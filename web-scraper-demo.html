@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compliance-First Web Data Extraction — Demo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0a0a0f;color:#e0e0e8;min-height:100vh}
+.app{max-width:860px;margin:0 auto;padding:24px}
+h1{font-size:20px;margin-bottom:4px;color:#fff}
+.sub{color:#888;font-size:13px;margin-bottom:20px}
+.card{background:#12121a;border:1px solid #1e1e2e;border-radius:10px;padding:20px;margin-bottom:16px}
+.card h2{font-size:15px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.input-row{display:flex;gap:10px;margin-bottom:16px}
+.input-row input{flex:1;background:#0a0a0f;border:1px solid #2a2a3a;color:#e0e0e8;padding:12px 16px;border-radius:8px;font-size:14px;outline:none}
+.input-row input:focus{border-color:#5865f2}
+.btn{background:#5865f2;border:none;color:#fff;padding:12px 24px;border-radius:8px;font-size:14px;cursor:pointer;font-weight:600;transition:all .2s}
+.btn:hover{background:#4752c4}
+.btn.outline{background:transparent;border:1px solid #5865f2;color:#5865f2}
+.btn.outline:hover{background:#5865f220}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;padding:8px 12px;background:#0a0a0f;border-radius:6px}
+.check .icon{font-size:16px}
+.check.pass{color:#57f287}
+.check.warn{color:#fee75c}
+.check.fail{color:#ed4245}
+.check.pending{color:#555}
+.progress{height:6px;background:#1e1e2e;border-radius:3px;overflow:hidden;margin:12px 0}
+.progress .bar{height:100%;background:linear-gradient(90deg,#5865f2,#57f287);border-radius:3px;transition:width .5s;width:0}
+.stats{display:flex;gap:20px;margin:12px 0}
+.stat{text-align:center}
+.stat .val{font-size:22px;font-weight:700;color:#fff}
+.stat .label{font-size:11px;color:#888;margin-top:2px}
+table{width:100%;border-collapse:collapse;font-size:13px;margin-top:12px}
+th{text-align:left;padding:8px 12px;background:#0a0a0f;color:#888;font-weight:500;border-bottom:1px solid #1e1e2e}
+td{padding:8px 12px;border-bottom:1px solid #1e1e2e}
+tr:hover td{background:#ffffff05}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600}
+.tag.ok{background:#57f28720;color:#57f287}
+.tag.mid{background:#fee75c20;color:#fee75c}
+.export-bar{display:flex;gap:10px;margin-top:12px}
+.hidden{display:none}
+.footer{text-align:center;color:#555;font-size:11px;padding:16px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.animate{animation:fadeIn .4s}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>🔍 Compliance-First Web Data Extraction</h1>
+<p class="sub">Extract structured data from public websites — legally and responsibly</p>
+
+<div class="card">
+<h2>🌐 Target URL</h2>
+<div class="input-row">
+<input type="text" id="urlInput" value="https://example-shop.com/products" placeholder="Enter URL to extract data from...">
+<button class="btn" onclick="startExtraction()">▶ Extract</button>
+</div>
+<div id="complianceSection" class="hidden">
+<h2>🛡️ Compliance Check</h2>
+<div class="checks" id="checks"></div>
+</div>
+</div>
+
+<div id="progressCard" class="card hidden animate">
+<h2>⚙️ Extraction Progress</h2>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div id="statusText" style="font-size:13px;color:#888">Initializing...</div>
+<div class="stats" id="statsBar">
+<div class="stat"><div class="val" id="statPages">0</div><div class="label">Pages Scanned</div></div>
+<div class="stat"><div class="val" id="statRecords">0</div><div class="label">Records Found</div></div>
+<div class="stat"><div class="val" id="statTime">0s</div><div class="label">Elapsed</div></div>
+<div class="stat"><div class="val" id="statRate">0</div><div class="label">Req/min</div></div>
+</div>
+</div>
+
+<div id="resultsCard" class="card hidden animate">
+<h2>📊 Extracted Data</h2>
+<table>
+<thead><tr><th>Name</th><th>Price</th><th>Rating</th><th>Stock</th><th>Category</th></tr></thead>
+<tbody id="tableBody"></tbody>
+</table>
+<div class="export-bar">
+<button class="btn outline" onclick="exportData('csv')">📥 Export CSV</button>
+<button class="btn outline" onclick="exportData('json')">📥 Export JSON</button>
+<button class="btn outline" onclick="exportData('xlsx')">📥 Export Excel</button>
+</div>
+</div>
+<div class="footer">Demo by Janis A. — Available for hire on Upwork</div>
+</div>
+<script>
+const sampleData=[
+{name:'Wireless Headphones Pro',price:'$89.99',rating:'4.7',stock:'In Stock',cat:'Electronics'},
+{name:'Organic Coffee Beans 1kg',price:'$24.50',rating:'4.9',stock:'In Stock',cat:'Food'},
+{name:'Running Shoes Ultra',price:'$129.00',rating:'4.5',stock:'Low Stock',cat:'Sports'},
+{name:'Smart Watch Series 5',price:'$249.99',rating:'4.8',stock:'In Stock',cat:'Electronics'},
+{name:'Bamboo Desk Organizer',price:'$34.99',rating:'4.3',stock:'In Stock',cat:'Home'},
+{name:'Protein Powder Vanilla',price:'$42.00',rating:'4.6',stock:'In Stock',cat:'Health'},
+{name:'LED Desk Lamp',price:'$56.99',rating:'4.4',stock:'Low Stock',cat:'Home'},
+{name:'Bluetooth Speaker Mini',price:'$39.99',rating:'4.2',stock:'In Stock',cat:'Electronics'},
+{name:'Yoga Mat Premium',price:'$28.00',rating:'4.8',stock:'In Stock',cat:'Sports'},
+{name:'Stainless Water Bottle',price:'$19.99',rating:'4.7',stock:'In Stock',cat:'Home'},
+];
+const checkItems=[
+['robots.txt','Checking robots.txt...','pass','✅ Allowed — no restrictions'],
+['Rate Limit','Checking rate limits...','pass','✅ Respectful — 2 req/sec'],
+['ToS','Reviewing Terms of Service...','pass','✅ Public data — extraction permitted'],
+['GDPR','Checking for personal data...','warn','⚠️ No PII detected — safe to proceed']
+];
+async function startExtraction(){
+const url=document.getElementById('urlInput').value;
+const cs=document.getElementById('complianceSection');cs.classList.remove('hidden');
+const checks=document.getElementById('checks');checks.innerHTML='';
+for(const[name,pending,status,result]of checkItems){
+const d=document.createElement('div');d.className='check pending';d.innerHTML='<span class="icon">⏳</span>'+name+': '+pending;
+checks.appendChild(d);
+await delay(600);
+d.className='check '+status;d.innerHTML='<span class="icon">'+(status==='pass'?'✅':status==='warn'?'⚠️':'❌')+'</span>'+result}
+await delay(400);
+const pc=document.getElementById('progressCard');pc.classList.remove('hidden');
+const bar=document.getElementById('bar'),st=document.getElementById('statusText');
+const steps=[
+[10,'Connecting to target...'],
+[25,'Parsing page structure...'],
+[40,'Identifying data patterns...'],
+[55,'Extracting product data...'],
+[70,'Processing page 2 of 3...'],
+[85,'Validating extracted records...'],
+[95,'Cleaning and structuring data...'],
+[100,'✅ Extraction complete!']
+];
+let pages=0,records=0,sec=0;
+const timer=setInterval(()=>{sec++;document.getElementById('statTime').textContent=sec+'s'},1000);
+for(const[pct,msg]of steps){
+bar.style.width=pct+'%';st.textContent=msg;
+pages=Math.min(3,Math.floor(pct/30)+1);records=Math.min(10,Math.floor(pct/10));
+document.getElementById('statPages').textContent=pages;
+document.getElementById('statRecords').textContent=records;
+document.getElementById('statRate').textContent=Math.min(120,pct+20);
+await delay(700)}
+clearInterval(timer);
+document.getElementById('statRecords').textContent='10';
+document.getElementById('statPages').textContent='3';
+document.getElementById('statRate').textContent='120';
+await delay(300);
+const rc=document.getElementById('resultsCard');rc.classList.remove('hidden');
+const tb=document.getElementById('tableBody');tb.innerHTML='';
+for(const d of sampleData){
+const tr=document.createElement('tr');
+tr.innerHTML='<td>'+d.name+'</td><td>'+d.price+'</td><td>'+d.rating+' ⭐</td><td><span class="tag '+(d.stock==='In Stock'?'ok':'mid')+'">'+d.stock+'</span></td><td>'+d.cat+'</td>';
+tb.appendChild(tr);await delay(100)}
+}
+function exportData(fmt){
+const blob=new Blob([JSON.stringify(sampleData,null,2)],{type:'application/json'});
+const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='extracted-data.'+fmt;a.click();
+}
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+</script>
+</body>
+</html>

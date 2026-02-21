@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WhatsApp Travel Bot — Demo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#111b21;color:#e9edef;height:100vh;display:flex;justify-content:center;align-items:center}
+.phone{width:390px;height:700px;background:#0b141a;border-radius:24px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.header{background:#1f2c34;padding:10px 16px;display:flex;align-items:center;gap:12px}
+.header .avatar{width:40px;height:40px;border-radius:50%;background:#00a884;display:flex;align-items:center;justify-content:center;font-size:20px}
+.header .info{flex:1}
+.header .info .name{font-size:16px;font-weight:500}
+.header .info .status{font-size:12px;color:#8696a0}
+.chat{flex:1;overflow-y:auto;padding:12px 16px;display:flex;flex-direction:column;gap:6px;background:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 5l5 8h-10z' fill='%23ffffff08'/%3E%3C/svg%3E")}
+.msg{max-width:82%;padding:6px 10px;border-radius:8px;font-size:14px;line-height:1.45;animation:fadeIn .25s;position:relative}
+.msg.bot{background:#1f2c34;align-self:flex-start;border-top-left-radius:0}
+.msg.user{background:#005c4b;align-self:flex-end;border-top-right-radius:0}
+.msg .time{font-size:11px;color:#8696a0;text-align:right;margin-top:3px}
+.buttons{display:flex;flex-direction:column;gap:4px;margin-top:8px}
+.buttons button{background:transparent;border:1px solid #00a884;color:#00a884;padding:8px;border-radius:8px;font-size:13px;cursor:pointer;transition:all .2s;text-align:center}
+.buttons button:hover{background:#00a88420}
+.input-area{background:#1f2c34;padding:8px 12px;display:flex;gap:8px;align-items:center}
+.input-area input{flex:1;background:#2a3942;border:none;color:#e9edef;padding:10px 14px;border-radius:24px;font-size:14px;outline:none}
+.input-area input::placeholder{color:#8696a0}
+.input-area .send{background:#00a884;border:none;color:#fff;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.footer{text-align:center;color:#8696a0;font-size:11px;padding:6px;background:#0b141a}
+.itinerary{background:#0b141a;border-radius:8px;padding:10px;margin-top:8px;font-size:13px}
+.itinerary .day{margin-bottom:8px}
+.itinerary .day-title{color:#00a884;font-weight:600;margin-bottom:3px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="phone">
+<div class="header">
+<div class="avatar">✈️</div>
+<div class="info">
+<div class="name">TravelWise Bot</div>
+<div class="status">online</div>
+</div>
+</div>
+<div class="chat" id="chat"></div>
+<div class="input-area">
+<input type="text" id="input" placeholder="Type a message..." autocomplete="off">
+<button class="send" onclick="sendMsg()">➤</button>
+</div>
+<div class="footer">Demo by Janis A. — Available for hire on Upwork</div>
+</div>
+<script>
+const chat=document.getElementById('chat'),input=document.getElementById('input');
+let booking={};
+const now=()=>{const d=new Date();return d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')};
+function addMsg(text,isBot,buttons){
+const d=document.createElement('div');d.className='msg '+(isBot?'bot':'user');
+d.innerHTML=text+'<div class="time">'+now()+'</div>';
+if(buttons){const b=document.createElement('div');b.className='buttons';
+buttons.forEach(([l,a])=>{const btn=document.createElement('button');btn.textContent=l;btn.onclick=()=>handle(a,l);b.appendChild(btn)});d.appendChild(b)}
+chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
+function type(text,buttons,delay=700){
+setTimeout(()=>addMsg(text,true,buttons),delay)}
+function handle(a,l){
+addMsg(l,false);
+if(a==='book'){type('🌍 Where would you like to go?',[['🏖 Bali, Indonesia','dest_bali'],['🗼 Paris, France','dest_paris'],['🏔 Swiss Alps','dest_swiss'],['🌴 Maldives','dest_maldives']])}
+else if(a.startsWith('dest_')){booking.dest=l;type('📅 When do you want to travel?',[['🗓 This Month','when_thismo'],['🗓 Next Month','when_nextmo'],['🗓 In 3 Months','when_3mo']])}
+else if(a.startsWith('when_')){booking.when=l;type('👥 How many travelers?',[['1 Person','pax_1'],['2 People','pax_2'],['3-4 People','pax_34'],['5+ Group','pax_5']])}
+else if(a.startsWith('pax_')){booking.pax=l;type('💰 What\'s your budget range?',[['💵 Budget ($500-1000)','bud_low'],['💎 Mid-Range ($1000-2500)','bud_mid'],['👑 Luxury ($2500+)','bud_high']])}
+else if(a.startsWith('bud_')){booking.budget=l;
+const dest=booking.dest||'Bali';
+let itin='<div class="itinerary">';
+itin+='<div class="day"><div class="day-title">✈️ Day 1 — Arrival</div>Airport pickup, hotel check-in, welcome dinner</div>';
+itin+='<div class="day"><div class="day-title">🏛 Day 2 — Sightseeing</div>Guided city tour, local markets, cultural show</div>';
+itin+='<div class="day"><div class="day-title">🌊 Day 3 — Adventure</div>Snorkeling/hiking, beach time, sunset cruise</div>';
+itin+='<div class="day"><div class="day-title">🧘 Day 4 — Relaxation</div>Spa day, shopping, farewell dinner</div>';
+itin+='<div class="day"><div class="day-title">✈️ Day 5 — Departure</div>Hotel checkout, airport transfer</div>';
+itin+='</div>';
+type('✨ <b>Your Custom Travel Plan</b>\n\n📍 '+booking.dest+'\n📅 '+booking.when+'\n👥 '+booking.pax+'\n💰 '+booking.budget+'\n\n<b>5-Day Itinerary:</b>'+itin+'\n\n💵 <b>Estimated Total: $1,890</b>\n<i>Includes flights, 4-star hotel, transfers & activities</i>',
+[['✅ Book This Trip','confirm'],['✏️ Modify Plan','book'],['💬 Talk to Agent','agent']],1200)}
+else if(a==='confirm'){type('🎉 <b>Booking Confirmed!</b>\n\n✅ Reservation ID: TW-'+Math.floor(Math.random()*90000+10000)+'\n📧 Confirmation sent to your email\n📱 You\'ll receive travel documents 48h before departure\n\nNeed anything else?',
+[['📋 New Trip','book'],['❓ FAQ','faq'],['📞 Contact','agent']])}
+else if(a==='faq'){type('What would you like to know?',[['🔄 Cancellation Policy','faq_cancel'],['💳 Payment Options','faq_pay'],['🧳 Packing Tips','faq_pack'],['🔙 Main Menu','menu']])}
+else if(a==='faq_cancel'){type('🔄 <b>Cancellation Policy</b>\n\n• 30+ days before: Full refund\n• 14-30 days: 50% refund\n• 7-14 days: 25% refund\n• Less than 7 days: No refund\n\n💡 Travel insurance recommended!',
+[['💳 Payment','faq_pay'],['📋 Book Trip','book'],['🔙 Menu','menu']])}
+else if(a==='faq_pay'){type('💳 <b>Payment Options</b>\n\n✅ Credit/Debit Card\n✅ Bank Transfer\n✅ PayPal\n✅ Installment Plans (3-6 months)\n\n🔒 All payments encrypted & secure',
+[['🔄 Cancellation','faq_cancel'],['📋 Book Trip','book'],['🔙 Menu','menu']])}
+else if(a==='faq_pack'){type('🧳 <b>Packing Tips</b>\n\n☀️ Sunscreen & hat\n💊 Basic medication\n📱 Universal adapter\n👟 Comfortable shoes\n📄 Copies of documents\n\n💡 Pack light — you\'ll want room for souvenirs!',
+[['📋 Book Trip','book'],['🔙 Menu','menu']])}
+else if(a==='agent'){type('👋 Connecting you with a travel agent...\n\n🟢 <b>Agent Sarah</b> will be with you shortly!\nAverage response time: 2 minutes\n\nIn the meantime, feel free to browse our FAQ.',
+[['❓ FAQ','faq'],['📋 New Booking','book'],['🔙 Menu','menu']])}
+else if(a==='menu'){type('How can I help you today? ✈️',
+[['📋 Plan a Trip','book'],['❓ FAQ','faq'],['📞 Talk to Agent','agent'],['🔥 Hot Deals','deals']])}
+else if(a==='deals'){type('🔥 <b>Hot Deals This Week</b>\n\n🏖 Bali 5 nights — <s>$2,100</s> <b>$1,499</b>\n🗼 Paris 4 nights — <s>$1,800</s> <b>$1,249</b>\n🌴 Maldives 6 nights — <s>$3,500</s> <b>$2,799</b>\n\n⏰ Limited time — book before Sunday!',
+[['📋 Book Now','book'],['🔙 Menu','menu']])}
+}
+function sendMsg(){
+const v=input.value.trim();if(!v)return;addMsg(v,false);input.value='';
+const vl=v.toLowerCase();
+if(vl.includes('book')||vl.includes('trip')||vl.includes('travel'))handle('book','Plan a Trip');
+else if(vl.includes('cancel'))handle('faq_cancel','Cancellation');
+else if(vl.includes('pay'))handle('faq_pay','Payment');
+else if(vl.includes('deal')||vl.includes('offer'))handle('deals','Deals');
+else if(vl.includes('hi')||vl.includes('hello'))handle('menu','Menu');
+else if(vl.includes('agent')||vl.includes('human'))handle('agent','Talk to Agent');
+else type('I can help you plan trips, check deals, or answer questions. What would you like?',[['📋 Plan a Trip','book'],['🔥 Hot Deals','deals'],['❓ FAQ','faq']])
+}
+input.addEventListener('keypress',e=>{if(e.key==='Enter')sendMsg()});
+setTimeout(()=>type('✈️ Welcome to <b>TravelWise</b>!\n\nI\'m your AI travel assistant. I can help you plan trips, find deals, and book everything — right here in WhatsApp.\n\nWhat would you like to do?',
+[['📋 Plan a Trip','book'],['🔥 Hot Deals','deals'],['❓ FAQ','faq'],['📞 Talk to Agent','agent']]),400);
+</script>
+</body>
+</html>

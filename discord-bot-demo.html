@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discord Bot — Demo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'gg sans',Helvetica,Arial,sans-serif;background:#313338;color:#dbdee1;height:100vh;display:flex;justify-content:center;align-items:center}
+.app{width:820px;height:680px;background:#313338;border-radius:12px;display:flex;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.sidebar{width:240px;background:#2b2d31;display:flex;flex-direction:column}
+.server{padding:16px;border-bottom:1px solid #1e1f22;font-weight:700;font-size:15px}
+.channels{flex:1;padding:8px}
+.ch{padding:6px 10px;border-radius:4px;font-size:14px;color:#949ba4;cursor:pointer;display:flex;align-items:center;gap:6px}
+.ch:hover,.ch.active{background:#35373c;color:#fff}
+.ch::before{content:'#';color:#6d6f78;font-size:16px}
+.main{flex:1;display:flex;flex-direction:column}
+.topbar{background:#313338;padding:12px 16px;border-bottom:1px solid #1e1f22;display:flex;align-items:center;gap:8px;font-weight:600}
+.topbar::before{content:'#';color:#6d6f78;font-size:18px}
+.messages{flex:1;overflow-y:auto;padding:16px}
+.msg-group{display:flex;gap:12px;margin-bottom:16px;animation:fadeIn .3s}
+.msg-group .avatar{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px}
+.msg-group .avatar.bot{background:#5865f2}
+.msg-group .avatar.user{background:#57728e}
+.msg-group .content{flex:1}
+.msg-group .author{font-weight:600;font-size:14px;margin-bottom:2px}
+.msg-group .author .badge{background:#5865f2;color:#fff;font-size:10px;padding:1px 5px;border-radius:3px;margin-left:6px;font-weight:500}
+.msg-group .author .time{color:#949ba4;font-size:12px;font-weight:400;margin-left:8px}
+.msg-group .text{font-size:14px;line-height:1.5;color:#dbdee1}
+.embed{background:#2b2d31;border-left:4px solid #5865f2;border-radius:4px;padding:12px;margin-top:8px;max-width:420px}
+.embed.green{border-color:#57f287}
+.embed.yellow{border-color:#fee75c}
+.embed.red{border-color:#ed4245}
+.embed .e-title{font-weight:700;font-size:14px;margin-bottom:6px}
+.embed .e-field{margin-top:6px;font-size:13px}
+.embed .e-field .label{color:#949ba4;font-size:12px}
+.embed .e-inline{display:flex;gap:24px;flex-wrap:wrap}
+.embed .e-inline .e-field{flex:1;min-width:80px}
+.input-area{padding:12px 16px;background:#313338}
+.input-area .wrap{background:#383a40;border-radius:8px;display:flex;align-items:center;padding:0 16px}
+.input-area input{flex:1;background:none;border:none;color:#dbdee1;padding:12px 0;font-size:14px;outline:none}
+.input-area input::placeholder{color:#6d6f78}
+.footer{text-align:center;color:#949ba4;font-size:11px;padding:6px;background:#2b2d31}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+</style>
+</head>
+<body>
+<div class="app">
+<div class="sidebar">
+<div class="server">🤖 My Server</div>
+<div class="channels">
+<div class="ch active" onclick="switchCh('general')">general</div>
+<div class="ch" onclick="switchCh('bot-commands')">bot-commands</div>
+<div class="ch" onclick="switchCh('moderation')">moderation</div>
+</div>
+<div class="footer">Demo by Janis A.</div>
+</div>
+<div class="main">
+<div class="topbar" id="topbar">general</div>
+<div class="messages" id="messages"></div>
+<div class="input-area"><div class="wrap">
+<input type="text" id="input" placeholder="Try: /help, /stats, /poll, /weather, /crypto" autocomplete="off">
+</div></div>
+</div>
+</div>
+<script>
+const msgs=document.getElementById('messages'),input=document.getElementById('input');
+const t=()=>{const d=new Date();return'Today at '+d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')};
+function add(author,text,embed,isBot=true){
+const g=document.createElement('div');g.className='msg-group';
+let h='<div class="avatar '+(isBot?'bot':'user')+'">'+(isBot?'🤖':'👤')+'</div>';
+h+='<div class="content"><div class="author">'+author+(isBot?'<span class="badge">BOT</span>':'')+'<span class="time">'+t()+'</span></div>';
+h+='<div class="text">'+text+'</div>';
+if(embed)h+=embed;
+h+='</div>';g.innerHTML=h;msgs.appendChild(g);msgs.scrollTop=msgs.scrollHeight}
+function embed(title,fields,color=''){
+let c=color?'embed '+color:'embed';
+let h='<div class="'+c+'"><div class="e-title">'+title+'</div>';
+if(Array.isArray(fields[0])){h+='<div class="e-inline">';fields.forEach(f=>h+='<div class="e-field"><div class="label">'+f[0]+'</div>'+f[1]+'</div>');h+='</div>'}
+else fields.forEach(f=>h+='<div class="e-field"><div class="label">'+f[0]+'</div>'+f[1]+'</div>');
+return h+'</div>'}
+const commands={
+'/help':()=>add('ModBot','Here are my commands:',embed('📋 Command List',[['Utility','/help, /stats, /poll, /weather, /crypto'],['Moderation','/kick, /ban, /purge, /warn'],['Info','/userinfo, /serverinfo']])),
+'/stats':()=>add('ModBot','',embed('📊 Server Statistics',[['Members','1,247'],['Online','834'],['Messages Today','3,591'],['Active Channels','12']],'green')),
+'/poll':()=>add('ModBot','',embed('📊 Quick Poll: Should we add a music channel?',[['✅ Yes','▓▓▓▓▓▓▓▓░░ 78% (45 votes)'],['❌ No','▓▓░░░░░░░░ 22% (13 votes)'],['Total Votes','58']],'yellow')),
+'/weather':()=>add('ModBot','',embed('🌤 Weather — Berlin, Germany',[['🌡 Temperature','8°C / 46°F'],['💧 Humidity','72%'],['💨 Wind','14 km/h NW'],['📅 Forecast','Partly cloudy, rain expected tonight']])),
+'/crypto':()=>add('ModBot','',embed('💰 Crypto Prices',[['₿ Bitcoin','$51,342 (+2.4%)'],['Ξ Ethereum','$2,891 (+1.7%)'],['◎ Solana','$124.50 (-0.8%)']],'green')),
+'/kick':()=>add('ModBot','',embed('👢 User Kicked',[['User','@spammer123'],['Reason','Spam in #general'],['By','@Admin']],'red')),
+'/ban':()=>add('ModBot','',embed('🔨 User Banned',[['User','@toxic_user'],['Reason','Repeated violations'],['Duration','Permanent'],['By','@Admin']],'red')),
+'/purge':()=>add('ModBot','',embed('🧹 Messages Purged',[['Deleted','25 messages'],['Channel','#general'],['By','@Admin']],'yellow')),
+'/warn':()=>add('ModBot','',embed('⚠️ Warning Issued',[['User','@troublemaker'],['Reason','Inappropriate language'],['Warnings','2/3 (1 more = mute)'],['By','@Moderator']],'yellow')),
+'/userinfo':()=>add('ModBot','',embed('👤 User Info — Janis#0001',[['Joined Server','Feb 14, 2026'],['Account Created','Jan 1, 2024'],['Roles','Admin, Developer, Verified'],['Messages','1,337']])),
+'/serverinfo':()=>add('ModBot','',embed('🏠 Server Info — My Server',[['Created','Feb 10, 2026'],['Members','1,247'],['Channels','24 (12 text, 8 voice, 4 category)'],['Boost Level','Level 2 (8 boosts)']],'green'))
+};
+function send(){
+const v=input.value.trim();if(!v)return;add('You',v,null,false);input.value='';
+const cmd=v.toLowerCase().split(' ')[0];
+if(commands[cmd])setTimeout(commands[cmd],400);
+else setTimeout(()=>add('ModBot','Unknown command. Type <code>/help</code> to see available commands.'),400)}
+input.addEventListener('keypress',e=>{if(e.key==='Enter')send()});
+function switchCh(name){
+document.querySelectorAll('.ch').forEach(c=>c.classList.remove('active'));
+document.querySelector('.ch[onclick*="'+name+'"]').classList.add('active');
+document.getElementById('topbar').textContent=name;
+msgs.innerHTML='';
+add('ModBot','Welcome to #'+name+'! Type /help to see available commands.')}
+setTimeout(()=>add('ModBot','👋 Hey! I\'m your server\'s moderation & utility bot. Type <code>/help</code> to see what I can do!'),300);
+</script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Agent AI System — Demo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#0f0f14;color:#e0e0e8;min-height:100vh}
+.app{max-width:900px;margin:0 auto;padding:20px}
+h1{font-size:22px;margin-bottom:4px;color:#fff}
+.sub{color:#888;font-size:13px;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:280px 1fr;gap:16px;height:580px}
+.agents{display:flex;flex-direction:column;gap:10px}
+.agent{background:#1a1a24;border:1px solid #2a2a3a;border-radius:10px;padding:14px;cursor:pointer;transition:all .2s}
+.agent:hover{border-color:#5865f2}
+.agent.active{border-color:#5865f2;background:#1e1e30}
+.agent .top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.agent .icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.agent .name{font-weight:600;font-size:14px}
+.agent .role{font-size:12px;color:#888}
+.dot{width:8px;height:8px;border-radius:50%;margin-left:auto}
+.dot.on{background:#57f287;box-shadow:0 0 6px #57f28766}
+.dot.busy{background:#fee75c;box-shadow:0 0 6px #fee75c66}
+.dot.off{background:#ed4245}
+.agent .stats{display:flex;gap:16px;font-size:12px;color:#888}
+.agent .stats span{color:#bbb}
+.panel{background:#1a1a24;border:1px solid #2a2a3a;border-radius:10px;display:flex;flex-direction:column;overflow:hidden}
+.panel-head{padding:12px 16px;border-bottom:1px solid #2a2a3a;font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px}
+.log{flex:1;overflow-y:auto;padding:12px 16px;font-family:'SF Mono',Monaco,Consolas,monospace;font-size:13px;line-height:1.8}
+.log .entry{animation:fadeIn .3s}
+.log .ts{color:#555}
+.log .info{color:#5865f2}
+.log .success{color:#57f287}
+.log .warn{color:#fee75c}
+.log .error{color:#ed4245}
+.log .agent-tag{color:#a78bfa;font-weight:600}
+.task-input{display:flex;gap:8px;padding:12px 16px;border-top:1px solid #2a2a3a}
+.task-input input{flex:1;background:#0f0f14;border:1px solid #2a2a3a;color:#e0e0e8;padding:10px 14px;border-radius:8px;font-size:13px;outline:none}
+.task-input input:focus{border-color:#5865f2}
+.task-input button{background:#5865f2;border:none;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;cursor:pointer;font-weight:600}
+.task-input button:hover{background:#4752c4}
+.footer{text-align:center;color:#555;font-size:11px;padding:12px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+<div class="app">
+<h1>🤖 Multi-Agent Orchestration System</h1>
+<p class="sub">Powered by OpenClaw — AI agents working together on your tasks</p>
+<div class="grid">
+<div class="agents" id="agents"></div>
+<div class="panel">
+<div class="panel-head">📋 Live Activity Log</div>
+<div class="log" id="log"></div>
+<div class="task-input">
+<input type="text" id="taskInput" placeholder="Enter a task (e.g., 'Research AI trends and write a summary')" autocomplete="off">
+<button onclick="submitTask()">▶ Run</button>
+</div>
+</div>
+</div>
+<div class="footer">Demo by Janis A. — Available for hire on Upwork</div>
+</div>
+<script>
+const agentData=[
+{id:'orchestrator',name:'Orchestrator',role:'Task Router & Coordinator',icon:'🧠',color:'#5865f2',status:'on',tasks:24,uptime:'99.8%'},
+{id:'researcher',name:'Researcher',role:'Web Search & Data Gathering',icon:'🔍',color:'#57f287',status:'on',tasks:18,uptime:'99.2%'},
+{id:'writer',name:'Writer',role:'Content Generation & Editing',icon:'✍️',color:'#a78bfa',status:'on',tasks:15,uptime:'98.9%'},
+{id:'coder',name:'Coder',role:'Code Generation & Review',icon:'💻',color:'#fee75c',status:'busy',tasks:21,uptime:'99.5%'},
+{id:'analyst',name:'Analyst',role:'Data Analysis & Reporting',icon:'📊',color:'#ed4245',status:'on',tasks:12,uptime:'97.8%'}
+];
+const agentsEl=document.getElementById('agents'),logEl=document.getElementById('log'),taskInput=document.getElementById('taskInput');
+function renderAgents(){agentsEl.innerHTML='';agentData.forEach(a=>{
+const d=document.createElement('div');d.className='agent'+(a.status==='busy'?' active':'');d.id='agent-'+a.id;
+d.innerHTML='<div class="top"><div class="icon" style="background:'+a.color+'22;color:'+a.color+'">'+a.icon+'</div><div><div class="name">'+a.name+'</div><div class="role">'+a.role+'</div></div><div class="dot '+a.status+'"></div></div><div class="stats">Tasks: <span>'+a.tasks+'</span> | Uptime: <span>'+a.uptime+'</span></div>';
+agentsEl.appendChild(d)})}
+function log(agent,msg,level='info'){
+const ts=new Date().toLocaleTimeString();
+const e=document.createElement('div');e.className='entry';
+e.innerHTML='<span class="ts">['+ts+']</span> <span class="agent-tag">['+agent+']</span> <span class="'+level+'">'+msg+'</span>';
+logEl.appendChild(e);logEl.scrollTop=logEl.scrollHeight}
+function setStatus(id,status){const a=agentData.find(x=>x.id===id);if(a){a.status=status;renderAgents()}}
+async function submitTask(){
+const task=taskInput.value.trim()||'Research the latest AI trends and create a summary report';
+taskInput.value='';
+log('Orchestrator','📥 New task received: "'+task+'"','info');
+await delay(600);
+log('Orchestrator','🔄 Analyzing task requirements...','info');
+await delay(800);
+log('Orchestrator','📋 Breaking down into subtasks...','info');
+await delay(500);
+log('Orchestrator','→ Subtask 1: Research (assigned to Researcher)','info');
+log('Orchestrator','→ Subtask 2: Analysis (assigned to Analyst)','info');
+log('Orchestrator','→ Subtask 3: Write report (assigned to Writer)','info');
+await delay(400);
+setStatus('researcher','busy');
+log('Researcher','🔍 Starting web search...','info');
+await delay(1200);
+log('Researcher','📄 Found 12 relevant sources','success');
+await delay(800);
+log('Researcher','📊 Extracting key data points...','info');
+await delay(1000);
+log('Researcher','✅ Research complete — 47 data points collected','success');
+setStatus('researcher','on');agentData.find(x=>x.id==='researcher').tasks++;
+await delay(400);
+setStatus('analyst','busy');
+log('Analyst','📊 Analyzing collected data...','info');
+await delay(1000);
+log('Analyst','📈 Identified 5 key trends','success');
+await delay(800);
+log('Analyst','✅ Analysis complete — report data ready','success');
+setStatus('analyst','on');agentData.find(x=>x.id==='analyst').tasks++;
+await delay(400);
+setStatus('writer','busy');
+log('Writer','✍️ Generating summary report...','info');
+await delay(1200);
+log('Writer','📝 Draft complete (1,200 words)','info');
+await delay(600);
+log('Writer','✏️ Editing and formatting...','info');
+await delay(800);
+log('Writer','✅ Final report ready','success');
+setStatus('writer','on');agentData.find(x=>x.id==='writer').tasks++;
+await delay(400);
+agentData.find(x=>x.id==='orchestrator').tasks++;
+log('Orchestrator','🎉 Task completed! All subtasks finished successfully.','success');
+log('Orchestrator','📊 Summary: 3 agents, 47 data points, 1,200 word report, completed in ~8s','success');
+renderAgents()}
+function delay(ms){return new Promise(r=>setTimeout(r,ms))}
+renderAgents();
+taskInput.addEventListener('keypress',e=>{if(e.key==='Enter')submitTask()});
+log('System','🟢 All agents initialized and ready','success');
+log('Orchestrator','👋 Waiting for tasks. Enter a task below or press ▶ Run to see a demo.','info');
+</script>
+</body>
+</html>
