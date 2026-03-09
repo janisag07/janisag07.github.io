@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Logistics Broker - Telegram Bot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(240, 147, 251, 0.3);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #fff 0%, #e0e0e0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(240, 147, 251, 0.2);
+            border-color: rgba(240, 147, 251, 0.5);
+        }
+
+        .card h3 {
+            color: #f093fb;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .workflow {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: linear-gradient(90deg, rgba(240, 147, 251, 0.2) 0%, rgba(245, 87, 108, 0.2) 100%);
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .workflow-step:hover {
+            background: linear-gradient(90deg, rgba(240, 147, 251, 0.3) 0%, rgba(245, 87, 108, 0.3) 100%);
+            transform: translateX(5px);
+        }
+
+        .workflow-step::after {
+            content: '↓';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5em;
+            color: #f093fb;
+        }
+
+        .workflow-step:last-child::after {
+            content: '';
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .agents {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .agent {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .agent:hover {
+            background: rgba(240, 147, 251, 0.3);
+            transform: scale(1.05);
+        }
+
+        .agent-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .telegram-mockup {
+            background: #17212b;
+            border-radius: 15px;
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .telegram-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .telegram-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .telegram-messages {
+            padding: 20px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .telegram-message {
+            background: rgba(240, 147, 251, 0.2);
+            padding: 12px 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            max-width: 80%;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .telegram-message.user {
+            background: rgba(245, 87, 108, 0.3);
+            margin-left: auto;
+        }
+
+        .telegram-input {
+            display: flex;
+            gap: 10px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .telegram-input input {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            color: #e0e0e0;
+        }
+
+        .telegram-input input:focus {
+            outline: none;
+            border-color: #f093fb;
+        }
+
+        .tracking {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .tracking-items {
+            display: grid;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .tracking-item {
+            background: linear-gradient(90deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
+            padding: 15px;
+            border-radius: 10px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .tracking-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .tracking-status.in-transit {
+            background: rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+        }
+
+        .tracking-status.delivered {
+            background: rgba(34, 197, 94, 0.3);
+            color: #4ade80;
+        }
+
+        .tracking-status.pending {
+            background: rgba(59, 130, 246, 0.3);
+            color: #60a5fa;
+        }
+
+        .analytics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .metric {
+            background: linear-gradient(135deg, rgba(240, 147, 251, 0.2) 0%, rgba(245, 87, 108, 0.2) 100%);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #f093fb;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .chat-container {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 10px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            background: rgba(245, 87, 108, 0.3);
+            margin-left: 20%;
+        }
+
+        .message.bot {
+            background: rgba(240, 147, 251, 0.3);
+            margin-right: 20%;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #f093fb;
+        }
+
+        .api-config {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .api-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1em;
+            margin-top: 10px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-left: 10px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.active {
+            background: #4ade80;
+        }
+
+        .status-indicator.demo {
+            background: #fbbf24;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .analytics {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .message.user, .message.bot {
+                margin-left: 0;
+                margin-right: 0;
+            }
+
+            .tracking-item {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚚 AI Logistics Broker</h1>
+            <p class="subtitle">Intelligent Telegram Bot for Freight Management</p>
+        </header>
+
+        <div class="grid">
+            <div class="card">
+                <h3>🤖 Multi-Agent Architecture</h3>
+                <div class="agents">
+                    <div class="agent">
+                        <div class="agent-icon">📊</div>
+                        <strong>Quote Agent</strong>
+                        <small>Price analysis</small>
+                    </div>
+                    <div class="agent">
+                        <div class="agent-icon">🗺️</div>
+                        <strong>Route Agent</strong>
+                        <small>Path optimization</small>
+                    </div>
+                    <div class="agent">
+                        <div class="agent-icon">🚛</div>
+                        <strong>Carrier Agent</strong>
+                        <small>Matching system</small>
+                    </div>
+                    <div class="agent">
+                        <div class="agent-icon">📍</div>
+                        <strong>Track Agent</strong>
+                        <small>Real-time tracking</small>
+                    </div>
+                    <div class="agent">
+                        <div class="agent-icon">💰</div>
+                        <strong>Invoice Agent</strong>
+                        <small>Billing automation</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔄 Logistics Workflow</h3>
+                <div class="workflow">
+                    <div class="workflow-step">
+                        <div class="step-number">1</div>
+                        <div>
+                            <strong>Get Quote</strong><br>
+                            <small>AI analyzes best rates</small>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">2</div>
+                        <div>
+                            <strong>Optimize Route</strong><br>
+                            <small>Smart path planning</small>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">3</div>
+                        <div>
+                            <strong>Match Carrier</strong><br>
+                            <small>Find best fit</small>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">4</div>
+                        <div>
+                            <strong>Track Shipment</strong><br>
+                            <small>Real-time updates</small>
+                        </div>
+                    </div>
+                    <div class="workflow-step">
+                        <div class="step-number">5</div>
+                        <div>
+                            <strong>Generate Invoice</strong><br>
+                            <small>Automated billing</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>✈️ Telegram Bot Interface</h3>
+                <div class="telegram-mockup">
+                    <div class="telegram-header">
+                        <div class="telegram-avatar">🚚</div>
+                        <div>
+                            <strong>Logistics AI Bot</strong><br>
+                            <small style="opacity: 0.7;">Online</small>
+                        </div>
+                    </div>
+                    <div class="telegram-messages" id="telegramMessages">
+                        <div class="telegram-message">
+                            👋 Welcome! I'm your AI logistics assistant. Send me your shipment details.
+                        </div>
+                        <div class="telegram-message user">
+                            Need to ship 10 pallets from Berlin to Munich
+                        </div>
+                        <div class="telegram-message">
+                            📦 Analyzing your request...<br><br>
+                            📍 Route: Berlin → Munich (584 km)<br>
+                            💰 Best quote: €450<br>
+                            🚛 Carrier: DHL Freight<br>
+                            ⏱️ ETA: 24-48 hours<br><br>
+                            Proceed with booking?
+                        </div>
+                    </div>
+                    <div class="telegram-input">
+                        <input type="text" placeholder="Type a message..." readonly>
+                        <button class="btn">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tracking">
+            <h3>📍 Real-Time Tracking Dashboard</h3>
+            <div class="tracking-items">
+                <div class="tracking-item">
+                    <div class="tracking-status in-transit">In Transit</div>
+                    <div>
+                        <strong>Shipment #LOG-2024-001</strong><br>
+                        <small>Berlin → Munich | ETA: 2 hours</small>
+                    </div>
+                    <div>🚛 87%</div>
+                </div>
+                <div class="tracking-item">
+                    <div class="tracking-status delivered">Delivered</div>
+                    <div>
+                        <strong>Shipment #LOG-2024-002</strong><br>
+                        <small>Hamburg → Frankfurt | Completed</small>
+                    </div>
+                    <div>✅</div>
+                </div>
+                <div class="tracking-item">
+                    <div class="tracking-status pending">Pending</div>
+                    <div>
+                        <strong>Shipment #LOG-2024-003</strong><br>
+                        <small>Cologne → Stuttgart | Awaiting carrier</small>
+                    </div>
+                    <div>⏳</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📊 Cost Optimization Analytics</h3>
+            <div class="analytics">
+                <div class="metric">
+                    <div class="metric-value" id="savings">€12,450</div>
+                    <div class="metric-label">Total Savings</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="shipments">347</div>
+                    <div class="metric-label">Shipments Managed</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="efficiency">94%</div>
+                    <div class="metric-label">Route Efficiency</div>
+                </div>
+                <div class="metric">
+                    <div class="metric-value" id="carriers">28</div>
+                    <div class="metric-label">Active Carriers</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chat-container">
+            <h3>💬 AI Logistics Assistant 
+                <span class="status-indicator" id="statusIndicator"></span>
+            </h3>
+            
+            <div class="api-config">
+                <label for="apiKey"><strong>OpenAI API Key (gpt-4o-mini):</strong></label>
+                <input 
+                    type="password" 
+                    id="apiKey" 
+                    class="api-input" 
+                    placeholder="sk-..."
+                >
+                <small style="opacity: 0.7; display: block; margin-top: 8px;">
+                    Leave empty to use demo mode with simulated responses
+                </small>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    Hello! I'm your AI logistics assistant. I can help you get quotes, track shipments, and optimize routes. What can I help you with?
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <input 
+                    type="text" 
+                    class="chat-input" 
+                    id="chatInput" 
+                    placeholder="E.g., 'Get quote for 5 pallets Berlin to Paris'"
+                >
+                <button class="btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const apiKeyInput = document.getElementById('apiKey');
+        const statusIndicator = document.getElementById('statusIndicator');
+
+        // Demo responses
+        const demoResponses = [
+            "📦 Analyzing your shipment details...\n\n📍 Route optimized\n💰 Best quote: €680\n🚛 Recommended carrier: DHL Freight\n⏱️ Estimated delivery: 36 hours",
+            "✅ Your shipment has been booked!\n\nTracking ID: LOG-2024-" + Math.floor(Math.random() * 1000) + "\nCarrier: DHL Freight\nStatus: Processing\n\nI'll keep you updated on the progress.",
+            "🗺️ Route analysis complete:\n\nDistance: 847 km\nFuel cost estimate: €124\nToll fees: €45\nRecommended stops: 2\nTotal time: 11.5 hours",
+            "💰 I found 3 competitive quotes:\n\n1. DHL Freight - €680 (fastest)\n2. DB Schenker - €650 (most reliable)\n3. Kühne+Nagel - €620 (cheapest)\n\nWhich would you prefer?",
+            "📍 Live tracking update:\n\nShipment is currently in transit\nLocation: 120 km from destination\nETA: 1 hour 45 minutes\nNo delays reported",
+            "📊 Cost optimization report:\n\nYour current route: €850\nOptimized alternative: €720\nPotential savings: €130 (15.3%)\n\nWould you like to switch?",
+            "🚛 Carrier matching complete:\n\nBased on your requirements, I recommend:\n- DHL Freight (reliability: 98%)\n- Available capacity: 15 pallets\n- Insurance included\n- Real-time tracking",
+            "💵 Invoice generated:\n\nInvoice #INV-2024-" + Math.floor(Math.random() * 1000) + "\nAmount: €720\nDue date: " + new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString() + "\nPayment link sent to your email"
+        ];
+
+        // Update status indicator
+        function updateStatusIndicator() {
+            const hasApiKey = apiKeyInput.value.trim().length > 0;
+            statusIndicator.className = 'status-indicator ' + (hasApiKey ? 'active' : 'demo');
+        }
+
+        apiKeyInput.addEventListener('input', updateStatusIndicator);
+        updateStatusIndicator();
+
+        // Simulate live metrics
+        setInterval(() => {
+            const savings = document.getElementById('savings');
+            const current = parseInt(savings.textContent.replace(/[€,]/g, ''));
+            savings.textContent = '€' + (current + Math.floor(Math.random() * 50)).toLocaleString();
+        }, 7000);
+
+        function addMessage(text, isUser) {
+            const message = document.createElement('div');
+            message.className = 'message ' + (isUser ? 'user' : 'bot');
+            message.textContent = text;
+            chatMessages.appendChild(message);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            addMessage(message, true);
+            chatInput.value = '';
+
+            const apiKey = apiKeyInput.value.trim();
+
+            if (apiKey) {
+                // Use OpenAI API
+                try {
+                    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${apiKey}`
+                        },
+                        body: JSON.stringify({
+                            model: 'gpt-4o-mini',
+                            messages: [
+                                {
+                                    role: 'system',
+                                    content: 'You are an AI logistics assistant. Help users with freight quotes, route optimization, carrier matching, shipment tracking, and invoicing. Be professional and use emojis for visual clarity.'
+                                },
+                                {
+                                    role: 'user',
+                                    content: message
+                                }
+                            ]
+                        })
+                    });
+
+                    const data = await response.json();
+                    const reply = data.choices[0].message.content;
+                    addMessage(reply, false);
+                } catch (error) {
+                    addMessage('Error connecting to OpenAI. Please check your API key.', false);
+                }
+            } else {
+                // Demo mode
+                setTimeout(() => {
+                    const reply = demoResponses[Math.floor(Math.random() * demoResponses.length)];
+                    addMessage(reply, false);
+                }, 500 + Math.random() * 1000);
+            }
+        }
+
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+    </script>
+</body>
+</html>
