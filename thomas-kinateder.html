@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Immobilienbewertung & Beratung | Demo für Prof. Dr. Thomas Kinateder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px var(--shadow);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .cta-button {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(14, 165, 233, 0.3);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .valuation-widget {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .widget-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .property-input {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .input-group input, .input-group select {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg-card);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .calculate-btn {
+            background: var(--primary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .calculate-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .valuation-result {
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .result-label {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-method {
+            font-size: 0.9rem;
+            opacity: 0.85;
+        }
+
+        .valuation-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .method-card {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .method-name {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .method-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .quick-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stat-widget {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px var(--shadow);
+            transition: all 0.3s;
+        }
+
+        .stat-widget:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px var(--shadow);
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-change {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .stat-change.positive {
+            color: var(--success);
+        }
+
+        .stat-change.negative {
+            color: var(--danger);
+        }
+
+        .portfolio-section {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            margin: 3rem 0;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .section-header {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .portfolio-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow-x: auto;
+        }
+
+        .portfolio-table thead {
+            background: var(--bg-secondary);
+        }
+
+        .portfolio-table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .portfolio-table td {
+            padding: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .portfolio-table tbody tr {
+            transition: all 0.3s;
+        }
+
+        .portfolio-table tbody tr:hover {
+            background: var(--bg-secondary);
+        }
+
+        .property-name {
+            font-weight: 600;
+        }
+
+        .property-type {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .kpi-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .kpi-good {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .kpi-medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .kpi-poor {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .regulatory-tracker {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            margin: 3rem 0;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .regulations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .regulation-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .regulation-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .regulation-tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+
+        .regulation-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .regulation-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .regulation-impact {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .roi-calculator {
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin: 3rem 0;
+            color: white;
+        }
+
+        .roi-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .roi-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .roi-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .roi-inputs .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .roi-inputs .input-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .roi-inputs .input-group input {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text);
+        }
+
+        .roi-result {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .roi-result-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .roi-result-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .roi-result-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .cta-large {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 1.25rem 3rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.25rem;
+            transition: all 0.3s;
+        }
+
+        .cta-large:hover {
+            background: var(--primary-dark);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(14, 165, 233, 0.4);
+        }
+
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .valuation-methods {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .portfolio-table {
+                font-size: 0.85rem;
+            }
+
+            .portfolio-table th, .portfolio-table td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .cta-section h2 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🏢 AI-Bewertungstool</div>
+            <div class="header-right">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Dark Mode umschalten">🌓</button>
+                <a href="mailto:janis@agic.me" class="cta-button">Demo anfragen</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <h1>Präzise Immobilienbewertung mit AI</h1>
+            <p>Speziell für Prof. Dr. Thomas Kinateder und TK3C Real Estate Consultants – Professionelles Bewertungs-, Analyse- und Beratungstool für anspruchsvolle Mandate</p>
+        </section>
+
+        <section class="dashboard-grid">
+            <div class="valuation-widget">
+                <div class="widget-header">
+                    <h2 class="widget-title">🏢 Schnellbewertung</h2>
+                </div>
+
+                <div class="property-input">
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Objekttyp</label>
+                            <select id="propertyType" onchange="updateValuation()">
+                                <option value="office">Büro</option>
+                                <option value="retail">Einzelhandel</option>
+                                <option value="residential">Wohnen</option>
+                                <option value="logistics">Logistik</option>
+                                <option value="hotel">Hotel</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Nutzfläche (m²)</label>
+                            <input type="number" id="area" value="4250" onchange="updateValuation()">
+                        </div>
+                        <div class="input-group">
+                            <label>Standort</label>
+                            <select id="location" onchange="updateValuation()">
+                                <option value="munich">München</option>
+                                <option value="frankfurt">Frankfurt</option>
+                                <option value="hamburg">Hamburg</option>
+                                <option value="berlin">Berlin</option>
+                                <option value="cologne">Köln</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label>Jahresnettomiete (€)</label>
+                            <input type="number" id="rent" value="850000" onchange="updateValuation()">
+                        </div>
+                        <div class="input-group">
+                            <label>Baujahr</label>
+                            <input type="number" id="yearBuilt" value="2018" onchange="updateValuation()">
+                        </div>
+                        <div class="input-group">
+                            <label>Vermietungsstand (%)</label>
+                            <input type="number" id="occupancy" value="94" min="0" max="100" onchange="updateValuation()">
+                        </div>
+                    </div>
+
+                    <button class="calculate-btn" onclick="updateValuation()">
+                        🤖 AI-Bewertung durchführen
+                    </button>
+                </div>
+
+                <div class="valuation-result">
+                    <div class="result-label">Marktwert (AI-Bewertung)</div>
+                    <div class="result-value" id="marketValue">€17,2M</div>
+                    <div class="result-method">Gewichtetes Mittel aus DCF, Ertragswert & Vergleichswert</div>
+                </div>
+
+                <div class="valuation-methods">
+                    <div class="method-card">
+                        <div class="method-name">DCF-Methode</div>
+                        <div class="method-value" id="dcfValue">€17,8M</div>
+                    </div>
+                    <div class="method-card">
+                        <div class="method-name">Ertragswert</div>
+                        <div class="method-value" id="incomeValue">€16,9M</div>
+                    </div>
+                    <div class="method-card">
+                        <div class="method-name">Vergleichswert</div>
+                        <div class="method-value" id="comparableValue">€17,0M</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-stats">
+                <div class="stat-widget">
+                    <div class="stat-title">Cap Rate</div>
+                    <div class="stat-value">4,94%</div>
+                    <div class="stat-change positive">↓ 0,12pp vs. Q4</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-title">Yield on Cost</div>
+                    <div class="stat-value">6,12%</div>
+                    <div class="stat-change positive">↑ 0,28pp</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-title">Leerstandsquote</div>
+                    <div class="stat-value">6,0%</div>
+                    <div class="stat-change positive">↓ 1,3pp</div>
+                </div>
+                <div class="stat-widget">
+                    <div class="stat-title">WALT (Jahre)</div>
+                    <div class="stat-value">5,8</div>
+                    <div class="stat-change positive">↑ 0,4</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio-section">
+            <h2 class="section-header">📊 Portfolio-Monitoring (Beispiel-Mandate)</h2>
+            <div style="overflow-x: auto;">
+                <table class="portfolio-table">
+                    <thead>
+                        <tr>
+                            <th>Objekt</th>
+                            <th>Standort</th>
+                            <th>Marktwert</th>
+                            <th>Cap Rate</th>
+                            <th>Vacancy</th>
+                            <th>WALT</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="property-name">Prime Office Tower</div>
+                                <div class="property-type">Büro • 12.450 m²</div>
+                            </td>
+                            <td>München CBD</td>
+                            <td><strong>€47,2M</strong></td>
+                            <td>4,12%</td>
+                            <td><span class="kpi-badge kpi-good">3%</span></td>
+                            <td>7,2 Jahre</td>
+                            <td><span class="kpi-badge kpi-good">Core+</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="property-name">Logistics Park West</div>
+                                <div class="property-type">Logistik • 28.900 m²</div>
+                            </td>
+                            <td>Frankfurt</td>
+                            <td><strong>€32,8M</strong></td>
+                            <td>5,48%</td>
+                            <td><span class="kpi-badge kpi-good">0%</span></td>
+                            <td>9,4 Jahre</td>
+                            <td><span class="kpi-badge kpi-good">Core</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="property-name">Retail Gallery Centrum</div>
+                                <div class="property-type">Einzelhandel • 8.750 m²</div>
+                            </td>
+                            <td>Hamburg</td>
+                            <td><strong>€28,4M</strong></td>
+                            <td>5,92%</td>
+                            <td><span class="kpi-badge kpi-medium">12%</span></td>
+                            <td>4,1 Jahre</td>
+                            <td><span class="kpi-badge kpi-medium">Value-Add</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="property-name">Residential Portfolio Süd</div>
+                                <div class="property-type">Wohnen • 142 Units</div>
+                            </td>
+                            <td>München</td>
+                            <td><strong>€52,6M</strong></td>
+                            <td>3,28%</td>
+                            <td><span class="kpi-badge kpi-good">1%</span></td>
+                            <td>-</td>
+                            <td><span class="kpi-badge kpi-good">Core</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="property-name">Mixed-Use Development</div>
+                                <div class="property-type">Mixed • 19.200 m²</div>
+                            </td>
+                            <td>Berlin Mitte</td>
+                            <td><strong>€89,2M</strong></td>
+                            <td>4,78%</td>
+                            <td><span class="kpi-badge kpi-medium">9%</span></td>
+                            <td>6,3 Jahre</td>
+                            <td><span class="kpi-badge kpi-good">Core+</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="regulatory-tracker">
+            <h2 class="section-header">⚖️ Regulatory-Tracking (ESG & Compliance)</h2>
+            <div class="regulations-grid">
+                <div class="regulation-card">
+                    <span class="regulation-tag">ESG</span>
+                    <div class="regulation-title">EU-Taxonomie Verschärfung 2026</div>
+                    <div class="regulation-desc">
+                        Neue Mindeststandards für Energieeffizienz bei Bestandsimmobilien. Betrifft 68% der deutschen Gewerbeimmobilien.
+                    </div>
+                    <div class="regulation-impact" style="color: var(--warning);">Impact: Hoch • Deadline: Q4 2026</div>
+                </div>
+
+                <div class="regulation-card">
+                    <span class="regulation-tag">BauGB</span>
+                    <div class="regulation-title">§ 34 BauGB Reform</div>
+                    <div class="regulation-desc">
+                        Vereinfachte Nachverdichtung in Innenstädten. Neue Möglichkeiten für Aufstockungen und Umnutzungen.
+                    </div>
+                    <div class="regulation-impact" style="color: var(--success);">Impact: Mittel • In Kraft: 01.03.2026</div>
+                </div>
+
+                <div class="regulation-card">
+                    <span class="regulation-tag">CSRD</span>
+                    <div class="regulation-title">Corporate Sustainability Reporting</div>
+                    <div class="regulation-desc">
+                        Erweiterte Berichtspflichten für Immobilienunternehmen >250 MA. Vorbereitung jetzt kritisch.
+                    </div>
+                    <div class="regulation-impact" style="color: var(--danger);">Impact: Sehr Hoch • Deadline: Q1 2027</div>
+                </div>
+
+                <div class="regulation-card">
+                    <span class="regulation-tag">Steuer</span>
+                    <div class="regulation-title">Grundsteuer C Umsetzung</div>
+                    <div class="regulation-desc">
+                        Erhöhte Grundsteuer für unbebaute baureife Grundstücke. Kommunen setzen vermehrt um.
+                    </div>
+                    <div class="regulation-impact" style="color: var(--warning);">Impact: Mittel • Regional unterschiedlich</div>
+                </div>
+
+                <div class="regulation-card">
+                    <span class="regulation-tag">ESG</span>
+                    <div class="regulation-title">GRESB Real Estate Kriterien Update</div>
+                    <div class="regulation-desc">
+                        Neue Bewertungskriterien für institutionelle Investoren. Höhere Gewichtung von Scope 3 Emissionen.
+                    </div>
+                    <div class="regulation-impact" style="color: var(--warning);">Impact: Hoch • Ab GRESB 2027</div>
+                </div>
+
+                <div class="regulation-card">
+                    <span class="regulation-tag">Energie</span>
+                    <div class="regulation-title">GEG-Novelle § 71-73</div>
+                    <div class="regulation-desc">
+                        Verschärfte Anforderungen an Energieausweise. Neue Sanierungsfahrpläne für Bestandsimmobilien Pflicht.
+                    </div>
+                    <div class="regulation-impact" style="color: var(--success);">Impact: Mittel • In Kraft: 01.01.2027</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📈</div>
+                <div class="feature-title">Automatische Marktanalyse</div>
+                <div class="feature-description">
+                    AI-gestützte Analyse von Transaktionsdaten, Mietspiegeln, Leerständen und Markttrends für präzise Bewertungen und fundierte Beratung.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🧮</div>
+                <div class="feature-title">Multi-Methoden-Bewertung</div>
+                <div class="feature-description">
+                    Parallele Berechnung nach DCF, Ertragswert, Vergleichswert und Sachwert. Plausibilisierung und Gewichtung durch AI-Algorithmen.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Portfolio-Monitoring</div>
+                <div class="feature-description">
+                    Live-Tracking aller Mandate mit KPIs (Cap Rate, Yield, WALT, Vacancy). Automatische Alerts bei Abweichungen oder Marktveränderungen.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📋</div>
+                <div class="feature-title">Gutachten-Vorlagen</div>
+                <div class="feature-description">
+                    Automatisch generierte Bewertungsgutachten nach ImmoWertV. Anpassbare Templates für Verkehrswert-, Beleihungswert- und Due Diligence Reports.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">⚖️</div>
+                <div class="feature-title">Regulatory-Tracking</div>
+                <div class="feature-description">
+                    Automatische Überwachung von ESG-Vorschriften, BauGB-Änderungen, Steuerrecht und Förderrichtlinien. Compliance-Checks für Ihre Mandate.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <div class="feature-title">Szenario-Analysen</div>
+                <div class="feature-description">
+                    Simulation verschiedener Marktszenarien, Mietentwicklungen und Exit-Strategien. Sensitivitätsanalysen für Risikobewertung.
+                </div>
+            </div>
+        </section>
+
+        <section class="roi-calculator">
+            <div class="roi-content">
+                <h2 class="roi-title">💰 ROI-Rechner für Ihre Beratungspraxis</h2>
+                <div class="roi-inputs">
+                    <div class="input-group">
+                        <label>Bewertungen pro Jahr</label>
+                        <input type="number" id="valuations" value="45" min="1" max="500" onchange="calculateROI()">
+                    </div>
+                    <div class="input-group">
+                        <label>Std./Bewertung (aktuell)</label>
+                        <input type="number" id="hoursPerValuation" value="18" min="1" max="100" onchange="calculateROI()">
+                    </div>
+                    <div class="input-group">
+                        <label>Berater Stundensatz (€)</label>
+                        <input type="number" id="consultantRate" value="195" min="50" max="500" step="5" onchange="calculateROI()">
+                    </div>
+                    <div class="input-group">
+                        <label>Gutachten pro Jahr</label>
+                        <input type="number" id="reports" value="28" min="0" max="200" onchange="calculateROI()">
+                    </div>
+                </div>
+                <div class="roi-result">
+                    <div class="roi-result-title">Jährliche Ersparnis</div>
+                    <div class="roi-result-value" id="roiValue">€189.540</div>
+                    <div class="roi-result-subtitle">Durch 62% weniger Bewertungszeit + automatisierte Gutachtenerstellung</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2>Bereit für präzise AI-gestützte Bewertung?</h2>
+            <p>Lassen Sie uns gemeinsam Ihre Beratungspraxis optimieren.</p>
+            <a href="mailto:janis@agic.me" class="cta-large">Persönliche Demo vereinbaren →</a>
+        </section>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        function updateValuation() {
+            const area = parseFloat(document.getElementById('area').value);
+            const rent = parseFloat(document.getElementById('rent').value);
+            const occupancy = parseFloat(document.getElementById('occupancy').value) / 100;
+            const yearBuilt = parseInt(document.getElementById('yearBuilt').value);
+            
+            // Simplified valuation logic (for demo purposes)
+            const effectiveRent = rent * occupancy;
+            const capRate = 0.0494; // 4.94%
+            const baseValue = effectiveRent / capRate;
+            
+            // Age adjustment
+            const age = 2026 - yearBuilt;
+            const ageAdjustment = Math.max(0.85, 1 - (age * 0.005));
+            
+            // DCF (slightly higher)
+            const dcfValue = baseValue * 1.035 * ageAdjustment;
+            
+            // Income value (slightly lower)
+            const incomeValue = baseValue * 0.982 * ageAdjustment;
+            
+            // Comparable value (middle)
+            const comparableValue = baseValue * 0.988 * ageAdjustment;
+            
+            // Weighted average
+            const marketValue = (dcfValue * 0.4 + incomeValue * 0.35 + comparableValue * 0.25);
+            
+            document.getElementById('marketValue').textContent = '€' + (marketValue / 1000000).toFixed(1) + 'M';
+            document.getElementById('dcfValue').textContent = '€' + (dcfValue / 1000000).toFixed(1) + 'M';
+            document.getElementById('incomeValue').textContent = '€' + (incomeValue / 1000000).toFixed(1) + 'M';
+            document.getElementById('comparableValue').textContent = '€' + (comparableValue / 1000000).toFixed(1) + 'M';
+        }
+
+        function calculateROI() {
+            const valuations = parseFloat(document.getElementById('valuations').value);
+            const hoursPerValuation = parseFloat(document.getElementById('hoursPerValuation').value);
+            const consultantRate = parseFloat(document.getElementById('consultantRate').value);
+            const reports = parseFloat(document.getElementById('reports').value);
+
+            // Time savings from AI-assisted valuations (62% reduction)
+            const valuationSavings = valuations * hoursPerValuation * 0.62 * consultantRate;
+            
+            // Report generation savings (estimated 8 hours per report, 70% reduction)
+            const reportSavings = reports * 8 * 0.70 * consultantRate;
+            
+            // Market analysis time savings (estimated 6 hours per week)
+            const analysisSavings = 6 * 52 * consultantRate;
+            
+            // Regulatory tracking time savings (estimated 3 hours per week)
+            const regulatorySavings = 3 * 52 * consultantRate;
+            
+            const totalSavings = valuationSavings + reportSavings + analysisSavings + regulatorySavings;
+            
+            document.getElementById('roiValue').textContent = '€' + Math.round(totalSavings).toLocaleString('de-DE');
+        }
+
+        // Initial calculations
+        updateValuation();
+        calculateROI();
+    </script>
+</body>
+</html>

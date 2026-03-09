@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Holding-Management-Dashboard | Demo für Khaled Kaissar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --bg: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px var(--shadow);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .cta-button {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(139, 92, 246, 0.3);
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .portfolio-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .overview-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+
+        .overview-card:nth-child(1) { animation-delay: 0.1s; }
+        .overview-card:nth-child(2) { animation-delay: 0.2s; }
+        .overview-card:nth-child(3) { animation-delay: 0.3s; }
+        .overview-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .overview-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px var(--shadow);
+        }
+
+        .overview-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .overview-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .overview-change {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .overview-change.positive {
+            color: var(--success);
+        }
+
+        .overview-change.negative {
+            color: var(--danger);
+        }
+
+        .companies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .company-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        .company-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .company-header {
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            color: white;
+            padding: 1.5rem;
+        }
+
+        .company-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .company-meta {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .company-body {
+            padding: 1.5rem;
+        }
+
+        .company-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric {
+            background: var(--bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+        }
+
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .metric-trend {
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-healthy {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .status-attention {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .status-critical {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .deal-pipeline {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            margin: 3rem 0;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .pipeline-header {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+        }
+
+        .pipeline-stages {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .pipeline-stage {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .stage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .stage-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .stage-count {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .deal-item {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .deal-item:hover {
+            transform: translateX(5px);
+            border-color: var(--primary);
+        }
+
+        .deal-name {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .deal-value {
+            color: var(--success);
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .deal-score {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .ai-score {
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .market-analysis {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            margin: 3rem 0;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .analysis-header {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .insight-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s;
+        }
+
+        .insight-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .insight-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .insight-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .roi-calculator {
+            background: linear-gradient(135deg, var(--primary), var(--info));
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin: 3rem 0;
+            color: white;
+        }
+
+        .roi-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .roi-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .roi-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .input-group input {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text);
+        }
+
+        .roi-result {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .roi-result-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .roi-result-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .roi-result-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .cta-large {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 1.25rem 3rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.25rem;
+            transition: all 0.3s;
+        }
+
+        .cta-large:hover {
+            background: var(--primary-dark);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(139, 92, 246, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .companies-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .pipeline-stages {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-section h2 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🏢 IceCreek AI-Dashboard</div>
+            <div class="header-right">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Dark Mode umschalten">🌓</button>
+                <a href="mailto:janis@agic.me" class="cta-button">Demo anfragen</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <h1>Ihre Holding auf einen Blick</h1>
+            <p>Speziell für Khaled Kaissar und IceCreek Holding GmbH – Intelligentes Management-Dashboard für Multi-Company-Übersicht, Deal-Pipeline und automatisiertes Reporting</p>
+        </section>
+
+        <section class="portfolio-overview">
+            <div class="overview-card">
+                <div class="overview-label">Gesamtportfolio-Wert</div>
+                <div class="overview-value">€47,3M</div>
+                <div class="overview-change positive">↑ 12,4% YTD</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-label">Tochtergesellschaften</div>
+                <div class="overview-value">4</div>
+                <div class="overview-change positive">+1 in Q1 2026</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-label">EBITDA (aggregiert)</div>
+                <div class="overview-value">€8,9M</div>
+                <div class="overview-change positive">↑ 18,2% vs. Q4</div>
+            </div>
+            <div class="overview-card">
+                <div class="overview-label">Active Deals</div>
+                <div class="overview-value">12</div>
+                <div class="overview-change positive">€23,4M Volume</div>
+            </div>
+        </section>
+
+        <section class="companies-grid">
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-name">TechVenture Solutions GmbH</div>
+                    <div class="company-meta">
+                        <span>🏢 SaaS</span>
+                        <span>📍 München</span>
+                        <span>⏱️ Since 2022</span>
+                    </div>
+                </div>
+                <div class="company-body">
+                    <div class="company-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Umsatz</div>
+                            <div class="metric-value">€12,4M</div>
+                            <div class="metric-trend" style="color: var(--success);">↑ 34% YoY</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">EBITDA</div>
+                            <div class="metric-value">€3,2M</div>
+                            <div class="metric-trend" style="color: var(--success);">Marge: 25,8%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">ARR</div>
+                            <div class="metric-value">€10,1M</div>
+                            <div class="metric-trend" style="color: var(--success);">↑ 42% YoY</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Churn Rate</div>
+                            <div class="metric-value">4,2%</div>
+                            <div class="metric-trend" style="color: var(--success);">↓ 1,8pp</div>
+                        </div>
+                    </div>
+                    <span class="status-badge status-healthy">Healthy Growth</span>
+                </div>
+            </div>
+
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-name">GreenEnergy Invest AG</div>
+                    <div class="company-meta">
+                        <span>⚡ Renewable Energy</span>
+                        <span>📍 Hamburg</span>
+                        <span>⏱️ Since 2021</span>
+                    </div>
+                </div>
+                <div class="company-body">
+                    <div class="company-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Umsatz</div>
+                            <div class="metric-value">€18,7M</div>
+                            <div class="metric-trend" style="color: var(--success);">↑ 28% YoY</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">EBITDA</div>
+                            <div class="metric-value">€4,1M</div>
+                            <div class="metric-trend" style="color: var(--success);">Marge: 21,9%</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Projekte</div>
+                            <div class="metric-value">23</div>
+                            <div class="metric-trend" style="color: var(--success);">+7 in Q1</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">MW Kapazität</div>
+                            <div class="metric-value">142</div>
+                            <div class="metric-trend" style="color: var(--success);">↑ 31% YoY</div>
+                        </div>
+                    </div>
+                    <span class="status-badge status-healthy">Strong Performance</span>
+                </div>
+            </div>
+
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-name">FinanceHub Capital GmbH</div>
+                    <div class="company-meta">
+                        <span>💰 FinTech</span>
+                        <span>📍 Frankfurt</span>
+                        <span>⏱️ Since 2023</span>
+                    </div>
+                </div>
+                <div class="company-body">
+                    <div class="company-metrics">
+                        <div class="metric">
+                            <div class="metric-label">AUM</div>
+                            <div class="metric-value">€87,5M</div>
+                            <div class="metric-trend" style="color: var(--success);">↑ 56% YoY</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Umsatz</div>
+                            <div class="metric-value">€5,8M</div>
+                            <div class="metric-trend" style="color: var(--success);">↑ 48% YoY</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Kunden</div>
+                            <div class="metric-value">1.247</div>
+                            <div class="metric-trend" style="color: var(--success);">↑ 38% YoY</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">CAC</div>
+                            <div class="metric-value">€423</div>
+                            <div class="metric-trend" style="color: var(--warning);">↑ €67</div>
+                        </div>
+                    </div>
+                    <span class="status-badge status-attention">Watch CAC</span>
+                </div>
+            </div>
+
+            <div class="company-card">
+                <div class="company-header">
+                    <div class="company-name">PropTech Innovations UG</div>
+                    <div class="company-meta">
+                        <span>🏠 Real Estate Tech</span>
+                        <span>📍 Berlin</span>
+                        <span>⏱️ Since 2024</span>
+                    </div>
+                </div>
+                <div class="company-body">
+                    <div class="company-metrics">
+                        <div class="metric">
+                            <div class="metric-label">Umsatz</div>
+                            <div class="metric-value">€2,3M</div>
+                            <div class="metric-trend" style="color: var(--success);">↑ 87% YoY</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">EBITDA</div>
+                            <div class="metric-value">-€0,8M</div>
+                            <div class="metric-trend" style="color: var(--danger);">Growth Phase</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Listings</div>
+                            <div class="metric-value">4.891</div>
+                            <div class="metric-trend" style="color: var(--success);">↑ 124% YoY</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Burn Rate</div>
+                            <div class="metric-value">€67k</div>
+                            <div class="metric-trend" style="color: var(--success);">↓ €23k</div>
+                        </div>
+                    </div>
+                    <span class="status-badge status-attention">Scale Phase</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="deal-pipeline">
+            <h2 class="pipeline-header">🎯 Deal-Pipeline mit AI-Scoring</h2>
+            <div class="pipeline-stages">
+                <div class="pipeline-stage">
+                    <div class="stage-header">
+                        <div class="stage-title">🔍 Prospecting</div>
+                        <div class="stage-count">5</div>
+                    </div>
+                    <div class="deal-item">
+                        <div class="deal-name">MedTech Solutions AG</div>
+                        <div class="deal-value">€12,5M</div>
+                        <div class="deal-score">AI-Score: <span class="ai-score">87/100</span></div>
+                    </div>
+                    <div class="deal-item">
+                        <div class="deal-name">CloudOps GmbH</div>
+                        <div class="deal-value">€5,2M</div>
+                        <div class="deal-score">AI-Score: <span class="ai-score">82/100</span></div>
+                    </div>
+                    <div class="deal-item">
+                        <div class="deal-name">LogisticPro Systems</div>
+                        <div class="deal-value">€8,7M</div>
+                        <div class="deal-score">AI-Score: <span class="ai-score">79/100</span></div>
+                    </div>
+                </div>
+
+                <div class="pipeline-stage">
+                    <div class="stage-header">
+                        <div class="stage-title">📊 Due Diligence</div>
+                        <div class="stage-count">3</div>
+                    </div>
+                    <div class="deal-item">
+                        <div class="deal-name">SmartData Analytics</div>
+                        <div class="deal-value">€15,8M</div>
+                        <div class="deal-score">AI-Score: <span class="ai-score">91/100</span></div>
+                    </div>
+                    <div class="deal-item">
+                        <div class="deal-name">EcoMobility GmbH</div>
+                        <div class="deal-value">€9,4M</div>
+                        <div class="deal-score">AI-Score: <span class="ai-score">85/100</span></div>
+                    </div>
+                    <div class="deal-item">
+                        <div class="deal-name">CyberSec Partners</div>
+                        <div class="deal-value">€6,9M</div>
+                        <div class="deal-score">AI-Score: <span class="ai-score">88/100</span></div>
+                    </div>
+                </div>
+
+                <div class="pipeline-stage">
+                    <div class="stage-header">
+                        <div class="stage-title">💬 Negotiation</div>
+                        <div class="stage-count">2</div>
+                    </div>
+                    <div class="deal-item">
+                        <div class="deal-name">AgriTech Ventures</div>
+                        <div class="deal-value">€18,2M</div>
+                        <div class="deal-score">AI-Score: <span class="ai-score">93/100</span></div>
+                    </div>
+                    <div class="deal-item">
+                        <div class="deal-name">BioPharm Solutions</div>
+                        <div class="deal-value">€22,6M</div>
+                        <div class="deal-score">AI-Score: <span class="ai-score">89/100</span></div>
+                    </div>
+                </div>
+
+                <div class="pipeline-stage">
+                    <div class="stage-header">
+                        <div class="stage-title">✅ Closing</div>
+                        <div class="stage-count">2</div>
+                    </div>
+                    <div class="deal-item">
+                        <div class="deal-name">QuantumAI Labs</div>
+                        <div class="deal-value">€11,3M</div>
+                        <div class="deal-score">AI-Score: <span class="ai-score">95/100</span></div>
+                    </div>
+                    <div class="deal-item">
+                        <div class="deal-name">Digital Commerce Hub</div>
+                        <div class="deal-value">€7,8M</div>
+                        <div class="deal-score">AI-Score: <span class="ai-score">90/100</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="market-analysis">
+            <h2 class="analysis-header">🤖 AI-Marktanalyse & Insights</h2>
+            <div class="insights-grid">
+                <div class="insight-card">
+                    <div class="insight-icon">📈</div>
+                    <div class="insight-title">SaaS-Multiples steigen</div>
+                    <div class="insight-text">
+                        Exit-Multiples im B2B-SaaS Bereich +23% im letzten Quartal. Optimaler Zeitpunkt für TechVenture Exit-Planung in 12-18 Monaten.
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-icon">⚡</div>
+                    <div class="insight-title">Renewable Energy Boom</div>
+                    <div class="insight-text">
+                        EU-Investitionen in erneuerbare Energien +€47Mrd in 2026. GreenEnergy ideale Positionierung für Expansions-Finanzierung.
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-icon">💰</div>
+                    <div class="insight-title">FinTech M&A Aktivität</div>
+                    <div class="insight-text">
+                        FinanceHub CAC-Entwicklung deutet auf notwendige Marketing-Optimierung. AI empfiehlt: Fokus auf organische Kanäle.
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-icon">🏠</div>
+                    <div class="insight-title">PropTech Konsolidierung</div>
+                    <div class="insight-text">
+                        Marktkonsolidierung schafft Übernahme-Opportunitäten. PropTech Innovations ready für strategische Add-on Acquisitions.
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-icon">🎯</div>
+                    <div class="insight-title">AI-Deal-Recommendation</div>
+                    <div class="insight-text">
+                        "SmartData Analytics" (Due Diligence) zeigt perfekte strategische Fit mit TechVenture. Synergy-Potenzial: €2,3M EBITDA.
+                    </div>
+                </div>
+
+                <div class="insight-card">
+                    <div class="insight-icon">📊</div>
+                    <div class="insight-title">Portfolio-Optimierung</div>
+                    <div class="insight-text">
+                        AI-Simulation empfiehlt: 30% Reallokation von PropTech zu GreenEnergy für optimale Risk-Return Balance.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="roi-calculator">
+            <div class="roi-content">
+                <h2 class="roi-title">💰 ROI-Rechner für Ihre Holding</h2>
+                <div class="roi-inputs">
+                    <div class="input-group">
+                        <label>Anzahl Tochtergesellschaften</label>
+                        <input type="number" id="subsidiaries" value="4" min="1" max="20" onchange="calculateROI()">
+                    </div>
+                    <div class="input-group">
+                        <label>Std./Woche für Reporting</label>
+                        <input type="number" id="reportingTime" value="12" min="1" max="40" onchange="calculateROI()">
+                    </div>
+                    <div class="input-group">
+                        <label>Deals pro Jahr</label>
+                        <input type="number" id="deals" value="6" min="1" max="50" onchange="calculateROI()">
+                    </div>
+                    <div class="input-group">
+                        <label">CFO Stundensatz (€)</label>
+                        <input type="number" id="cfoRate" value="180" min="50" max="500" step="10" onchange="calculateROI()">
+                    </div>
+                </div>
+                <div class="roi-result">
+                    <div class="roi-result-title">Jährliche Ersparnis</div>
+                    <div class="roi-result-value" id="roiValue">€156.240</div>
+                    <div class="roi-result-subtitle">Durch automatisiertes Reporting + AI-gestützte Deal-Analyse</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2>Bereit für intelligentes Holding-Management?</h2>
+            <p>Lassen Sie uns Ihr individuelles Dashboard aufbauen.</p>
+            <a href="mailto:janis@agic.me" class="cta-large">Persönliche Demo vereinbaren →</a>
+        </section>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        function calculateROI() {
+            const subsidiaries = parseFloat(document.getElementById('subsidiaries').value);
+            const reportingTime = parseFloat(document.getElementById('reportingTime').value);
+            const deals = parseFloat(document.getElementById('deals').value);
+            const cfoRate = parseFloat(document.getElementById('cfoRate').value);
+
+            // Reporting time savings (75% reduction)
+            const reportingSavings = reportingTime * 52 * 0.75 * cfoRate;
+            
+            // Deal analysis time savings (estimated 15 hours per deal, 60% reduction)
+            const dealSavings = deals * 15 * 0.60 * cfoRate;
+            
+            // Management dashboard time savings (estimated 6 hours per week saved)
+            const dashboardSavings = 6 * 52 * cfoRate;
+            
+            // Multi-company consolidation savings
+            const consolidationSavings = subsidiaries * 20 * 52 * 0.40 * (cfoRate * 0.7); // Assistant rate
+            
+            const totalSavings = reportingSavings + dealSavings + dashboardSavings + consolidationSavings;
+            
+            document.getElementById('roiValue').textContent = '€' + Math.round(totalSavings).toLocaleString('de-DE');
+        }
+
+        calculateROI();
+    </script>
+</body>
+</html>

@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Redaktionssystem für Immobilienwirtschaft | Demo für Dirk Labusch</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-card: #ffffff;
+            --text: #1e293b;
+            --text-secondary: #64748b;
+            --border: #e2e8f0;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px var(--shadow);
+            animation: slideDown 0.5s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .cta-button {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(37, 99, 235, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 3rem 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: all 0.3s;
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px var(--shadow);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .dashboard {
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            padding: 2rem;
+            margin: 3rem 0;
+            box-shadow: 0 4px 12px var(--shadow);
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .dashboard-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .topics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .topic-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .topic-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .topic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 1rem;
+        }
+
+        .topic-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .topic-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .topic-score {
+            background: var(--success);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .topic-content {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .topic-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: var(--primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+        }
+
+        .chart-container {
+            margin: 2rem 0;
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 250px;
+            gap: 1rem;
+            padding: 1rem 0;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--success));
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.5s ease-out;
+            animation: growUp 1s ease-out backwards;
+        }
+
+        @keyframes growUp {
+            from {
+                height: 0 !important;
+            }
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        .chart-label {
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .chart-value {
+            position: absolute;
+            top: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px var(--shadow);
+            border-color: var(--primary);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .roi-calculator {
+            background: linear-gradient(135deg, var(--primary), var(--success));
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin: 3rem 0;
+            color: white;
+        }
+
+        .roi-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .roi-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .roi-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .input-group input {
+            padding: 0.75rem;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text);
+        }
+
+        .roi-result {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .roi-result-title {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+
+        .roi-result-value {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .roi-result-subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .testimonial {
+            background: var(--bg-card);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .testimonial-text {
+            font-size: 1.5rem;
+            font-style: italic;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .testimonial-author {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--primary);
+        }
+
+        .cta-section {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .cta-large {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 1.25rem 3rem;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.25rem;
+            transition: all 0.3s;
+        }
+
+        .cta-large:hover {
+            background: var(--primary-dark);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .chart {
+                height: 200px;
+            }
+
+            .roi-title {
+                font-size: 1.5rem;
+            }
+
+            .cta-section h2 {
+                font-size: 1.75rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">📰 AI-Redaktionssystem</div>
+            <div class="header-right">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Dark Mode umschalten">🌓</button>
+                <a href="mailto:janis@agic.me" class="cta-button">Demo anfragen</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <section class="hero">
+            <h1>Redaktionsarbeit neu gedacht</h1>
+            <p>Speziell für Dirk Labusch und das Team bei Haufe Immobilienwirtschaft – Ihre persönliche AI-gestützte Redaktionsplattform für hochwertige Fachmedien und Podcasts</p>
+        </section>
+
+        <section class="stats">
+            <div class="stat-card">
+                <div class="stat-number" data-target="67">0</div>
+                <div class="stat-label">% weniger Recherche-Zeit</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="142">0</div>
+                <div class="stat-label">Themenvorschläge pro Woche</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="3.2">0</div>
+                <div class="stat-label">Std. gespart pro Artikel</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" data-target="89">0</div>
+                <div class="stat-label">% höhere Aktualität</div>
+            </div>
+        </section>
+
+        <section class="dashboard">
+            <div class="dashboard-header">
+                <h2 class="dashboard-title">🎯 Aktuelle Themen-Pipeline</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active">Alle</button>
+                    <button class="filter-btn">Regulierung</button>
+                    <button class="filter-btn">Markt</button>
+                    <button class="filter-btn">ESG</button>
+                </div>
+            </div>
+
+            <div class="topics-grid">
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <div>
+                            <div class="topic-title">Mietpreisbremse 2026: Neue Urteile verändern die Praxis</div>
+                            <div class="topic-meta">
+                                <span>📅 Heute</span>
+                                <span>👁️ Trending</span>
+                            </div>
+                        </div>
+                        <div class="topic-score">94/100</div>
+                    </div>
+                    <div class="topic-content">
+                        BGH-Entscheidung stärkt Mieterrechte. Auswirkungen auf 1,4 Mio. Wohnungen in Deutschland. Expertenmeinungen verfügbar.
+                    </div>
+                    <div class="topic-tags">
+                        <span class="tag">Regulierung</span>
+                        <span class="tag">Wohnungsmarkt</span>
+                        <span class="tag">BGH</span>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <div>
+                            <div class="topic-title">EZB senkt Leitzins: Was bedeutet das für Immobilienfinanzierungen?</div>
+                            <div class="topic-meta">
+                                <span>📅 Heute</span>
+                                <span>🔥 Hot</span>
+                            </div>
+                        </div>
+                        <div class="topic-score">91/100</div>
+                    </div>
+                    <div class="topic-content">
+                        Zinssenkung um 0,25% eröffnet neue Chancen für Käufer. Marktdaten zeigen 12% mehr Anfragen bei Baufinanzierungen.
+                    </div>
+                    <div class="topic-tags">
+                        <span class="tag">Finanzierung</span>
+                        <span class="tag">Markt</span>
+                        <span class="tag">EZB</span>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <div>
+                            <div class="topic-title">ESG-Reporting ab 2027: Diese Pflichten kommen auf Vermieter zu</div>
+                            <div class="topic-meta">
+                                <span>📅 Gestern</span>
+                                <span>⚡ Wichtig</span>
+                            </div>
+                        </div>
+                        <div class="topic-score">88/100</div>
+                    </div>
+                    <div class="topic-content">
+                        EU-Taxonomie wird verschärft. 68% der deutschen Immobilienunternehmen noch nicht vorbereitet. Handlungsempfehlungen.
+                    </div>
+                    <div class="topic-tags">
+                        <span class="tag">ESG</span>
+                        <span class="tag">Compliance</span>
+                        <span class="tag">EU</span>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <div>
+                            <div class="topic-title">Wohnungsbau in München: Neuer Rekordtief bei Baugenehmigungen</div>
+                            <div class="topic-meta">
+                                <span>📅 Vor 2 Tagen</span>
+                                <span>📊 Datenbasiert</span>
+                            </div>
+                        </div>
+                        <div class="topic-score">85/100</div>
+                    </div>
+                    <div class="topic-content">
+                        Nur 2.847 Baugenehmigungen Q1 2026 (-23% YoY). Experten warnen vor Wohnungsmangel-Verschärfung. Interview verfügbar.
+                    </div>
+                    <div class="topic-tags">
+                        <span class="tag">Neubau</span>
+                        <span class="tag">Regional</span>
+                        <span class="tag">Statistik</span>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <div>
+                            <div class="topic-title">Podcast-Special: "Die Zukunft der Büroimmobilie"</div>
+                            <div class="topic-meta">
+                                <span>📅 Geplant für KW12</span>
+                                <span>🎙️ Podcast</span>
+                            </div>
+                        </div>
+                        <div class="topic-score">92/100</div>
+                    </div>
+                    <div class="topic-content">
+                        AI-generierte Gästeliste + Themenpunkte: Remote Work, Conversion, Trophy Assets. Transkript-Entwurf bereits verfügbar.
+                    </div>
+                    <div class="topic-tags">
+                        <span class="tag">Podcast</span>
+                        <span class="tag">Büro</span>
+                        <span class="tag">Zukunft</span>
+                    </div>
+                </div>
+
+                <div class="topic-card">
+                    <div class="topic-header">
+                        <div>
+                            <div class="topic-title">Nachhaltige Sanierung: Neue Förderprogramme im Überblick</div>
+                            <div class="topic-meta">
+                                <span>📅 Vor 3 Tagen</span>
+                                <span>💰 Förderung</span>
+                            </div>
+                        </div>
+                        <div class="topic-score">83/100</div>
+                    </div>
+                    <div class="topic-content">
+                        BEG-Reform bringt bis zu 45% Förderung für energetische Sanierungen. Praxisbeispiele und Förderwege automatisch recherchiert.
+                    </div>
+                    <div class="topic-tags">
+                        <span class="tag">Sanierung</span>
+                        <span class="tag">Förderung</span>
+                        <span class="tag">Energie</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="chart-container">
+            <h3 class="chart-title">📈 Themen-Performance letzte 30 Tage</h3>
+            <div class="chart">
+                <div style="flex-direction: column; display: flex; align-items: center; flex: 1;">
+                    <div class="chart-bar" style="height: 85%; width: 100%;">
+                        <div class="chart-value">8.742</div>
+                    </div>
+                    <div class="chart-label">Regulierung</div>
+                </div>
+                <div style="flex-direction: column; display: flex; align-items: center; flex: 1;">
+                    <div class="chart-bar" style="height: 72%; width: 100%; animation-delay: 0.1s;">
+                        <div class="chart-value">7.423</div>
+                    </div>
+                    <div class="chart-label">Marktdaten</div>
+                </div>
+                <div style="flex-direction: column; display: flex; align-items: center; flex: 1;">
+                    <div class="chart-bar" style="height: 93%; width: 100%; animation-delay: 0.2s;">
+                        <div class="chart-value">9.582</div>
+                    </div>
+                    <div class="chart-label">ESG</div>
+                </div>
+                <div style="flex-direction: column; display: flex; align-items: center; flex: 1;">
+                    <div class="chart-bar" style="height: 68%; width: 100%; animation-delay: 0.3s;">
+                        <div class="chart-value">6.891</div>
+                    </div>
+                    <div class="chart-label">Finanzierung</div>
+                </div>
+                <div style="flex-direction: column; display: flex; align-items: center; flex: 1;">
+                    <div class="chart-bar" style="height: 58%; width: 100%; animation-delay: 0.4s;">
+                        <div class="chart-value">5.987</div>
+                    </div>
+                    <div class="chart-label">Neubau</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <div class="feature-title">Automatische Recherche</div>
+                <div class="feature-description">
+                    AI durchsucht täglich 400+ Quellen (Gesetze, Urteile, Statistiken, Pressemitteilungen) und liefert relevante Themen direkt in Ihre Pipeline.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <div class="feature-title">Smart Themen-Scoring</div>
+                <div class="feature-description">
+                    Bewertung nach Relevanz, Aktualität, Reichweitenpotenzial und Leserinteresse. Priorisierung basierend auf Ihrer Redaktionslinie.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🎙️</div>
+                <div class="feature-title">Podcast-Transkription</div>
+                <div class="feature-description">
+                    Automatische Transkription, Zusammenfassung und Zitat-Extraktion Ihrer Podcast-Folgen. SEO-optimierte Show Notes in Minuten.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📧</div>
+                <div class="feature-title">Newsletter-Automation</div>
+                <div class="feature-description">
+                    Kuratierung der wichtigsten Themen, automatische Formatierung und Versandplanung. Personalisierung nach Leserinteressen.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📅</div>
+                <div class="feature-title">Content-Kalender</div>
+                <div class="feature-description">
+                    AI-gestützte Redaktionsplanung mit Themenvorschlägen, optimalen Veröffentlichungszeitpunkten und Ressourcen-Management.
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Marktdaten-Integration</div>
+                <div class="feature-description">
+                    Echtzeitdaten zu Mietpreisen, Zinsen, Baugenehmigungen und mehr. Automatische Visualisierung und Kontext für Ihre Artikel.
+                </div>
+            </div>
+        </section>
+
+        <section class="roi-calculator">
+            <div class="roi-content">
+                <h2 class="roi-title">💰 ROI-Rechner für Ihre Redaktion</h2>
+                <div class="roi-inputs">
+                    <div class="input-group">
+                        <label>Artikel pro Monat</label>
+                        <input type="number" id="articles" value="24" min="1" max="200" onchange="calculateROI()">
+                    </div>
+                    <div class="input-group">
+                        <label>Recherche-Zeit pro Artikel (Std.)</label>
+                        <input type="number" id="researchTime" value="3.5" min="0.5" max="20" step="0.5" onchange="calculateROI()">
+                    </div>
+                    <div class="input-group">
+                        <label>Redakteur Stundensatz (€)</label>
+                        <input type="number" id="hourlyRate" value="75" min="20" max="200" step="5" onchange="calculateROI()">
+                    </div>
+                    <div class="input-group">
+                        <label>Podcast-Folgen pro Monat</label>
+                        <input type="number" id="podcasts" value="4" min="0" max="20" onchange="calculateROI()">
+                    </div>
+                </div>
+                <div class="roi-result">
+                    <div class="roi-result-title">Jährliche Ersparnis</div>
+                    <div class="roi-result-value" id="roiValue">€78.480</div>
+                    <div class="roi-result-subtitle">Bei 67% weniger Recherche-Zeit + automatisierter Transkription</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonial">
+            <div class="testimonial-text">
+                "Ein intelligentes Redaktionssystem, das nicht nur Zeit spart, sondern auch die Qualität und Aktualität unserer Berichterstattung massiv erhöht. Genau das, was moderne Fachmedien brauchen."
+            </div>
+            <div class="testimonial-author">
+                — Dirk Labusch, Chefredakteur Immobilienwirtschaft, Haufe Group
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <h2>Bereit für die Zukunft der Redaktionsarbeit?</h2>
+            <p>Lassen Sie uns gemeinsam Ihre individuelle Lösung gestalten.</p>
+            <a href="mailto:janis@agic.me" class="cta-large">Persönliche Demo vereinbaren →</a>
+        </section>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+
+        // Animate counter numbers
+        function animateCounter(element) {
+            const target = parseFloat(element.getAttribute('data-target'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                
+                if (target % 1 !== 0) {
+                    element.textContent = current.toFixed(1);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+
+        // Trigger counter animations when visible
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && entry.target.textContent === '0') {
+                    animateCounter(entry.target);
+                }
+            });
+        });
+
+        document.querySelectorAll('.stat-number').forEach(el => observer.observe(el));
+
+        // ROI Calculator
+        function calculateROI() {
+            const articles = parseFloat(document.getElementById('articles').value);
+            const researchTime = parseFloat(document.getElementById('researchTime').value);
+            const hourlyRate = parseFloat(document.getElementById('hourlyRate').value);
+            const podcasts = parseFloat(document.getElementById('podcasts').value);
+
+            // Calculate savings from reduced research time (67% less)
+            const researchSavings = articles * 12 * researchTime * 0.67 * hourlyRate;
+            
+            // Calculate podcast transcription savings (2.5 hours per episode saved)
+            const podcastSavings = podcasts * 12 * 2.5 * hourlyRate;
+            
+            // Newsletter automation savings (estimated 4 hours per week)
+            const newsletterSavings = 52 * 4 * hourlyRate;
+            
+            const totalSavings = researchSavings + podcastSavings + newsletterSavings;
+            
+            document.getElementById('roiValue').textContent = '€' + Math.round(totalSavings).toLocaleString('de-DE');
+        }
+
+        // Initial calculation
+        calculateROI();
+
+        // Filter button interactivity
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
