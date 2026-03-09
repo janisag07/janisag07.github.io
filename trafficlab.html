@@ -2390,52 +2390,56 @@
         function createNeuralNetwork() {
             const container = document.getElementById('aiBrainViz');
             if (!container) return;
-            const width = container.offsetWidth;
-            const height = container.offsetHeight;
 
-            // Create nodes
-            const nodeCount = 40;
-            const nodes = [];
+            function render() {
+                container.innerHTML = '';
+                const width = container.offsetWidth;
+                const height = container.offsetHeight;
+                if (width < 10 || height < 10) return;
 
-            for (let i = 0; i < nodeCount; i++) {
-                const node = document.createElement('div');
-                node.className = 'neural-node';
-                node.style.left = Math.random() * (width - 12) + 'px';
-                node.style.top = Math.random() * (height - 12) + 'px';
-                node.style.animationDelay = Math.random() * 2 + 's';
-                container.appendChild(node);
-                nodes.push({
-                    element: node,
-                    x: parseFloat(node.style.left),
-                    y: parseFloat(node.style.top)
-                });
-            }
+                const nodeCount = width < 500 ? 20 : 40;
+                const nodes = [];
 
-            // Create connections
-            for (let i = 0; i < nodeCount; i++) {
-                const connectionsPerNode = Math.floor(Math.random() * 3) + 1;
-                for (let j = 0; j < connectionsPerNode; j++) {
-                    const targetIndex = Math.floor(Math.random() * nodeCount);
-                    if (targetIndex === i) continue;
+                for (let i = 0; i < nodeCount; i++) {
+                    const node = document.createElement('div');
+                    node.className = 'neural-node';
+                    node.style.left = (Math.random() * (width - 20) + 4) + 'px';
+                    node.style.top = (Math.random() * (height - 20) + 4) + 'px';
+                    node.style.animationDelay = Math.random() * 2 + 's';
+                    container.appendChild(node);
+                    nodes.push({ x: parseFloat(node.style.left), y: parseFloat(node.style.top) });
+                }
 
-                    const source = nodes[i];
-                    const target = nodes[targetIndex];
-
-                    const dx = target.x - source.x;
-                    const dy = target.y - source.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-
-                    const connection = document.createElement('div');
-                    connection.className = 'neural-connection';
-                    connection.style.left = source.x + 6 + 'px';
-                    connection.style.top = source.y + 6 + 'px';
-                    connection.style.width = distance + 'px';
-                    connection.style.transform = `rotate(${angle}deg)`;
-                    connection.style.animationDelay = Math.random() * 3 + 's';
-                    container.appendChild(connection);
+                for (let i = 0; i < nodeCount; i++) {
+                    const c = Math.floor(Math.random() * 2) + 1;
+                    for (let j = 0; j < c; j++) {
+                        const t = Math.floor(Math.random() * nodeCount);
+                        if (t === i) continue;
+                        const dx = nodes[t].x - nodes[i].x;
+                        const dy = nodes[t].y - nodes[i].y;
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist > width * 0.5) continue;
+                        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                        const conn = document.createElement('div');
+                        conn.className = 'neural-connection';
+                        conn.style.left = (nodes[i].x + 6) + 'px';
+                        conn.style.top = (nodes[i].y + 6) + 'px';
+                        conn.style.width = dist + 'px';
+                        conn.style.transform = 'rotate(' + angle + 'deg)';
+                        conn.style.animationDelay = Math.random() * 3 + 's';
+                        container.appendChild(conn);
+                    }
                 }
             }
+
+            // Render when tab becomes visible
+            const observer = new MutationObserver(function() {
+                if (container.offsetWidth > 10) { render(); observer.disconnect(); }
+            });
+            observer.observe(container.closest('.section'), { attributes: true, attributeFilter: ['class'] });
+
+            // Also try immediately
+            if (container.offsetWidth > 10) { render(); observer.disconnect(); }
         }
 
         setTimeout(createNeuralNetwork, 500);
