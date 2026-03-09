@@ -20,9 +20,13 @@
             --accent-blue: #00d4ff;
             --accent-purple: #b400ff;
             --accent-ai: #ff00ff;
+            --accent-gold: #ffd700;
             --text-primary: #ffffff;
             --text-secondary: #a0aec0;
             --text-muted: #718096;
+            --discord-bg: #36393f;
+            --discord-sidebar: #2f3136;
+            --discord-header: #202225;
         }
 
         html {
@@ -728,6 +732,347 @@
             gap: 10px;
         }
 
+        /* DISCORD BOT PREVIEW STYLES */
+        .discord-mockup {
+            background: var(--discord-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            max-width: 1200px;
+            margin: 40px auto;
+            box-shadow: 0 10px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .discord-header {
+            background: var(--discord-header);
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .discord-header-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .discord-layout {
+            display: flex;
+            min-height: 600px;
+        }
+
+        .discord-sidebar {
+            background: var(--discord-sidebar);
+            width: 240px;
+            padding: 20px 10px;
+            border-right: 1px solid rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+        }
+
+        .discord-server-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            padding: 10px 12px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .discord-channel {
+            padding: 8px 12px;
+            margin: 2px 0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #96989d;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .discord-channel:hover {
+            background: rgba(79, 84, 92, 0.4);
+            color: #dcddde;
+        }
+
+        .discord-channel.active {
+            background: rgba(79, 84, 92, 0.6);
+            color: #fff;
+        }
+
+        .discord-chat {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .discord-message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            animation: discordFadeIn 0.5s ease;
+        }
+
+        @keyframes discordFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .discord-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-ai), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .discord-message-content {
+            flex: 1;
+        }
+
+        .discord-message-header {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .discord-username {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--accent-ai);
+        }
+
+        .discord-bot-tag {
+            background: var(--accent-blue);
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .discord-timestamp {
+            font-size: 12px;
+            color: #72767d;
+        }
+
+        .discord-message-text {
+            font-size: 15px;
+            color: #dcddde;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+
+        .discord-embed {
+            background: #2f3136;
+            border-left: 4px solid var(--accent-green);
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-top: 8px;
+            max-width: 500px;
+        }
+
+        .discord-embed.delayed {
+            border-left-color: var(--accent-red);
+        }
+
+        .discord-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .discord-button {
+            background: #5865f2;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .discord-button:hover {
+            background: #4752c4;
+        }
+
+        .discord-dm-preview {
+            background: var(--discord-header);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .discord-dm-header {
+            font-size: 12px;
+            color: #72767d;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .discord-dm-content {
+            background: #40444b;
+            border-radius: 8px;
+            padding: 16px;
+            color: #dcddde;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .discord-dm-button {
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-top: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-block;
+        }
+
+        .discord-dm-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        /* SIGNAL DELAY COMPARISON */
+        .delay-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .delay-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .delay-card.free {
+            opacity: 0.85;
+            border-color: rgba(255, 0, 85, 0.2);
+        }
+
+        .delay-card.premium {
+            border: 2px solid var(--accent-gold);
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.2);
+        }
+
+        .delay-card-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .delay-tier-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .delay-card.free .delay-tier-label {
+            color: var(--text-muted);
+        }
+
+        .delay-card.premium .delay-tier-label {
+            color: var(--accent-gold);
+        }
+
+        .delay-tier-title {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .delay-signal-item {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border-left: 3px solid;
+            font-size: 13px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .delay-signal-item.delayed {
+            border-left-color: var(--accent-red);
+        }
+
+        .delay-signal-item.realtime {
+            border-left-color: var(--accent-green);
+        }
+
+        .delay-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: 8px;
+        }
+
+        .delay-badge.delayed {
+            background: rgba(255, 0, 85, 0.2);
+            color: var(--accent-red);
+        }
+
+        .delay-badge.realtime {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--accent-green);
+        }
+
+        .delay-pnl {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .delay-pnl-value {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .delay-card.free .delay-pnl-value {
+            color: var(--accent-red);
+        }
+
+        .delay-card.premium .delay-pnl-value {
+            color: var(--accent-green);
+        }
+
+        .delay-pnl-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
         /* AI BRAIN VISUALIZATION */
         .ai-brain-container {
             position: relative;
@@ -1199,6 +1544,20 @@
             .api-key-trigger {
                 font-size: 16px;
             }
+
+            .discord-layout {
+                flex-direction: column;
+            }
+
+            .discord-sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+            }
+
+            .delay-comparison {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 390px) {
@@ -1253,6 +1612,7 @@
             <div class="nav-tabs">
                 <button class="nav-tab active" data-section="home">Home</button>
                 <button class="nav-tab" data-section="ai-brain">AI Brain</button>
+                <button class="nav-tab" data-section="bot-preview">Bot Preview</button>
                 <button class="nav-tab" data-section="acquisition">Acquisition</button>
                 <button class="nav-tab" data-section="onboarding">Onboarding</button>
                 <button class="nav-tab" data-section="conversion">Conversion</button>
@@ -1305,7 +1665,7 @@
                         <div class="ai-chatbot-header">
                             <div style="display: flex; align-items: center; gap: 10px; flex: 1;">
                                 <div class="ai-icon"></div>
-                                🤖 AI Assistant — Try It Live
+                                🤖 TrafficLab AI Assistant — Try It Live
                             </div>
                             <span class="api-key-trigger" onclick="openAPIModal()" title="Connect AI Engine">🔑</span>
                             <span class="api-status demo" id="apiStatus">⚪ Demo Mode</span>
@@ -1405,7 +1765,7 @@
                             🤖 AI Signal Analysis
                         </div>
                         <div class="ai-process-desc">
-                            NLP model scans 250,000+ messages per day across 12 communities. Detects buying intent keywords ("looking for indicators", "need signals") with 94% accuracy.
+                            NLP model scans 250,000+ messages per day across 12 communities. Detects buying intent keywords ("looking for TrafficLab Signals", "need indicators") with 94% accuracy.
                         </div>
                         <div class="ai-metric">
                             <span class="ai-metric-label">Accuracy</span>
@@ -1523,6 +1883,135 @@
             </div>
         </section>
 
+        <!-- BOT PREVIEW SECTION -->
+        <section id="bot-preview" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">🤖 Discord Bot Preview — See TrafficLab AI In Action</h2>
+                    <p class="section-subtitle">Realistic Discord server mockup showing how the bot operates 24/7</p>
+                </div>
+
+                <div class="discord-mockup">
+                    <div class="discord-header">
+                        <span style="font-size: 20px;">#</span>
+                        <span class="discord-header-title">crypto-signals</span>
+                    </div>
+                    <div class="discord-layout">
+                        <div class="discord-sidebar">
+                            <div class="discord-server-name">TrafficLab Hub</div>
+                            <div class="discord-channel"># welcome</div>
+                            <div class="discord-channel active"># crypto-signals</div>
+                            <div class="discord-channel"># forex-signals</div>
+                            <div class="discord-channel"># stocks-signals</div>
+                            <div class="discord-channel"># bot-commands</div>
+                            <div class="discord-channel"># premium-access</div>
+                        </div>
+                        <div class="discord-chat">
+                            <!-- SIGNAL MESSAGE -->
+                            <div class="discord-message">
+                                <div class="discord-avatar">🤖</div>
+                                <div class="discord-message-content">
+                                    <div class="discord-message-header">
+                                        <span class="discord-username">TrafficLab AI</span>
+                                        <span class="discord-bot-tag">BOT</span>
+                                        <span class="discord-timestamp">Today at 2:47 PM</span>
+                                    </div>
+                                    <div class="discord-message-text">
+                                        🟢 <strong>BTC LONG</strong> | Entry: $68,400 | TP: $72,000 | SL: $66,500 | Confidence: 87%
+                                        <div class="discord-embed">
+                                            <strong>TrafficLab Signal Analysis</strong><br>
+                                            Market structure: Higher highs forming<br>
+                                            Volume profile: Strong accumulation<br>
+                                            Risk/Reward: 1:5.2
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- DELAYED SIGNAL -->
+                            <div class="discord-message">
+                                <div class="discord-avatar">🤖</div>
+                                <div class="discord-message-content">
+                                    <div class="discord-message-header">
+                                        <span class="discord-username">TrafficLab AI</span>
+                                        <span class="discord-bot-tag">BOT</span>
+                                        <span class="discord-timestamp">Today at 2:32 PM</span>
+                                    </div>
+                                    <div class="discord-message-text">
+                                        ⏳ Signal delayed 15min for free members — Upgrade to <strong>TrafficLab Premium</strong> for real-time access
+                                        <div class="discord-embed delayed">
+                                            <strong>ETH SHORT</strong> | Entry: $3,840 (now $3,910) | Signal already moved<br>
+                                            Free members miss the optimal entry. Premium gets instant alerts.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- WELCOME MESSAGE -->
+                            <div class="discord-message">
+                                <div class="discord-avatar">🤖</div>
+                                <div class="discord-message-content">
+                                    <div class="discord-message-header">
+                                        <span class="discord-username">TrafficLab AI</span>
+                                        <span class="discord-bot-tag">BOT</span>
+                                        <span class="discord-timestamp">Today at 1:15 PM</span>
+                                    </div>
+                                    <div class="discord-message-text">
+                                        Welcome @CryptoTrader_88! 👋 Pick your market below to get started with TrafficLab Signals 👇
+                                        <div class="discord-buttons">
+                                            <button class="discord-button">🪙 Crypto</button>
+                                            <button class="discord-button">💱 Forex</button>
+                                            <button class="discord-button">📈 Stocks</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AUTO-DM PREVIEW -->
+                            <div class="discord-dm-preview">
+                                <div class="discord-dm-header">📬 Automatic DM Preview (Sent After 7 Days Engagement)</div>
+                                <div class="discord-dm-content">
+                                    <strong>Hey @CryptoTrader_88! 👋</strong><br><br>
+                                    
+                                    I noticed you've been checking out our BTC signals for 7 days. Here's what you're missing with the 15-min delay:<br><br>
+                                    
+                                    📊 <strong>3 signals that hit TP</strong> before you saw them (+$1,240 potential profit)<br>
+                                    📉 You could have avoided <strong>2 losing trades</strong> with real-time alerts<br><br>
+                                    
+                                    <strong>Exclusive offer for active members:</strong><br>
+                                    20% off TrafficLab Premium → <strong>$39/month</strong> (normally $49)<br><br>
+                                    
+                                    <button class="discord-dm-button">🚀 Get Premium →</button>
+                                    
+                                    <div style="font-size: 11px; color: #72767d; margin-top: 12px;">
+                                        This offer expires in 48h.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px; padding: 30px; background: rgba(0, 255, 136, 0.05); border-radius: 16px; border: 1px solid rgba(0, 255, 136, 0.2);">
+                    <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 15px;">📊 Bot Performance Stats</div>
+                    <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 30px;">
+                        <div>
+                            <div style="font-size: 32px; font-weight: 800; color: var(--accent-green);">72%</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">DM Open Rate</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 32px; font-weight: 800; color: var(--accent-green);">34%</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Click-Through Rate</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 32px; font-weight: 800; color: var(--accent-green);">18%</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Conversion Rate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- ACQUISITION SECTION -->
         <section id="acquisition" class="section">
             <div class="container">
@@ -1573,7 +2062,7 @@
                         <div class="signal-feed" id="signalFeed">
                             <div class="signal-item">
                                 <span class="signal-time">18:42</span>
-                                AI detected: User looking for <span class="signal-keyword">reliable indicators</span> for BTC
+                                AI detected: User looking for <span class="signal-keyword">reliable TrafficLab Indicators</span> for BTC
                             </div>
                             <div class="signal-item">
                                 <span class="signal-time">18:39</span>
@@ -1695,7 +2184,7 @@
                             <span class="lead-score">92</span>
                         </div>
                         <div class="lead-insights">
-                            🤖 <strong>AI Analysis:</strong> High engagement, active in #crypto-signals, checked 47 signals this week. Prime conversion candidate.
+                            🤖 <strong>AI Analysis:</strong> High engagement, active in #crypto-signals, checked 47 TrafficLab Signals this week. Prime conversion candidate.
                         </div>
                     </div>
 
@@ -1725,7 +2214,7 @@
                             <span class="lead-score">71</span>
                         </div>
                         <div class="lead-insights">
-                            🤖 <strong>AI Analysis:</strong> Moderate activity, likes scalping strategies. Target with short-term signals.
+                            🤖 <strong>AI Analysis:</strong> Moderate activity, likes scalping strategies. Target with short-term TrafficLab Signals.
                         </div>
                     </div>
 
@@ -1749,32 +2238,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="card" style="margin-top: 40px;">
-                    <h3 class="card-title">
-                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
-                        AI-Generated Smart DM Example
-                    </h3>
-                    <div style="background: var(--bg-tertiary); border-radius: 12px; padding: 25px; border-left: 4px solid var(--accent-ai);">
-                        <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 15px;">📬 AI Personalized Message (After 7 Days Engagement)</p>
-                        <div style="font-size: 15px; line-height: 1.8;">
-                            Hey CryptoKing_47! 🚀<br><br>
-                            
-                            I noticed you've been crushing it with our delayed signals this week. You caught some amazing moves — BTC +3.5%, ETH +4.2%, SOL +6.8%.<br><br>
-                            
-                            Here's the thing: you're seeing these 15 minutes late. Our premium members made those exact trades in real-time and captured the full move.<br><br>
-                            
-                            Right now we're offering lifetime access for $299 (normally $49/month). That's less than 7 months of subscription, and you'll never pay again.<br><br>
-                            
-                            Want to upgrade? Just reply <strong>"YES"</strong> and I'll send the link. No pressure — but the offer expires in 48h.<br><br>
-                            
-                            Let's get you those real-time signals. 💎
-                        </div>
-                        <p style="font-size: 12px; color: var(--text-muted); margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
-                            🤖 <strong>AI personalization:</strong> Message tailored to user's engagement history, favorite markets, and win rate. Open rate: 72%.
-                        </p>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -1786,6 +2249,136 @@
                     <p class="section-subtitle">From free members to paying customers — automated by AI</p>
                 </div>
 
+                <!-- SIGNAL DELAY COMPARISON -->
+                <div style="margin-bottom: 60px;">
+                    <h3 style="text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 30px;">
+                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                        Signal Delay Comparison — Free vs TrafficLab Premium
+                    </h3>
+                    <div class="delay-comparison">
+                        <div class="delay-card free">
+                            <div class="delay-card-header">
+                                <div class="delay-tier-label">Free Members</div>
+                                <div class="delay-tier-title">15-Min Delay</div>
+                            </div>
+                            <div class="delay-signal-item delayed">
+                                <strong>BTC LONG @ $68,400</strong> <span class="delay-badge delayed">DELAYED</span><br>
+                                Current Price: $69,100 → <span style="color: var(--accent-red);">Entry missed</span><br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Signal received 15 min late</span>
+                            </div>
+                            <div class="delay-signal-item delayed">
+                                <strong>ETH SHORT @ $3,840</strong> <span class="delay-badge delayed">DELAYED</span><br>
+                                Current Price: $3,760 → <span style="color: var(--accent-red);">Missed entry by $80</span><br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Signal received 15 min late</span>
+                            </div>
+                            <div class="delay-signal-item delayed">
+                                <strong>SOL LONG @ $142</strong> <span class="delay-badge delayed">DELAYED</span><br>
+                                Current Price: $148 → <span style="color: var(--accent-red);">Entry missed</span><br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Signal received 15 min late</span>
+                            </div>
+                            <div class="delay-signal-item delayed">
+                                <strong>ADA SHORT @ $0.68</strong> <span class="delay-badge delayed">DELAYED</span><br>
+                                Current Price: $0.65 → <span style="color: var(--accent-red);">Too late to enter</span><br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Signal received 15 min late</span>
+                            </div>
+                            <div class="delay-pnl">
+                                <div class="delay-pnl-value">Missed: +$700</div>
+                                <div class="delay-pnl-label">Potential Profit Lost</div>
+                            </div>
+                        </div>
+
+                        <div class="delay-card premium">
+                            <div class="delay-card-header">
+                                <div class="delay-tier-label">⭐ TrafficLab Premium</div>
+                                <div class="delay-tier-title">Real-Time</div>
+                            </div>
+                            <div class="delay-signal-item realtime">
+                                <strong>BTC LONG @ $68,400</strong> <span class="delay-badge realtime">REAL-TIME</span><br>
+                                Current Price: $69,100 → <span style="color: var(--accent-green);">+$700 profit ✅</span><br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Instant alert • Perfect entry</span>
+                            </div>
+                            <div class="delay-signal-item realtime">
+                                <strong>ETH SHORT @ $3,840</strong> <span class="delay-badge realtime">REAL-TIME</span><br>
+                                Current Price: $3,760 → <span style="color: var(--accent-green);">+$80 profit ✅</span><br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Instant alert • Perfect entry</span>
+                            </div>
+                            <div class="delay-signal-item realtime">
+                                <strong>SOL LONG @ $142</strong> <span class="delay-badge realtime">REAL-TIME</span><br>
+                                Current Price: $148 → <span style="color: var(--accent-green);">+$6 profit ✅</span><br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Instant alert • Perfect entry</span>
+                            </div>
+                            <div class="delay-signal-item realtime">
+                                <strong>ADA SHORT @ $0.68</strong> <span class="delay-badge realtime">REAL-TIME</span><br>
+                                Current Price: $0.65 → <span style="color: var(--accent-green);">+$0.03 profit ✅</span><br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Instant alert • Perfect entry</span>
+                            </div>
+                            <div class="delay-pnl">
+                                <div class="delay-pnl-value">+$2,340</div>
+                                <div class="delay-pnl-label">This Week's Profit</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 30px; padding: 25px; background: rgba(0, 255, 136, 0.05); border-radius: 12px; border: 1px solid rgba(0, 255, 136, 0.2);">
+                        <p style="font-size: 16px; color: var(--text-secondary); margin-bottom: 10px;">
+                            <strong style="color: var(--accent-green);">Free members see what they're missing.</strong> TrafficLab Premium converts itself.
+                        </p>
+                        <p style="font-size: 14px; color: var(--text-muted);">
+                            📊 Conversion Rate: <strong style="color: var(--accent-green);">34%</strong> of free → premium within 14 days
+                        </p>
+                    </div>
+                </div>
+
+                <!-- DM TEMPLATE PREVIEW -->
+                <div style="margin-bottom: 60px;">
+                    <h3 style="text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 30px;">
+                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                        AI-Powered DM Template Preview
+                    </h3>
+                    <div style="display: grid; grid-template-columns: 1fr auto; gap: 30px; align-items: center;">
+                        <div style="background: var(--discord-header); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 12px; padding: 30px;">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">
+                                <div style="width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-ai), var(--accent-purple)); display: flex; align-items: center; justify-content: center; font-size: 24px;">🤖</div>
+                                <div>
+                                    <div style="font-size: 16px; font-weight: 700; color: var(--accent-ai);">TrafficLab AI</div>
+                                    <div style="font-size: 12px; color: #72767d;">Bot • Direct Message</div>
+                                </div>
+                            </div>
+                            <div style="color: #dcddde; font-size: 15px; line-height: 1.8;">
+                                <strong>Hey CryptoTrader_88! 👋</strong><br><br>
+                                
+                                You've been active in #crypto-signals for <strong>7 days</strong> and checked out <strong>23 signals</strong>. Here's what you missed with the 15-min delay:<br><br>
+                                
+                                📊 <strong>3 signals that hit TP</strong> before you saw them (<span style="color: var(--accent-red);">+$1,240 potential profit</span>)<br>
+                                📉 You could have avoided <strong>2 losing trades</strong> with real-time alerts<br><br>
+                                
+                                <strong style="color: var(--accent-gold);">Exclusive for active members:</strong> 20% off TrafficLab Premium → <strong style="color: var(--accent-green);">$39/month</strong> (normally $49)<br><br>
+                                
+                                <div style="background: var(--accent-green); color: #000; padding: 14px 28px; border-radius: 8px; display: inline-block; font-weight: 700; margin-top: 10px;">🚀 Unlock Real-Time Signals</div>
+                                
+                                <div style="font-size: 12px; color: #72767d; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.05);">
+                                    This offer expires in 48h.
+                                </div>
+                            </div>
+                        </div>
+                        <div style="background: var(--bg-secondary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 25px; min-width: 200px; text-align: center;">
+                            <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">📊 DM Stats</div>
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 36px; font-weight: 800; color: var(--accent-green);">72%</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">Open Rate</div>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 36px; font-weight: 800; color: var(--accent-blue);">34%</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">Click Rate</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 36px; font-weight: 800; color: var(--accent-ai);">18%</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">Conversion</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONVERSION PIPELINE -->
                 <div class="card">
                     <h3 class="card-title">
                         <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
@@ -2013,7 +2606,7 @@
                             <input type="number" id="currentMembers" value="100" min="0" style="width: 100%; background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 14px; color: var(--text-primary); font-size: 16px;">
                         </div>
                         <div>
-                            <label style="display: block; font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 600;">Indicator Price ($)</label>
+                            <label style="display: block; font-size: 14px; color: var(--text-secondary); margin-bottom: 8px; font-weight: 600;">TrafficLab Indicator Price ($)</label>
                             <input type="number" id="indicatorPrice" value="49" min="1" style="width: 100%; background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 14px; color: var(--text-primary); font-size: 16px;">
                         </div>
                         <div>
@@ -2076,7 +2669,7 @@
                         <div class="ai-icon"></div>
                         AI-POWERED GROWTH ENGINE
                     </div>
-                    <h2 class="cta-title">Ready to automate your growth with AI?</h2>
+                    <h2 class="cta-title">Ready to automate your growth with TrafficLab AI?</h2>
                     <p style="font-size: 22px; color: var(--text-secondary); margin: 30px 0;">
                         MVP ready in 5-7 days. Start building your AI-powered empire.
                     </p>
@@ -2216,22 +2809,22 @@
         // AI CHATBOT - INTERACTIVE FEATURE
         const chatResponses = {
             'looking for btc signals': {
-                text: 'Great timing! BTC is showing strong momentum. Based on your query, I can see you\'re interested in crypto signals.',
+                text: 'Great timing! BTC is showing strong momentum. Based on your query, I can see you\'re interested in TrafficLab crypto signals.',
                 analysis: '<strong>🤖 AI Analysis:</strong><br>• Detected keyword: "BTC signals"<br>• User sentiment: Bullish 🟢<br>• Lead score: 87/100<br>• Engagement level: High',
                 score: '87/100 — High Intent Lead'
             },
             'best indicators for crypto?': {
-                text: 'Smart question! Most profitable traders use a combination of RSI, MACD, and Volume analysis. Let me analyze your trading profile.',
-                analysis: '<strong>🤖 AI Analysis:</strong><br>• Detected interest: Technical Analysis<br>• User sentiment: Curious 🟡<br>• Lead score: 72/100<br>• Recommended product: Premium indicators',
+                text: 'Smart question! Most profitable traders use TrafficLab Indicators with RSI, MACD, and Volume analysis. Let me analyze your trading profile.',
+                analysis: '<strong>🤖 AI Analysis:</strong><br>• Detected interest: Technical Analysis<br>• User sentiment: Curious 🟡<br>• Lead score: 72/100<br>• Recommended product: TrafficLab Premium',
                 score: '72/100 — Qualified Lead'
             },
             'analyze my engagement': {
-                text: 'Based on your activity pattern, you\'re in the top 15% of engaged users. You checked 23 signals this week and opened 8 DMs.',
+                text: 'Based on your activity pattern, you\'re in the top 15% of engaged users. You checked 23 TrafficLab Signals this week and opened 8 DMs.',
                 analysis: '<strong>🤖 AI Analysis:</strong><br>• Activity: Very High 🔥<br>• Conversion probability: 91%<br>• Lead score: 94/100<br>• Churn risk: Very Low',
                 score: '94/100 — Premium Lead'
             },
             'default': {
-                text: 'I analyzed your message using NLP. I can help with signal analysis, sentiment detection, lead scoring, and more. Try asking about BTC signals or indicators!',
+                text: 'I analyzed your message using NLP. I can help with TrafficLab signal analysis, sentiment detection, lead scoring, and more. Try asking about BTC signals or indicators!',
                 analysis: '<strong>🤖 AI Analysis:</strong><br>• Message analyzed<br>• Intent: General inquiry<br>• Lead score: 65/100<br>• Next step: Engage with specific questions',
                 score: '65/100 — Active User'
             }
@@ -2382,73 +2975,15 @@
             sendMessage();
         }
 
-        // AI BRAIN VISUALIZATION
-        function createNeuralNetwork() {
-            const container = document.getElementById('aiBrainViz');
-            if (!container) return;
-
-            function render() {
-                container.innerHTML = '';
-                const width = container.offsetWidth;
-                const height = container.offsetHeight;
-                if (width < 10 || height < 10) return;
-
-                const nodeCount = width < 500 ? 20 : 40;
-                const nodes = [];
-
-                for (let i = 0; i < nodeCount; i++) {
-                    const node = document.createElement('div');
-                    node.className = 'neural-node';
-                    node.style.left = (Math.random() * (width - 20) + 4) + 'px';
-                    node.style.top = (Math.random() * (height - 20) + 4) + 'px';
-                    node.style.animationDelay = Math.random() * 2 + 's';
-                    container.appendChild(node);
-                    nodes.push({ x: parseFloat(node.style.left), y: parseFloat(node.style.top) });
-                }
-
-                for (let i = 0; i < nodeCount; i++) {
-                    const c = Math.floor(Math.random() * 2) + 1;
-                    for (let j = 0; j < c; j++) {
-                        const t = Math.floor(Math.random() * nodeCount);
-                        if (t === i) continue;
-                        const dx = nodes[t].x - nodes[i].x;
-                        const dy = nodes[t].y - nodes[i].y;
-                        const dist = Math.sqrt(dx * dx + dy * dy);
-                        if (dist > width * 0.5) continue;
-                        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
-                        const conn = document.createElement('div');
-                        conn.className = 'neural-connection';
-                        conn.style.left = (nodes[i].x + 6) + 'px';
-                        conn.style.top = (nodes[i].y + 6) + 'px';
-                        conn.style.width = dist + 'px';
-                        conn.style.transform = 'rotate(' + angle + 'deg)';
-                        conn.style.animationDelay = Math.random() * 3 + 's';
-                        container.appendChild(conn);
-                    }
-                }
-            }
-
-            // Render when tab becomes visible
-            const observer = new MutationObserver(function() {
-                if (container.offsetWidth > 10) { render(); observer.disconnect(); }
-            });
-            observer.observe(container.closest('.section'), { attributes: true, attributeFilter: ['class'] });
-
-            // Also try immediately
-            if (container.offsetWidth > 10) { render(); observer.disconnect(); }
-        }
-
-        setTimeout(createNeuralNetwork, 500);
-
         // SIGNAL FEED AUTO-UPDATE
         const signals = [
-            'AI detected: User looking for <span class="signal-keyword">reliable indicators</span> for BTC',
-            'AI detected: Anyone know good <span class="signal-keyword">signals</span> for forex?',
+            'AI detected: User looking for <span class="signal-keyword">reliable TrafficLab Indicators</span> for BTC',
+            'AI detected: Anyone know good <span class="signal-keyword">TrafficLab Signals</span> for forex?',
             'AI detected: Need <span class="signal-keyword">technical analysis</span> for SOL',
             'AI detected: Looking for <span class="signal-keyword">trading indicators</span>',
             'AI detected: Best <span class="signal-keyword">TA tools</span> for crypto?',
-            'AI detected: Where to find <span class="signal-keyword">accurate signals</span>?',
-            'AI detected: Recommend <span class="signal-keyword">indicators</span> for day trading?',
+            'AI detected: Where to find <span class="signal-keyword">accurate TrafficLab Signals</span>?',
+            'AI detected: Recommend <span class="signal-keyword">TrafficLab Indicators</span> for day trading?',
             'AI detected: Need <span class="signal-keyword">chart analysis</span> help'
         ];
 
