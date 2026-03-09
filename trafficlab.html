@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrafficLab Growth Engine — Powered by AI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #131824;
+            --bg-tertiary: #1a1f2e;
+            --accent-green: #00ff88;
+            --accent-red: #ff0055;
+            --accent-blue: #00d4ff;
+            --accent-purple: #b400ff;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --text-muted: #718096;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0a0e17 0%, #1a1f2e 100%);
+            position: relative;
+            overflow: hidden;
+            padding: 60px 20px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+            bottom: -300px;
+            left: -300px;
+            animation: pulse 5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 6vw, 72px);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 3vw, 28px);
+            color: var(--text-secondary);
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-green);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--accent-green);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 100px 20px;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        /* Dashboard Section */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent-green);
+            box-shadow: 0 8px 30px rgba(0, 255, 136, 0.15);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .server-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .server-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
+
+        .server-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .server-count {
+            font-size: 14px;
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .signal-feed {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+        }
+
+        .signal-item {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: rgba(0, 255, 136, 0.05);
+            border-left: 3px solid var(--accent-green);
+            border-radius: 4px;
+            font-size: 13px;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .signal-time {
+            color: var(--text-muted);
+            margin-right: 10px;
+        }
+
+        .signal-keyword {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .funnel {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 40px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .funnel-step {
+            text-align: center;
+            position: relative;
+        }
+
+        .funnel-step::after {
+            content: '→';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-green);
+            font-size: 24px;
+        }
+
+        .funnel-step:last-child::after {
+            display: none;
+        }
+
+        .funnel-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--accent-green);
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .funnel-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .conversion-rate {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+
+        .conversion-rate-value {
+            font-size: 64px;
+            font-weight: 800;
+            color: var(--accent-green);
+            text-shadow: 0 0 30px rgba(0, 255, 136, 0.6);
+        }
+
+        /* Onboarding Flow */
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .flow-step {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            position: relative;
+        }
+
+        .flow-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 32px;
+            box-shadow: 0 0 30px rgba(0, 212, 255, 0.4);
+        }
+
+        .flow-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .flow-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .channel-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .channel-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+        }
+
+        .channel-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--accent-green);
+        }
+
+        .signal-preview {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .delay-badge {
+            display: inline-block;
+            background: rgba(255, 0, 85, 0.2);
+            color: var(--accent-red);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Engagement Tracker */
+        .heatmap {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin: 30px 0;
+        }
+
+        .heatmap-day {
+            text-align: center;
+        }
+
+        .heatmap-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .heatmap-cell {
+            height: 80px;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .heatmap-cell.active {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
+
+        .dm-example {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .dm-header {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .dm-content {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        /* Revenue Chart */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 40px 0;
+        }
+
+        .revenue-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .revenue-stat {
+            text-align: center;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+        }
+
+        .revenue-stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--accent-green);
+            margin-bottom: 5px;
+        }
+
+        .revenue-stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Leaderboard */
+        .leaderboard {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .leaderboard-rank {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--accent-green);
+            width: 40px;
+        }
+
+        .leaderboard-name {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .leaderboard-stat {
+            font-size: 16px;
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        /* Signal Ticker */
+        .ticker-container {
+            background: var(--bg-tertiary);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 40px 0;
+        }
+
+        .ticker-item {
+            background: var(--bg-secondary);
+            border-left: 4px solid var(--accent-green);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            animation: tickerPulse 2s ease infinite;
+        }
+
+        @keyframes tickerPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+
+        .ticker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .ticker-symbol {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .ticker-time {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .ticker-data {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            font-size: 14px;
+        }
+
+        .ticker-label {
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .ticker-value {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .ticker-pnl {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        /* ROI Calculator */
+        .calculator {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-field {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+
+        .calc-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .calc-result {
+            text-align: center;
+        }
+
+        .calc-result-value {
+            font-size: 40px;
+            font-weight: 800;
+            color: var(--accent-green);
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .calc-result-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .comparison-card {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .comparison-card.highlight {
+            border: 2px solid var(--accent-green);
+            box-shadow: 0 0 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .comparison-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .comparison-value {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--accent-green);
+            margin: 20px 0;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 212, 255, 0.1));
+            border-radius: 24px;
+            padding: 80px 40px;
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .cta-title {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            color: var(--bg-primary);
+            padding: 18px 50px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(0, 255, 136, 0.5);
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 60px;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .timeline-item {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        .timeline-phase {
+            font-size: 14px;
+            color: var(--accent-green);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .timeline-desc {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Canvas for Chart */
+        canvas {
+            max-width: 100%;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .funnel {
+                flex-direction: column;
+            }
+
+            .funnel-step::after {
+                display: none;
+            }
+
+            .heatmap {
+                grid-template-columns: repeat(4, 1fr);
+            }
+
+            .timeline {
+                flex-direction: column;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">Powered by AI</div>
+            <h1>TrafficLab Growth Engine</h1>
+            <p class="hero-subtitle">From 0 to 10,000+ qualified traders — fully automated</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Members</div>
+                    <div class="stat-value" id="memberCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Conversions</div>
+                    <div class="stat-value" id="conversionCount">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Revenue</div>
+                    <div class="stat-value" id="revenueCount">$0</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Acquisition Dashboard -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Live Acquisition Dashboard</h2>
+                <p class="section-subtitle">Real-time monitoring across 12+ trading communities</p>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="card">
+                    <h3 class="card-title">Monitored Servers</h3>
+                    <div class="server-list">
+                        <div class="server-item">
+                            <span class="server-name">Crypto Signals Pro</span>
+                            <span class="server-count">45.2K</span>
+                        </div>
+                        <div class="server-item">
+                            <span class="server-name">Forex Mastery Hub</span>
+                            <span class="server-count">32.8K</span>
+                        </div>
+                        <div class="server-item">
+                            <span class="server-name">Stock Market Elite</span>
+                            <span class="server-count">28.1K</span>
+                        </div>
+                        <div class="server-item">
+                            <span class="server-name">Day Traders United</span>
+                            <span class="server-count">22.4K</span>
+                        </div>
+                        <div class="server-item">
+                            <span class="server-name">Altcoin Alerts</span>
+                            <span class="server-count">19.7K</span>
+                        </div>
+                        <div class="server-item">
+                            <span class="server-name">Technical Analysis Pro</span>
+                            <span class="server-count">17.3K</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">Real-time Signal Detection</h3>
+                    <div class="signal-feed" id="signalFeed">
+                        <div class="signal-item">
+                            <span class="signal-time">18:42</span>
+                            User looking for <span class="signal-keyword">reliable indicators</span> for BTC
+                        </div>
+                        <div class="signal-item">
+                            <span class="signal-time">18:39</span>
+                            Anyone know good <span class="signal-keyword">signals</span> for forex?
+                        </div>
+                        <div class="signal-item">
+                            <span class="signal-time">18:35</span>
+                            Need <span class="signal-keyword">technical analysis</span> for SOL
+                        </div>
+                        <div class="signal-item">
+                            <span class="signal-time">18:31</span>
+                            Looking for <span class="signal-keyword">trading indicators</span>
+                        </div>
+                        <div class="signal-item">
+                            <span class="signal-time">18:28</span>
+                            Best <span class="signal-keyword">TA tools</span> for crypto?
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Auto-Invite Pipeline (Today)</h3>
+                <div class="funnel">
+                    <div class="funnel-step">
+                        <div class="funnel-number">847</div>
+                        <div class="funnel-label">Detected</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-number">312</div>
+                        <div class="funnel-label">Invited</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-number">89</div>
+                        <div class="funnel-label">Joined</div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="funnel-number">67</div>
+                        <div class="funnel-label">Onboarded</div>
+                    </div>
+                </div>
+                <div class="conversion-rate">
+                    <div class="conversion-rate-value">7.7%</div>
+                    <div class="stat-label">Conversion Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Smart Onboarding Flow -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Smart Onboarding Flow</h2>
+                <p class="section-subtitle">Automated journey from join to engagement</p>
+            </div>
+
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="flow-icon">👋</div>
+                    <div class="flow-title">User Joined</div>
+                    <div class="flow-desc">Welcome message sent</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-icon">✅</div>
+                    <div class="flow-title">Verification</div>
+                    <div class="flow-desc">Quick captcha check</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-icon">📊</div>
+                    <div class="flow-title">Market Selection</div>
+                    <div class="flow-desc">Crypto/Forex/Stocks</div>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-icon">🎯</div>
+                    <div class="flow-title">Personalized</div>
+                    <div class="flow-desc">Custom channel access</div>
+                </div>
+            </div>
+
+            <div class="channels-grid">
+                <div class="channel-card">
+                    <div class="channel-name">#crypto-signals</div>
+                    <div class="signal-preview">
+                        🚀 BTC LONG SIGNAL<br>
+                        Entry: $67,400<br>
+                        Target: $69,800 (+3.5%)<br>
+                        Stop: $66,200
+                    </div>
+                    <span class="delay-badge">⏱ 15 min delayed</span>
+                    <p style="margin-top: 15px; font-size: 13px; color: var(--text-muted);">
+                        Members see results but can't act fast enough
+                    </p>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-name">#forex-signals</div>
+                    <div class="signal-preview">
+                        💱 EUR/USD SHORT<br>
+                        Entry: 1.0850<br>
+                        Target: 1.0785 (+65 pips)<br>
+                        Stop: 1.0885
+                    </div>
+                    <span class="delay-badge">⏱ 15 min delayed</span>
+                    <p style="margin-top: 15px; font-size: 13px; color: var(--text-muted);">
+                        Premium members get instant access
+                    </p>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-name">#stocks-signals</div>
+                    <div class="signal-preview">
+                        📈 AAPL CALL OPTION<br>
+                        Strike: $175<br>
+                        Exp: 14 days<br>
+                        Expected: +45% ROI
+                    </div>
+                    <span class="delay-badge">⏱ 15 min delayed</span>
+                    <p style="margin-top: 15px; font-size: 13px; color: var(--text-muted);">
+                        Upgrade for real-time signals
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Conversion Engine -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Conversion Engine</h2>
+                <p class="section-subtitle">From free members to paying customers</p>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">7-Day Engagement Tracker</h3>
+                <div class="heatmap">
+                    <div class="heatmap-day">
+                        <div class="heatmap-label">Day 1</div>
+                        <div class="heatmap-cell active">87%</div>
+                    </div>
+                    <div class="heatmap-day">
+                        <div class="heatmap-label">Day 2</div>
+                        <div class="heatmap-cell active">79%</div>
+                    </div>
+                    <div class="heatmap-day">
+                        <div class="heatmap-label">Day 3</div>
+                        <div class="heatmap-cell active">71%</div>
+                    </div>
+                    <div class="heatmap-day">
+                        <div class="heatmap-label">Day 4</div>
+                        <div class="heatmap-cell">65%</div>
+                    </div>
+                    <div class="heatmap-day">
+                        <div class="heatmap-label">Day 5</div>
+                        <div class="heatmap-cell">58%</div>
+                    </div>
+                    <div class="heatmap-day">
+                        <div class="heatmap-label">Day 6</div>
+                        <div class="heatmap-cell">52%</div>
+                    </div>
+                    <div class="heatmap-day">
+                        <div class="heatmap-label">Day 7</div>
+                        <div class="heatmap-cell active">89%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dm-example">
+                <div class="dm-header">📬 Auto-DM Example (After 7 Days Engagement)</div>
+                <div class="dm-content">
+                    Hey! I noticed you've been checking out our delayed signals this week. You've seen some great calls — BTC +3.5%, ETH +4.2%, SOL +6.8%.<br><br>
+                    
+                    Imagine catching those moves in real-time instead of 15 minutes later. Our premium members made those exact trades when they mattered.<br><br>
+                    
+                    Right now we're offering lifetime access for $299 (normally $49/month). That's less than 7 months of subscription.<br><br>
+                    
+                    Want to upgrade? Just reply "YES" and I'll send you the link.
+                </div>
+            </div>
+
+            <div class="funnel" style="margin: 40px 0;">
+                <div class="funnel-step">
+                    <div class="funnel-number">2,340</div>
+                    <div class="funnel-label">Free Members</div>
+                </div>
+                <div class="funnel-step">
+                    <div class="funnel-number">1,456</div>
+                    <div class="funnel-label">Engaged (7d)</div>
+                </div>
+                <div class="funnel-step">
+                    <div class="funnel-number">582</div>
+                    <div class="funnel-label">DM Sent</div>
+                </div>
+                <div class="funnel-step">
+                    <div class="funnel-number">421</div>
+                    <div class="funnel-label">Clicked</div>
+                </div>
+                <div class="funnel-step">
+                    <div class="funnel-number">340</div>
+                    <div class="funnel-label">Purchased</div>
+                </div>
+            </div>
+
+            <div class="revenue-stats">
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value">$12,450</div>
+                    <div class="revenue-stat-label">This Month</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value">$47,800</div>
+                    <div class="revenue-stat-label">Total Revenue</div>
+                </div>
+                <div class="revenue-stat">
+                    <div class="revenue-stat-value">340</div>
+                    <div class="revenue-stat-label">Paying Customers</div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Referral & Scale -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Referral & Scale</h2>
+                <p class="section-subtitle">Each member brings 0.3 new members on average</p>
+            </div>
+
+            <div class="leaderboard">
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">1</div>
+                    <div class="leaderboard-name">CryptoKing_47</div>
+                    <div class="leaderboard-stat">89 referrals</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">2</div>
+                    <div class="leaderboard-name">ForexTrader_Elite</div>
+                    <div class="leaderboard-stat">76 referrals</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">3</div>
+                    <div class="leaderboard-name">TechAnalyst_Pro</div>
+                    <div class="leaderboard-stat">64 referrals</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">4</div>
+                    <div class="leaderboard-name">DayTrader_Max</div>
+                    <div class="leaderboard-stat">58 referrals</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">5</div>
+                    <div class="leaderboard-name">AltcoinHunter</div>
+                    <div class="leaderboard-stat">52 referrals</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">6</div>
+                    <div class="leaderboard-name">SignalMaster_88</div>
+                    <div class="leaderboard-stat">47 referrals</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">7</div>
+                    <div class="leaderboard-name">ChartWizard</div>
+                    <div class="leaderboard-stat">43 referrals</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">8</div>
+                    <div class="leaderboard-name">OptionsGuru</div>
+                    <div class="leaderboard-stat">39 referrals</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">9</div>
+                    <div class="leaderboard-name">SwingTrade_Pro</div>
+                    <div class="leaderboard-stat">35 referrals</div>
+                </div>
+                <div class="leaderboard-item">
+                    <div class="leaderboard-rank">10</div>
+                    <div class="leaderboard-name">ScalpMaster</div>
+                    <div class="leaderboard-stat">31 referrals</div>
+                </div>
+            </div>
+
+            <div class="chart-container" style="margin-top: 60px;">
+                <canvas id="growthChart"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <!-- Signal Delay Preview -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Signal Delay Preview</h2>
+                <p class="section-subtitle">Free members see signals 15 minutes delayed</p>
+            </div>
+
+            <div class="ticker-container">
+                <div class="ticker-item">
+                    <div class="ticker-header">
+                        <div class="ticker-symbol">🚀 BTC/USDT</div>
+                        <div class="ticker-time">15 min delay</div>
+                    </div>
+                    <div class="ticker-data">
+                        <div>
+                            <div class="ticker-label">Entry</div>
+                            <div class="ticker-value">$67,400</div>
+                        </div>
+                        <div>
+                            <div class="ticker-label">Exit</div>
+                            <div class="ticker-value">$69,758</div>
+                        </div>
+                        <div>
+                            <div class="ticker-label">P&L</div>
+                            <div class="ticker-pnl">+3.5% ($2,358)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ticker-item">
+                    <div class="ticker-header">
+                        <div class="ticker-symbol">💎 ETH/USDT</div>
+                        <div class="ticker-time">15 min delay</div>
+                    </div>
+                    <div class="ticker-data">
+                        <div>
+                            <div class="ticker-label">Entry</div>
+                            <div class="ticker-value">$3,245</div>
+                        </div>
+                        <div>
+                            <div class="ticker-label">Exit</div>
+                            <div class="ticker-value">$3,381</div>
+                        </div>
+                        <div>
+                            <div class="ticker-label">P&L</div>
+                            <div class="ticker-pnl">+4.2% ($136)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ticker-item">
+                    <div class="ticker-header">
+                        <div class="ticker-symbol">⚡ SOL/USDT</div>
+                        <div class="ticker-time">15 min delay</div>
+                    </div>
+                    <div class="ticker-data">
+                        <div>
+                            <div class="ticker-label">Entry</div>
+                            <div class="ticker-value">$142.50</div>
+                        </div>
+                        <div>
+                            <div class="ticker-label">Exit</div>
+                            <div class="ticker-value">$152.19</div>
+                        </div>
+                        <div>
+                            <div class="ticker-label">P&L</div>
+                            <div class="ticker-pnl">+6.8% ($9.69)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="text-align: center; padding: 40px;">
+                <h3 style="font-size: 24px; margin-bottom: 20px;">Upgrade to Premium</h3>
+                <p style="font-size: 16px; color: var(--text-secondary); margin-bottom: 30px;">
+                    Get signals in real-time and catch moves when they matter
+                </p>
+                <div style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+                    <div>
+                        <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">Monthly</div>
+                        <div style="font-size: 36px; font-weight: 800; color: var(--accent-blue);">$49</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">Lifetime</div>
+                        <div style="font-size: 36px; font-weight: 800; color: var(--accent-green);">$299</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROI Calculator -->
+    <section>
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">ROI Calculator</h2>
+                <p class="section-subtitle">See your potential return in 6 months</p>
+            </div>
+
+            <div class="calculator">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px;">
+                    <div class="input-group">
+                        <label class="input-label">Current Members</label>
+                        <input type="number" class="input-field" id="currentMembers" value="100" min="0">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Indicator Price ($)</label>
+                        <input type="number" class="input-field" id="indicatorPrice" value="49" min="1">
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label">Monthly Marketing Budget ($)</label>
+                        <input type="number" class="input-field" id="marketingBudget" value="500" min="0">
+                    </div>
+                </div>
+
+                <div class="calc-results">
+                    <div class="calc-result">
+                        <div class="calc-result-value" id="projectedMembers">0</div>
+                        <div class="calc-result-label">Projected Members (6mo)</div>
+                    </div>
+                    <div class="calc-result">
+                        <div class="calc-result-value" id="expectedConversions">0</div>
+                        <div class="calc-result-label">Expected Conversions</div>
+                    </div>
+                    <div class="calc-result">
+                        <div class="calc-result-value" id="expectedRevenue">$0</div>
+                        <div class="calc-result-label">Expected Revenue</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comparison">
+                <div class="comparison-card">
+                    <div class="comparison-title">Manual Outreach</div>
+                    <p style="color: var(--text-muted); margin: 20px 0;">Cold DMs, manual follow-ups, scattered conversions</p>
+                    <div class="comparison-value" style="color: var(--accent-red);">2-3x</div>
+                    <div class="stat-label">Return on Investment</div>
+                </div>
+                <div class="comparison-card highlight">
+                    <div class="comparison-title">TrafficLab Growth Engine</div>
+                    <p style="color: var(--text-muted); margin: 20px 0;">Automated acquisition, smart onboarding, proven conversion</p>
+                    <div class="comparison-value">23x</div>
+                    <div class="stat-label">Return on Investment</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section>
+        <div class="container">
+            <div class="cta-section">
+                <h2 class="cta-title">Ready to automate your growth?</h2>
+                <p style="font-size: 20px; color: var(--text-secondary); margin-bottom: 40px;">
+                    MVP ready in 5-7 days. Start building your automated empire.
+                </p>
+                <a href="mailto:janis@agic.me?subject=TrafficLab Growth Engine - Let's Talk&body=Hi Janis,%0A%0AI'm interested in the TrafficLab Growth Engine. Let's schedule a 15-minute call to discuss the details.%0A%0ABest regards," class="cta-button">Book a 15-min Call</a>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-phase">Week 1</div>
+                        <div class="timeline-desc">Setup & Integration</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-phase">Week 2</div>
+                        <div class="timeline-desc">First Members Incoming</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-phase">Month 1</div>
+                        <div class="timeline-desc">500+ Members</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-phase">Month 3</div>
+                        <div class="timeline-desc">2,000+ Members</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Animated Counters
+        function animateCounter(id, target, prefix = '', suffix = '') {
+            const element = document.getElementById(id);
+            const duration = 2000;
+            const steps = 60;
+            const increment = target / steps;
+            let current = 0;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+            }, duration / steps);
+        }
+
+        // Start counters
+        setTimeout(() => {
+            animateCounter('memberCount', 8547);
+            animateCounter('conversionCount', 1247);
+            animateCounter('revenueCount', 47800, '$', '');
+        }, 500);
+
+        // Signal Feed Auto-Update
+        const signals = [
+            'User looking for <span class="signal-keyword">reliable indicators</span> for BTC',
+            'Anyone know good <span class="signal-keyword">signals</span> for forex?',
+            'Need <span class="signal-keyword">technical analysis</span> for SOL',
+            'Looking for <span class="signal-keyword">trading indicators</span>',
+            'Best <span class="signal-keyword">TA tools</span> for crypto?',
+            'Where to find <span class="signal-keyword">accurate signals</span>?',
+            'Recommend <span class="signal-keyword">indicators</span> for day trading?',
+            'Need <span class="signal-keyword">chart analysis</span> help'
+        ];
+
+        function addSignal() {
+            const feed = document.getElementById('signalFeed');
+            const now = new Date();
+            const time = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            const signal = signals[Math.floor(Math.random() * signals.length)];
+            
+            const item = document.createElement('div');
+            item.className = 'signal-item';
+            item.innerHTML = `<span class="signal-time">${time}</span>${signal}`;
+            
+            feed.insertBefore(item, feed.firstChild);
+            
+            if (feed.children.length > 10) {
+                feed.removeChild(feed.lastChild);
+            }
+        }
+
+        setInterval(addSignal, 5000);
+
+        // Chart.js inline (minimal version for demo)
+        const chartScript = document.createElement('script');
+        chartScript.textContent = `
+            (function(){
+                const Chart = function(ctx, config) {
+                    const canvas = ctx.canvas;
+                    const context = canvas.getContext('2d');
+                    const width = canvas.width;
+                    const height = canvas.height;
+                    
+                    canvas.width = canvas.offsetWidth * 2;
+                    canvas.height = canvas.offsetHeight * 2;
+                    context.scale(2, 2);
+                    
+                    const data = config.data.datasets[0].data;
+                    const labels = config.data.labels;
+                    const max = Math.max(...data) * 1.2;
+                    
+                    context.clearRect(0, 0, width, height);
+                    
+                    // Draw grid
+                    context.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+                    context.lineWidth = 1;
+                    for (let i = 0; i < 5; i++) {
+                        const y = (height / 5) * i;
+                        context.beginPath();
+                        context.moveTo(50, y);
+                        context.lineTo(width - 20, y);
+                        context.stroke();
+                    }
+                    
+                    // Draw line
+                    context.beginPath();
+                    context.strokeStyle = '#00ff88';
+                    context.lineWidth = 3;
+                    context.shadowBlur = 15;
+                    context.shadowColor = 'rgba(0, 255, 136, 0.6)';
+                    
+                    const stepX = (width - 70) / (data.length - 1);
+                    data.forEach((value, index) => {
+                        const x = 50 + (index * stepX);
+                        const y = height - 30 - ((value / max) * (height - 50));
+                        
+                        if (index === 0) {
+                            context.moveTo(x, y);
+                        } else {
+                            context.lineTo(x, y);
+                        }
+                    });
+                    
+                    context.stroke();
+                    context.shadowBlur = 0;
+                    
+                    // Draw gradient fill
+                    const gradient = context.createLinearGradient(0, 0, 0, height);
+                    gradient.addColorStop(0, 'rgba(0, 255, 136, 0.3)');
+                    gradient.addColorStop(1, 'rgba(0, 255, 136, 0)');
+                    
+                    context.fillStyle = gradient;
+                    context.lineTo(width - 20, height - 30);
+                    context.lineTo(50, height - 30);
+                    context.closePath();
+                    context.fill();
+                    
+                    // Draw points
+                    context.fillStyle = '#00ff88';
+                    context.shadowBlur = 10;
+                    context.shadowColor = 'rgba(0, 255, 136, 0.8)';
+                    data.forEach((value, index) => {
+                        const x = 50 + (index * stepX);
+                        const y = height - 30 - ((value / max) * (height - 50));
+                        
+                        context.beginPath();
+                        context.arc(x, y, 4, 0, Math.PI * 2);
+                        context.fill();
+                    });
+                    
+                    // Draw labels
+                    context.shadowBlur = 0;
+                    context.fillStyle = '#718096';
+                    context.font = '12px -apple-system, sans-serif';
+                    context.textAlign = 'center';
+                    labels.forEach((label, index) => {
+                        const x = 50 + (index * stepX);
+                        context.fillText(label, x, height - 10);
+                    });
+                    
+                    // Draw values
+                    context.textAlign = 'right';
+                    for (let i = 0; i <= 4; i++) {
+                        const value = Math.floor((max / 4) * (4 - i));
+                        const y = (height / 5) * i + 5;
+                        context.fillText('$' + value.toLocaleString(), 45, y);
+                    }
+                };
+                
+                window.Chart = Chart;
+            })();
+        `;
+        document.head.appendChild(chartScript);
+
+        // Revenue Chart
+        setTimeout(() => {
+            const ctx1 = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['Month 1', 'Month 2', 'Month 3'],
+                    datasets: [{
+                        data: [8200, 22400, 47800]
+                    }]
+                }
+            });
+
+            // Growth Chart
+            const ctx2 = document.getElementById('growthChart').getContext('2d');
+            new Chart(ctx2, {
+                type: 'line',
+                data: {
+                    labels: ['Now', 'Month 1', 'Month 2', 'Month 3', 'Month 4', 'Month 5', 'Month 6'],
+                    datasets: [{
+                        data: [100, 520, 1350, 2800, 4900, 7600, 11200]
+                    }]
+                }
+            });
+        }, 1000);
+
+        // ROI Calculator
+        function calculateROI() {
+            const currentMembers = parseInt(document.getElementById('currentMembers').value) || 0;
+            const indicatorPrice = parseInt(document.getElementById('indicatorPrice').value) || 0;
+            const marketingBudget = parseInt(document.getElementById('marketingBudget').value) || 0;
+            
+            // Growth formula: exponential with 0.3 referral rate
+            const projectedMembers = Math.floor(currentMembers * Math.pow(1.3, 6));
+            const conversionRate = 0.145; // 14.5%
+            const expectedConversions = Math.floor(projectedMembers * conversionRate);
+            const expectedRevenue = expectedConversions * indicatorPrice;
+            
+            document.getElementById('projectedMembers').textContent = projectedMembers.toLocaleString();
+            document.getElementById('expectedConversions').textContent = expectedConversions.toLocaleString();
+            document.getElementById('expectedRevenue').textContent = '$' + expectedRevenue.toLocaleString();
+        }
+
+        document.getElementById('currentMembers').addEventListener('input', calculateROI);
+        document.getElementById('indicatorPrice').addEventListener('input', calculateROI);
+        document.getElementById('marketingBudget').addEventListener('input', calculateROI);
+
+        calculateROI();
+    </script>
+</body>
+</html>
