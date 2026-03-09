@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visual Content Pipeline - OWD Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #6366f1;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --bg: #ffffff;
+            --surface: #f9fafb;
+            --text: #111827;
+            --text-muted: #6b7280;
+            --border: #e5e7eb;
+        }
+        
+        [data-theme="dark"] {
+            --bg: #111827;
+            --surface: #1f2937;
+            --text: #f9fafb;
+            --text-muted: #9ca3af;
+            --border: #374151;
+        }
+        
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+        
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 2.5rem;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 2rem;
+            animation: slideInDown 0.7s ease;
+        }
+        
+        .brand {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
+        
+        .theme-btn {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 0.7rem 1.3rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all 0.3s;
+        }
+        
+        .theme-btn:hover {
+            transform: scale(1.1);
+            border-color: var(--primary);
+        }
+        
+        .hero-section {
+            text-align: center;
+            padding: 4rem 0;
+            margin-bottom: 4rem;
+            animation: fadeIn 0.9s ease;
+        }
+        
+        .hero-section h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-section p {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+        
+        .pipeline-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4rem;
+            padding: 3rem;
+            background: var(--surface);
+            border-radius: 24px;
+            border: 2px solid var(--border);
+            animation: slideInUp 1s ease;
+            overflow-x: auto;
+        }
+        
+        .flow-step {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+            position: relative;
+            animation: popIn 0.8s ease;
+            animation-fill-mode: both;
+        }
+        
+        .flow-step:nth-child(1) { animation-delay: 0.2s; }
+        .flow-step:nth-child(2) { animation-delay: 0.4s; }
+        .flow-step:nth-child(3) { animation-delay: 0.6s; }
+        .flow-step:nth-child(4) { animation-delay: 0.8s; }
+        .flow-step:nth-child(5) { animation-delay: 1s; }
+        
+        .flow-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 30px rgba(99,102,241,0.3);
+            transition: all 0.4s;
+        }
+        
+        .flow-step:hover .flow-icon {
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 15px 40px rgba(99,102,241,0.5);
+        }
+        
+        .flow-arrow {
+            font-size: 2rem;
+            color: var(--primary);
+            margin: 0 1rem;
+        }
+        
+        .flow-label {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .flow-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        
+        .stats-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .stat-box {
+            background: var(--surface);
+            padding: 3rem 2rem;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 1s ease;
+            animation-fill-mode: both;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99,102,241,0.1), transparent);
+            transition: left 0.5s;
+        }
+        
+        .stat-box:hover::before {
+            left: 100%;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            border-color: var(--primary);
+        }
+        
+        .stat-box:nth-child(1) { animation-delay: 0.1s; }
+        .stat-box:nth-child(2) { animation-delay: 0.2s; }
+        .stat-box:nth-child(3) { animation-delay: 0.3s; }
+        
+        .stat-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .stat-number {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        
+        .gallery-section {
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .gallery-item {
+            aspect-ratio: 1;
+            background: var(--surface);
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s;
+            animation: scaleIn 0.8s ease;
+            animation-fill-mode: both;
+        }
+        
+        .gallery-item:nth-child(1) { animation-delay: 0.1s; }
+        .gallery-item:nth-child(2) { animation-delay: 0.2s; }
+        .gallery-item:nth-child(3) { animation-delay: 0.3s; }
+        .gallery-item:nth-child(4) { animation-delay: 0.4s; }
+        .gallery-item:nth-child(5) { animation-delay: 0.5s; }
+        .gallery-item:nth-child(6) { animation-delay: 0.6s; }
+        
+        .gallery-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            z-index: 10;
+        }
+        
+        .gallery-bg {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+        }
+        
+        .gallery-item:nth-child(1) .gallery-bg { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .gallery-item:nth-child(2) .gallery-bg { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .gallery-item:nth-child(3) .gallery-bg { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .gallery-item:nth-child(4) .gallery-bg { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .gallery-item:nth-child(5) .gallery-bg { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); }
+        .gallery-item:nth-child(6) .gallery-bg { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 1.5rem;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+        
+        .gallery-title {
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        
+        .roi-calculator-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            padding: 5rem 3rem;
+            border-radius: 30px;
+            color: white;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .roi-calculator-section::after {
+            content: '';
+            position: absolute;
+            bottom: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .roi-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .roi-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .roi-header h2 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+        
+        .roi-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .form-field label {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        
+        .form-field input {
+            padding: 1.3rem;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 12px;
+            font-size: 1.2rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .form-field input:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .form-field input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .roi-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .roi-card {
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.4);
+        }
+        
+        .roi-card-label {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+        
+        .roi-card-value {
+            font-size: 3.5rem;
+            font-weight: 900;
+        }
+        
+        .cta-finale {
+            text-align: center;
+            padding: 6rem 3rem;
+            background: var(--surface);
+            border-radius: 30px;
+            border: 2px solid var(--border);
+        }
+        
+        .cta-finale h2 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-finale p {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-btn {
+            display: inline-block;
+            padding: 1.8rem 4.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 60px;
+            font-weight: 900;
+            font-size: 1.3rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 15px 40px rgba(99,102,241,0.4);
+        }
+        
+        .cta-btn:hover {
+            transform: translateY(-8px) scale(1.08);
+            box-shadow: 0 25px 60px rgba(99,102,241,0.6);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .pipeline-flow { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); margin: 1rem 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1.5rem; }
+            .hero-section h1 { font-size: 2.5rem; }
+            .cta-finale h2 { font-size: 2.5rem; }
+            .roi-header h2 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <div class="brand">🎨 Visual Pipeline</div>
+            <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+        </nav>
+        
+        <section class="hero-section">
+            <h1><span class="gradient-text">OWD Visual Marketing</span></h1>
+            <p>Von der Idee zum viralen Visual — in Rekordzeit. Ihre Content-Pipeline auf Autopilot.</p>
+        </section>
+        
+        <div class="pipeline-flow">
+            <div class="flow-step">
+                <div class="flow-icon">💡</div>
+                <div class="flow-label">Konzept</div>
+                <div class="flow-desc">Briefing & Strategie</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="flow-icon">🎨</div>
+                <div class="flow-label">Design</div>
+                <div class="flow-desc">AI-gestützte Kreation</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="flow-icon">✨</div>
+                <div class="flow-label">Optimierung</div>
+                <div class="flow-desc">A/B-Testing & Refinement</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="flow-icon">📱</div>
+                <div class="flow-label">Publishing</div>
+                <div class="flow-desc">Multi-Channel Distribution</div>
+            </div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">
+                <div class="flow-icon">📊</div>
+                <div class="flow-label">Analytics</div>
+                <div class="flow-desc">Performance Tracking</div>
+            </div>
+        </div>
+        
+        <div class="stats-showcase">
+            <div class="stat-box">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-number" data-target="187">0</div>
+                <div class="stat-label">Visuals produziert/Monat</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">⏱️</div>
+                <div class="stat-number" data-target="73">0</div>
+                <div class="stat-label">% Schneller als manuell</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-number" data-target="4.2">0.0</div>
+                <div class="stat-label">Mio. Impressions Q1</div>
+            </div>
+        </div>
+        
+        <section class="gallery-section">
+            <h2 class="section-title">Aktuelle Projekte</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <div class="gallery-bg">📸</div>
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">Social Media Campaign</div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-bg">🎬</div>
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">Video Ads Serie</div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-bg">🖼️</div>
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">Brand Identity</div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-bg">✨</div>
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">Product Shots</div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-bg">🎨</div>
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">Influencer Content</div>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <div class="gallery-bg">🚀</div>
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">Launch Campaign</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="roi-calculator-section">
+            <div class="roi-content">
+                <div class="roi-header">
+                    <h2>Content-ROI Rechner</h2>
+                    <p style="font-size: 1.1rem; opacity: 0.95;">Berechnen Sie die Ersparnis durch automatisierte Visual-Produktion</p>
+                </div>
+                
+                <div class="roi-form">
+                    <div class="form-field">
+                        <label>Visuals pro Monat</label>
+                        <input type="number" id="visualsPerMonth" value="50" onchange="calculateContentROI()">
+                    </div>
+                    <div class="form-field">
+                        <label>Kosten pro Visual (€)</label>
+                        <input type="number" id="costPerVisual" value="120" onchange="calculateContentROI()">
+                    </div>
+                    <div class="form-field">
+                        <label>Zeitersparnis (%)</label>
+                        <input type="number" id="timeSavings" value="65" onchange="calculateContentROI()">
+                    </div>
+                    <div class="form-field">
+                        <label>Qualitätssteigerung (%)</label>
+                        <input type="number" id="qualityIncrease" value="40" onchange="calculateContentROI()">
+                    </div>
+                </div>
+                
+                <div class="roi-display">
+                    <div class="roi-card">
+                        <div class="roi-card-label">Monatliche Ersparnis</div>
+                        <div class="roi-card-value" id="monthlySavings">€3.9k</div>
+                    </div>
+                    <div class="roi-card">
+                        <div class="roi-card-label">Jährliche Ersparnis</div>
+                        <div class="roi-card-value" id="yearlySavings">€46.8k</div>
+                    </div>
+                    <div class="roi-card">
+                        <div class="roi-card-label">Extra Visuals/Jahr</div>
+                        <div class="roi-card-value" id="extraVisuals">234</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="cta-finale">
+            <h2>Bereit für die Content-Revolution?</h2>
+            <p>Lassen Sie uns gemeinsam Ihre Visual Marketing Pipeline auf das nächste Level bringen.</p>
+            <a href="mailto:janis@agic.me" class="cta-btn">Kostenloses Erstgespräch</a>
+        </section>
+    </div>
+    
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        }
+        
+        function animateNumber(el) {
+            const target = parseFloat(el.getAttribute('data-target'));
+            const isDecimal = target % 1 !== 0;
+            const duration = 2500;
+            const step = target / (duration / 16);
+            let current = 0;
+            
+            const interval = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    el.textContent = isDecimal ? target.toFixed(1) : target.toLocaleString('de-DE');
+                    clearInterval(interval);
+                } else {
+                    el.textContent = isDecimal ? current.toFixed(1) : Math.floor(current).toLocaleString('de-DE');
+                }
+            }, 16);
+        }
+        
+        function calculateContentROI() {
+            const visuals = parseFloat(document.getElementById('visualsPerMonth').value) || 0;
+            const cost = parseFloat(document.getElementById('costPerVisual').value) || 0;
+            const timeSave = parseFloat(document.getElementById('timeSavings').value) || 0;
+            const quality = parseFloat(document.getElementById('qualityIncrease').value) || 0;
+            
+            const currentCost = visuals * cost;
+            const savings = currentCost * (timeSave / 100);
+            const yearlySave = savings * 12;
+            const extraVisuals = Math.floor((visuals * (quality / 100)) * 12);
+            
+            document.getElementById('monthlySavings').textContent = '€' + (savings / 1000).toFixed(1) + 'k';
+            document.getElementById('yearlySavings').textContent = '€' + (yearlySave / 1000).toFixed(1) + 'k';
+            document.getElementById('extraVisuals').textContent = extraVisuals.toLocaleString('de-DE');
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.stat-number').forEach(el => animateNumber(el));
+            calculateContentROI();
+        });
+    </script>
+</body>
+</html>

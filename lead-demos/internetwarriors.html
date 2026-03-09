@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Channel Analytics - internetwarriors Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #0ea5e9;
+            --secondary: #6366f1;
+            --accent: #14b8a6;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        
+        [data-theme="dark"] {
+            --bg: #020617;
+            --surface: #0f172a;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+        
+        body {
+            font-family: 'Neue Haas', 'Helvetica Neue', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: all 0.3s;
+        }
+        
+        .wrapper {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border);
+            animation: fadeSlideDown 0.6s ease;
+        }
+        
+        .branding {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .theme-switcher {
+            background: var(--card);
+            border: 2px solid var(--border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .theme-switcher:hover {
+            border-color: var(--primary);
+            transform: scale(1.05);
+        }
+        
+        .page-header {
+            margin-bottom: 4rem;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .page-header h1 {
+            font-size: 4rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            line-height: 1;
+        }
+        
+        .page-header .tagline {
+            font-size: 1.5rem;
+            color: var(--text-muted);
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .metric-tile {
+            background: var(--card);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: scaleUp 0.8s ease;
+            animation-fill-mode: both;
+        }
+        
+        .metric-tile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .metric-tile:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+            border-color: var(--primary);
+        }
+        
+        .metric-tile:hover::before {
+            opacity: 1;
+        }
+        
+        .metric-tile:nth-child(1) { animation-delay: 0.1s; }
+        .metric-tile:nth-child(2) { animation-delay: 0.2s; }
+        .metric-tile:nth-child(3) { animation-delay: 0.3s; }
+        .metric-tile:nth-child(4) { animation-delay: 0.4s; }
+        
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+        
+        .metric-title {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+        }
+        
+        .metric-badge {
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .badge-green {
+            background: rgba(34,197,94,0.15);
+            color: var(--success);
+        }
+        
+        .badge-blue {
+            background: rgba(14,165,233,0.15);
+            color: var(--primary);
+        }
+        
+        .metric-figure {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+        
+        .metric-compare {
+            font-size: 1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .compare-positive { color: var(--success); }
+        .compare-negative { color: var(--danger); }
+        
+        .channels-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-head {
+            font-size: 2rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+        }
+        
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .channel-block {
+            background: var(--card);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            text-align: center;
+            transition: all 0.3s;
+            animation: popUp 0.7s ease;
+            animation-fill-mode: both;
+        }
+        
+        .channel-block:nth-child(1) { animation-delay: 0.1s; }
+        .channel-block:nth-child(2) { animation-delay: 0.2s; }
+        .channel-block:nth-child(3) { animation-delay: 0.3s; }
+        .channel-block:nth-child(4) { animation-delay: 0.4s; }
+        .channel-block:nth-child(5) { animation-delay: 0.5s; }
+        
+        .channel-block:hover {
+            transform: translateY(-6px);
+            border-color: var(--primary);
+        }
+        
+        .channel-emoji {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .channel-name {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .channel-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 2px solid var(--border);
+        }
+        
+        .channel-stat {
+            text-align: center;
+        }
+        
+        .channel-stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        
+        .channel-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .performance-chart {
+            background: var(--card);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            margin-bottom: 3rem;
+            animation: fadeIn 1.2s ease;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+        }
+        
+        .chart-legend {
+            display: flex;
+            gap: 2rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .legend-dot.blue { background: var(--primary); }
+        .legend-dot.purple { background: var(--secondary); }
+        .legend-dot.teal { background: var(--accent); }
+        
+        .bars-container {
+            display: flex;
+            gap: 1.5rem;
+            height: 300px;
+            align-items: flex-end;
+        }
+        
+        .bar-group {
+            flex: 1;
+            display: flex;
+            gap: 0.5rem;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .bars-wrapper {
+            display: flex;
+            gap: 0.3rem;
+            width: 100%;
+            height: 250px;
+            align-items: flex-end;
+        }
+        
+        .single-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--secondary));
+            border-radius: 6px 6px 0 0;
+            transition: all 0.3s;
+            animation: growBar 1.5s ease;
+            position: relative;
+        }
+        
+        .single-bar:hover {
+            opacity: 0.7;
+            transform: scaleY(1.05);
+        }
+        
+        .single-bar:nth-child(1) { background: linear-gradient(to top, var(--primary), #38bdf8); }
+        .single-bar:nth-child(2) { background: linear-gradient(to top, var(--secondary), #818cf8); }
+        .single-bar:nth-child(3) { background: linear-gradient(to top, var(--accent), #2dd4bf); }
+        
+        .bar-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+        }
+        
+        .calculator-box {
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            padding: 4rem 3rem;
+            border-radius: 30px;
+            color: white;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .calculator-box::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -20%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .calc-inner {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .calc-heading {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .calc-heading h2 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+        
+        .calc-heading p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+        }
+        
+        .calc-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .input-field label {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        
+        .input-field input {
+            padding: 1.3rem;
+            border: 2px solid rgba(255,255,255,0.35);
+            border-radius: 12px;
+            font-size: 1.15rem;
+            background: rgba(255,255,255,0.18);
+            color: white;
+            backdrop-filter: blur(12px);
+            transition: all 0.3s;
+        }
+        
+        .input-field input:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255,255,255,0.28);
+        }
+        
+        .input-field input::placeholder {
+            color: rgba(255,255,255,0.65);
+        }
+        
+        .calc-output {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+        }
+        
+        .output-box {
+            background: rgba(255,255,255,0.22);
+            backdrop-filter: blur(25px);
+            padding: 2.5rem;
+            border-radius: 18px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.35);
+        }
+        
+        .output-label {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            opacity: 0.93;
+        }
+        
+        .output-value {
+            font-size: 3.2rem;
+            font-weight: 900;
+        }
+        
+        .final-cta {
+            text-align: center;
+            padding: 6rem 3rem;
+            background: var(--card);
+            border-radius: 30px;
+            border: 2px solid var(--border);
+        }
+        
+        .final-cta h2 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+        }
+        
+        .final-cta p {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+        }
+        
+        .final-cta-btn {
+            display: inline-block;
+            padding: 1.8rem 5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 60px;
+            font-weight: 900;
+            font-size: 1.3rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 15px 45px rgba(14,165,233,0.4);
+        }
+        
+        .final-cta-btn:hover {
+            transform: translateY(-8px) scale(1.06);
+            box-shadow: 0 25px 65px rgba(14,165,233,0.6);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes scaleUp {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        
+        @keyframes popUp {
+            0% {
+                opacity: 0;
+                transform: scale(0.85);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes growBar {
+            from {
+                transform: scaleY(0);
+                transform-origin: bottom;
+            }
+            to {
+                transform: scaleY(1);
+                transform-origin: bottom;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .wrapper { padding: 1.5rem; }
+            .page-header h1 { font-size: 2.5rem; }
+            .final-cta h2 { font-size: 2.5rem; }
+            .calc-heading h2 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="topbar">
+            <div class="branding">🎯 Multi-Channel Analytics</div>
+            <div class="controls">
+                <button class="theme-switcher" onclick="toggleTheme()">🌓</button>
+            </div>
+        </div>
+        
+        <div class="page-header">
+            <h1>internetwarriors<br>360° Dashboard</h1>
+            <p class="tagline">Alle Ihre Marketing-Channels, eine zentrale Plattform</p>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-tile">
+                <div class="metric-header">
+                    <div class="metric-title">Gesamtreichweite</div>
+                    <div class="metric-badge badge-green">Live</div>
+                </div>
+                <div class="metric-figure" data-target="2847000">0</div>
+                <div class="metric-compare compare-positive">
+                    <span>▲</span>
+                    <span>+23% vs. letzter Monat</span>
+                </div>
+            </div>
+            
+            <div class="metric-tile">
+                <div class="metric-header">
+                    <div class="metric-title">Conversions</div>
+                    <div class="metric-badge badge-blue">+18%</div>
+                </div>
+                <div class="metric-figure" data-target="4521">0</div>
+                <div class="metric-compare compare-positive">
+                    <span>▲</span>
+                    <span>Über Target</span>
+                </div>
+            </div>
+            
+            <div class="metric-tile">
+                <div class="metric-header">
+                    <div class="metric-title">Avg. ROAS</div>
+                    <div class="metric-badge badge-green">Optimal</div>
+                </div>
+                <div class="metric-figure" data-target="5.3">0.0</div>
+                <div class="metric-compare compare-positive">
+                    <span>▲</span>
+                    <span>+0.7 vs. Q4</span>
+                </div>
+            </div>
+            
+            <div class="metric-tile">
+                <div class="metric-header">
+                    <div class="metric-title">Marketing Ausgaben</div>
+                    <div class="metric-badge badge-blue">Budget</div>
+                </div>
+                <div class="metric-figure" data-target="87500">€0</div>
+                <div class="metric-compare compare-positive">
+                    <span>▼</span>
+                    <span>-12% Optimierung</span>
+                </div>
+            </div>
+        </div>
+        
+        <section class="channels-section">
+            <h2 class="section-head">Channel Performance</h2>
+            <div class="channels-grid">
+                <div class="channel-block">
+                    <div class="channel-emoji">🔍</div>
+                    <div class="channel-name">Google Ads</div>
+                    <div class="channel-stats">
+                        <div class="channel-stat">
+                            <div class="channel-stat-value">1.2M</div>
+                            <div class="channel-stat-label">Impressions</div>
+                        </div>
+                        <div class="channel-stat">
+                            <div class="channel-stat-value">5.8x</div>
+                            <div class="channel-stat-label">ROAS</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="channel-block">
+                    <div class="channel-emoji">📘</div>
+                    <div class="channel-name">Meta Ads</div>
+                    <div class="channel-stats">
+                        <div class="channel-stat">
+                            <div class="channel-stat-value">890K</div>
+                            <div class="channel-stat-label">Impressions</div>
+                        </div>
+                        <div class="channel-stat">
+                            <div class="channel-stat-value">4.9x</div>
+                            <div class="channel-stat-label">ROAS</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="channel-block">
+                    <div class="channel-emoji">💼</div>
+                    <div class="channel-name">LinkedIn</div>
+                    <div class="channel-stats">
+                        <div class="channel-stat">
+                            <div class="channel-stat-value">420K</div>
+                            <div class="channel-stat-label">Impressions</div>
+                        </div>
+                        <div class="channel-stat">
+                            <div class="channel-stat-value">4.2x</div>
+                            <div class="channel-stat-label">ROAS</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="channel-block">
+                    <div class="channel-emoji">📧</div>
+                    <div class="channel-name">E-Mail</div>
+                    <div class="channel-stats">
+                        <div class="channel-stat">
+                            <div class="channel-stat-value">67K</div>
+                            <div class="channel-stat-label">Öffnungen</div>
+                        </div>
+                        <div class="channel-stat">
+                            <div class="channel-stat-value">8.4%</div>
+                            <div class="channel-stat-label">CTR</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="channel-block">
+                    <div class="channel-emoji">🎬</div>
+                    <div class="channel-name">YouTube</div>
+                    <div class="channel-stats">
+                        <div class="channel-stat">
+                            <div class="channel-stat-value">270K</div>
+                            <div class="channel-stat-label">Views</div>
+                        </div>
+                        <div class="channel-stat">
+                            <div class="channel-stat-value">3.8x</div>
+                            <div class="channel-stat-label">ROAS</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <div class="performance-chart">
+            <div class="chart-header">
+                <h3 class="chart-title">Quartal-Performance</h3>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-dot blue"></div>
+                        <span>Google</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot purple"></div>
+                        <span>Meta</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-dot teal"></div>
+                        <span>LinkedIn</span>
+                    </div>
+                </div>
+            </div>
+            <div class="bars-container">
+                <div class="bar-group">
+                    <div class="bars-wrapper">
+                        <div class="single-bar" style="height: 75%;"></div>
+                        <div class="single-bar" style="height: 62%;"></div>
+                        <div class="single-bar" style="height: 55%;"></div>
+                    </div>
+                    <div class="bar-label">Q1</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bars-wrapper">
+                        <div class="single-bar" style="height: 88%;"></div>
+                        <div class="single-bar" style="height: 71%;"></div>
+                        <div class="single-bar" style="height: 63%;"></div>
+                    </div>
+                    <div class="bar-label">Q2</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bars-wrapper">
+                        <div class="single-bar" style="height: 95%;"></div>
+                        <div class="single-bar" style="height: 84%;"></div>
+                        <div class="single-bar" style="height: 77%;"></div>
+                    </div>
+                    <div class="bar-label">Q3</div>
+                </div>
+                <div class="bar-group">
+                    <div class="bars-wrapper">
+                        <div class="single-bar" style="height: 100%;"></div>
+                        <div class="single-bar" style="height: 91%;"></div>
+                        <div class="single-bar" style="height: 85%;"></div>
+                    </div>
+                    <div class="bar-label">Q4</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="calculator-box">
+            <div class="calc-inner">
+                <div class="calc-heading">
+                    <h2>360° ROI-Rechner</h2>
+                    <p>Berechnen Sie das Potenzial Ihrer Multi-Channel Strategie</p>
+                </div>
+                
+                <div class="calc-inputs">
+                    <div class="input-field">
+                        <label>Monatliches Budget (€)</label>
+                        <input type="number" id="totalBudget" value="50000" onchange="calculateMultiROI()">
+                    </div>
+                    <div class="input-field">
+                        <label>Anzahl Channels</label>
+                        <input type="number" id="numChannels" value="5" onchange="calculateMultiROI()">
+                    </div>
+                    <div class="input-field">
+                        <label>Durchschn. ROAS</label>
+                        <input type="number" step="0.1" id="avgROAS" value="5.2" onchange="calculateMultiROI()">
+                    </div>
+                    <div class="input-field">
+                        <label">Synergy-Bonus (%)</label>
+                        <input type="number" id="synergyBonus" value="15" onchange="calculateMultiROI()">
+                    </div>
+                </div>
+                
+                <div class="calc-output">
+                    <div class="output-box">
+                        <div class="output-label">Monatlicher Revenue</div>
+                        <div class="output-value" id="monthRev">€260k</div>
+                    </div>
+                    <div class="output-box">
+                        <div class="output-label">Jährlicher Revenue</div>
+                        <div class="output-value" id="yearRev">€3.1M</div>
+                    </div>
+                    <div class="output-box">
+                        <div class="output-label">Netto-Gewinn</div>
+                        <div class="output-value" id="netProfit">€2.5M</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="final-cta">
+            <h2>Bereit für 360° Marketing Excellence?</h2>
+            <p>Lassen Sie uns gemeinsam Ihre Multi-Channel Strategie auf das nächste Level bringen.</p>
+            <a href="mailto:janis@agic.me" class="final-cta-btn">Kostenloses Strategie-Gespräch</a>
+        </div>
+    </div>
+    
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const curr = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', curr === 'dark' ? 'light' : 'dark');
+        }
+        
+        function animateCounter(elem) {
+            const target = parseFloat(elem.getAttribute('data-target'));
+            const isDecimal = target % 1 !== 0;
+            const duration = 2200;
+            const step = target / (duration / 16);
+            let current = 0;
+            
+            const interval = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    elem.textContent = isDecimal ? target.toFixed(1) : (target >= 1000 ? target.toLocaleString('de-DE') : target);
+                    clearInterval(interval);
+                } else {
+                    elem.textContent = isDecimal ? current.toFixed(1) : Math.floor(current).toLocaleString('de-DE');
+                }
+            }, 16);
+        }
+        
+        function calculateMultiROI() {
+            const budget = parseFloat(document.getElementById('totalBudget').value) || 0;
+            const channels = parseFloat(document.getElementById('numChannels').value) || 0;
+            const roas = parseFloat(document.getElementById('avgROAS').value) || 0;
+            const synergy = parseFloat(document.getElementById('synergyBonus').value) || 0;
+            
+            const baseRevenue = budget * roas;
+            const synergyBonus = baseRevenue * (synergy / 100);
+            const monthlyRev = baseRevenue + synergyBonus;
+            const yearlyRev = monthlyRev * 12;
+            const profit = yearlyRev - (budget * 12);
+            
+            document.getElementById('monthRev').textContent = '€' + (monthlyRev / 1000).toFixed(0) + 'k';
+            document.getElementById('yearRev').textContent = '€' + (yearlyRev / 1000000).toFixed(1) + 'M';
+            document.getElementById('netProfit').textContent = '€' + (profit / 1000000).toFixed(1) + 'M';
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.metric-figure').forEach(el => animateCounter(el));
+            calculateMultiROI();
+        });
+    </script>
+</body>
+</html>

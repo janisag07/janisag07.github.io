@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Intelligence - PROTEA Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #8b5cf6;
+            --secondary: #ec4899;
+            --success: #22c55e;
+            --warning: #f97316;
+            --info: #06b6d4;
+            --bg: #ffffff;
+            --surface: #fafafa;
+            --text: #18181b;
+            --text-muted: #71717a;
+            --border: #e4e4e7;
+        }
+        
+        [data-theme="dark"] {
+            --bg: #09090b;
+            --surface: #18181b;
+            --text: #fafafa;
+            --text-muted: #a1a1aa;
+            --border: #27272a;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: all 0.3s;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            animation: slideDown 0.6s ease;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        
+        .theme-toggle {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(180deg);
+            border-color: var(--primary);
+        }
+        
+        .hero {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .metric-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: fadeInUp 0.8s ease;
+            animation-fill-mode: both;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(139,92,246,0.15);
+            border-color: var(--primary);
+        }
+        
+        .metric-card.large { grid-column: span 3; }
+        .metric-card.wide { grid-column: span 6; }
+        .metric-card.full { grid-column: span 12; }
+        
+        .metric-card:nth-child(1) { animation-delay: 0.1s; }
+        .metric-card:nth-child(2) { animation-delay: 0.2s; }
+        .metric-card:nth-child(3) { animation-delay: 0.3s; }
+        .metric-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .metric-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .metric-icon.purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+        .metric-icon.pink { background: linear-gradient(135deg, #ec4899, #f472b6); }
+        .metric-icon.green { background: linear-gradient(135deg, #22c55e, #4ade80); }
+        .metric-icon.orange { background: linear-gradient(135deg, #f97316, #fb923c); }
+        
+        .metric-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-value {
+            font-size: 2.8rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 0.8rem;
+        }
+        
+        .metric-trend {
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .trend-up { color: var(--success); }
+        .trend-down { color: var(--warning); }
+        
+        .campaign-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 0.5rem;
+        }
+        
+        .campaign-table thead th {
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+        
+        .campaign-table tbody tr {
+            background: var(--surface);
+            transition: all 0.3s;
+        }
+        
+        .campaign-table tbody tr:hover {
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .campaign-table tbody td {
+            padding: 1.5rem 1rem;
+            border-top: 2px solid var(--border);
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .campaign-table tbody td:first-child {
+            border-left: 2px solid var(--border);
+            border-radius: 12px 0 0 12px;
+        }
+        
+        .campaign-table tbody td:last-child {
+            border-right: 2px solid var(--border);
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .campaign-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        
+        .campaign-status {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        
+        .status-active {
+            background: rgba(34,197,94,0.15);
+            color: var(--success);
+        }
+        
+        .status-paused {
+            background: rgba(249,115,22,0.15);
+            color: var(--warning);
+        }
+        
+        .channel-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .channel-card {
+            background: var(--surface);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .channel-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+        }
+        
+        .channel-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .channel-name {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .channel-metric {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        
+        .roi-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 4rem 3rem;
+            border-radius: 24px;
+            color: white;
+            margin: 3rem 0;
+            animation: fadeIn 1.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .roi-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .roi-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .roi-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 2.5rem;
+            text-align: center;
+        }
+        
+        .roi-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .roi-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .roi-input-group label {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .roi-input-group input {
+            padding: 1.2rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 12px;
+            font-size: 1.1rem;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+        }
+        
+        .roi-input-group input:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255,255,255,0.25);
+        }
+        
+        .roi-input-group input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .roi-results {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+        
+        .roi-result-card {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 16px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .roi-result-label {
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+            opacity: 0.95;
+            font-weight: 600;
+        }
+        
+        .roi-result-value {
+            font-size: 3rem;
+            font-weight: 900;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 5rem 2rem;
+            background: var(--surface);
+            border-radius: 24px;
+            border: 2px solid var(--border);
+            animation: fadeIn 1.4s ease;
+        }
+        
+        .cta-title {
+            font-size: 2.8rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 1.5rem 4rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 1.2rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 10px 30px rgba(139,92,246,0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(139,92,246,0.5);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .metric-card.large { grid-column: span 4; }
+            .metric-card.wide { grid-column: span 12; }
+            .roi-results { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .hero h1 { font-size: 2.5rem; }
+            .metric-card.large { grid-column: span 12; }
+            .roi-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">📊 Campaign Intelligence</div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+        </div>
+        
+        <div class="hero">
+            <h1>PROTEA Digital Marketing</h1>
+            <p>Echtzeit-Analytics für Ihre Multi-Channel-Kampagnen – Performance auf einen Blick</p>
+        </div>
+        
+        <div class="dashboard-grid">
+            <div class="metric-card large">
+                <div class="metric-icon purple">💰</div>
+                <div class="metric-label">Gesamt-ROAS</div>
+                <div class="metric-value" data-target="4.7">0.0</div>
+                <div class="metric-trend trend-up">
+                    <span>↗</span>
+                    <span>+18% vs. Q4</span>
+                </div>
+            </div>
+            
+            <div class="metric-card large">
+                <div class="metric-icon pink">👥</div>
+                <div class="metric-label">Leads generiert</div>
+                <div class="metric-value" data-target="1847">0</div>
+                <div class="metric-trend trend-up">
+                    <span>↗</span>
+                    <span>+32% MoM</span>
+                </div>
+            </div>
+            
+            <div class="metric-card large">
+                <div class="metric-icon green">💸</div>
+                <div class="metric-label">CPA (Ø)</div>
+                <div class="metric-value" data-target="24">0</div>
+                <div class="metric-trend trend-up">
+                    <span>↘</span>
+                    <span>-15% optimiert</span>
+                </div>
+            </div>
+            
+            <div class="metric-card large">
+                <div class="metric-icon orange">📈</div>
+                <div class="metric-label">Conv.-Rate</div>
+                <div class="metric-value" data-target="6.8">0.0</div>
+                <div class="metric-trend trend-up">
+                    <span>↗</span>
+                    <span>+2.1% WoW</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="metric-card full">
+            <h2 style="margin-bottom: 2rem; font-size: 1.5rem;">Aktive Kampagnen</h2>
+            <table class="campaign-table">
+                <thead>
+                    <tr>
+                        <th>Kampagne</th>
+                        <th>Channel</th>
+                        <th>Budget</th>
+                        <th>Ausgaben</th>
+                        <th>Leads</th>
+                        <th>ROAS</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="campaign-name">B2B Lead Gen Berlin</td>
+                        <td>Google Ads</td>
+                        <td>€12.500</td>
+                        <td>€9.847</td>
+                        <td>412</td>
+                        <td style="font-weight: 700; color: var(--success);">5.2x</td>
+                        <td><span class="campaign-status status-active">Aktiv</span></td>
+                    </tr>
+                    <tr>
+                        <td class="campaign-name">Social Branding Q1</td>
+                        <td>Meta Ads</td>
+                        <td>€8.000</td>
+                        <td>€7.234</td>
+                        <td>623</td>
+                        <td style="font-weight: 700; color: var(--success);">4.8x</td>
+                        <td><span class="campaign-status status-active">Aktiv</span></td>
+                    </tr>
+                    <tr>
+                        <td class="campaign-name">LinkedIn ABM</td>
+                        <td>LinkedIn</td>
+                        <td>€15.000</td>
+                        <td>€11.892</td>
+                        <td>287</td>
+                        <td style="font-weight: 700; color: var(--success);">3.9x</td>
+                        <td><span class="campaign-status status-active">Aktiv</span></td>
+                    </tr>
+                    <tr>
+                        <td class="campaign-name">Retargeting Winter</td>
+                        <td>Multi-Channel</td>
+                        <td>€5.500</td>
+                        <td>€2.186</td>
+                        <td>156</td>
+                        <td style="font-weight: 700; color: var(--warning);">2.3x</td>
+                        <td><span class="campaign-status status-paused">Pausiert</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="metric-card full">
+            <h2 style="margin-bottom: 2rem; font-size: 1.5rem;">Performance nach Channel</h2>
+            <div class="channel-overview">
+                <div class="channel-card">
+                    <div class="channel-icon">🔍</div>
+                    <div class="channel-name">Google Ads</div>
+                    <div class="channel-metric">€51.2k</div>
+                    <div style="color: var(--text-muted); margin-top: 0.5rem;">Revenue</div>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-icon">📘</div>
+                    <div class="channel-name">Meta Ads</div>
+                    <div class="channel-metric">€34.7k</div>
+                    <div style="color: var(--text-muted); margin-top: 0.5rem;">Revenue</div>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-icon">💼</div>
+                    <div class="channel-name">LinkedIn</div>
+                    <div class="channel-metric">€46.3k</div>
+                    <div style="color: var(--text-muted); margin-top: 0.5rem;">Revenue</div>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-icon">📧</div>
+                    <div class="channel-name">E-Mail</div>
+                    <div class="channel-metric">€18.9k</div>
+                    <div style="color: var(--text-muted); margin-top: 0.5rem;">Revenue</div>
+                </div>
+                <div class="channel-card">
+                    <div class="channel-icon">🎯</div>
+                    <div class="channel-name">Programmatic</div>
+                    <div class="channel-metric">€12.1k</div>
+                    <div style="color: var(--text-muted); margin-top: 0.5rem;">Revenue</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="roi-section">
+            <div class="roi-content">
+                <h2 class="roi-title">ROI-Rechner für Ihre Kampagnen</h2>
+                <div class="roi-grid">
+                    <div class="roi-input-group">
+                        <label>Monatliches Budget (€)</label>
+                        <input type="number" id="budget" value="25000" onchange="calculateROI()" placeholder="25000">
+                    </div>
+                    <div class="roi-input-group">
+                        <label>Erwarteter ROAS</label>
+                        <input type="number" step="0.1" id="roas" value="4.5" onchange="calculateROI()" placeholder="4.5">
+                    </div>
+                    <div class="roi-input-group">
+                        <label>Ø Lead-Wert (€)</label>
+                        <input type="number" id="leadValue" value="450" onchange="calculateROI()" placeholder="450">
+                    </div>
+                    <div class="roi-input-group">
+                        <label>Conversion-Rate (%)</label>
+                        <input type="number" step="0.1" id="convRate" value="6.5" onchange="calculateROI()" placeholder="6.5">
+                    </div>
+                </div>
+                
+                <div class="roi-results">
+                    <div class="roi-result-card">
+                        <div class="roi-result-label">Monatlicher Revenue</div>
+                        <div class="roi-result-value" id="monthlyRevenue">€112.5k</div>
+                    </div>
+                    <div class="roi-result-card">
+                        <div class="roi-result-label">Erwartete Leads</div>
+                        <div class="roi-result-value" id="expectedLeads">1,625</div>
+                    </div>
+                    <div class="roi-result-card">
+                        <div class="roi-result-label">Profit</div>
+                        <div class="roi-result-value" id="profit">€87.5k</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <h2 class="cta-title">Bereit für intelligentere Kampagnen?</h2>
+            <p class="cta-subtitle">Lassen Sie uns gemeinsam Ihre Digital Marketing Performance auf das nächste Level heben.</p>
+            <a href="mailto:janis@agic.me" class="cta-button">Kostenloses Strategy-Call buchen</a>
+        </div>
+    </div>
+    
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        }
+        
+        function animateValue(element) {
+            const target = parseFloat(element.getAttribute('data-target'));
+            const isDecimal = target % 1 !== 0;
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = isDecimal ? target.toFixed(1) : target.toLocaleString('de-DE');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = isDecimal ? current.toFixed(1) : Math.floor(current).toLocaleString('de-DE');
+                }
+            }, 16);
+        }
+        
+        function calculateROI() {
+            const budget = parseFloat(document.getElementById('budget').value) || 0;
+            const roas = parseFloat(document.getElementById('roas').value) || 0;
+            const leadValue = parseFloat(document.getElementById('leadValue').value) || 0;
+            const convRate = parseFloat(document.getElementById('convRate').value) || 0;
+            
+            const revenue = budget * roas;
+            const leads = (budget / leadValue) * (convRate / 100) * 100;
+            const profit = revenue - budget;
+            
+            document.getElementById('monthlyRevenue').textContent = '€' + (revenue / 1000).toFixed(1) + 'k';
+            document.getElementById('expectedLeads').textContent = Math.round(leads).toLocaleString('de-DE');
+            document.getElementById('profit').textContent = '€' + (profit / 1000).toFixed(1) + 'k';
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.metric-value').forEach(el => animateValue(el));
+            calculateROI();
+        });
+    </script>
+</body>
+</html>

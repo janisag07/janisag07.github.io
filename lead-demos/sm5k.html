@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Team Dashboard - SM5K Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #ffffff;
+            --surface: #f8fafc;
+            --text: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+        
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.6s ease;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .theme-toggle {
+            background: var(--surface);
+            border: 2px solid var(--border);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.9s ease;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            animation: fadeInUp 1s ease;
+            animation-fill-mode: both;
+            transition: all 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-color: var(--primary);
+        }
+        
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-change {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .stat-change.positive { color: var(--success); }
+        .stat-change.negative { color: var(--danger); }
+        
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .chart-card {
+            background: var(--surface);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            animation: fadeIn 1.2s ease;
+        }
+        
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        
+        .bar-chart {
+            display: flex;
+            gap: 1rem;
+            height: 250px;
+            align-items: flex-end;
+        }
+        
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--primary), var(--secondary));
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            animation: growUp 1.5s ease;
+            transition: all 0.3s;
+        }
+        
+        .bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.05);
+        }
+        
+        .bar-label {
+            position: absolute;
+            bottom: -30px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .bar-value {
+            position: absolute;
+            top: -30px;
+            width: 100%;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        
+        .progress-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .progress-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+        
+        .progress-bar {
+            height: 12px;
+            background: var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 6px;
+            animation: fillProgress 2s ease;
+            transition: width 0.5s;
+        }
+        
+        .roi-calculator {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 3rem;
+            border-radius: 16px;
+            color: white;
+            animation: fadeIn 1.4s ease;
+        }
+        
+        .roi-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .roi-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .input-group input {
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+        
+        .input-group input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .roi-result {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .roi-result-label {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            opacity: 0.9;
+        }
+        
+        .roi-result-value {
+            font-size: 3rem;
+            font-weight: 800;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: var(--surface);
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            animation: fadeIn 1.6s ease;
+        }
+        
+        .cta-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .cta-text {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 1.2rem 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(37,99,235,0.4);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes growUp {
+            from {
+                transform: scaleY(0);
+                transform-origin: bottom;
+            }
+            to {
+                transform: scaleY(1);
+                transform-origin: bottom;
+            }
+        }
+        
+        @keyframes fillProgress {
+            from { width: 0; }
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            h1 { font-size: 2rem; }
+            .charts-section { grid-template-columns: 1fr; }
+            .roi-inputs { grid-template-columns: 1fr; }
+            .header { flex-direction: column; gap: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">🤖 AI Team Dashboard</div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+        </div>
+        
+        <h1>SM5K KI-Workshop Analytics</h1>
+        <p class="subtitle">Echtzeit-Einblicke in Ihre KI-gestützten Mittelstands-Workshops</p>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Aktive Teilnehmer</div>
+                <div class="stat-value" data-target="247">0</div>
+                <div class="stat-change positive">↑ 23% vs. Vormonat</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Implementierte KI-Lösungen</div>
+                <div class="stat-value" data-target="68">0</div>
+                <div class="stat-change positive">↑ 41% Erfolgsrate</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Ø Effizienzsteigerung</div>
+                <div class="stat-value" data-target="34">0</div>
+                <div class="stat-change positive">↑ 8% über Ziel</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Gespartes Budget (€)</div>
+                <div class="stat-value" data-target="156000">0</div>
+                <div class="stat-change positive">↑ €42k dieser Monat</div>
+            </div>
+        </div>
+        
+        <div class="charts-section">
+            <div class="chart-card">
+                <div class="chart-title">Workshop-Teilnahme Q1 2026</div>
+                <div class="bar-chart">
+                    <div class="bar" style="height: 65%;">
+                        <div class="bar-value">52</div>
+                        <div class="bar-label">Jan</div>
+                    </div>
+                    <div class="bar" style="height: 82%;">
+                        <div class="bar-value">67</div>
+                        <div class="bar-label">Feb</div>
+                    </div>
+                    <div class="bar" style="height: 100%;">
+                        <div class="bar-value">82</div>
+                        <div class="bar-label">Mär</div>
+                    </div>
+                    <div class="bar" style="height: 45%;">
+                        <div class="bar-value">37</div>
+                        <div class="bar-label">Apr</div>
+                    </div>
+                    <div class="bar" style="height: 55%;">
+                        <div class="bar-value">45</div>
+                        <div class="bar-label">Mai</div>
+                    </div>
+                    <div class="bar" style="height: 70%;">
+                        <div class="bar-value">57</div>
+                        <div class="bar-label">Jun</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <div class="chart-title">KI-Tool Adoption</div>
+                <div class="progress-list">
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span>ChatGPT Enterprise</span>
+                            <span><strong>89%</strong></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 89%;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span>Midjourney Business</span>
+                            <span><strong>76%</strong></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 76%;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span>Custom AI Workflows</span>
+                            <span><strong>64%</strong></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 64%;"></div>
+                        </div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span>Zapier Automation</span>
+                            <span><strong>52%</strong></span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 52%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="roi-calculator">
+            <div class="roi-title">ROI-Rechner für Ihre Workshops</div>
+            <div class="roi-inputs">
+                <div class="input-group">
+                    <label>Anzahl Mitarbeiter</label>
+                    <input type="number" id="employees" value="50" onchange="calculateROI()">
+                </div>
+                <div class="input-group">
+                    <label>Workshop-Investment (€)</label>
+                    <input type="number" id="investment" value="12000" onchange="calculateROI()">
+                </div>
+                <div class="input-group">
+                    <label>Ø Stundenlohn (€)</label>
+                    <input type="number" id="hourlyRate" value="45" onchange="calculateROI()">
+                </div>
+                <div class="input-group">
+                    <label>Zeitersparnis/Woche (h)</label>
+                    <input type="number" id="timeSaved" value="8" onchange="calculateROI()">
+                </div>
+            </div>
+            <div class="roi-result">
+                <div class="roi-result-label">Jährlicher ROI</div>
+                <div class="roi-result-value" id="roiValue">783%</div>
+            </div>
+        </div>
+        
+        <div class="cta-section">
+            <div class="cta-title">Bereit für Ihre eigene KI-Transformation?</div>
+            <p class="cta-text">Lassen Sie uns gemeinsam Ihre individuelle Workshop-Strategie entwickeln.</p>
+            <a href="mailto:janis@agic.me" class="cta-button">Jetzt Beratungsgespräch buchen</a>
+        </div>
+    </div>
+    
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+        }
+        
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString('de-DE');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString('de-DE');
+                }
+            }, 16);
+        }
+        
+        function calculateROI() {
+            const employees = parseFloat(document.getElementById('employees').value) || 0;
+            const investment = parseFloat(document.getElementById('investment').value) || 0;
+            const hourlyRate = parseFloat(document.getElementById('hourlyRate').value) || 0;
+            const timeSaved = parseFloat(document.getElementById('timeSaved').value) || 0;
+            
+            const yearlyTimeSaved = timeSaved * 52;
+            const yearlySavings = employees * hourlyRate * yearlyTimeSaved;
+            const roi = ((yearlySavings - investment) / investment) * 100;
+            
+            document.getElementById('roiValue').textContent = Math.round(roi) + '%';
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.stat-value').forEach(el => animateCounter(el));
+            calculateROI();
+        });
+    </script>
+</body>
+</html>

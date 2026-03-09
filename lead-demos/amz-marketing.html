@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amazon Listing Optimizer - AMZ-Marketing Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #ff9900;
+            --secondary: #146eb4;
+            --success: #067d62;
+            --warning: #f08804;
+            --danger: #c7511f;
+            --bg: #ffffff;
+            --surface: #f3f3f3;
+            --card: #ffffff;
+            --text: #0f1111;
+            --text-muted: #565959;
+            --border: #d5d9d9;
+            --amazon: #ff9900;
+        }
+        
+        [data-theme="dark"] {
+            --bg: #131921;
+            --surface: #1e2936;
+            --card: #232f3e;
+            --text: #ffffff;
+            --text-muted: #aab7c4;
+            --border: #3a4553;
+        }
+        
+        body {
+            font-family: 'Amazon Ember', Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            transition: all 0.3s;
+        }
+        
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 0;
+            margin-bottom: 3rem;
+            border-bottom: 3px solid var(--amazon);
+            animation: slideDown 0.6s ease;
+        }
+        
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--amazon);
+            letter-spacing: -0.5px;
+        }
+        
+        .theme-toggle-btn {
+            background: var(--card);
+            border: 2px solid var(--border);
+            padding: 0.7rem 1.3rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle-btn:hover {
+            border-color: var(--amazon);
+            transform: scale(1.05);
+        }
+        
+        .hero {
+            text-align: center;
+            padding: 3rem 0 4rem;
+            animation: fadeIn 0.8s ease;
+        }
+        
+        .hero h1 {
+            font-size: 3.8rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        
+        .hero .highlight {
+            color: var(--amazon);
+        }
+        
+        .hero p {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .kpi-card {
+            background: var(--card);
+            padding: 2.5rem;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: scaleIn 0.8s ease;
+            animation-fill-mode: both;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--amazon), var(--secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s;
+        }
+        
+        .kpi-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            border-color: var(--amazon);
+        }
+        
+        .kpi-card:hover::after {
+            transform: scaleX(1);
+        }
+        
+        .kpi-card:nth-child(1) { animation-delay: 0.1s; }
+        .kpi-card:nth-child(2) { animation-delay: 0.2s; }
+        .kpi-card:nth-child(3) { animation-delay: 0.3s; }
+        .kpi-card:nth-child(4) { animation-delay: 0.4s; }
+        
+        .kpi-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .kpi-label {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+        }
+        
+        .kpi-value {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--text);
+            margin-bottom: 0.8rem;
+        }
+        
+        .kpi-change {
+            font-size: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .change-positive { color: var(--success); }
+        .change-negative { color: var(--danger); }
+        
+        .products-section {
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 2.5rem;
+        }
+        
+        .products-table {
+            width: 100%;
+            background: var(--card);
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        
+        .products-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .products-table thead {
+            background: var(--surface);
+        }
+        
+        .products-table thead th {
+            padding: 1.5rem 1rem;
+            text-align: left;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .products-table tbody tr {
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+        
+        .products-table tbody tr:hover {
+            background: var(--surface);
+        }
+        
+        .products-table tbody td {
+            padding: 1.5rem 1rem;
+            font-size: 1rem;
+        }
+        
+        .product-name {
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        
+        .badge-bestseller {
+            background: rgba(255,153,0,0.15);
+            color: var(--amazon);
+        }
+        
+        .badge-optimized {
+            background: rgba(6,125,98,0.15);
+            color: var(--success);
+        }
+        
+        .badge-pending {
+            background: rgba(240,136,4,0.15);
+            color: var(--warning);
+        }
+        
+        .insights-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+        
+        .insights-card {
+            background: var(--card);
+            padding: 3rem;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+        
+        .insights-title {
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-bars {
+            display: flex;
+            gap: 1rem;
+            height: 280px;
+            align-items: flex-end;
+            margin-bottom: 1rem;
+        }
+        
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(to top, var(--amazon), #ffad33);
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            animation: barGrow 1.5s ease;
+            transition: all 0.3s;
+        }
+        
+        .chart-bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.05);
+        }
+        
+        .chart-bar-value {
+            position: absolute;
+            top: -35px;
+            width: 100%;
+            text-align: center;
+            font-weight: 900;
+            font-size: 1rem;
+        }
+        
+        .chart-bar-label {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        
+        .top-keywords {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .keyword-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--surface);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .keyword-item:hover {
+            background: var(--border);
+            transform: translateX(5px);
+        }
+        
+        .keyword-name {
+            font-weight: 700;
+        }
+        
+        .keyword-rank {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--amazon);
+        }
+        
+        .roi-calculator {
+            background: linear-gradient(135deg, var(--amazon) 0%, var(--secondary) 100%);
+            padding: 4rem 3rem;
+            border-radius: 16px;
+            color: white;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .roi-calculator::before {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -15%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+        
+        .roi-inner {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .roi-title {
+            text-align: center;
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+        }
+        
+        .roi-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            margin-bottom: 3rem;
+            opacity: 0.95;
+        }
+        
+        .roi-inputs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .roi-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+        
+        .roi-field label {
+            font-weight: 800;
+            font-size: 1.05rem;
+        }
+        
+        .roi-field input {
+            padding: 1.3rem;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 10px;
+            font-size: 1.15rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        
+        .roi-field input:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .roi-field input::placeholder {
+            color: rgba(255,255,255,0.7);
+        }
+        
+        .roi-results {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+        }
+        
+        .roi-result-box {
+            background: rgba(255,255,255,0.25);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 14px;
+            text-align: center;
+            border: 2px solid rgba(255,255,255,0.4);
+        }
+        
+        .roi-result-label {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            opacity: 0.95;
+        }
+        
+        .roi-result-value {
+            font-size: 3.5rem;
+            font-weight: 900;
+        }
+        
+        .cta-section {
+            text-align: center;
+            padding: 6rem 3rem;
+            background: var(--card);
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        }
+        
+        .cta-section h2 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-section p {
+            font-size: 1.4rem;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 1.8rem 5rem;
+            background: linear-gradient(135deg, var(--amazon), #ffad33);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 900;
+            font-size: 1.3rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 15px 40px rgba(255,153,0,0.4);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-8px) scale(1.06);
+            box-shadow: 0 25px 60px rgba(255,153,0,0.6);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.85);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes barGrow {
+            from {
+                transform: scaleY(0);
+                transform-origin: bottom;
+            }
+            to {
+                transform: scaleY(1);
+                transform-origin: bottom;
+            }
+        }
+        
+        @media (max-width: 1024px) {
+            .insights-section { grid-template-columns: 1fr; }
+        }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1.5rem; }
+            .hero h1 { font-size: 2.5rem; }
+            .cta-section h2 { font-size: 2.5rem; }
+            .roi-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-bar">
+            <div class="logo">📦 AMZ Listing Optimizer</div>
+            <button class="theme-toggle-btn" onclick="toggleTheme()">🌓</button>
+        </div>
+        
+        <section class="hero">
+            <h1>Amazon Listing <span class="highlight">auf Autopilot</span></h1>
+            <p>KI-gestützte Optimierung für mehr Sichtbarkeit, höhere Conversion und maximalen Umsatz</p>
+        </section>
+        
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-icon">🚀</div>
+                <div class="kpi-label">Organische Sessions</div>
+                <div class="kpi-value" data-target="34200">0</div>
+                <div class="kpi-change change-positive">
+                    <span>↑</span>
+                    <span>+47% vs. Vormonat</span>
+                </div>
+            </div>
+            
+            <div class="kpi-card">
+                <div class="kpi-icon">💰</div>
+                <div class="kpi-label">Monatsumsatz</div>
+                <div class="kpi-value" data-target="187500">€0</div>
+                <div class="kpi-change change-positive">
+                    <span>↑</span>
+                    <span>+34% Wachstum</span>
+                </div>
+            </div>
+            
+            <div class="kpi-card">
+                <div class="kpi-icon">⭐</div>
+                <div class="kpi-label">Conversion Rate</div>
+                <div class="kpi-value" data-target="18.7">0.0</div>
+                <div class="kpi-change change-positive">
+                    <span>↑</span>
+                    <span>+5.2% über Durchschnitt</span>
+                </div>
+            </div>
+            
+            <div class="kpi-card">
+                <div class="kpi-icon">🏆</div>
+                <div class="kpi-label">BSR Ranking (Ø)</div>
+                <div class="kpi-value" data-target="247">0</div>
+                <div class="kpi-change change-positive">
+                    <span>↑</span>
+                    <span>Top 1% Kategorie</span>
+                </div>
+            </div>
+        </div>
+        
+        <section class="products-section">
+            <h2 class="section-title">Top-Performance Listings</h2>
+            <div class="products-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produkt</th>
+                            <th>ASIN</th>
+                            <th>Sessions</th>
+                            <th>Conv. Rate</th>
+                            <th>Umsatz</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="product-name">Premium Wireless Headphones</td>
+                            <td>B08X4M9WRL</td>
+                            <td>12.4k</td>
+                            <td style="font-weight: 700; color: var(--success);">21.3%</td>
+                            <td style="font-weight: 700;">€68.2k</td>
+                            <td><span class="badge badge-bestseller">Bestseller</span></td>
+                        </tr>
+                        <tr>
+                            <td class="product-name">Smart Fitness Tracker</td>
+                            <td>B09Y7N3KLP</td>
+                            <td>9.8k</td>
+                            <td style="font-weight: 700; color: var(--success);">19.7%</td>
+                            <td style="font-weight: 700;">€47.5k</td>
+                            <td><span class="badge badge-optimized">Optimiert</span></td>
+                        </tr>
+                        <tr>
+                            <td class="product-name">Portable Power Bank 20000mAh</td>
+                            <td>B07K5J8VNM</td>
+                            <td>7.2k</td>
+                            <td style="font-weight: 700; color: var(--success);">17.8%</td>
+                            <td style="font-weight: 700;">€31.8k</td>
+                            <td><span class="badge badge-optimized">Optimiert</span></td>
+                        </tr>
+                        <tr>
+                            <td class="product-name">LED Desk Lamp Pro</td>
+                            <td>B08D3GW9RT</td>
+                            <td>4.8k</td>
+                            <td style="font-weight: 700; color: var(--warning);">14.2%</td>
+                            <td style="font-weight: 700;">€18.1k</td>
+                            <td><span class="badge badge-pending">In Arbeit</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <div class="insights-section">
+            <div class="insights-card">
+                <h3 class="insights-title">Monatliche Sessions-Entwicklung</h3>
+                <div class="chart-bars">
+                    <div style="flex-direction: column; display: flex; flex: 1; align-items: center;">
+                        <div class="chart-bar" style="height: 55%;">
+                            <div class="chart-bar-value">18.2k</div>
+                        </div>
+                        <div class="chart-bar-label">Jan</div>
+                    </div>
+                    <div style="flex-direction: column; display: flex; flex: 1; align-items: center;">
+                        <div class="chart-bar" style="height: 68%;">
+                            <div class="chart-bar-value">22.5k</div>
+                        </div>
+                        <div class="chart-bar-label">Feb</div>
+                    </div>
+                    <div style="flex-direction: column; display: flex; flex: 1; align-items: center;">
+                        <div class="chart-bar" style="height: 82%;">
+                            <div class="chart-bar-value">27.1k</div>
+                        </div>
+                        <div class="chart-bar-label">Mär</div>
+                    </div>
+                    <div style="flex-direction: column; display: flex; flex: 1; align-items: center;">
+                        <div class="chart-bar" style="height: 100%;">
+                            <div class="chart-bar-value">33.0k</div>
+                        </div>
+                        <div class="chart-bar-label">Apr</div>
+                    </div>
+                    <div style="flex-direction: column; display: flex; flex: 1; align-items: center;">
+                        <div class="chart-bar" style="height: 75%;">
+                            <div class="chart-bar-value">24.8k</div>
+                        </div>
+                        <div class="chart-bar-label">Mai</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="insights-card">
+                <h3 class="insights-title">Top Keywords</h3>
+                <div class="top-keywords">
+                    <div class="keyword-item">
+                        <span class="keyword-name">wireless headphones</span>
+                        <span class="keyword-rank">#3</span>
+                    </div>
+                    <div class="keyword-item">
+                        <span class="keyword-name">bluetooth kopfhörer</span>
+                        <span class="keyword-rank">#7</span>
+                    </div>
+                    <div class="keyword-item">
+                        <span class="keyword-name">noise cancelling</span>
+                        <span class="keyword-rank">#12</span>
+                    </div>
+                    <div class="keyword-item">
+                        <span class="keyword-name">fitness tracker</span>
+                        <span class="keyword-rank">#5</span>
+                    </div>
+                    <div class="keyword-item">
+                        <span class="keyword-name">power bank 20000</span>
+                        <span class="keyword-rank">#9</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="roi-calculator">
+            <div class="roi-inner">
+                <h2 class="roi-title">Amazon ROI-Rechner</h2>
+                <p class="roi-subtitle">Berechnen Sie das Potenzial Ihrer optimierten Listings</p>
+                
+                <div class="roi-inputs-grid">
+                    <div class="roi-field">
+                        <label>Aktuelle Sessions/Monat</label>
+                        <input type="number" id="currentSessions" value="15000" onchange="calculateAmazonROI()">
+                    </div>
+                    <div class="roi-field">
+                        <label>Conversion-Rate (%)</label>
+                        <input type="number" step="0.1" id="conversionRate" value="12.5" onchange="calculateAmazonROI()">
+                    </div>
+                    <div class="roi-field">
+                        <label>Ø Warenkorbwert (€)</label>
+                        <input type="number" id="avgBasket" value="45" onchange="calculateAmazonROI()">
+                    </div>
+                    <div class="roi-field">
+                        <label">Optimierungs-Boost (%)</label>
+                        <input type="number" id="optimizationBoost" value="35" onchange="calculateAmazonROI()">
+                    </div>
+                </div>
+                
+                <div class="roi-results">
+                    <div class="roi-result-box">
+                        <div class="roi-result-label">Zusätzliche Sessions</div>
+                        <div class="roi-result-value" id="extraSessions">5.2k</div>
+                    </div>
+                    <div class="roi-result-box">
+                        <div class="roi-result-label">Monatl. Mehrumsatz</div>
+                        <div class="roi-result-value" id="extraRevenue">€29k</div>
+                    </div>
+                    <div class="roi-result-box">
+                        <div class="roi-result-label">Jahres-Potenzial</div>
+                        <div class="roi-result-value" id="yearlyPotential">€348k</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <section class="cta-section">
+            <h2>Bereit für mehr Amazon-Erfolg?</h2>
+            <p>Lassen Sie uns gemeinsam Ihre Listings auf das nächste Level optimieren.</p>
+            <a href="mailto:janis@agic.me" class="cta-button">Kostenloses Listing-Audit</a>
+        </section>
+    </div>
+    
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            html.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+        }
+        
+        function animateValue(element) {
+            const target = parseFloat(element.getAttribute('data-target'));
+            const isDecimal = target % 1 !== 0;
+            const duration = 2300;
+            const increment = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = isDecimal ? target.toFixed(1) : (target >= 1000 ? '€' + target.toLocaleString('de-DE') : target);
+                    clearInterval(timer);
+                } else {
+                    element.textContent = isDecimal ? current.toFixed(1) : Math.floor(current).toLocaleString('de-DE');
+                }
+            }, 16);
+        }
+        
+        function calculateAmazonROI() {
+            const sessions = parseFloat(document.getElementById('currentSessions').value) || 0;
+            const convRate = parseFloat(document.getElementById('conversionRate').value) || 0;
+            const basket = parseFloat(document.getElementById('avgBasket').value) || 0;
+            const boost = parseFloat(document.getElementById('optimizationBoost').value) || 0;
+            
+            const extraSessions = sessions * (boost / 100);
+            const extraOrders = extraSessions * (convRate / 100);
+            const monthlyExtra = extraOrders * basket;
+            const yearlyPotential = monthlyExtra * 12;
+            
+            document.getElementById('extraSessions').textContent = (extraSessions / 1000).toFixed(1) + 'k';
+            document.getElementById('extraRevenue').textContent = '€' + (monthlyExtra / 1000).toFixed(0) + 'k';
+            document.getElementById('yearlyPotential').textContent = '€' + (yearlyPotential / 1000).toFixed(0) + 'k';
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.kpi-value').forEach(el => animateValue(el));
+            calculateAmazonROI();
+        });
+    </script>
+</body>
+</html>
