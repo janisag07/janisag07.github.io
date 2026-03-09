@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+var path = window.location.pathname;
+var map = {
+  '/lead-demos/sm5k.html': '/sm5k.html',
+  '/lead-demos/protea.html': '/protea.html',
+  '/lead-demos/owd.html': '/owd.html',
+  '/lead-demos/internetwarriors.html': '/internetwarriors.html',
+  '/lead-demos/amz-marketing.html': '/amz-marketing.html'
+};
+if (map[path]) { window.location.replace(map[path]); }
+else { document.write('<h1>Page not found</h1><p><a href="/">Back to home</a></p>'); }
+</script>
+</head>
+<body></body>
+</html>
