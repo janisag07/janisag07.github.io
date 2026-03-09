@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DocBot AI — Intelligent Documentation Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #131824;
+            --bg-tertiary: #1a1f2e;
+            --accent-green: #00ff88;
+            --accent-red: #ff0055;
+            --accent-blue: #00d4ff;
+            --accent-purple: #b400ff;
+            --accent-ai: #ff00ff;
+            --accent-gold: #ffd700;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --text-muted: #718096;
+        }
+
+        html {
+            overflow-x: hidden;
+            overscroll-behavior: none;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        /* STICKY NAV */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 14, 23, 0.97);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+            z-index: 9999;
+            padding: 10px 0;
+            box-shadow: 0 5px 40px rgba(0, 255, 136, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00ff88, #00d4ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 10001;
+        }
+        .nav-hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--accent-green);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+        .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 4px;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+
+        .nav-tab {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 7px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .nav-tab:hover {
+            border-color: var(--accent-green);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            border-color: var(--accent-green);
+            color: var(--bg-primary);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .nav-hamburger { display: block; }
+            .nav-tabs {
+                display: none;
+                flex-direction: column;
+                gap: 6px;
+                margin-top: 12px;
+                padding: 0;
+            }
+            .nav-tabs.open { display: flex; }
+            .nav-tab {
+                text-align: center;
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            padding-top: 90px;
+            width: 100%;
+        }
+
+        .section {
+            display: none;
+            min-height: auto;
+            padding: 40px 15px 60px;
+            opacity: 0;
+            width: 100%;
+        }
+
+        .section.active {
+            display: block;
+            opacity: 1;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* AI BADGE */
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(90deg, var(--accent-ai), var(--accent-blue));
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
+        }
+
+        .ai-icon {
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #fff 30%, transparent 70%);
+            border-radius: 50%;
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* HERO */
+        .hero-content {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .hero-title {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 800;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-green) 50%, var(--accent-ai) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 3vw, 28px);
+            color: var(--text-secondary);
+            margin: 30px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-green);
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-ai));
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--accent-green);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        /* AI CHATBOT */
+        .ai-chatbot-container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: var(--bg-secondary);
+            border: 2px solid rgba(255, 0, 255, 0.4);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 60px rgba(255, 0, 255, 0.3);
+        }
+
+        .ai-chatbot-header {
+            background: linear-gradient(135deg, var(--accent-ai), var(--accent-purple));
+            padding: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-chatbot-messages {
+            padding: 25px;
+            min-height: 350px;
+            max-height: 450px;
+            overflow-y: auto;
+            background: var(--bg-tertiary);
+        }
+
+        .ai-message {
+            margin-bottom: 20px;
+            animation: messageSlideIn 0.4s ease;
+        }
+
+        @keyframes messageSlideIn {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .ai-message.user {
+            text-align: right;
+        }
+
+        .ai-message.user .message-bubble {
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));
+            color: var(--bg-primary);
+            margin-left: auto;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            padding: 14px 18px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            max-width: 85%;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .ai-chatbot-input {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ai-chatbot-input input {
+            flex: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 14px 20px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+        }
+
+        .ai-chatbot-input button {
+            background: linear-gradient(135deg, var(--accent-ai), var(--accent-purple));
+            border: none;
+            border-radius: 25px;
+            padding: 14px 30px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-prompts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 0 20px 20px;
+            background: var(--bg-secondary);
+        }
+
+        .quick-prompt {
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            color: var(--accent-ai);
+            padding: 12px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 44px;
+        }
+
+        /* API MODAL */
+        .api-key-trigger {
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px 10px;
+        }
+
+        .api-status {
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .api-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .api-modal.open {
+            display: flex;
+        }
+
+        .api-modal-content {
+            background: var(--bg-secondary);
+            border: 2px solid rgba(255, 0, 255, 0.4);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .api-modal-header {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent-ai), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .api-modal input {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .api-modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .api-modal-buttons button {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-connect {
+            background: linear-gradient(135deg, var(--accent-ai), var(--accent-purple));
+            color: #fff;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+        }
+
+        /* SECTION HEADERS */
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* PIPELINE */
+        .pipeline {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 40px 20px;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .pipeline-step {
+            text-align: center;
+            position: relative;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .pipeline-step::after {
+            content: '→';
+            position: absolute;
+            right: -35px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-ai);
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .pipeline-step:last-child::after {
+            display: none;
+        }
+
+        .pipeline-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .pipeline-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            .pipeline {
+                flex-direction: column;
+            }
+            .pipeline-step::after {
+                content: '↓';
+                top: auto;
+                bottom: -30px;
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+
+        /* CTA */
+        .cta-section {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(255, 0, 255, 0.1));
+            border-radius: 24px;
+            padding: 80px 40px;
+            text-align: center;
+            margin: 60px 0;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-ai));
+            color: #fff;
+            padding: 20px 60px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 50px rgba(0, 255, 136, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 60px rgba(255, 0, 255, 0.6);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-green);
+            border-radius: 4px;
+        }
+
+        .widget-preview {
+            background: var(--bg-tertiary);
+            border: 2px solid rgba(0, 255, 136, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 40px auto;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 255, 136, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <div class="nav-header">
+                <div class="nav-logo">📚 DocBot AI</div>
+                <button class="nav-hamburger" onclick="this.classList.toggle('open');document.querySelector('.nav-tabs').classList.toggle('open');">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-section="home">Home</button>
+                <button class="nav-tab" data-section="how-it-works">How It Works</button>
+                <button class="nav-tab" data-section="knowledge-base">Knowledge Base</button>
+                <button class="nav-tab" data-section="widget-preview">Widget Preview</button>
+                <button class="nav-tab" data-section="analytics">Analytics</button>
+                <button class="nav-tab" data-section="get-started">Get Started</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <!-- HOME SECTION -->
+        <section id="home" class="section active">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="ai-badge">
+                        <div class="ai-icon"></div>
+                        AI-Powered Documentation Assistant
+                    </div>
+                    <h1 class="hero-title">DocBot AI</h1>
+                    <p class="hero-subtitle">Intelligent Documentation Assistant for WordPress</p>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Docs Indexed</div>
+                            <div class="stat-value" id="docsIndexed">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Accuracy Rate</div>
+                            <div class="stat-value" id="accuracyRate">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Response Time</div>
+                            <div class="stat-value" id="responseTime">0s</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Support Tickets Reduced</div>
+                            <div class="stat-value" id="ticketsReduced">0%</div>
+                        </div>
+                    </div>
+
+                    <!-- AI CHAT BOT -->
+                    <div class="ai-chatbot-container">
+                        <div class="ai-chatbot-header">
+                            <div style="flex: 1;">🤖 DocBot AI Assistant</div>
+                            <span class="api-key-trigger" onclick="openAPIModal()">🔑</span>
+                            <span class="api-status" id="apiStatus">⚪ Demo Mode</span>
+                        </div>
+                        <div class="ai-chatbot-messages" id="chatMessages">
+                            <div class="ai-message">
+                                <div class="message-bubble">
+                                    👋 Hi! I'm DocBot AI. I search your entire documentation and return accurate answers with source links. Ask me anything about your docs!
+                                </div>
+                            </div>
+                        </div>
+                        <div class="quick-prompts">
+                            <button class="quick-prompt" onclick="sendQuickPrompt('How does DocBot search docs?')">How does DocBot search docs?</button>
+                            <button class="quick-prompt" onclick="sendQuickPrompt('What\'s the accuracy rate?')">What's the accuracy rate?</button>
+                            <button class="quick-prompt" onclick="sendQuickPrompt('Show me pricing')">Show me pricing</button>
+                        </div>
+                        <div class="ai-chatbot-input">
+                            <input type="text" id="chatInput" placeholder="Ask about documentation..." onkeypress="if(event.key==='Enter') sendMessage()">
+                            <button id="sendBtn" onclick="sendMessage()">Send</button>
+                        </div>
+                    </div>
+
+                    <!-- API MODAL -->
+                    <div class="api-modal" id="apiModal">
+                        <div class="api-modal-content">
+                            <div class="api-modal-header">🔑 Connect AI Engine</div>
+                            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 25px;">
+                                Enter your OpenAI API key for live AI responses (GPT-4o-mini).
+                            </div>
+                            <input type="password" id="apiKeyInput" placeholder="sk-proj-...">
+                            <div class="api-modal-buttons">
+                                <button class="btn-cancel" onclick="closeAPIModal()">Cancel</button>
+                                <button class="btn-connect" onclick="connectAPI()">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- HOW IT WORKS -->
+        <section id="how-it-works" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">🔍 How It Works</h2>
+                    <p class="section-subtitle">From question to accurate answer in seconds</p>
+                </div>
+
+                <div class="pipeline">
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon">❓</div>
+                        <h3>User Asks Question</h3>
+                        <p class="pipeline-label">"How do I reset password?"</p>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon">🔍</div>
+                        <h3>AI Searches Docs</h3>
+                        <p class="pipeline-label">Semantic search across all pages</p>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon">🧠</div>
+                        <h3>AI Processes Context</h3>
+                        <p class="pipeline-label">Understands intent + extracts answer</p>
+                    </div>
+                    <div class="pipeline-step">
+                        <div class="pipeline-icon">✅</div>
+                        <h3>Returns Answer + Source</h3>
+                        <p class="pipeline-label">Link to exact doc section</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">
+                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                        Example Query
+                    </h3>
+                    <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 12px; margin-bottom: 15px;">
+                        <div style="color: var(--accent-blue); font-weight: 600; margin-bottom: 10px;">User Question:</div>
+                        <div style="font-size: 14px; margin-bottom: 20px;">"How do I integrate PayPal into my WordPress store?"</div>
+                        <div style="color: var(--accent-green); font-weight: 600; margin-bottom: 10px;">DocBot Answer:</div>
+                        <div style="font-size: 14px; line-height: 1.8;">
+                            To integrate PayPal: Go to <strong>WooCommerce → Settings → Payments</strong>, enable PayPal, enter your API credentials from PayPal Developer Dashboard, and save changes. Test mode available for sandbox testing.<br><br>
+                            <a href="#" style="color: var(--accent-ai);">📄 Source: Payment Gateway Setup (Section 3.2)</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KNOWLEDGE BASE -->
+        <section id="knowledge-base" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">📚 Knowledge Base Stats</h2>
+                    <p class="section-subtitle">What DocBot knows about your documentation</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Pages Indexed</div>
+                        <div class="stat-value" id="pagesIndexed">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Topics Covered</div>
+                        <div class="stat-value" id="topicsCovered">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Code Snippets</div>
+                        <div class="stat-value" id="codeSnippets">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Update Frequency</div>
+                        <div class="stat-value" id="updateFrequency">24h</div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px;">
+                    <div class="card">
+                        <h4 class="card-title">🔧 Installation</h4>
+                        <p style="font-size: 14px; color: var(--text-secondary);">Setup guides, system requirements, troubleshooting</p>
+                    </div>
+                    <div class="card">
+                        <h4 class="card-title">⚙️ Configuration</h4>
+                        <p style="font-size: 14px; color: var(--text-secondary);">Settings, integrations, customization options</p>
+                    </div>
+                    <div class="card">
+                        <h4 class="card-title">🛡️ Security</h4>
+                        <p style="font-size: 14px; color: var(--text-secondary);">Authentication, permissions, SSL certificates</p>
+                    </div>
+                    <div class="card">
+                        <h4 class="card-title">💻 API Reference</h4>
+                        <p style="font-size: 14px; color: var(--text-secondary);">Endpoints, parameters, code examples</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- WIDGET PREVIEW -->
+        <section id="widget-preview" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">💬 WordPress Widget Preview</h2>
+                    <p class="section-subtitle">See how DocBot looks on your site</p>
+                </div>
+
+                <div class="widget-preview">
+                    <div style="background: linear-gradient(135deg, var(--accent-ai), var(--accent-purple)); padding: 15px; border-radius: 12px 12px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-weight: 700;">📚 DocBot Assistant</div>
+                        <button style="background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 30px; height: 30px; cursor: pointer; color: #fff; font-weight: 700;">✕</button>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 20px; min-height: 250px;">
+                        <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; margin-bottom: 15px; font-size: 13px;">
+                            👋 Hi! I can help you find answers in our documentation. Try asking: "How do I reset my password?"
+                        </div>
+                        <div style="background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); padding: 12px; border-radius: 12px; margin-left: auto; max-width: 80%; font-size: 13px; color: var(--bg-primary); text-align: right;">
+                            How do I reset password?
+                        </div>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 15px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 10px;">
+                        <input type="text" placeholder="Ask anything..." style="flex: 1; background: var(--bg-tertiary); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 10px 15px; color: var(--text-primary); font-size: 12px; outline: none;">
+                        <button style="background: linear-gradient(135deg, var(--accent-ai), var(--accent-purple)); border: none; border-radius: 20px; padding: 10px 20px; color: #fff; font-weight: 700; cursor: pointer; font-size: 12px;">Send</button>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 30px; color: var(--text-secondary); font-size: 14px;">
+                    ✅ Fully customizable colors & branding • Mobile-responsive • Position: bottom-right or bottom-left
+                </div>
+            </div>
+        </section>
+
+        <!-- ANALYTICS -->
+        <section id="analytics" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">📊 Analytics Dashboard</h2>
+                    <p class="section-subtitle">Track DocBot performance & user satisfaction</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Questions Answered</div>
+                        <div class="stat-value" id="questionsAnswered">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">User Satisfaction</div>
+                        <div class="stat-value" id="satisfaction">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Support Tickets Reduced</div>
+                        <div class="stat-value" id="ticketsReduced2">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Time Saved (Hours)</div>
+                        <div class="stat-value" id="timeSaved">0h</div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 40px;">
+                    <h3 class="card-title">
+                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                        Most Asked Questions
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent-green);">
+                            <div style="font-weight: 600; margin-bottom: 5px;">How do I reset my password?</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">1,247 asks • 98% accuracy</div>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent-blue);">
+                            <div style="font-weight: 600; margin-bottom: 5px;">How do I integrate PayPal?</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">892 asks • 96% accuracy</div>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px; border-left: 4px solid var(--accent-ai);">
+                            <div style="font-weight: 600; margin-bottom: 5px;">What are the system requirements?</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">678 asks • 99% accuracy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- GET STARTED -->
+        <section id="get-started" class="section">
+            <div class="container">
+                <div class="cta-section">
+                    <div class="ai-badge" style="margin-bottom: 30px;">
+                        <div class="ai-icon"></div>
+                        AI-POWERED DOCUMENTATION
+                    </div>
+                    <h2 style="font-size: clamp(28px, 4vw, 48px); font-weight: 800; margin-bottom: 30px;">Ready to Add DocBot to Your WordPress Site?</h2>
+                    <p style="font-size: 22px; color: var(--text-secondary); margin: 30px 0;">
+                        $1,000 one-time setup • Live in 3 days
+                    </p>
+                    <a href="mailto:janis@agic.me?subject=DocBot%20AI%20-%20WordPress%20Chatbot&body=Hi%20Janis,%0A%0AI'm%20interested%20in%20adding%20DocBot%20AI%20to%20my%20WordPress%20site.%0A%0ABest%20regards," class="cta-button">Get Started</a>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 80px;">
+                        <div>
+                            <div style="font-size: 14px; color: var(--accent-green); font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Day 1</div>
+                            <div style="font-size: 16px; color: var(--text-secondary);">Documentation Indexing</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; color: var(--accent-green); font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Day 2</div>
+                            <div style="font-size: 16px; color: var(--text-secondary);">Widget Installation & Testing</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 14px; color: var(--accent-ai); font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Day 3</div>
+                            <div style="font-size: 16px; color: var(--text-secondary);">Go Live + Training</div>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--bg-secondary); border-radius: 16px; padding: 40px; margin-top: 60px;">
+                        <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 30px;">What's Included</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; text-align: left;">
+                            <div style="display: flex; align-items: start; gap: 12px;">
+                                <span style="color: var(--accent-green); font-size: 20px;">✅</span>
+                                <span style="font-size: 15px; color: var(--text-secondary);">Full Documentation Indexing</span>
+                            </div>
+                            <div style="display: flex; align-items: start; gap: 12px;">
+                                <span style="color: var(--accent-green); font-size: 20px;">✅</span>
+                                <span style="font-size: 15px; color: var(--text-secondary);">Custom Branded Widget</span>
+                            </div>
+                            <div style="display: flex; align-items: start; gap: 12px;">
+                                <span style="color: var(--accent-green); font-size: 20px;">✅</span>
+                                <span style="font-size: 15px; color: var(--text-secondary);">WordPress Plugin Installation</span>
+                            </div>
+                            <div style="display: flex; align-items: start; gap: 12px;">
+                                <span style="color: var(--accent-green); font-size: 20px;">✅</span>
+                                <span style="font-size: 15px; color: var(--text-secondary);">Analytics Dashboard</span>
+                            </div>
+                            <div style="display: flex; align-items: start; gap: 12px;">
+                                <span style="color: var(--accent-green); font-size: 20px;">✅</span>
+                                <span style="font-size: 15px; color: var(--text-secondary);">Auto-Updates (24h sync)</span>
+                            </div>
+                            <div style="display: flex; align-items: start; gap: 12px;">
+                                <span style="color: var(--accent-green); font-size: 20px;">✅</span>
+                                <span style="font-size: 15px; color: var(--text-secondary);">30 Days Support</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // TAB NAVIGATION
+        const tabs = document.querySelectorAll('.nav-tab');
+        const sections = document.querySelectorAll('.section');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetSection = tab.dataset.section;
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(targetSection).classList.add('active');
+                document.querySelector('.nav-hamburger').classList.remove('open');
+                document.querySelector('.nav-tabs').classList.remove('open');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        // ANIMATED COUNTERS
+        function animateCounter(id, target, prefix = '', suffix = '') {
+            const element = document.getElementById(id);
+            const duration = 2000;
+            const steps = 60;
+            const increment = target / steps;
+            let current = 0;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+            }, duration / steps);
+        }
+
+        setTimeout(() => {
+            animateCounter('docsIndexed', 12450);
+            animateCounter('accuracyRate', 97, '', '%');
+            animateCounter('responseTime', 2, '', 's');
+            animateCounter('ticketsReduced', 68, '', '%');
+            animateCounter('pagesIndexed', 3847);
+            animateCounter('topicsCovered', 142);
+            animateCounter('codeSnippets', 1256);
+            animateCounter('questionsAnswered', 8942);
+            animateCounter('satisfaction', 94, '', '%');
+            animateCounter('ticketsReduced2', 68, '', '%');
+            animateCounter('timeSaved', 1240, '', 'h');
+        }, 500);
+
+        // API KEY MANAGEMENT
+        let apiKey = null;
+        let conversationHistory = [];
+
+        function openAPIModal() {
+            document.getElementById('apiModal').classList.add('open');
+        }
+
+        function closeAPIModal() {
+            document.getElementById('apiModal').classList.remove('open');
+        }
+
+        function connectAPI() {
+            const input = document.getElementById('apiKeyInput');
+            const key = input.value.trim();
+            if (!key || !key.startsWith('sk-')) {
+                alert('Invalid API key. OpenAI keys start with "sk-"');
+                return;
+            }
+            apiKey = key;
+            conversationHistory = [];
+            document.getElementById('apiStatus').innerHTML = '🟢 AI Connected';
+            input.value = '';
+            closeAPIModal();
+            const messagesContainer = document.getElementById('chatMessages');
+            const systemMsg = document.createElement('div');
+            systemMsg.className = 'ai-message';
+            systemMsg.innerHTML = `<div class="message-bubble" style="background: rgba(0, 255, 136, 0.1); border-left: 3px solid var(--accent-green);">✅ AI Connected! Now using GPT-4o-mini.</div>`;
+            messagesContainer.appendChild(systemMsg);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('apiModal');
+            if (e.target === modal) closeAPIModal();
+        });
+
+        // AI CHATBOT
+        const chatResponses = {
+            'how does docbot search docs?': {
+                text: 'DocBot uses semantic search powered by AI embeddings. When you ask a question, it searches all your documentation pages, finds the most relevant sections, and returns an accurate answer with a link to the source. Average response time: 2 seconds.'
+            },
+            'what\'s the accuracy rate?': {
+                text: 'DocBot achieves 97% accuracy rate across all queries. It understands natural language questions, extracts the right context from your docs, and provides answers that users can trust. Plus, every answer includes a source link for verification.'
+            },
+            'show me pricing': {
+                text: '$1,000 one-time setup. This includes: full documentation indexing, custom WordPress widget, analytics dashboard, and 30 days support. Auto-updates every 24h to keep answers fresh.'
+            },
+            'default': {
+                text: 'I help you add AI-powered documentation search to your WordPress site. Ask me about how DocBot works, accuracy rates, or pricing!'
+            }
+        };
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messagesContainer = document.getElementById('chatMessages');
+            const sendBtn = document.getElementById('sendBtn');
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'ai-message user';
+            userMsg.innerHTML = `<div class="message-bubble">${escapeHtml(message)}</div>`;
+            messagesContainer.appendChild(userMsg);
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            sendBtn.disabled = true;
+            sendBtn.textContent = 'Thinking...';
+
+            if (apiKey) {
+                await sendToOpenAI(message, messagesContainer);
+            } else {
+                setTimeout(() => {
+                    const key = message.toLowerCase();
+                    const response = chatResponses[key] || chatResponses['default'];
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = 'ai-message';
+                    aiMsg.innerHTML = `<div class="message-bubble">${response.text}</div>`;
+                    messagesContainer.appendChild(aiMsg);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = 'Send';
+                }, 1200);
+            }
+        }
+
+        async function sendToOpenAI(userMessage, messagesContainer) {
+            const sendBtn = document.getElementById('sendBtn');
+            try {
+                conversationHistory.push({ role: 'user', content: userMessage });
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            { role: 'system', content: 'You are DocBot AI, an intelligent documentation assistant for WordPress. You help explain how AI searches documentation, answers user questions, and reduces support tickets. Be concise and technical.' },
+                            ...conversationHistory
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 400
+                    })
+                });
+
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                const data = await response.json();
+                const aiResponse = data.choices[0].message.content;
+                conversationHistory.push({ role: 'assistant', content: aiResponse });
+
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'ai-message';
+                aiMsg.innerHTML = `<div class="message-bubble">${aiResponse.replace(/\n/g, '<br>')}</div>`;
+                messagesContainer.appendChild(aiMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } catch (error) {
+                console.error('OpenAI API Error:', error);
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'ai-message';
+                errorMsg.innerHTML = `<div class="message-bubble" style="background: rgba(255, 0, 85, 0.1);">❌ Error connecting to AI. Check your API key.</div>`;
+                messagesContainer.appendChild(errorMsg);
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = 'Send';
+            }
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function sendQuickPrompt(prompt) {
+            document.getElementById('chatInput').value = prompt;
+            sendMessage();
+        }
+    </script>
+</body>
+</html>

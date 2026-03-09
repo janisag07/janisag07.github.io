@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MachineIQ — AI-Powered Industrial Support</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #131824;
+            --bg-tertiary: #1a1f2e;
+            --accent-green: #00ff88;
+            --accent-red: #ff0055;
+            --accent-blue: #00d4ff;
+            --accent-purple: #b400ff;
+            --accent-ai: #ff00ff;
+            --accent-gold: #ffd700;
+            --accent-orange: #ff6b35;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --text-muted: #718096;
+        }
+
+        html {
+            overflow-x: hidden;
+            overscroll-behavior: none;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 14, 23, 0.97);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+            z-index: 9999;
+            padding: 10px 0;
+            box-shadow: 0 5px 40px rgba(255, 107, 53, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .nav-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 10001;
+        }
+        .nav-hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--accent-orange);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+        .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-bottom: 4px;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+
+        .nav-tab {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 7px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .nav-tab:hover {
+            border-color: var(--accent-orange);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-blue));
+            border-color: var(--accent-orange);
+            color: var(--bg-primary);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.4); }
+            50% { box-shadow: 0 0 35px rgba(255, 107, 53, 0.7); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-hamburger { display: block; }
+            .nav-tabs {
+                display: none;
+                flex-direction: column;
+                gap: 6px;
+                margin-top: 12px;
+                padding: 0;
+                overflow-x: visible;
+            }
+            .nav-tabs.open { display: flex; }
+            .nav-tab {
+                text-align: center;
+                padding: 10px 16px;
+                font-size: 13px;
+                border-radius: 12px;
+            }
+        }
+
+        .main-content {
+            padding-top: 90px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .section {
+            display: none;
+            min-height: auto;
+            padding: 40px 15px 60px;
+            opacity: 0;
+            transform: translateY(20px);
+            overflow: visible;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-blue));
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 25px rgba(255, 107, 53, 0.4);
+            animation: aiPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes aiPulse {
+            0%, 100% { box-shadow: 0 0 25px rgba(255, 107, 53, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(255, 107, 53, 0.7); }
+        }
+
+        .ai-icon {
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #fff 30%, transparent 70%);
+            border-radius: 50%;
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 800;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-orange) 50%, var(--accent-ai) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            position: relative;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 3vw, 28px);
+            color: var(--text-secondary);
+            margin: 30px 0;
+            font-weight: 300;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 107, 53, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            max-width: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-orange);
+            box-shadow: 0 10px 40px rgba(255, 107, 53, 0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-ai));
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--accent-orange);
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+        }
+
+        .ai-chatbot-container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: var(--bg-secondary);
+            border: 2px solid rgba(255, 107, 53, 0.4);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 60px rgba(255, 107, 53, 0.3);
+        }
+
+        .ai-chatbot-header {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            padding: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .ai-chatbot-header > div:first-child {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-chatbot-messages {
+            padding: 25px;
+            min-height: 350px;
+            max-height: 450px;
+            overflow-y: auto;
+            background: var(--bg-tertiary);
+        }
+
+        .ai-message {
+            margin-bottom: 20px;
+            animation: messageSlideIn 0.4s ease;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .ai-message.user {
+            text-align: right;
+        }
+
+        .ai-message.user .message-bubble {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            color: #fff;
+            margin-left: auto;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            padding: 14px 18px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            max-width: 85%;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .ai-chatbot-input {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            align-items: center;
+        }
+
+        .ai-chatbot-input input {
+            flex: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 14px 20px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 0;
+        }
+
+        .ai-chatbot-input input:focus {
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .ai-chatbot-input button {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            border: none;
+            border-radius: 25px;
+            padding: 14px 30px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .ai-chatbot-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5);
+        }
+
+        .quick-prompts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 0 20px 20px;
+            background: var(--bg-secondary);
+        }
+
+        .quick-prompt {
+            background: rgba(255, 107, 53, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.3);
+            color: var(--accent-orange);
+            padding: 12px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .quick-prompt:hover {
+            background: rgba(255, 107, 53, 0.2);
+            border-color: var(--accent-orange);
+        }
+
+        .api-key-trigger {
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .api-key-trigger:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .api-status {
+            font-size: 11px;
+            margin-left: 10px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .api-status.connected {
+            color: var(--accent-green);
+        }
+
+        .api-status.demo {
+            color: var(--text-muted);
+        }
+
+        .api-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .api-modal.open {
+            display: flex;
+        }
+
+        .api-modal-content {
+            background: var(--bg-secondary);
+            border: 2px solid rgba(255, 107, 53, 0.4);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 80px rgba(255, 107, 53, 0.3);
+        }
+
+        .api-modal-header {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .api-modal-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .api-modal input {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .api-modal input:focus {
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .api-modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .api-modal-buttons button {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .api-modal-buttons .btn-connect {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            color: #fff;
+        }
+
+        .api-modal-buttons .btn-connect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 53, 0.5);
+        }
+
+        .api-modal-buttons .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .api-modal-buttons .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            max-width: 100%;
+        }
+
+        .card:hover {
+            border-color: var(--accent-orange);
+            box-shadow: 0 8px 30px rgba(255, 107, 53, 0.15);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(255, 0, 255, 0.1));
+            border-radius: 24px;
+            padding: 80px 40px;
+            text-align: center;
+            margin: 60px 0;
+            max-width: 100%;
+        }
+
+        .cta-title {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-blue));
+            color: #fff;
+            padding: 20px 60px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 50px rgba(255, 107, 53, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 60px rgba(255, 107, 53, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .ai-chatbot-messages {
+                min-height: 300px;
+                max-height: 350px;
+            }
+            .message-bubble {
+                max-width: 90%;
+            }
+            .quick-prompt {
+                flex: 1 1 calc(50% - 4px);
+                min-width: calc(50% - 4px);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-orange);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <div class="nav-header">
+                <div class="nav-logo">
+                    <span>⚙️</span> MachineIQ
+                </div>
+                <button class="nav-hamburger" onclick="this.classList.toggle('open');document.querySelector('.nav-tabs').classList.toggle('open');">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-section="home">Home</button>
+                <button class="nav-tab" data-section="knowledge">Knowledge Base</button>
+                <button class="nav-tab" data-section="slack">Slack Bot</button>
+                <button class="nav-tab" data-section="media">Media Analysis</button>
+                <button class="nav-tab" data-section="analytics">Analytics</button>
+                <button class="nav-tab" data-section="get-started">Get Started</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section id="home" class="section active">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="ai-badge">
+                        <div class="ai-icon"></div>
+                        AI-Powered Industrial Support
+                    </div>
+                    <h1 class="hero-title">MachineIQ</h1>
+                    <p class="hero-subtitle">LLM-powered Slack bot for industrial troubleshooting — RAG + image/video analysis</p>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">
+                                <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                                Issues Resolved
+                            </div>
+                            <div class="stat-value" id="issues">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">
+                                <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                                Accuracy
+                            </div>
+                            <div class="stat-value" id="accuracy">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">
+                                <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                                Avg Response Time
+                            </div>
+                            <div class="stat-value" id="responseTime">0s</div>
+                        </div>
+                    </div>
+
+                    <div class="ai-chatbot-container">
+                        <div class="ai-chatbot-header">
+                            <div>
+                                <div class="ai-icon"></div>
+                                🤖 MachineIQ AI Assistant — Try It Live
+                            </div>
+                            <span class="api-key-trigger" onclick="openAPIModal()" title="Connect AI Engine">🔑</span>
+                            <span class="api-status demo" id="apiStatus">⚪ Demo Mode</span>
+                        </div>
+                        <div class="ai-chatbot-messages" id="chatMessages">
+                            <div class="ai-message">
+                                <div class="message-bubble">
+                                    👋 Hi! I'm MachineIQ. I help industrial teams troubleshoot equipment via Slack using RAG knowledge base + image/video analysis. Ask me anything!
+                                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                                        💡 <strong>Tip:</strong> Enter your OpenAI API key (click 🔑) for live AI responses!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="quick-prompts">
+                            <button class="quick-prompt" onclick="sendQuickPrompt('How does RAG knowledge base work?')">How does RAG knowledge base work?</button>
+                            <button class="quick-prompt" onclick="sendQuickPrompt('Can it analyze images?')">Can it analyze images?</button>
+                            <button class="quick-prompt" onclick="sendQuickPrompt('Show me a Slack conversation')">Show me a Slack conversation</button>
+                        </div>
+                        <div class="ai-chatbot-input">
+                            <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                            <button id="sendBtn" onclick="sendMessage()">Send</button>
+                        </div>
+                    </div>
+
+                    <div class="api-modal" id="apiModal">
+                        <div class="api-modal-content">
+                            <div class="api-modal-header">🔑 Connect AI Engine</div>
+                            <div class="api-modal-desc">
+                                Enter your OpenAI API key to enable live AI responses powered by GPT-4o-mini. Your key is never stored — used only for this session.
+                            </div>
+                            <input type="password" id="apiKeyInput" placeholder="sk-proj-..." autocomplete="off">
+                            <div class="api-modal-buttons">
+                                <button class="btn-cancel" onclick="closeAPIModal()">Cancel</button>
+                                <button class="btn-connect" onclick="connectAPI()">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="knowledge" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">📚 RAG Knowledge Base — Document Indexing & Retrieval</h2>
+                    <p class="section-subtitle">AI-powered semantic search across manuals, SOPs, and maintenance logs</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+                    <div class="card">
+                        <h3 class="card-title">
+                            <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                            Indexed Documents
+                        </h3>
+                        <div style="background: var(--bg-tertiary); border-radius: 8px; padding: 20px;">
+                            <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <div style="font-size: 14px; color: var(--text-secondary);">📄 Equipment Manuals</div>
+                                <div style="font-size: 20px; font-weight: 700; color: var(--accent-orange); margin-top: 5px;">47 PDFs</div>
+                            </div>
+                            <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <div style="font-size: 14px; color: var(--text-secondary);">🛠️ Maintenance SOPs</div>
+                                <div style="font-size: 20px; font-weight: 700; color: var(--accent-orange); margin-top: 5px;">23 Documents</div>
+                            </div>
+                            <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <div style="font-size: 14px; color: var(--text-secondary);">📋 Service Logs</div>
+                                <div style="font-size: 20px; font-weight: 700; color: var(--accent-orange); margin-top: 5px;">1,240 Entries</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 14px; color: var(--text-secondary);">🔧 Troubleshooting Guides</div>
+                                <div style="font-size: 20px; font-weight: 700; color: var(--accent-orange); margin-top: 5px;">18 Guides</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">
+                            <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                            RAG Retrieval Example
+                        </h3>
+                        <div style="font-family: 'Courier New', monospace; font-size: 13px; background: var(--bg-tertiary); border-radius: 8px; padding: 20px;">
+                            <div style="color: var(--accent-blue); margin-bottom: 10px;">🔍 User Query:</div>
+                            <div style="margin-bottom: 20px;">"Compressor overheating — what's the fix?"</div>
+                            
+                            <div style="color: var(--accent-orange); margin-bottom: 10px;">📚 Retrieved Documents:</div>
+                            <div style="background: rgba(255,107,53,0.1); border-left: 3px solid var(--accent-orange); padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+                                <strong>Manual XJ-420</strong> — Section 8.3<br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Relevance: 94%</span>
+                            </div>
+                            <div style="background: rgba(255,107,53,0.1); border-left: 3px solid var(--accent-orange); padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+                                <strong>Service Log #4728</strong> — 2024-08-12<br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Relevance: 87%</span>
+                            </div>
+                            <div style="background: rgba(255,107,53,0.1); border-left: 3px solid var(--accent-orange); padding: 10px; border-radius: 4px;">
+                                <strong>Troubleshooting Guide</strong> — Heat Issues<br>
+                                <span style="font-size: 11px; color: var(--text-muted);">Relevance: 82%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3 class="card-title">
+                            <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                            Performance Stats
+                        </h3>
+                        <div style="text-align: center;">
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 36px; font-weight: 800; color: var(--accent-orange);">92%</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">Retrieval Accuracy</div>
+                            </div>
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 36px; font-weight: 800; color: var(--accent-blue);">1.4s</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">Avg Retrieval Time</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 36px; font-weight: 800; color: var(--accent-green);">3.2M</div>
+                                <div style="font-size: 12px; color: var(--text-muted);">Vector DB Embeddings</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="slack" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">💬 Slack Bot — Troubleshooting Conversation Flow</h2>
+                    <p class="section-subtitle">Real-time support in your team's Slack workspace</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">
+                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                        Sample Troubleshooting Session
+                    </h3>
+                    <div style="background: #1a1d21; border-radius: 12px; padding: 30px; font-family: 'Courier New', monospace; font-size: 14px;">
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 32px; height: 32px; background: #36c5f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 700;">JD</div>
+                                <div>
+                                    <span style="font-weight: 700; color: #fff;">John Davis</span>
+                                    <span style="color: #999; font-size: 12px; margin-left: 8px;">14:23</span>
+                                </div>
+                            </div>
+                            <div style="color: #ddd;">@MachineIQ Compressor #4 is overheating again. What should I check?</div>
+                        </div>
+
+                        <div style="margin-bottom: 20px; background: rgba(54, 197, 240, 0.1); padding: 15px; border-radius: 8px; border-left: 3px solid #36c5f0;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue)); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px;">🤖</div>
+                                <div>
+                                    <span style="font-weight: 700; color: #36c5f0;">MachineIQ</span>
+                                    <span style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px; color: #aaa;">APP</span>
+                                    <span style="color: #999; font-size: 12px; margin-left: 8px;">14:23</span>
+                                </div>
+                            </div>
+                            <div style="color: #ddd; line-height: 1.8;">
+                                I found <strong style="color: #36c5f0;">3 relevant solutions</strong> from your knowledge base:<br><br>
+                                
+                                <strong style="color: #ff6b35;">📄 Manual XJ-420 (Section 8.3):</strong><br>
+                                Check coolant level (min 80%). Inspect air filters for blockage. Verify fan belt tension.<br><br>
+                                
+                                <strong style="color: #ff6b35;">🛠️ Service Log #4728 (Aug 12):</strong><br>
+                                Similar issue resolved by cleaning condenser coils and replacing thermal sensor.<br><br>
+                                
+                                <strong style="color: #00d4ff;">💡 Recommended Action:</strong><br>
+                                1. Check coolant level immediately<br>
+                                2. Inspect air filters<br>
+                                3. If issue persists, replace thermal sensor (Part #TS-8842)
+                            </div>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); font-size: 11px; color: #999;">
+                                📚 Sources: Manual XJ-420 • Service Log #4728 • Troubleshooting Guide
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 32px; height: 32px; background: #36c5f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 700;">JD</div>
+                                <div>
+                                    <span style="font-weight: 700; color: #fff;">John Davis</span>
+                                    <span style="color: #999; font-size: 12px; margin-left: 8px;">14:27</span>
+                                </div>
+                            </div>
+                            <div style="color: #ddd;">Coolant was at 60%. Topped it up. Thanks!</div>
+                        </div>
+
+                        <div style="background: rgba(0, 255, 136, 0.1); padding: 15px; border-radius: 8px; border-left: 3px solid var(--accent-green);">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue)); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px;">🤖</div>
+                                <div>
+                                    <span style="font-weight: 700; color: #36c5f0;">MachineIQ</span>
+                                    <span style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px; color: #aaa;">APP</span>
+                                    <span style="color: #999; font-size: 12px; margin-left: 8px;">14:28</span>
+                                </div>
+                            </div>
+                            <div style="color: #ddd;">
+                                ✅ <strong style="color: var(--accent-green);">Issue resolved!</strong> Low coolant was the cause. I've logged this to Service Log #4846 for future reference.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px;">
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-orange);">🔗 Slack Features</h4>
+                        <ul style="font-size: 14px; color: var(--text-secondary); line-height: 2;">
+                            <li>✅ @mention bot for help</li>
+                            <li>✅ Real-time RAG retrieval</li>
+                            <li>✅ Auto-logging resolved issues</li>
+                            <li>✅ Multi-channel support</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-orange);">📊 Resolution Stats</h4>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <div style="font-size: 36px; font-weight: 800; color: var(--accent-orange);">87%</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">First-Response Resolution</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-orange);">⚡ Speed</h4>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <div style="font-size: 36px; font-weight: 800; color: var(--accent-orange);">8.2s</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Avg Response Time</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="media" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">📸 Media Analysis — Image/Video Diagnostics</h2>
+                    <p class="section-subtitle">AI vision for visual troubleshooting via Slack uploads</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">
+                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                        Image Analysis Example
+                    </h3>
+                    <div style="background: #1a1d21; border-radius: 12px; padding: 30px;">
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                                <div style="width: 32px; height: 32px; background: #36c5f0; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 700;">MA</div>
+                                <div>
+                                    <span style="font-weight: 700; color: #fff;">Maria Alvarez</span>
+                                    <span style="color: #999; font-size: 12px; margin-left: 8px;">15:42</span>
+                                </div>
+                            </div>
+                            <div style="color: #ddd; margin-bottom: 10px;">@MachineIQ Check this leak:</div>
+                            <div style="background: #2f3136; border-radius: 8px; padding: 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1);">
+                                <div style="font-size: 48px; margin-bottom: 10px;">📷</div>
+                                <div style="color: #999; font-size: 13px;">pipe-leak.jpg (uploaded)</div>
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(54, 197, 240, 0.1); padding: 20px; border-radius: 8px; border-left: 3px solid #36c5f0;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                                <div style="width: 32px; height: 32px; background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue)); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px;">🤖</div>
+                                <div>
+                                    <span style="font-weight: 700; color: #36c5f0;">MachineIQ</span>
+                                    <span style="background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; font-size: 10px; margin-left: 6px; color: #aaa;">APP</span>
+                                    <span style="color: #999; font-size: 12px; margin-left: 8px;">15:43</span>
+                                </div>
+                            </div>
+                            <div style="color: #ddd; line-height: 1.8;">
+                                <strong style="color: #ff6b35;">🔍 Image Analysis:</strong><br><br>
+                                
+                                <strong>Detected Issue:</strong> Hydraulic fluid leak at pipe joint (Zone 3, Valve Assembly)<br><br>
+                                
+                                <strong>Severity:</strong> <span style="color: #ff0055;">🔴 HIGH</span> — Active leak detected<br><br>
+                                
+                                <strong>Cause:</strong> Worn O-ring seal (visible degradation in image)<br><br>
+                                
+                                <strong>Recommended Fix:</strong><br>
+                                1. Shut down hydraulic system immediately<br>
+                                2. Replace O-ring seal (Part #OR-2847)<br>
+                                3. Check adjacent joints for wear<br>
+                                4. Refill hydraulic fluid to correct level<br><br>
+                                
+                                <strong>Parts Required:</strong> O-Ring Kit #OR-2847 (Stock: 12 units)<br>
+                                <strong>Est. Repair Time:</strong> 45 minutes
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px;">
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-orange);">🎥 Supported Media</h4>
+                        <ul style="font-size: 14px; color: var(--text-secondary); line-height: 2;">
+                            <li>✅ Images (JPG, PNG, HEIC)</li>
+                            <li>✅ Videos (MP4, MOV up to 2min)</li>
+                            <li>✅ Multi-image comparison</li>
+                            <li>✅ Thermal imaging support</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-orange);">🧠 AI Capabilities</h4>
+                        <ul style="font-size: 14px; color: var(--text-secondary); line-height: 2;">
+                            <li>✅ Leak detection</li>
+                            <li>✅ Wear pattern analysis</li>
+                            <li>✅ Component identification</li>
+                            <li>✅ Severity assessment</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-orange);">📈 Accuracy</h4>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <div style="font-size: 36px; font-weight: 800; color: var(--accent-orange);">89%</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Visual Diagnosis Accuracy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analytics" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">📊 Analytics Dashboard</h2>
+                    <p class="section-subtitle">Track resolution time, accuracy, and most common issues</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px;">
+                    <div class="card">
+                        <div style="text-align: center;">
+                            <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">Total Issues Resolved</div>
+                            <div style="font-size: 42px; font-weight: 800; color: var(--accent-orange);">1,847</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div style="text-align: center;">
+                            <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">Avg Resolution Time</div>
+                            <div style="font-size: 42px; font-weight: 800; color: var(--accent-blue);">12.4 min</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">62% faster than manual</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div style="text-align: center;">
+                            <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">First-Response Accuracy</div>
+                            <div style="font-size: 42px; font-weight: 800; color: var(--accent-green);">92%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">
+                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                        Top 10 Most Common Issues (Last 30 Days)
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 14px;">1. Compressor Overheating</span>
+                            <span style="font-size: 18px; font-weight: 700; color: var(--accent-orange);">247</span>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 14px;">2. Hydraulic Leaks</span>
+                            <span style="font-size: 18px; font-weight: 700; color: var(--accent-orange);">189</span>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 14px;">3. Sensor Calibration</span>
+                            <span style="font-size: 18px; font-weight: 700; color: var(--accent-orange);">142</span>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 14px;">4. Belt Wear</span>
+                            <span style="font-size: 18px; font-weight: 700; color: var(--accent-orange);">128</span>
+                        </div>
+                        <div style="background: var(--bg-tertiary); padding: 15px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 14px;">5. Filter Blockage</span>
+                            <span style="font-size: 18px; font-weight: 700; color: var(--accent-orange);">107</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="get-started" class="section">
+            <div class="container">
+                <div class="cta-section">
+                    <div class="ai-badge" style="font-size: 14px; padding: 8px 20px; margin-bottom: 30px;">
+                        <div class="ai-icon"></div>
+                        AI-POWERED INDUSTRIAL SUPPORT
+                    </div>
+                    <h2 class="cta-title">Ready to deploy MachineIQ in your Slack?</h2>
+                    <p style="font-size: 22px; color: var(--text-secondary); margin: 30px 0;">
+                        Implementation: $2,000 USD — Live in 7 days
+                    </p>
+                    <a href="mailto:janis@agic.me?subject=MachineIQ%20Implementation&body=Hi%20Janis,%0A%0AI'm%20interested%20in%20MachineIQ%20for%20industrial%20support%20automation.%20Let's%20schedule%20a%2015-minute%20call.%0A%0ABest%20regards," class="cta-button">Book a 15-min Call</a>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 80px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 14px; color: var(--accent-orange); font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Day 1-3</div>
+                            <div style="font-size: 16px; color: var(--text-secondary);">RAG Knowledge Base Setup</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 14px; color: var(--accent-orange); font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Day 4-5</div>
+                            <div style="font-size: 16px; color: var(--text-secondary);">Slack Bot Integration</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 14px; color: var(--accent-orange); font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Day 6-7</div>
+                            <div style="font-size: 16px; color: var(--text-secondary);">Media Analysis + Testing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const tabs = document.querySelectorAll('.nav-tab');
+        const sections = document.querySelectorAll('.section');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetSection = tab.dataset.section;
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(targetSection).classList.add('active');
+                document.querySelector('.nav-hamburger').classList.remove('open');
+                document.querySelector('.nav-tabs').classList.remove('open');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        function animateCounter(id, target, prefix = "", suffix = "") {
+            const element = document.getElementById(id);
+            const duration = 2000;
+            const steps = 60;
+            const increment = target / steps;
+            let current = 0;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+            }, duration / steps);
+        }
+
+        setTimeout(() => {
+            animateCounter("issues", 1847);
+            animateCounter("accuracy", 92, "", "%");
+            animateCounter("responseTime", 8, "", "s");
+        }, 500);
+
+        let apiKey = null;
+        let conversationHistory = [];
+
+        function openAPIModal() {
+            document.getElementById("apiModal").classList.add("open");
+        }
+
+        function closeAPIModal() {
+            document.getElementById("apiModal").classList.remove("open");
+        }
+
+        function connectAPI() {
+            const input = document.getElementById("apiKeyInput");
+            const key = input.value.trim();
+            if (!key || !key.startsWith("sk-")) {
+                alert("Invalid API key format");
+                return;
+            }
+            apiKey = key;
+            conversationHistory = [];
+            document.getElementById("apiStatus").innerHTML = "🟢 AI Connected";
+            document.getElementById("apiStatus").className = "api-status connected";
+            input.value = "";
+            closeAPIModal();
+            const messagesContainer = document.getElementById("chatMessages");
+            const systemMsg = document.createElement("div");
+            systemMsg.className = "ai-message";
+            systemMsg.innerHTML = `<div class="message-bubble" style="background: rgba(255, 107, 53, 0.1); border-left: 3px solid var(--accent-orange);">✅ <strong>AI Connected!</strong> You're now using live GPT-4o-mini.</div>`;
+            messagesContainer.appendChild(systemMsg);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        document.addEventListener("click", (e) => {
+            const modal = document.getElementById("apiModal");
+            if (e.target === modal) closeAPIModal();
+        });
+
+        const chatResponses = {
+            "how does rag knowledge base work?": {
+                text: "MachineIQ uses RAG (Retrieval-Augmented Generation) to index your equipment manuals, SOPs, and service logs into a vector database. When a user asks a question, we search for relevant docs (semantic search), then feed them to GPT-4o-mini for context-aware answers. 92% retrieval accuracy."
+            },
+            "can it analyze images?": {
+                text: "Yes! MachineIQ supports image & video analysis via GPT-4 Vision. Upload a photo of a leak, worn part, or error code, and the AI will diagnose the issue, identify severity, and recommend fixes. We detect leaks, wear patterns, and component failures with 89% accuracy."
+            },
+            "show me a slack conversation": {
+                text: "Check the 'Slack Bot' tab above for a full conversation mockup showing how MachineIQ answers a troubleshooting question in Slack — with RAG retrieval, recommended actions, and auto-logging of resolved issues."
+            },
+            "default": {
+                text: "I help industrial teams troubleshoot equipment via Slack using RAG knowledge base + image/video analysis. Try asking: 'How does RAG knowledge base work?' or 'Can it analyze images?'"
+            }
+        };
+
+        async function sendMessage() {
+            const input = document.getElementById("chatInput");
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messagesContainer = document.getElementById("chatMessages");
+            const sendBtn = document.getElementById("sendBtn");
+
+            const userMsg = document.createElement("div");
+            userMsg.className = "ai-message user";
+            userMsg.innerHTML = `<div class="message-bubble">${escapeHtml(message)}</div>`;
+            messagesContainer.appendChild(userMsg);
+
+            input.value = "";
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            sendBtn.disabled = true;
+            const originalText = sendBtn.textContent;
+            sendBtn.innerHTML = `<span style="animation: pulse 1s infinite;">Thinking...</span>`;
+
+            if (apiKey) {
+                await sendToOpenAI(message, messagesContainer);
+            } else {
+                setTimeout(() => {
+                    const key = message.toLowerCase();
+                    const response = chatResponses[key] || chatResponses["default"];
+                    const aiMsg = document.createElement("div");
+                    aiMsg.className = "ai-message";
+                    aiMsg.innerHTML = `<div class="message-bubble">${response.text}</div>`;
+                    messagesContainer.appendChild(aiMsg);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = originalText;
+                }, 1200);
+            }
+        }
+
+        async function sendToOpenAI(userMessage, messagesContainer) {
+            const sendBtn = document.getElementById("sendBtn");
+            const originalText = "Send";
+            try {
+                conversationHistory.push({ role: "user", content: userMessage });
+                const response = await fetch("https://api.openai.com/v1/chat/completions", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: "gpt-4o-mini",
+                        messages: [
+                            { role: "system", content: "You are MachineIQ, an AI assistant for industrial troubleshooting. You help teams diagnose equipment issues via Slack using RAG knowledge base + image/video analysis. Be concise and helpful." },
+                            ...conversationHistory
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 400
+                    })
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                const data = await response.json();
+                const aiResponse = data.choices[0].message.content;
+                conversationHistory.push({ role: "assistant", content: aiResponse });
+                const aiMsg = document.createElement("div");
+                aiMsg.className = "ai-message";
+                aiMsg.innerHTML = `<div class="message-bubble">${formatAIResponse(aiResponse)}</div>`;
+                messagesContainer.appendChild(aiMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } catch (error) {
+                console.error("OpenAI API Error:", error);
+                const errorMsg = document.createElement("div");
+                errorMsg.className = "ai-message";
+                errorMsg.innerHTML = `<div class="message-bubble" style="background: rgba(255, 0, 85, 0.1); border-left: 3px solid var(--accent-red);">❌ <strong>Error:</strong> Failed to connect to OpenAI API.</div>`;
+                messagesContainer.appendChild(errorMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = originalText;
+            }
+        }
+
+        function formatAIResponse(text) {
+            return text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>").replace(/
+/g, "<br>");
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement("div");
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function sendQuickPrompt(prompt) {
+            document.getElementById("chatInput").value = prompt;
+            sendMessage();
+        }
+    </script>
+</body>
+</html>

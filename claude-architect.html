@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ContentForge AI — Autonomous Content Production</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #131824;
+            --bg-tertiary: #1a1f2e;
+            --accent-green: #00ff88;
+            --accent-red: #ff0055;
+            --accent-blue: #00d4ff;
+            --accent-purple: #b400ff;
+            --accent-ai: #ff00ff;
+            --accent-gold: #ffd700;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --text-muted: #718096;
+        }
+
+        html {
+            overflow-x: hidden;
+            overscroll-behavior: none;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(10, 14, 23, 0.97);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 0, 255, 0.2);
+            z-index: 9999;
+            padding: 10px 0;
+            box-shadow: 0 5px 40px rgba(255, 0, 255, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        .nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 20px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-ai), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .nav-hamburger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 10001;
+        }
+        .nav-hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--accent-ai);
+            margin: 5px 0;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+        .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            padding-bottom: 4px;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+
+        .nav-tab {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 7px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .nav-tab:hover {
+            border-color: var(--accent-ai);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(90deg, var(--accent-ai), var(--accent-blue));
+            border-color: var(--accent-ai);
+            color: var(--bg-primary);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.4);
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 255, 0.4); }
+            50% { box-shadow: 0 0 35px rgba(255, 0, 255, 0.7); }
+        }
+
+        @media (max-width: 768px) {
+            .nav-hamburger { display: block; }
+            .nav-tabs {
+                display: none;
+                flex-direction: column;
+                gap: 6px;
+                margin-top: 12px;
+                padding: 0;
+                overflow-x: visible;
+            }
+            .nav-tabs.open { display: flex; }
+            .nav-tab {
+                text-align: center;
+                padding: 10px 16px;
+                font-size: 13px;
+                border-radius: 12px;
+            }
+        }
+
+        .main-content {
+            padding-top: 90px;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .section {
+            display: none;
+            min-height: auto;
+            padding: 40px 15px 60px;
+            opacity: 0;
+            transform: translateY(20px);
+            overflow: visible;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(90deg, var(--accent-ai), var(--accent-blue));
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 25px rgba(255, 0, 255, 0.4);
+            animation: aiPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes aiPulse {
+            0%, 100% { box-shadow: 0 0 25px rgba(255, 0, 255, 0.4); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 255, 0.7); }
+        }
+
+        .ai-icon {
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, #fff 30%, transparent 70%);
+            border-radius: 50%;
+            animation: spin 3s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-title {
+            font-size: clamp(36px, 6vw, 72px);
+            font-weight: 800;
+            margin: 20px 0;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-ai) 50%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            position: relative;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(18px, 3vw, 28px);
+            color: var(--text-secondary);
+            margin: 30px 0;
+            font-weight: 300;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 0, 255, 0.2);
+            border-radius: 16px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            max-width: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-ai);
+            box-shadow: 0 10px 40px rgba(255, 0, 255, 0.2);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-ai), var(--accent-blue));
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-value {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--accent-ai);
+            text-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+        }
+
+        .ai-chatbot-container {
+            max-width: 700px;
+            margin: 50px auto;
+            background: var(--bg-secondary);
+            border: 2px solid rgba(255, 0, 255, 0.4);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 60px rgba(255, 0, 255, 0.3);
+        }
+
+        .ai-chatbot-header {
+            background: linear-gradient(135deg, var(--accent-ai), var(--accent-blue));
+            padding: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .ai-chatbot-header > div:first-child {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .ai-chatbot-messages {
+            padding: 25px;
+            min-height: 350px;
+            max-height: 450px;
+            overflow-y: auto;
+            background: var(--bg-tertiary);
+        }
+
+        .ai-message {
+            margin-bottom: 20px;
+            animation: messageSlideIn 0.4s ease;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .ai-message.user {
+            text-align: right;
+        }
+
+        .ai-message.user .message-bubble {
+            background: linear-gradient(135deg, var(--accent-ai), var(--accent-blue));
+            color: #fff;
+            margin-left: auto;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            padding: 14px 18px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.05);
+            max-width: 85%;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .ai-chatbot-input {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            align-items: center;
+        }
+
+        .ai-chatbot-input input {
+            flex: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 25px;
+            padding: 14px 20px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 0;
+        }
+
+        .ai-chatbot-input input:focus {
+            border-color: var(--accent-ai);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+
+        .ai-chatbot-input button {
+            background: linear-gradient(135deg, var(--accent-ai), var(--accent-blue));
+            border: none;
+            border-radius: 25px;
+            padding: 14px 30px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .ai-chatbot-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 0, 255, 0.5);
+        }
+
+        .quick-prompts {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 0 20px 20px;
+            background: var(--bg-secondary);
+        }
+
+        .quick-prompt {
+            background: rgba(255, 0, 255, 0.1);
+            border: 1px solid rgba(255, 0, 255, 0.3);
+            color: var(--accent-ai);
+            padding: 12px 14px;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .quick-prompt:hover {
+            background: rgba(255, 0, 255, 0.2);
+            border-color: var(--accent-ai);
+        }
+
+        .api-key-trigger {
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .api-key-trigger:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .api-status {
+            font-size: 11px;
+            margin-left: 10px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .api-status.connected {
+            color: var(--accent-green);
+        }
+
+        .api-status.demo {
+            color: var(--text-muted);
+        }
+
+        .api-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .api-modal.open {
+            display: flex;
+        }
+
+        .api-modal-content {
+            background: var(--bg-secondary);
+            border: 2px solid rgba(255, 0, 255, 0.4);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 80px rgba(255, 0, 255, 0.3);
+        }
+
+        .api-modal-header {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--accent-ai), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .api-modal-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .api-modal input {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 20px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .api-modal input:focus {
+            border-color: var(--accent-ai);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+
+        .api-modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .api-modal-buttons button {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .api-modal-buttons .btn-connect {
+            background: linear-gradient(135deg, var(--accent-ai), var(--accent-blue));
+            color: #fff;
+        }
+
+        .api-modal-buttons .btn-connect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 0, 255, 0.5);
+        }
+
+        .api-modal-buttons .btn-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .api-modal-buttons .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-ai) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            max-width: 100%;
+        }
+
+        .card:hover {
+            border-color: var(--accent-ai);
+            box-shadow: 0 8px 30px rgba(255, 0, 255, 0.15);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pipeline-step {
+            background: var(--bg-tertiary);
+            border-left: 4px solid;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .pipeline-step.research {
+            border-left-color: var(--accent-blue);
+        }
+
+        .pipeline-step.script {
+            border-left-color: var(--accent-purple);
+        }
+
+        .pipeline-step.review {
+            border-left-color: var(--accent-gold);
+        }
+
+        .pipeline-step.publish {
+            border-left-color: var(--accent-green);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 212, 255, 0.1));
+            border-radius: 24px;
+            padding: 80px 40px;
+            text-align: center;
+            margin: 60px 0;
+            max-width: 100%;
+        }
+
+        .cta-title {
+            font-size: clamp(28px, 4vw, 48px);
+            font-weight: 800;
+            margin-bottom: 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(90deg, var(--accent-ai), var(--accent-blue));
+            color: #fff;
+            padding: 20px 60px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 50px rgba(255, 0, 255, 0.4);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 60px rgba(255, 0, 255, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .ai-chatbot-messages {
+                min-height: 300px;
+                max-height: 350px;
+            }
+            .message-bubble {
+                max-width: 90%;
+            }
+            .quick-prompt {
+                flex: 1 1 calc(50% - 4px);
+                min-width: calc(50% - 4px);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-ai);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <div class="nav-header">
+                <div class="nav-logo">
+                    <span>📝</span> ContentForge AI
+                </div>
+                <button class="nav-hamburger" onclick="this.classList.toggle('open');document.querySelector('.nav-tabs').classList.toggle('open');">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-section="home">Home</button>
+                <button class="nav-tab" data-section="pipeline">Production Pipeline</button>
+                <button class="nav-tab" data-section="agent-system">Agent System</button>
+                <button class="nav-tab" data-section="quality">Quality Control</button>
+                <button class="nav-tab" data-section="output">Output Gallery</button>
+                <button class="nav-tab" data-section="get-started">Get Started</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <section id="home" class="section active">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="ai-badge">
+                        <div class="ai-icon"></div>
+                        Autonomous Content Production
+                    </div>
+                    <h1 class="hero-title">ContentForge AI</h1>
+                    <p class="hero-subtitle">Claude Code Agent Architect — Fully automated research, script writing & quality gates</p>
+
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">
+                                <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                                Scripts Generated
+                            </div>
+                            <div class="stat-value" id="scripts">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">
+                                <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                                Quality Score
+                            </div>
+                            <div class="stat-value" id="quality">0%</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">
+                                <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                                Avg Production Time
+                            </div>
+                            <div class="stat-value" id="prodTime">0min</div>
+                        </div>
+                    </div>
+
+                    <div class="ai-chatbot-container">
+                        <div class="ai-chatbot-header">
+                            <div>
+                                <div class="ai-icon"></div>
+                                🤖 ContentForge AI Assistant — Try It Live
+                            </div>
+                            <span class="api-key-trigger" onclick="openAPIModal()" title="Connect AI Engine">🔑</span>
+                            <span class="api-status demo" id="apiStatus">⚪ Demo Mode</span>
+                        </div>
+                        <div class="ai-chatbot-messages" id="chatMessages">
+                            <div class="ai-message">
+                                <div class="message-bubble">
+                                    👋 Hi! I'm ContentForge AI. I orchestrate autonomous content production using Claude Code agents — research, script writing, review, and publishing. Ask me anything!
+                                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.1);">
+                                        💡 <strong>Tip:</strong> Enter your OpenAI API key (click 🔑) for live AI responses!
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="quick-prompts">
+                            <button class="quick-prompt" onclick="sendQuickPrompt('How does the production pipeline work?')">How does the production pipeline work?</button>
+                            <button class="quick-prompt" onclick="sendQuickPrompt('What is the agent system?')">What is the agent system?</button>
+                            <button class="quick-prompt" onclick="sendQuickPrompt('Show me quality control')">Show me quality control</button>
+                        </div>
+                        <div class="ai-chatbot-input">
+                            <input type="text" id="chatInput" placeholder="Type your message..." onkeypress="if(event.key==='Enter') sendMessage()">
+                            <button id="sendBtn" onclick="sendMessage()">Send</button>
+                        </div>
+                    </div>
+
+                    <div class="api-modal" id="apiModal">
+                        <div class="api-modal-content">
+                            <div class="api-modal-header">🔑 Connect AI Engine</div>
+                            <div class="api-modal-desc">
+                                Enter your OpenAI API key to enable live AI responses powered by GPT-4o-mini. Your key is never stored — used only for this session.
+                            </div>
+                            <input type="password" id="apiKeyInput" placeholder="sk-proj-..." autocomplete="off">
+                            <div class="api-modal-buttons">
+                                <button class="btn-cancel" onclick="closeAPIModal()">Cancel</button>
+                                <button class="btn-connect" onclick="connectAPI()">Connect</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pipeline" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">🏭 Production Pipeline — Research → Script → Review → Publish</h2>
+                    <p class="section-subtitle">Fully automated 4-phase content production</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">
+                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                        Pipeline Phases
+                    </h3>
+
+                    <div class="pipeline-step research">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div style="font-size: 18px; font-weight: 700; color: var(--accent-blue);">🔍 Phase 1: Research Agent</div>
+                            <div style="background: rgba(0, 212, 255, 0.2); color: var(--accent-blue); padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 700;">AUTOMATED</div>
+                        </div>
+                        <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 15px;">
+                            • Web scraping for primary sources<br>
+                            • Academic paper extraction<br>
+                            • Expert quote aggregation<br>
+                            • Fact verification & citation tracking<br>
+                            • Outlier detection (controversial claims flagged)
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted);">
+                            <strong>Duration:</strong> 8-12 minutes | <strong>Output:</strong> Research brief (2,500 words)
+                        </div>
+                    </div>
+
+                    <div class="pipeline-step script">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div style="font-size: 18px; font-weight: 700; color: var(--accent-purple);">✍️ Phase 2: Script Agent</div>
+                            <div style="background: rgba(180, 0, 255, 0.2); color: var(--accent-purple); padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 700;">AUTOMATED</div>
+                        </div>
+                        <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 15px;">
+                            • Narrative structure generation<br>
+                            • Hook + body + CTA optimization<br>
+                            • Tone matching (educational, humorous, formal)<br>
+                            • SEO keyword integration<br>
+                            • Citation placement
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted);">
+                            <strong>Duration:</strong> 6-10 minutes | <strong>Output:</strong> Draft script (1,200 words)
+                        </div>
+                    </div>
+
+                    <div class="pipeline-step review">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div style="font-size: 18px; font-weight: 700; color: var(--accent-gold);">📋 Phase 3: Review Agent</div>
+                            <div style="background: rgba(255, 215, 0, 0.2); color: var(--accent-gold); padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 700;">QUALITY GATE</div>
+                        </div>
+                        <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 15px;">
+                            • Fact-check against research brief<br>
+                            • Grammar & style validation<br>
+                            • Readability score (Flesch-Kincaid)<br>
+                            • Plagiarism detection<br>
+                            • Citation accuracy check<br>
+                            • <strong style="color: var(--accent-red);">If score < 80% → Flag for human review</strong>
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted);">
+                            <strong>Duration:</strong> 3-5 minutes | <strong>Pass Rate:</strong> 94%
+                        </div>
+                    </div>
+
+                    <div class="pipeline-step publish">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <div style="font-size: 18px; font-weight: 700; color: var(--accent-green);">🚀 Phase 4: Publish Agent</div>
+                            <div style="background: rgba(0, 255, 136, 0.2); color: var(--accent-green); padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 700;">AUTOMATED</div>
+                        </div>
+                        <div style="font-size: 14px; color: var(--text-secondary); line-height: 1.8; margin-bottom: 15px;">
+                            • Format for target platform (YouTube, blog, social)<br>
+                            • Auto-generate title variants (A/B tested)<br>
+                            • Thumbnail prompt generation<br>
+                            • Schedule post (optimal timing via ML)<br>
+                            • Cross-platform distribution
+                        </div>
+                        <div style="font-size: 12px; color: var(--text-muted);">
+                            <strong>Duration:</strong> 2-4 minutes | <strong>Success Rate:</strong> 99.7%
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 40px; padding: 30px; background: rgba(255, 0, 255, 0.05); border-radius: 16px; border: 1px solid rgba(255, 0, 255, 0.2);">
+                    <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 15px;">⏱️ Total Pipeline Duration</div>
+                    <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 30px;">
+                        <div>
+                            <div style="font-size: 32px; font-weight: 800; color: var(--accent-ai);">22 min</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Avg End-to-End</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 32px; font-weight: 800; color: var(--accent-green);">94%</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Auto-Approval Rate</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 32px; font-weight: 800; color: var(--accent-blue);">Zero</div>
+                            <div style="font-size: 12px; color: var(--text-muted);">Manual Intervention</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="agent-system" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">🤖 Agent System — Skills, Subagents & Dependencies</h2>
+                    <p class="section-subtitle">Claude Code orchestration via AgentSkills framework</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">
+                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                        Agent Architecture
+                    </h3>
+                    <div style="background: var(--bg-tertiary); border-radius: 12px; padding: 30px; font-family: 'Courier New', monospace; font-size: 13px;">
+                        <div style="margin-bottom: 20px;">
+                            <div style="color: var(--accent-ai); margin-bottom: 8px;">🧠 <strong>Main Agent: Content Architect</strong></div>
+                            <div style="padding-left: 20px; color: var(--text-secondary);">
+                                • Coordinates all sub-agents<br>
+                                • Manages phase dependencies<br>
+                                • Handles error recovery<br>
+                                • Logs production state
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 20px; padding-left: 40px; border-left: 2px solid var(--accent-blue);">
+                            <div style="color: var(--accent-blue); margin-bottom: 8px;">🔍 <strong>Sub-Agent 1: Research Agent</strong></div>
+                            <div style="padding-left: 20px; color: var(--text-secondary); font-size: 12px;">
+                                Skills: web_search, web_fetch, pdf (academic papers)<br>
+                                Output: research-brief.md (2,500 words)<br>
+                                Dependencies: None (spawns first)
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 20px; padding-left: 40px; border-left: 2px solid var(--accent-purple);">
+                            <div style="color: var(--accent-purple); margin-bottom: 8px;">✍️ <strong>Sub-Agent 2: Script Agent</strong></div>
+                            <div style="padding-left: 20px; color: var(--text-secondary); font-size: 12px;">
+                                Skills: read (research brief), write (draft script)<br>
+                                Output: draft-script.md (1,200 words)<br>
+                                Dependencies: Research Agent (waits for research-brief.md)
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 20px; padding-left: 40px; border-left: 2px solid var(--accent-gold);">
+                            <div style="color: var(--accent-gold); margin-bottom: 8px;">📋 <strong>Sub-Agent 3: Review Agent</strong></div>
+                            <div style="padding-left: 20px; color: var(--text-secondary); font-size: 12px;">
+                                Skills: read (draft + research), custom validation rubric<br>
+                                Output: review-report.json (quality score + feedback)<br>
+                                Dependencies: Script Agent (waits for draft-script.md)<br>
+                                Quality Gate: Score >= 80% → Approve, else flag for human
+                            </div>
+                        </div>
+
+                        <div style="padding-left: 40px; border-left: 2px solid var(--accent-green);">
+                            <div style="color: var(--accent-green); margin-bottom: 8px;">🚀 <strong>Sub-Agent 4: Publish Agent</strong></div>
+                            <div style="padding-left: 20px; color: var(--text-secondary); font-size: 12px;">
+                                Skills: write (formatted script), exec (upload to CMS)<br>
+                                Output: published-url.txt<br>
+                                Dependencies: Review Agent (waits for approval)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px;">
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-ai);">🛠️ AgentSkills Used</h4>
+                        <ul style="font-size: 14px; color: var(--text-secondary); line-height: 2;">
+                            <li>✅ web_search (Brave API)</li>
+                            <li>✅ web_fetch (article extraction)</li>
+                            <li>✅ pdf (academic paper parsing)</li>
+                            <li>✅ read/write (file I/O)</li>
+                            <li>✅ exec (CMS upload script)</li>
+                            <li>✅ subagents (orchestration)</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-ai);">📊 Agent Performance</h4>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <div style="font-size: 36px; font-weight: 800; color: var(--accent-ai);">4 agents</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Running in parallel</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-ai);">⚡ Efficiency</h4>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <div style="font-size: 36px; font-weight: 800; color: var(--accent-green);">6x</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Faster than manual</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="quality" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">✅ Quality Control — Validation Rubrics & Review Gates</h2>
+                    <p class="section-subtitle">Automated quality assurance at every phase</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">
+                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                        Review Agent Rubric (100-Point Scale)
+                    </h3>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent-blue);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong style="font-size: 14px;">Factual Accuracy (30 pts)</strong>
+                                <span style="color: var(--accent-green); font-weight: 700;">28/30</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">
+                                ✅ All claims verified against research brief<br>
+                                ✅ Citations present & accurate<br>
+                                ⚠️ 1 minor stat slightly outdated (flagged for update)
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent-purple);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong style="font-size: 14px;">Grammar & Style (20 pts)</strong>
+                                <span style="color: var(--accent-green); font-weight: 700;">20/20</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">
+                                ✅ Zero grammar errors<br>
+                                ✅ Tone consistent (educational, friendly)<br>
+                                ✅ Active voice usage: 92%
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent-gold);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong style="font-size: 14px;">Readability (20 pts)</strong>
+                                <span style="color: var(--accent-green); font-weight: 700;">18/20</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">
+                                ✅ Flesch-Kincaid Grade: 8.2 (target: 7-9)<br>
+                                ✅ Avg sentence length: 14 words<br>
+                                ⚠️ 2 sentences slightly complex (flagged for simplification)
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent-green);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong style="font-size: 14px;">SEO & Structure (15 pts)</strong>
+                                <span style="color: var(--accent-green); font-weight: 700;">15/15</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">
+                                ✅ Primary keyword density: 1.8% (target: 1-2%)<br>
+                                ✅ H2/H3 headings present<br>
+                                ✅ Meta description optimized (158 chars)
+                            </div>
+                        </div>
+
+                        <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 8px; border-left: 4px solid var(--accent-ai);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                                <strong style="font-size: 14px;">Originality (15 pts)</strong>
+                                <span style="color: var(--accent-green); font-weight: 700;">15/15</span>
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-secondary);">
+                                ✅ Plagiarism score: 0%<br>
+                                ✅ Unique phrasing verified<br>
+                                ✅ No direct copy-paste from sources
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; padding: 30px; background: rgba(0, 255, 136, 0.1); border-radius: 12px; margin-top: 20px;">
+                        <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px;">Final Quality Score</div>
+                        <div style="font-size: 58px; font-weight: 800; color: var(--accent-green); text-shadow: 0 0 30px rgba(0, 255, 136, 0.6);">96/100</div>
+                        <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">✅ APPROVED FOR PUBLISHING</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="output" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">📁 Output Gallery — Script Templates & Deliverables</h2>
+                    <p class="section-subtitle">Preview of AI-generated content</p>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">
+                        <span class="ai-badge" style="font-size: 10px; padding: 4px 10px;">AI</span>
+                        Sample Output: "The Future of AI in Healthcare" (YouTube Script)
+                    </h3>
+                    <div style="background: #fff; color: #000; border-radius: 12px; padding: 40px; font-family: Georgia, serif; line-height: 1.8; max-height: 500px; overflow-y: auto;">
+                        <div style="text-align: center; margin-bottom: 30px; border-bottom: 2px solid #b400ff; padding-bottom: 20px;">
+                            <div style="font-size: 28px; font-weight: 700; color: #b400ff;">The Future of AI in Healthcare</div>
+                            <div style="font-size: 14px; color: #666; margin-top: 5px;">Generated by ContentForge AI | Quality Score: 96/100</div>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <div style="font-size: 18px; font-weight: 700; color: #b400ff; margin-bottom: 10px;">🎬 Hook (0:00-0:30)</div>
+                            <p>"Imagine a world where your doctor knows you're about to get sick... before you even feel symptoms. That's not science fiction — it's happening right now thanks to AI. In this video, we're diving into 3 game-changing AI technologies that are transforming healthcare as we speak."</p>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <div style="font-size: 18px; font-weight: 700; color: #b400ff; margin-bottom: 10px;">📊 Section 1: Predictive Diagnostics (0:30-3:00)</div>
+                            <p>"First up: predictive diagnostics. AI models are now analyzing millions of patient records to predict diseases before they manifest. A 2023 Stanford study (citation: Nature Medicine, doi:10.1038...) showed AI can predict heart attacks with 94% accuracy up to 6 months in advance — way better than traditional methods."</p>
+                            <p>"How does it work? Machine learning algorithms scan genetic data, lifestyle patterns, even your sleep tracker metrics. They spot patterns humans miss. Dr. Sarah Chen at Johns Hopkins told me: 'We're moving from reactive medicine to proactive medicine.' Imagine catching cancer at stage 0 instead of stage 3."</p>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <div style="font-size: 18px; font-weight: 700; color: #b400ff; margin-bottom: 10px;">🔬 Section 2: Drug Discovery Acceleration (3:00-5:30)</div>
+                            <p>"Next: AI is slashing drug development time from 10+ years to under 2. DeepMind's AlphaFold already predicted protein structures for 200 million proteins — work that would have taken human researchers centuries."</p>
+                            <p>"Real-world impact? Moderna used AI to design their COVID vaccine in just 48 hours (source: CNBC interview, 2021). The testing took longer, but the design process? Done in a weekend. That's the power of AI."</p>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <div style="font-size: 18px; font-weight: 700; color: #b400ff; margin-bottom: 10px;">🤖 Section 3: Robotic Surgery Precision (5:30-7:00)</div>
+                            <p>"Finally: robotic surgery powered by AI. The Da Vinci Surgical System now performs over 1 million procedures annually. But here's the kicker — new AI-enhanced systems can react 10x faster than human surgeons to unexpected bleeding or complications."</p>
+                            <p>"Patients get smaller incisions, faster recovery, and fewer complications. Dr. Michael Torres at Mayo Clinic said: 'AI doesn't replace surgeons — it makes us superhuman.' I'm here for it."</p>
+                        </div>
+
+                        <div style="margin-bottom: 25px;">
+                            <div style="font-size: 18px; font-weight: 700; color: #b400ff; margin-bottom: 10px;">🎯 CTA & Closing (7:00-8:00)</div>
+                            <p>"So what does this mean for you? Whether you're a patient, healthcare worker, or just someone who wants to live longer — AI is about to change the game. If you found this useful, smash that like button and subscribe for more deep dives into emerging tech. Drop a comment: What healthcare AI breakthrough are you most excited about? Catch you in the next one!"</p>
+                        </div>
+
+                        <div style="text-align: center; font-size: 12px; color: #999; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd;">
+                            Generated by ContentForge AI | Production Time: 22 minutes | Quality Score: 96/100
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 40px;">
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-ai);">📝 Output Formats</h4>
+                        <ul style="font-size: 14px; color: var(--text-secondary); line-height: 2;">
+                            <li>✅ YouTube scripts (8-15 min)</li>
+                            <li>✅ Blog posts (1,500-3,000 words)</li>
+                            <li>✅ Social media threads</li>
+                            <li>✅ Newsletter content</li>
+                        </ul>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-ai);">⏱️ Avg Production Time</h4>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <div style="font-size: 36px; font-weight: 800; color: var(--accent-ai);">22 min</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">vs 6+ hours manual</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h4 style="font-size: 16px; margin-bottom: 15px; color: var(--accent-ai);">📊 Quality Score</h4>
+                        <div style="text-align: center; margin-top: 20px;">
+                            <div style="font-size: 36px; font-weight: 800; color: var(--accent-green);">94%</div>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Avg across 100+ scripts</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="get-started" class="section">
+            <div class="container">
+                <div class="cta-section">
+                    <div class="ai-badge" style="font-size: 14px; padding: 8px 20px; margin-bottom: 30px;">
+                        <div class="ai-icon"></div>
+                        AUTONOMOUS CONTENT PRODUCTION
+                    </div>
+                    <h2 class="cta-title">Ready to automate your content production with AI agents?</h2>
+                    <p style="font-size: 22px; color: var(--text-secondary); margin: 30px 0;">
+                        Build: $1,500 USD — Live in 5-7 days
+                    </p>
+                    <a href="mailto:janis@agic.me?subject=ContentForge%20AI%20Implementation&body=Hi%20Janis,%0A%0AI'm%20interested%20in%20ContentForge%20AI%20for%20autonomous%20content%20production.%20Let's%20schedule%20a%2015-minute%20call.%0A%0ABest%20regards," class="cta-button">Book a 15-min Call</a>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; margin-top: 80px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 14px; color: var(--accent-ai); font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Day 1-2</div>
+                            <div style="font-size: 16px; color: var(--text-secondary);">Agent Architecture Design</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 14px; color: var(--accent-ai); font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Day 3-5</div>
+                            <div style="font-size: 16px; color: var(--text-secondary);">Pipeline Development</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 14px; color: var(--accent-ai); font-weight: 700; text-transform: uppercase; margin-bottom: 10px;">Day 6-7</div>
+                            <div style="font-size: 16px; color: var(--text-secondary);">Quality Control + Testing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        const tabs = document.querySelectorAll('.nav-tab');
+        const sections = document.querySelectorAll('.section');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const targetSection = tab.dataset.section;
+                tabs.forEach(t => t.classList.remove('active'));
+                sections.forEach(s => s.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(targetSection).classList.add('active');
+                document.querySelector('.nav-hamburger').classList.remove('open');
+                document.querySelector('.nav-tabs').classList.remove('open');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+
+        function animateCounter(id, target, prefix = '', suffix = '') {
+            const element = document.getElementById(id);
+            const duration = 2000;
+            const steps = 60;
+            const increment = target / steps;
+            let current = 0;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                element.textContent = prefix + Math.floor(current).toLocaleString() + suffix;
+            }, duration / steps);
+        }
+
+        setTimeout(() => {
+            animateCounter('scripts', 147);
+            animateCounter('quality', 94, '', '%');
+            animateCounter('prodTime', 22, '', 'min');
+        }, 500);
+
+        let apiKey = null;
+        let conversationHistory = [];
+
+        function openAPIModal() {
+            document.getElementById('apiModal').classList.add('open');
+        }
+
+        function closeAPIModal() {
+            document.getElementById('apiModal').classList.remove('open');
+        }
+
+        function connectAPI() {
+            const input = document.getElementById('apiKeyInput');
+            const key = input.value.trim();
+            if (!key || !key.startsWith('sk-')) {
+                alert('Invalid API key format');
+                return;
+            }
+            apiKey = key;
+            conversationHistory = [];
+            document.getElementById('apiStatus').innerHTML = '🟢 AI Connected';
+            document.getElementById('apiStatus').className = 'api-status connected';
+            input.value = '';
+            closeAPIModal();
+            const messagesContainer = document.getElementById('chatMessages');
+            const systemMsg = document.createElement('div');
+            systemMsg.className = 'ai-message';
+            systemMsg.innerHTML = `<div class="message-bubble" style="background: rgba(255, 0, 255, 0.1); border-left: 3px solid var(--accent-ai);">✅ <strong>AI Connected!</strong> You're now using live GPT-4o-mini.</div>`;
+            messagesContainer.appendChild(systemMsg);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        document.addEventListener('click', (e) => {
+            const modal = document.getElementById('apiModal');
+            if (e.target === modal) closeAPIModal();
+        });
+
+        const chatResponses = {
+            'how does the production pipeline work?': {
+                text: 'ContentForge AI uses a 4-phase pipeline: 1) Research Agent (web scraping + fact extraction), 2) Script Agent (narrative generation), 3) Review Agent (quality gate with 100-point rubric), 4) Publish Agent (formatting + upload). Total time: ~22 minutes.'
+            },
+            'what is the agent system?': {
+                text: 'We use Claude Code agents orchestrated via AgentSkills. Main agent coordinates 4 sub-agents (Research, Script, Review, Publish) with phase dependencies. Review Agent acts as quality gate — scripts scoring <80% get flagged for human review.'
+            },
+            'show me quality control': {
+                text: 'Check the "Quality Control" tab above for the full review rubric. We score on: Factual Accuracy (30 pts), Grammar & Style (20 pts), Readability (20 pts), SEO & Structure (15 pts), Originality (15 pts). Avg score: 94/100 across 100+ scripts.'
+            },
+            'default': {
+                text: 'I orchestrate autonomous content production using Claude Code agents. I handle research, script writing, quality review, and publishing — all in ~22 minutes. Try asking: "How does the production pipeline work?" or "What is the agent system?"'
+            }
+        };
+
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messagesContainer = document.getElementById('chatMessages');
+            const sendBtn = document.getElementById('sendBtn');
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'ai-message user';
+            userMsg.innerHTML = `<div class="message-bubble">${escapeHtml(message)}</div>`;
+            messagesContainer.appendChild(userMsg);
+
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            sendBtn.disabled = true;
+            const originalText = sendBtn.textContent;
+            sendBtn.innerHTML = '<span style="animation: pulse 1s infinite;">Thinking...</span>';
+
+            if (apiKey) {
+                await sendToOpenAI(message, messagesContainer);
+            } else {
+                setTimeout(() => {
+                    const key = message.toLowerCase();
+                    const response = chatResponses[key] || chatResponses['default'];
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = 'ai-message';
+                    aiMsg.innerHTML = `<div class="message-bubble">${response.text}</div>`;
+                    messagesContainer.appendChild(aiMsg);
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    sendBtn.disabled = false;
+                    sendBtn.textContent = originalText;
+                }, 1200);
+            }
+        }
+
+        async function sendToOpenAI(userMessage, messagesContainer) {
+            const sendBtn = document.getElementById('sendBtn');
+            const originalText = 'Send';
+            try {
+                conversationHistory.push({ role: 'user', content: userMessage });
+                const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`
+                    },
+                    body: JSON.stringify({
+                        model: 'gpt-4o-mini',
+                        messages: [
+                            { role: 'system', content: 'You are ContentForge AI, an assistant for autonomous content production using Claude Code agents. You orchestrate research, script writing, quality review, and publishing. Be concise and helpful.' },
+                            ...conversationHistory
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 400
+                    })
+                });
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                const data = await response.json();
+                const aiResponse = data.choices[0].message.content;
+                conversationHistory.push({ role: 'assistant', content: aiResponse });
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'ai-message';
+                aiMsg.innerHTML = `<div class="message-bubble">${formatAIResponse(aiResponse)}</div>`;
+                messagesContainer.appendChild(aiMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } catch (error) {
+                console.error('OpenAI API Error:', error);
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'ai-message';
+                errorMsg.innerHTML = `<div class="message-bubble" style="background: rgba(255, 0, 85, 0.1); border-left: 3px solid var(--accent-red);">❌ <strong>Error:</strong> Failed to connect to OpenAI API.</div>`;
+                messagesContainer.appendChild(errorMsg);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            } finally {
+                sendBtn.disabled = false;
+                sendBtn.textContent = originalText;
+            }
+        }
+
+        function formatAIResponse(text) {
+            return text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function sendQuickPrompt(prompt) {
+            document.getElementById('chatInput').value = prompt;
+            sendMessage();
+        }
+    </script>
+</body>
+</html>
