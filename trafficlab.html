@@ -191,10 +191,11 @@
 
         .section {
             display: none;
-            min-height: calc(100vh - 90px);
-            padding: 60px 20px;
+            min-height: auto;
+            padding: 40px 15px 60px;
             opacity: 0;
             transform: translateY(20px);
+            overflow-x: hidden;
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
@@ -265,11 +266,11 @@
         .hero-content::before {
             content: '';
             position: absolute;
-            width: 600px;
-            height: 600px;
+            width: 300px;
+            height: 300px;
             background: radial-gradient(circle, rgba(0, 255, 136, 0.15) 0%, transparent 70%);
-            top: -200px;
-            right: -200px;
+            top: -50px;
+            right: -50px;
             animation: pulse 4s ease-in-out infinite;
             pointer-events: none;
         }
@@ -277,11 +278,11 @@
         .hero-content::after {
             content: '';
             position: absolute;
-            width: 600px;
-            height: 600px;
+            width: 300px;
+            height: 300px;
             background: radial-gradient(circle, rgba(255, 0, 255, 0.15) 0%, transparent 70%);
-            bottom: -200px;
-            left: -200px;
+            bottom: -50px;
+            left: -50px;
             animation: pulse 5s ease-in-out infinite;
             pointer-events: none;
         }
@@ -884,6 +885,48 @@
                                 Revenue Generated
                             </div>
                             <div class="stat-value" id="revenueCount">$0</div>
+                        </div>
+                    </div>
+
+                    <!-- AI FEATURES PREVIEW ON HOME -->
+                    <div style="margin-top: 40px;">
+                        <h3 style="font-size: 18px; color: var(--accent-ai); text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 2px;">🧠 7 AI Systems Running 24/7</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; max-width: 700px; margin: 0 auto;">
+                            <div style="background: rgba(255,0,255,0.08); border: 1px solid rgba(255,0,255,0.3); border-radius: 12px; padding: 14px 10px; text-align: center;">
+                                <div style="font-size: 24px;">🤖</div>
+                                <div style="font-size: 11px; color: var(--accent-green); font-weight: 700; margin-top: 6px;">Signal Analysis</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">NLP • 94% accuracy</div>
+                            </div>
+                            <div style="background: rgba(255,0,255,0.08); border: 1px solid rgba(255,0,255,0.3); border-radius: 12px; padding: 14px 10px; text-align: center;">
+                                <div style="font-size: 24px;">📊</div>
+                                <div style="font-size: 11px; color: var(--accent-green); font-weight: 700; margin-top: 6px;">Sentiment Detection</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">Bullish/Bearish • 15min</div>
+                            </div>
+                            <div style="background: rgba(255,0,255,0.08); border: 1px solid rgba(255,0,255,0.3); border-radius: 12px; padding: 14px 10px; text-align: center;">
+                                <div style="font-size: 24px;">💬</div>
+                                <div style="font-size: 11px; color: var(--accent-green); font-weight: 700; margin-top: 6px;">Smart DMs</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">Personalized • 72% open</div>
+                            </div>
+                            <div style="background: rgba(255,0,255,0.08); border: 1px solid rgba(255,0,255,0.3); border-radius: 12px; padding: 14px 10px; text-align: center;">
+                                <div style="font-size: 24px;">✍️</div>
+                                <div style="font-size: 11px; color: var(--accent-green); font-weight: 700; margin-top: 6px;">Content Gen</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">24 posts/day auto</div>
+                            </div>
+                            <div style="background: rgba(255,0,255,0.08); border: 1px solid rgba(255,0,255,0.3); border-radius: 12px; padding: 14px 10px; text-align: center;">
+                                <div style="font-size: 24px;">🎯</div>
+                                <div style="font-size: 11px; color: var(--accent-green); font-weight: 700; margin-top: 6px;">Lead Scoring</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">AI score 1-100</div>
+                            </div>
+                            <div style="background: rgba(255,0,255,0.08); border: 1px solid rgba(255,0,255,0.3); border-radius: 12px; padding: 14px 10px; text-align: center;">
+                                <div style="font-size: 24px;">🚨</div>
+                                <div style="font-size: 11px; color: var(--accent-green); font-weight: 700; margin-top: 6px;">Churn Prediction</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">38% saved</div>
+                            </div>
+                            <div style="background: rgba(255,0,255,0.08); border: 1px solid rgba(255,0,255,0.3); border-radius: 12px; padding: 14px 10px; text-align: center;">
+                                <div style="font-size: 24px;">💰</div>
+                                <div style="font-size: 11px; color: var(--accent-green); font-weight: 700; margin-top: 6px;">Price Optimization</div>
+                                <div style="font-size: 10px; color: var(--text-muted);">Max revenue AI</div>
+                            </div>
                         </div>
                     </div>
                 </div>
