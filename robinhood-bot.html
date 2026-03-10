@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robinhood Options Trading Bot - Live Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0a0e17;
+            color: #e0e6ed;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+            padding: 20px;
+            border-bottom: 2px solid #00ff88;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 255, 136, 0.1);
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #8b92a8;
+            font-size: 14px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: linear-gradient(145deg, #141822 0%, #1a1f2e 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #252b3d;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 255, 136, 0.15);
+            border-color: #00ff88;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #252b3d;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #00ff88;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-online {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+
+        .status-warning {
+            background: rgba(255, 191, 0, 0.2);
+            color: #ffbf00;
+        }
+
+        .status-error {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+
+        .signal-feed {
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #00ff88 #1a1f2e;
+        }
+
+        .signal-feed::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .signal-feed::-webkit-scrollbar-track {
+            background: #1a1f2e;
+            border-radius: 3px;
+        }
+
+        .signal-feed::-webkit-scrollbar-thumb {
+            background: #00ff88;
+            border-radius: 3px;
+        }
+
+        .signal-item {
+            background: #1a1f2e;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 3px solid #00ff88;
+            animation: slideIn 0.3s ease;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .signal-item.sell {
+            border-left-color: #ff4444;
+        }
+
+        .signal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .signal-type {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .signal-type.buy {
+            background: #00ff88;
+            color: #0a0e17;
+        }
+
+        .signal-type.sell {
+            background: #ff4444;
+            color: #fff;
+        }
+
+        .signal-time {
+            font-size: 11px;
+            color: #8b92a8;
+        }
+
+        .signal-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .signal-detail {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .signal-label {
+            color: #8b92a8;
+        }
+
+        .signal-value {
+            font-weight: 600;
+            color: #e0e6ed;
+        }
+
+        .toggle-control {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+        }
+
+        .toggle-checkbox {
+            appearance: none;
+            width: 40px;
+            height: 20px;
+            background: #252b3d;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-checkbox:checked {
+            background: #00ff88;
+        }
+
+        .toggle-checkbox::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-checkbox:checked::before {
+            left: 22px;
+        }
+
+        .health-metrics {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .metric {
+            background: #1a1f2e;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #8b92a8;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .metric-value.green {
+            color: #00ff88;
+        }
+
+        .metric-value.red {
+            color: #ff4444;
+        }
+
+        .metric-value.yellow {
+            color: #ffbf00;
+        }
+
+        .order-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .order-table th {
+            text-align: left;
+            padding: 12px 8px;
+            font-size: 12px;
+            color: #8b92a8;
+            text-transform: uppercase;
+            border-bottom: 2px solid #252b3d;
+        }
+
+        .order-table td {
+            padding: 12px 8px;
+            font-size: 13px;
+            border-bottom: 1px solid #1a1f2e;
+        }
+
+        .order-table tr:hover {
+            background: #1a1f2e;
+        }
+
+        .pnl-positive {
+            color: #00ff88;
+            font-weight: 600;
+        }
+
+        .pnl-negative {
+            color: #ff4444;
+            font-weight: 600;
+        }
+
+        .trade-log {
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background: #0a0e17;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px;
+            border-left: 2px solid #252b3d;
+            padding-left: 10px;
+        }
+
+        .log-timestamp {
+            color: #8b92a8;
+            margin-right: 10px;
+        }
+
+        .log-success {
+            border-left-color: #00ff88;
+        }
+
+        .log-error {
+            border-left-color: #ff4444;
+        }
+
+        .log-info {
+            border-left-color: #4da6ff;
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #0a0e17;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 15px;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message.user {
+            text-align: right;
+        }
+
+        .chat-bubble {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 12px;
+            max-width: 80%;
+        }
+
+        .chat-message.bot .chat-bubble {
+            background: #1a1f2e;
+            border: 1px solid #252b3d;
+        }
+
+        .chat-message.user .chat-bubble {
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6f 100%);
+            color: #0a0e17;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            background: #1a1f2e;
+            border: 1px solid #252b3d;
+            border-radius: 8px;
+            color: #e0e6ed;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.1);
+        }
+
+        .chat-send-btn {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #00ff88 0%, #00cc6f 100%);
+            border: none;
+            border-radius: 8px;
+            color: #0a0e17;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .api-config {
+            background: #1a1f2e;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .api-input {
+            width: 100%;
+            padding: 10px;
+            background: #0a0e17;
+            border: 1px solid #252b3d;
+            border-radius: 6px;
+            color: #e0e6ed;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        .api-input:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1200px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .signal-details {
+                grid-template-columns: 1fr;
+            }
+
+            .health-metrics {
+                grid-template-columns: 1fr;
+            }
+
+            .order-table {
+                font-size: 11px;
+            }
+
+            .order-table th,
+            .order-table td {
+                padding: 8px 4px;
+            }
+
+            .chat-container {
+                height: 400px;
+            }
+
+            .metric-value {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 390px) {
+            header {
+                padding: 15px;
+            }
+
+            .card-title {
+                font-size: 14px;
+            }
+
+            .signal-item {
+                padding: 10px;
+            }
+
+            .toggle-control {
+                position: static;
+                margin-top: 10px;
+                text-align: right;
+            }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Robinhood Options Trading Bot</h1>
+            <p class="subtitle">Discord-to-Robinhood Automated Trading System | Live Dashboard</p>
+        </header>
+
+        <div class="grid">
+            <!-- System Health Monitor -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">System Health</h2>
+                    <span class="status-badge status-online pulse">Online</span>
+                </div>
+                <div class="health-metrics">
+                    <div class="metric">
+                        <div class="metric-label">Discord Gateway</div>
+                        <div class="metric-value green">Active</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Robinhood API</div>
+                        <div class="metric-value green">Connected</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Latency</div>
+                        <div class="metric-value yellow" id="latency">45ms</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Error Rate</div>
+                        <div class="metric-value green" id="errorRate">0.2%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Discord Signal Monitor -->
+            <div class="card" style="grid-column: span 2;">
+                <div class="card-header">
+                    <h2 class="card-title">Discord Signal Monitor</h2>
+                    <span class="status-badge status-online">Live Feed</span>
+                </div>
+                <div class="signal-feed" id="signalFeed">
+                    <!-- Signals will be added dynamically -->
+                </div>
+            </div>
+
+            <!-- Robinhood Execution Dashboard -->
+            <div class="card full-width">
+                <div class="card-header">
+                    <h2 class="card-title">Robinhood Execution Dashboard</h2>
+                    <span class="status-badge status-online">Auto-Trading Active</span>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="order-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Ticker</th>
+                                <th>Type</th>
+                                <th>Strike</th>
+                                <th>Expiry</th>
+                                <th>Entry</th>
+                                <th>Current</th>
+                                <th>P&L</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTable">
+                            <!-- Orders will be added dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Trade History Log -->
+            <div class="card" style="grid-column: span 2;">
+                <div class="card-header">
+                    <h2 class="card-title">Trade History Log</h2>
+                    <span class="status-badge status-online">Real-time</span>
+                </div>
+                <div class="trade-log" id="tradeLog">
+                    <!-- Log entries will be added dynamically -->
+                </div>
+            </div>
+
+            <!-- AI Chat Assistant -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">AI Trading Assistant</h2>
+                    <span class="status-badge status-online" id="aiStatus">Demo Mode</span>
+                </div>
+                <div class="api-config">
+                    <label style="font-size: 12px; color: #8b92a8;">OpenAI API Key (optional)</label>
+                    <input type="password" class="api-input" id="apiKeyInput" placeholder="sk-...">
+                </div>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message bot">
+                            <div class="chat-bubble">
+                                Hello! I'm your AI trading assistant. I can help you analyze signals, review trades, and answer questions about the bot's performance. Ask me anything!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask about signals, strategies, or performance...">
+                        <button class="chat-send-btn" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for demo
+        const sampleSignals = [
+            { type: 'BUY', ticker: 'SPY', strike: 450, expiry: '2026-03-12', source: '#trading-signals', confidence: 'High' },
+            { type: 'SELL', ticker: 'TSLA', strike: 180, expiry: '2026-03-15', source: '#options-flow', confidence: 'Medium' },
+            { type: 'BUY', ticker: 'AAPL', strike: 175, expiry: '2026-03-19', source: '#dark-pool', confidence: 'High' },
+            { type: 'BUY', ticker: 'NVDA', strike: 850, expiry: '2026-03-14', source: '#trading-signals', confidence: 'Very High' },
+            { type: 'SELL', ticker: 'AMD', strike: 165, expiry: '2026-03-18', source: '#options-flow', confidence: 'Low' }
+        ];
+
+        const sampleOrders = [
+            { time: '14:32:15', ticker: 'SPY', type: 'CALL', strike: 450, expiry: '03/12', entry: 3.45, current: 4.20, pnl: 21.7, status: 'Open' },
+            { time: '14:28:03', ticker: 'AAPL', type: 'CALL', strike: 175, expiry: '03/19', entry: 2.80, current: 2.95, pnl: 5.4, status: 'Open' },
+            { time: '14:15:42', ticker: 'NVDA', type: 'CALL', strike: 850, expiry: '03/14', entry: 12.50, current: 14.30, pnl: 14.4, status: 'Open' },
+            { time: '13:58:21', ticker: 'TSLA', type: 'PUT', strike: 180, expiry: '03/15', entry: 5.20, current: 4.80, pnl: -7.7, status: 'Closed' }
+        ];
+
+        let signalCounter = 0;
+        let orderCounter = 0;
+        let logCounter = 0;
+
+        // Initialize dashboard
+        function init() {
+            // Load initial signals
+            sampleSignals.forEach((signal, index) => {
+                setTimeout(() => addSignal(signal), index * 500);
+            });
+
+            // Load initial orders
+            sampleOrders.forEach(order => addOrder(order));
+
+            // Add initial log entries
+            addLog('System initialized successfully', 'success');
+            addLog('Connected to Discord Gateway (wss://gateway.discord.gg)', 'info');
+            addLog('Robinhood API authentication successful', 'success');
+            addLog('Monitoring 3 Discord channels for trading signals', 'info');
+
+            // Simulate live updates
+            setInterval(updateMetrics, 3000);
+            setInterval(addRandomSignal, 8000);
+            setInterval(updateOrders, 5000);
+
+            // Chat input handler
+            document.getElementById('chatInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+
+            // API key handler
+            document.getElementById('apiKeyInput').addEventListener('input', function(e) {
+                if (e.target.value.startsWith('sk-')) {
+                    document.getElementById('aiStatus').textContent = 'GPT-4o-mini';
+                    document.getElementById('aiStatus').className = 'status-badge status-online';
+                } else {
+                    document.getElementById('aiStatus').textContent = 'Demo Mode';
+                }
+            });
+        }
+
+        function addSignal(signal) {
+            const feed = document.getElementById('signalFeed');
+            const item = document.createElement('div');
+            item.className = `signal-item ${signal.type.toLowerCase()}`;
+            item.id = `signal-${signalCounter++}`;
+            
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+            
+            item.innerHTML = `
+                <div class="signal-header">
+                    <span class="signal-type ${signal.type.toLowerCase()}">${signal.type}</span>
+                    <span class="signal-time">${timeStr}</span>
+                </div>
+                <div class="signal-details">
+                    <div class="signal-detail">
+                        <span class="signal-label">Ticker:</span>
+                        <span class="signal-value">${signal.ticker}</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">Strike:</span>
+                        <span class="signal-value">$${signal.strike}</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">Expiry:</span>
+                        <span class="signal-value">${signal.expiry}</span>
+                    </div>
+                    <div class="signal-detail">
+                        <span class="signal-label">Source:</span>
+                        <span class="signal-value">${signal.source}</span>
+                    </div>
+                    <div class="signal-detail" style="grid-column: span 2;">
+                        <span class="signal-label">Confidence:</span>
+                        <span class="signal-value">${signal.confidence}</span>
+                    </div>
+                </div>
+                ${signal.type === 'BUY' ? `<div class="toggle-control">
+                    <input type="checkbox" class="toggle-checkbox" checked onchange="toggleSignal('${item.id}', this.checked)">
+                </div>` : ''}
+            `;
+            
+            feed.insertBefore(item, feed.firstChild);
+            
+            // Keep only last 10 signals
+            while (feed.children.length > 10) {
+                feed.removeChild(feed.lastChild);
+            }
+
+            // Add log entry
+            addLog(`New ${signal.type} signal detected: ${signal.ticker} $${signal.strike} ${signal.expiry}`, signal.type === 'BUY' ? 'success' : 'error');
+        }
+
+        function addRandomSignal() {
+            const tickers = ['SPY', 'QQQ', 'TSLA', 'AAPL', 'NVDA', 'AMD', 'MSFT', 'GOOGL'];
+            const types = ['BUY', 'BUY', 'BUY', 'SELL']; // More buys than sells
+            const sources = ['#trading-signals', '#options-flow', '#dark-pool', '#whale-alerts'];
+            const confidences = ['Very High', 'High', 'High', 'Medium', 'Low'];
+            
+            const signal = {
+                type: types[Math.floor(Math.random() * types.length)],
+                ticker: tickers[Math.floor(Math.random() * tickers.length)],
+                strike: Math.floor(Math.random() * 500) + 100,
+                expiry: `2026-03-${10 + Math.floor(Math.random() * 20)}`,
+                source: sources[Math.floor(Math.random() * sources.length)],
+                confidence: confidences[Math.floor(Math.random() * confidences.length)]
+            };
+            
+            addSignal(signal);
+        }
+
+        function toggleSignal(signalId, enabled) {
+            const signal = document.getElementById(signalId);
+            if (enabled) {
+                signal.style.opacity = '1';
+                addLog(`Signal ${signalId} enabled for auto-trading`, 'success');
+            } else {
+                signal.style.opacity = '0.5';
+                addLog(`Signal ${signalId} disabled - will not execute`, 'info');
+            }
+        }
+
+        function addOrder(order) {
+            const table = document.getElementById('orderTable');
+            const row = document.createElement('tr');
+            
+            const pnlClass = order.pnl >= 0 ? 'pnl-positive' : 'pnl-negative';
+            const pnlSign = order.pnl >= 0 ? '+' : '';
+            
+            row.innerHTML = `
+                <td>${order.time}</td>
+                <td><strong>${order.ticker}</strong></td>
+                <td>${order.type}</td>
+                <td>$${order.strike}</td>
+                <td>${order.expiry}</td>
+                <td>$${order.entry.toFixed(2)}</td>
+                <td>$${order.current.toFixed(2)}</td>
+                <td class="${pnlClass}">${pnlSign}${order.pnl.toFixed(1)}%</td>
+                <td>${order.status}</td>
+            `;
+            
+            table.insertBefore(row, table.firstChild);
+            
+            // Keep only last 15 orders
+            while (table.children.length > 15) {
+                table.removeChild(table.lastChild);
+            }
+        }
+
+        function updateOrders() {
+            const rows = document.getElementById('orderTable').querySelectorAll('tr');
+            rows.forEach(row => {
+                const cells = row.cells;
+                if (cells.length > 0 && cells[8].textContent === 'Open') {
+                    // Randomly update current price
+                    const currentCell = cells[6];
+                    const pnlCell = cells[7];
+                    const entryPrice = parseFloat(cells[5].textContent.replace('$', ''));
+                    
+                    let currentPrice = parseFloat(currentCell.textContent.replace('$', ''));
+                    currentPrice += (Math.random() - 0.5) * 0.3;
+                    currentPrice = Math.max(0.01, currentPrice);
+                    
+                    const pnl = ((currentPrice - entryPrice) / entryPrice) * 100;
+                    
+                    currentCell.textContent = `$${currentPrice.toFixed(2)}`;
+                    pnlCell.textContent = `${pnl >= 0 ? '+' : ''}${pnl.toFixed(1)}%`;
+                    pnlCell.className = pnl >= 0 ? 'pnl-positive' : 'pnl-negative';
+                }
+            });
+        }
+
+        function updateMetrics() {
+            // Update latency
+            const latency = 30 + Math.floor(Math.random() * 30);
+            document.getElementById('latency').textContent = `${latency}ms`;
+            
+            // Update error rate
+            const errorRate = (Math.random() * 0.5).toFixed(1);
+            document.getElementById('errorRate').textContent = `${errorRate}%`;
+        }
+
+        function addLog(message, type) {
+            const log = document.getElementById('tradeLog');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            
+            const now = new Date();
+            const timestamp = now.toLocaleTimeString('en-US', { hour12: false });
+            
+            entry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span>${message}`;
+            
+            log.insertBefore(entry, log.firstChild);
+            
+            // Keep only last 50 entries
+            while (log.children.length > 50) {
+                log.removeChild(log.lastChild);
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            const chatMessages = document.getElementById('chatMessages');
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.innerHTML = `<div class="chat-bubble">${message}</div>`;
+            chatMessages.appendChild(userMsg);
+            
+            input.value = '';
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'chat-message bot';
+                
+                const response = getAIResponse(message);
+                botMsg.innerHTML = `<div class="chat-bubble">${response}</div>`;
+                chatMessages.appendChild(botMsg);
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        }
+
+        function getAIResponse(message) {
+            const lower = message.toLowerCase();
+            
+            if (lower.includes('performance') || lower.includes('how') && lower.includes('doing')) {
+                return "Current performance is strong! Your portfolio is up 12.3% today with 4 open positions. The SPY call is performing best at +21.7% profit. Would you like a detailed breakdown?";
+            } else if (lower.includes('signal') || lower.includes('buy')) {
+                return "We've detected 8 signals today. 6 BUY and 2 SELL. The highest confidence signal is NVDA $850 CALL expiring 03/14. Auto-trading is enabled for all BUY signals with 'High' or 'Very High' confidence.";
+            } else if (lower.includes('risk') || lower.includes('safe')) {
+                return "Current risk exposure is moderate. You have $12,450 deployed across 4 positions. Maximum single-position risk is 8.5% of portfolio. All positions have stop-losses at -15%. System latency is healthy at 45ms.";
+            } else if (lower.includes('strategy') || lower.includes('recommend')) {
+                return "Based on current market conditions and signal flow, I recommend focusing on tech sector calls with 7-14 DTE. Discord channels are showing increased bullish sentiment on NVDA and AAPL. Consider reducing exposure to SPY as we approach resistance at $452.";
+            } else {
+                return "I'm here to help! You can ask me about current signals, portfolio performance, risk analysis, or trading recommendations. I monitor all Discord channels and Robinhood positions in real-time.";
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
