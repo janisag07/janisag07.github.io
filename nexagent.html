@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexAgent - Your AI Workforce. On Demand.</title>
-    <meta name="description" content="Pre-built AI agents that run your business 24/7. Set up in minutes, not months. Subscription-based AI workforce for modern businesses.">
+    <title>NexAgent — Your AI Workforce. Ready Now.</title>
+    <meta name="description" content="Deploy intelligent AI agents that run your business 24/7. No setup. No waiting. Just results.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Stripe.js -->
     <script src="https://js.stripe.com/v3/"></script>
@@ -17,15 +22,13 @@
         }
 
         :root {
+            --bg-black: #000000;
             --bg-dark: #0a0a14;
-            --bg-card: #141420;
-            --bg-card-hover: #1a1a2e;
             --accent-blue: #0066FF;
-            --accent-blue-dark: #0052cc;
-            --accent-blue-light: #1a7fff;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0b8;
-            --border-subtle: rgba(0, 102, 255, 0.15);
+            --text-white: #ffffff;
+            --text-gray: #8b8b9d;
+            --glass-bg: rgba(20, 20, 32, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
 
         html {
@@ -33,11 +36,26 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-black);
+            color: var(--text-white);
             line-height: 1.6;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Dot Pattern Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+            z-index: 0;
         }
 
         /* Navigation */
@@ -45,17 +63,18 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(10, 10, 20, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-subtle);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
             z-index: 1000;
-            padding: 1rem 0;
+            padding: 1.2rem 0;
         }
 
         .nav-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 3rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -63,39 +82,42 @@
 
         .nav-logo {
             font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent-blue);
+            font-weight: 800;
+            color: var(--text-white);
+            letter-spacing: -0.02em;
         }
 
         .nav-links {
             display: flex;
-            gap: 2rem;
+            gap: 3rem;
             align-items: center;
         }
 
         .nav-links a {
-            color: var(--text-secondary);
+            color: var(--text-gray);
             text-decoration: none;
             font-weight: 500;
+            font-size: 0.95rem;
             transition: color 0.3s ease;
         }
 
         .nav-links a:hover {
-            color: var(--text-primary);
+            color: var(--text-white);
         }
 
         .nav-cta {
             background: var(--accent-blue);
-            color: white;
-            padding: 0.6rem 1.5rem;
+            color: white !important;
+            padding: 0.7rem 1.8rem;
             border-radius: 8px;
             font-weight: 600;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 16px rgba(0, 102, 255, 0.3);
         }
 
         .nav-cta:hover {
-            background: var(--accent-blue-light);
             transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 102, 255, 0.5);
         }
 
         /* Hero Section */
@@ -106,50 +128,46 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 8rem 2rem 4rem;
+            padding: 10rem 2rem 6rem;
             overflow: hidden;
         }
 
-        .hero-background {
+        .hero::before {
+            content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at top, rgba(0, 102, 255, 0.15) 0%, transparent 60%),
-                        radial-gradient(ellipse at bottom right, rgba(0, 102, 255, 0.08) 0%, transparent 50%);
-            animation: gradientShift 8s ease-in-out infinite;
-            z-index: 0;
-        }
-
-        @keyframes gradientShift {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
+            top: -50%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120%;
+            height: 120%;
+            background: radial-gradient(ellipse at center, rgba(0, 102, 255, 0.15) 0%, transparent 60%);
+            pointer-events: none;
         }
 
         .hero-content {
             position: relative;
             z-index: 1;
-            max-width: 900px;
+            max-width: 1100px;
             animation: fadeInUp 1s ease-out;
         }
 
         h1 {
-            font-size: clamp(2.5rem, 8vw, 5rem);
-            font-weight: 800;
+            font-size: clamp(2.5rem, 5vw, 5rem);
+            font-weight: 300;
             margin-bottom: 1.5rem;
             line-height: 1.1;
-            letter-spacing: -0.02em;
+            letter-spacing: -0.03em;
         }
 
         .hero-subtitle {
-            font-size: clamp(1.1rem, 3vw, 1.4rem);
-            color: var(--text-secondary);
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--text-gray);
             margin-bottom: 3rem;
-            max-width: 650px;
+            font-weight: 300;
+            line-height: 1.6;
+            max-width: 700px;
             margin-left: auto;
             margin-right: auto;
-            line-height: 1.6;
         }
 
         .cta-group {
@@ -157,19 +175,20 @@
             gap: 1.5rem;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 4rem;
+            margin-bottom: 5rem;
         }
 
         .btn {
-            padding: 1rem 2.5rem;
-            font-size: 1.1rem;
+            padding: 1.1rem 2.5rem;
+            font-size: 1.05rem;
             font-weight: 600;
             border: none;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-block;
+            font-family: 'Inter', sans-serif;
         }
 
         .btn-primary {
@@ -179,145 +198,141 @@
         }
 
         .btn-primary:hover {
-            background: var(--accent-blue-light);
             transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(0, 102, 255, 0.5);
+            box-shadow: 0 12px 32px rgba(0, 102, 255, 0.6);
         }
 
         .btn-secondary {
             background: transparent;
-            color: var(--accent-blue);
-            border: 2px solid var(--accent-blue);
+            color: var(--text-white);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
 
         .btn-secondary:hover {
-            background: rgba(0, 102, 255, 0.1);
+            border-color: var(--accent-blue);
+            background: rgba(0, 102, 255, 0.05);
             transform: translateY(-3px);
         }
 
         .stats-bar {
             display: flex;
             justify-content: center;
-            gap: 3rem;
+            gap: 4rem;
             flex-wrap: wrap;
-            padding: 2rem;
-            background: rgba(20, 20, 32, 0.6);
-            border-radius: 16px;
-            border: 1px solid var(--border-subtle);
-        }
-
-        .stat {
-            text-align: center;
         }
 
         .stat-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--accent-blue);
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--text-white);
+            line-height: 1;
         }
 
         .stat-label {
             font-size: 0.9rem;
-            color: var(--text-secondary);
-            margin-top: 0.3rem;
+            color: var(--text-gray);
+            margin-top: 0.5rem;
+            font-weight: 400;
         }
 
         /* Container */
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 3rem;
+            position: relative;
+            z-index: 1;
         }
 
         section {
-            padding: 6rem 0;
-        }
-
-        section:nth-child(even) {
-            background: rgba(20, 20, 32, 0.3);
+            padding: 8rem 0;
         }
 
         h2 {
-            font-size: clamp(2rem, 5vw, 3rem);
+            font-size: clamp(2rem, 4vw, 3.5rem);
             text-align: center;
             margin-bottom: 1rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
+            font-weight: 300;
+            letter-spacing: -0.03em;
         }
 
         .section-subtitle {
             text-align: center;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             font-size: 1.2rem;
-            margin-bottom: 4rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: 5rem;
+            font-weight: 300;
         }
 
         /* How It Works */
         .steps {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 3rem;
             margin-top: 4rem;
         }
 
         .step {
             text-align: center;
-            padding: 2.5rem;
-            background: var(--bg-card);
+            padding: 3rem 2rem;
+            background: var(--glass-bg);
             border-radius: 16px;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-subtle);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
         }
 
         .step:hover {
             transform: translateY(-10px);
-            background: var(--bg-card-hover);
             border-color: var(--accent-blue);
+            box-shadow: 0 20px 40px rgba(0, 102, 255, 0.2);
         }
 
         .step-number {
             display: inline-block;
-            width: 60px;
-            height: 60px;
-            line-height: 60px;
-            background: rgba(0, 102, 255, 0.15);
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(0, 102, 255, 0.05));
             color: var(--accent-blue);
             border-radius: 50%;
-            font-size: 1.8rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            font-weight: 300;
+            margin-bottom: 2rem;
         }
 
         .step h3 {
             font-size: 1.5rem;
             margin-bottom: 1rem;
-            font-weight: 700;
+            font-weight: 600;
         }
 
         .step p {
-            color: var(--text-secondary);
+            color: var(--text-gray);
             line-height: 1.7;
+            font-weight: 300;
         }
 
         /* Agent Showcase */
         .agents-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
             margin-top: 4rem;
         }
 
         .agent-card {
-            background: var(--bg-card);
+            background: var(--glass-bg);
             border-radius: 16px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-subtle);
+            padding: 2.5rem;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             position: relative;
-            overflow: hidden;
+            transition: all 0.4s ease;
         }
 
         .agent-card::before {
@@ -325,11 +340,11 @@
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-blue-light));
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
         }
 
         .agent-card:hover::before {
@@ -338,146 +353,37 @@
 
         .agent-card:hover {
             transform: translateY(-8px);
-            border-color: var(--accent-blue);
-            box-shadow: 0 12px 32px rgba(0, 102, 255, 0.3);
+            border-color: rgba(0, 102, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 102, 255, 0.15);
         }
 
         .agent-icon {
             font-size: 3rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 20px rgba(0, 102, 255, 0.3));
         }
 
         .agent-card h3 {
             font-size: 1.4rem;
             margin-bottom: 0.8rem;
-            font-weight: 700;
+            font-weight: 600;
         }
 
         .agent-card p {
-            color: var(--text-secondary);
+            color: var(--text-gray);
             margin-bottom: 1.5rem;
-            min-height: 60px;
             line-height: 1.6;
+            font-weight: 300;
         }
 
-        .agent-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .agent-link {
-            color: var(--accent-blue);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: color 0.3s ease;
-        }
-
-        .agent-link:hover {
-            color: var(--accent-blue-light);
-        }
-
-        .badge {
+        .agent-badge {
             background: rgba(0, 102, 255, 0.15);
             color: var(--accent-blue);
-            padding: 0.4rem 0.9rem;
+            padding: 0.4rem 1rem;
             border-radius: 6px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             font-weight: 600;
-        }
-
-        .badge.coming-soon {
-            background: rgba(160, 160, 184, 0.15);
-            color: var(--text-secondary);
-        }
-
-        /* Features Section */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2.5rem;
-            margin-top: 4rem;
-        }
-
-        .feature {
-            text-align: center;
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            background: rgba(0, 102, 255, 0.15);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            margin: 0 auto 1.5rem;
-        }
-
-        .feature h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.8rem;
-            font-weight: 700;
-        }
-
-        .feature p {
-            color: var(--text-secondary);
-            line-height: 1.6;
-        }
-
-        /* Value Comparison Section */
-        .value-comparison {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .comparison-card {
-            background: var(--bg-card);
-            padding: 2.5rem 2rem;
-            border-radius: 16px;
-            border: 2px solid var(--border-subtle);
-            text-align: center;
-            transition: all 0.3s ease;
-        }
-
-        .comparison-card.highlight {
-            border-color: var(--accent-blue);
-            background: rgba(0, 102, 255, 0.05);
-            transform: scale(1.05);
-            box-shadow: 0 12px 32px rgba(0, 102, 255, 0.3);
-        }
-
-        .comparison-card h3 {
-            font-size: 1.6rem;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-        }
-
-        .comparison-card.highlight h3 {
-            color: var(--accent-blue);
-        }
-
-        .comparison-features {
-            list-style: none;
-            margin: 1.5rem 0;
-            text-align: left;
-        }
-
-        .comparison-features li {
-            padding: 0.7rem 0;
-            color: var(--text-secondary);
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        .comparison-result {
-            font-size: 2.5rem;
-            margin-top: 1.5rem;
-            font-weight: 700;
+            display: inline-block;
         }
 
         /* Pricing Section */
@@ -485,29 +391,30 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 1rem;
-            margin-bottom: 3rem;
+            gap: 1.5rem;
+            margin-bottom: 4rem;
         }
 
         .toggle-option {
             font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--text-secondary);
+            font-weight: 500;
+            color: var(--text-gray);
             transition: color 0.3s ease;
         }
 
         .toggle-option.active {
-            color: var(--text-primary);
+            color: var(--text-white);
         }
 
         .toggle-switch {
             position: relative;
-            width: 60px;
-            height: 32px;
-            background: rgba(160, 160, 184, 0.2);
-            border-radius: 16px;
+            width: 64px;
+            height: 34px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 17px;
             cursor: pointer;
             transition: background 0.3s ease;
+            border: 1px solid var(--glass-border);
         }
 
         .toggle-switch.active {
@@ -516,56 +423,58 @@
 
         .toggle-slider {
             position: absolute;
-            top: 4px;
-            left: 4px;
-            width: 24px;
-            height: 24px;
+            top: 3px;
+            left: 3px;
+            width: 26px;
+            height: 26px;
             background: white;
             border-radius: 50%;
             transition: transform 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .toggle-switch.active .toggle-slider {
-            transform: translateX(28px);
+            transform: translateX(30px);
         }
 
-        .pricing-badge-yearly {
-            display: inline-block;
-            background: rgba(0, 255, 100, 0.15);
-            color: #00ff64;
+        .yearly-badge {
+            background: linear-gradient(135deg, #00ff88, #00cc6a);
+            color: #000;
             padding: 0.3rem 0.8rem;
             border-radius: 6px;
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             margin-left: 0.5rem;
         }
 
         .pricing-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 2rem;
             margin-top: 3rem;
         }
 
         .pricing-card {
-            background: var(--bg-card);
-            padding: 3rem 2rem;
+            background: var(--glass-bg);
+            padding: 3rem 2.5rem;
             border-radius: 16px;
-            border: 2px solid var(--border-subtle);
-            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
             position: relative;
         }
 
         .pricing-card.popular {
-            border-color: var(--accent-blue);
+            border: 1px solid var(--accent-blue);
+            box-shadow: 0 20px 60px rgba(0, 102, 255, 0.3);
             transform: scale(1.05);
-            box-shadow: 0 12px 32px rgba(0, 102, 255, 0.3);
         }
 
         .pricing-card.popular::before {
-            content: 'MOST POPULAR';
+            content: '⭐ MOST POPULAR';
             position: absolute;
-            top: -12px;
+            top: -14px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--accent-blue);
@@ -578,8 +487,8 @@
         }
 
         .pricing-card:hover {
-            border-color: var(--accent-blue);
             transform: translateY(-8px);
+            border-color: var(--accent-blue);
         }
 
         .pricing-card.popular:hover {
@@ -587,20 +496,21 @@
         }
 
         .pricing-card h3 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             margin-bottom: 0.5rem;
-            font-weight: 700;
+            font-weight: 600;
         }
 
         .pricing-amount {
             font-size: 3rem;
-            font-weight: 800;
-            color: var(--accent-blue);
+            font-weight: 300;
+            color: var(--text-white);
             margin: 1.5rem 0;
+            line-height: 1;
         }
 
         .pricing-period {
-            color: var(--text-secondary);
+            color: var(--text-gray);
             font-size: 1rem;
             font-weight: 400;
         }
@@ -612,13 +522,11 @@
         }
 
         .pricing-features li {
-            padding: 0.8rem 0;
-            color: var(--text-secondary);
-            border-bottom: 1px solid rgba(160, 160, 184, 0.1);
-        }
-
-        .pricing-features li:last-child {
-            border-bottom: none;
+            padding: 0.7rem 0;
+            color: var(--text-gray);
+            font-size: 0.95rem;
+            font-weight: 300;
+            line-height: 1.6;
         }
 
         .pricing-features li::before {
@@ -630,70 +538,130 @@
 
         .pricing-card .btn {
             width: 100%;
-            margin-top: 1rem;
+            margin-top: 1.5rem;
         }
 
-        /* Social Proof */
-        .reviews {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
-            margin: 3rem 0;
-        }
-
-        .review {
-            background: var(--bg-card);
-            padding: 2.5rem;
-            border-radius: 16px;
-            border: 1px solid var(--border-subtle);
-            transition: all 0.3s ease;
-        }
-
-        .review:hover {
-            border-color: var(--accent-blue);
-            transform: translateY(-5px);
-        }
-
-        .stars {
-            color: #ffd700;
-            font-size: 1.3rem;
+        .trial-badge {
+            background: rgba(0, 255, 136, 0.15);
+            color: #00ff88;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
             margin-bottom: 1rem;
         }
 
-        .review-text {
-            font-style: italic;
-            color: var(--text-secondary);
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-            font-size: 1.05rem;
+        /* Enterprise Form */
+        .enterprise-form {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-top: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .trust-logos {
+        .enterprise-form h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .enterprise-form p {
+            color: var(--text-gray);
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .form-grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-white);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 0.9rem 1.2rem;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-white);
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Social Proof */
+        .stats-section {
             display: flex;
             justify-content: center;
-            gap: 3rem;
+            gap: 6rem;
             flex-wrap: wrap;
-            margin-top: 3rem;
-            padding: 2rem;
-            opacity: 0.4;
+            padding: 6rem 0;
+            background: linear-gradient(180deg, transparent, rgba(0, 102, 255, 0.03), transparent);
         }
 
-        .trust-logos p {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .stat-big {
+            text-align: center;
+        }
+
+        .stat-big-value {
+            font-size: 4rem;
+            font-weight: 300;
+            color: var(--text-white);
+            line-height: 1;
+        }
+
+        .stat-big-label {
+            font-size: 1.1rem;
+            color: var(--text-gray);
+            margin-top: 0.5rem;
+            font-weight: 300;
         }
 
         /* FAQ Section */
         .faq-container {
-            max-width: 800px;
+            max-width: 900px;
             margin: 3rem auto 0;
         }
 
         .faq-item {
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border-radius: 12px;
             margin-bottom: 1rem;
             overflow: hidden;
@@ -707,7 +675,7 @@
         .faq-question {
             padding: 1.5rem 2rem;
             font-size: 1.1rem;
-            font-weight: 600;
+            font-weight: 500;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
@@ -720,12 +688,14 @@
         }
 
         .faq-icon {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             transition: transform 0.3s ease;
+            color: var(--text-gray);
         }
 
         .faq-item.active .faq-icon {
             transform: rotate(180deg);
+            color: var(--accent-blue);
         }
 
         .faq-answer {
@@ -740,48 +710,40 @@
 
         .faq-answer p {
             padding: 0 2rem 1.5rem;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             line-height: 1.7;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            text-align: center;
-            padding: 6rem 2rem;
-            background: linear-gradient(135deg, rgba(0, 102, 255, 0.1) 0%, transparent 100%);
-        }
-
-        .cta-section h2 {
-            margin-bottom: 1rem;
-        }
-
-        .cta-section p {
-            font-size: 1.3rem;
-            color: var(--text-secondary);
-            margin-bottom: 2.5rem;
+            font-weight: 300;
         }
 
         /* Footer */
         footer {
-            background: var(--bg-card);
-            padding: 4rem 2rem 2rem;
-            border-top: 1px solid var(--border-subtle);
+            background: var(--bg-dark);
+            padding: 5rem 0 3rem;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 8rem;
         }
 
         .footer-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            padding: 0 3rem;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 3rem;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
             margin-bottom: 3rem;
         }
 
         .footer-section h4 {
-            color: var(--accent-blue);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-            font-weight: 700;
+            color: var(--text-white);
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .footer-section p {
+            color: var(--text-gray);
+            line-height: 1.7;
+            font-weight: 300;
         }
 
         .footer-section ul {
@@ -793,23 +755,47 @@
         }
 
         .footer-section a {
-            color: var(--text-secondary);
+            color: var(--text-gray);
             text-decoration: none;
             transition: color 0.3s ease;
+            font-weight: 300;
         }
 
         .footer-section a:hover {
-            color: var(--text-primary);
+            color: var(--text-white);
         }
 
         .footer-bottom {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border-subtle);
+            padding: 2rem 3rem 0;
+            border-top: 1px solid var(--glass-border);
             text-align: center;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             font-size: 0.9rem;
+            font-weight: 300;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            border-color: var(--accent-blue);
+            background: rgba(0, 102, 255, 0.1);
         }
 
         /* Animations */
@@ -836,50 +822,9 @@
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
-            nav {
-                padding: 0.8rem 0;
-            }
-
-            .nav-links {
-                gap: 1rem;
-            }
-
-            .nav-links a:not(.nav-cta) {
-                display: none;
-            }
-
-            .hero {
-                min-height: 90vh;
-                padding: 6rem 1.5rem 3rem;
-            }
-
-            section {
-                padding: 4rem 0;
-            }
-
-            .stats-bar {
-                gap: 1.5rem;
-            }
-
-            .steps,
-            .agents-grid,
-            .features-grid,
-            .value-comparison,
+        @media (max-width: 1200px) {
             .pricing-cards {
-                grid-template-columns: 1fr;
-            }
-
-            .comparison-card.highlight {
-                transform: scale(1);
-            }
-
-            .cta-group {
-                flex-direction: column;
-            }
-
-            .btn {
-                width: 100%;
+                grid-template-columns: repeat(2, 1fr);
             }
 
             .pricing-card.popular {
@@ -890,12 +835,74 @@
                 transform: translateY(-8px);
             }
 
+            .agents-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 1.5rem;
+            }
+
+            .nav-links a:not(.nav-cta) {
+                display: none;
+            }
+
+            .container {
+                padding: 0 1.5rem;
+            }
+
+            .hero {
+                padding: 8rem 1.5rem 4rem;
+            }
+
+            section {
+                padding: 5rem 0;
+            }
+
+            .steps,
+            .agents-grid,
+            .pricing-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                padding: 0 1.5rem;
+            }
+
+            .footer-bottom {
+                padding: 2rem 1.5rem 0;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
             h1 {
                 font-size: 2.5rem;
             }
 
             h2 {
                 font-size: 2rem;
+            }
+
+            .stats-section {
+                gap: 3rem;
+            }
+
+            .stat-big-value {
+                font-size: 2.5rem;
             }
         }
     </style>
@@ -906,33 +913,36 @@
         <div class="nav-container">
             <div class="nav-logo">NexAgent</div>
             <div class="nav-links">
-                <a href="#agents">Products</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#agents">Agents</a>
                 <a href="#pricing">Pricing</a>
                 <a href="#faq">FAQ</a>
-                <a href="trial.html" class="nav-cta">Start Free Trial</a>
+                <a href="#pricing" class="nav-cta">See Plans</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero">
-        <div class="hero-background"></div>
         <div class="hero-content">
-            <h1>Your AI Workforce.<br>On Demand.</h1>
-            <p class="hero-subtitle">Pre-built AI agents that run your business 24/7. Set up in minutes, not months.</p>
+            <h1>Your AI Workforce.<br>Ready Now.</h1>
+            <p class="hero-subtitle">Deploy intelligent AI agents that run your business 24/7. No setup. No waiting. Just results.</p>
             <div class="cta-group">
-                <a href="trial.html" class="btn btn-primary">Start Free Trial</a>
-                <a href="#how-it-works" class="btn btn-secondary">See How It Works</a>
+                <a href="#pricing" class="btn btn-primary">See Plans</a>
+                <a href="#how-it-works" class="btn btn-secondary">Watch Demo</a>
             </div>
             <div class="stats-bar">
-                <div class="stat">
-                    <div class="stat-label">Managed AI Service</div>
+                <div>
+                    <div class="stat-value">500+</div>
+                    <div class="stat-label">Businesses</div>
                 </div>
-                <div class="stat">
-                    <div class="stat-label">24/7 Monitoring</div>
+                <div>
+                    <div class="stat-value">2M+</div>
+                    <div class="stat-label">Interactions</div>
                 </div>
-                <div class="stat">
-                    <div class="stat-label">5-Star Rated</div>
+                <div>
+                    <div class="stat-value">99.9%</div>
+                    <div class="stat-label">Uptime</div>
                 </div>
             </div>
         </div>
@@ -942,22 +952,22 @@
     <section id="how-it-works">
         <div class="container">
             <h2>How It Works</h2>
-            <p class="section-subtitle">Get your AI workforce up and running in three simple steps</p>
+            <p class="section-subtitle">Get started in three simple steps</p>
             <div class="steps">
                 <div class="step reveal">
                     <div class="step-number">1</div>
-                    <h3>Choose Your Agent</h3>
-                    <p>Browse our marketplace of ready-to-deploy AI agents. Each one built for a specific business need.</p>
+                    <h3>Choose Your Plan</h3>
+                    <p>Pick the agents you need. Flexible plans for every business size.</p>
                 </div>
                 <div class="step reveal">
                     <div class="step-number">2</div>
-                    <h3>Configure in Minutes</h3>
-                    <p>Connect your tools, set your preferences, done. No technical knowledge required.</p>
+                    <h3>We Set It Up</h3>
+                    <p>Our AI configures everything in 24-48h. You just relax.</p>
                 </div>
                 <div class="step reveal">
                     <div class="step-number">3</div>
-                    <h3>Watch It Work</h3>
-                    <p>Your agent starts working immediately. You focus on growth, they handle the rest.</p>
+                    <h3>Go Live</h3>
+                    <p>Your AI workforce starts working. Focus on growth.</p>
                 </div>
             </div>
         </div>
@@ -966,153 +976,69 @@
     <!-- Agent Showcase -->
     <section id="agents">
         <div class="container">
-            <h2>Your AI Team Awaits</h2>
-            <p class="section-subtitle">Pre-built agents that solve real business problems</p>
+            <h2>Your AI Team</h2>
+            <p class="section-subtitle">Specialized agents for every business need</p>
             <div class="agents-grid">
                 <div class="agent-card reveal">
-                    <div class="agent-icon">🤖</div>
-                    <h3>Discord Community Manager</h3>
-                    <p>Moderates, welcomes, answers questions. Your community runs itself.</p>
-                    <div class="agent-footer">
-                        <a href="#pricing" class="agent-link">Learn More →</a>
-                        <div class="badge">Available</div>
-                    </div>
+                    <div class="agent-icon">💬</div>
+                    <h3>Customer Support</h3>
+                    <p>Instant responses, 24/7 availability. Never miss a customer question again.</p>
+                    <span class="agent-badge">Included in: Professional+</span>
                 </div>
                 <div class="agent-card reveal">
                     <div class="agent-icon">📈</div>
-                    <h3>Social Media Growth Engine</h3>
-                    <p>Creates content, engages followers, grows your audience on autopilot.</p>
-                    <div class="agent-footer">
-                        <a href="#pricing" class="agent-link">Learn More →</a>
-                        <div class="badge">Available</div>
-                    </div>
+                    <h3>Lead Generation</h3>
+                    <p>Find, qualify, and nurture leads automatically while you sleep.</p>
+                    <span class="agent-badge">Included in: Professional+</span>
                 </div>
                 <div class="agent-card reveal">
-                    <div class="agent-icon">💬</div>
-                    <h3>Customer Support Agent</h3>
-                    <p>Learns your business, answers instantly. 24/7, no breaks.</p>
-                    <div class="agent-footer">
-                        <a href="#pricing" class="agent-link">Learn More →</a>
-                        <div class="badge">Available</div>
-                    </div>
+                    <div class="agent-icon">✍️</div>
+                    <h3>Content Creation</h3>
+                    <p>Generate blog posts, social media content, and marketing copy on autopilot.</p>
+                    <span class="agent-badge">Included in: Professional+</span>
                 </div>
                 <div class="agent-card reveal">
                     <div class="agent-icon">📱</div>
-                    <h3>Telegram Business Bot</h3>
-                    <p>Orders, bookings, payments — all automated in Telegram.</p>
-                    <div class="agent-footer">
-                        <a href="#pricing" class="agent-link">Learn More →</a>
-                        <div class="badge coming-soon">Coming Soon</div>
-                    </div>
+                    <h3>Social Media</h3>
+                    <p>Engage followers, schedule posts, grow your audience automatically.</p>
+                    <span class="agent-badge">Included in: Business+</span>
                 </div>
                 <div class="agent-card reveal">
                     <div class="agent-icon">📊</div>
-                    <h3>Lead Generation Agent</h3>
-                    <p>Finds, qualifies, and nurtures leads while you sleep.</p>
-                    <div class="agent-footer">
-                        <a href="#pricing" class="agent-link">Learn More →</a>
-                        <div class="badge coming-soon">Coming Soon</div>
-                    </div>
+                    <h3>Data Analysis</h3>
+                    <p>Analyze trends, generate reports, and uncover insights from your data.</p>
+                    <span class="agent-badge">Included in: Business+</span>
                 </div>
                 <div class="agent-card reveal">
-                    <div class="agent-icon">🔄</div>
-                    <h3>Content Pipeline Agent</h3>
-                    <p>Research, write, publish. Your content machine.</p>
-                    <div class="agent-footer">
-                        <a href="#pricing" class="agent-link">Learn More →</a>
-                        <div class="badge coming-soon">Coming Soon</div>
-                    </div>
+                    <div class="agent-icon">📅</div>
+                    <h3>Booking Management</h3>
+                    <p>Handle appointments, send reminders, manage your calendar seamlessly.</p>
+                    <span class="agent-badge">Included in: Business+</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section id="features">
-        <div class="container">
-            <h2>Built for Modern Businesses</h2>
-            <p class="section-subtitle">Everything you need to automate and scale</p>
-            <div class="features-grid">
-                <div class="feature reveal">
-                    <div class="feature-icon">⚡</div>
-                    <h3>No Coding Required</h3>
-                    <p>One-click setup. If you can use an app, you can deploy an AI agent.</p>
-                </div>
-                <div class="feature reveal">
-                    <div class="feature-icon">🔑</div>
-                    <h3>Bring Your Own API Key</h3>
-                    <p>You control your AI costs. Transparent, predictable, no hidden fees.</p>
-                </div>
-                <div class="feature reveal">
-                    <div class="feature-icon">🧠</div>
-                    <h3>Always Learning</h3>
-                    <p>Agents improve from your data. The more they work, the smarter they get.</p>
-                </div>
-                <div class="feature reveal">
-                    <div class="feature-icon">🌐</div>
-                    <h3>Multi-Platform</h3>
-                    <p>Discord, Telegram, Twitter, Email, WhatsApp — all in one place.</p>
-                </div>
-                <div class="feature reveal">
-                    <div class="feature-icon">🔒</div>
-                    <h3>Secure & Private</h3>
-                    <p>Your data stays yours. GDPR compliant, encrypted, zero-knowledge architecture.</p>
-                </div>
-                <div class="feature reveal">
-                    <div class="feature-icon">🔄</div>
-                    <h3>24/7 Operation</h3>
-                    <p>Never sleeps, never takes breaks. Your business runs around the clock.</p>
-                </div>
-            </div>
+    <!-- Social Proof Stats -->
+    <div class="stats-section">
+        <div class="stat-big reveal">
+            <div class="stat-big-value">500+</div>
+            <div class="stat-big-label">Businesses</div>
         </div>
-    </section>
-
-    <!-- Value Comparison Section -->
-    <section id="value-comparison">
-        <div class="container">
-            <h2>Why NexAgent?</h2>
-            <p class="section-subtitle">The smarter choice for modern businesses</p>
-            <div class="value-comparison">
-                <div class="comparison-card reveal">
-                    <h3>Hire an Employee</h3>
-                    <ul class="comparison-features">
-                        <li>€2,500+/month</li>
-                        <li>Works 8 hours</li>
-                        <li>Needs training</li>
-                        <li>Takes vacation</li>
-                    </ul>
-                    <div class="comparison-result">❌</div>
-                </div>
-
-                <div class="comparison-card reveal">
-                    <h3>DIY with AI Tools</h3>
-                    <ul class="comparison-features">
-                        <li>€500+/month + your time</li>
-                        <li>You manage everything</li>
-                        <li>You fix every bug</li>
-                        <li>No support</li>
-                    </ul>
-                    <div class="comparison-result">❌</div>
-                </div>
-
-                <div class="comparison-card highlight reveal">
-                    <h3>NexAgent</h3>
-                    <ul class="comparison-features">
-                        <li>From €149/month</li>
-                        <li>Works 24/7</li>
-                        <li>We manage everything</li>
-                        <li>Dedicated support</li>
-                    </ul>
-                    <div class="comparison-result">✅</div>
-                </div>
-            </div>
+        <div class="stat-big reveal">
+            <div class="stat-big-value">2M+</div>
+            <div class="stat-big-label">Interactions</div>
         </div>
-    </section>
+        <div class="stat-big reveal">
+            <div class="stat-big-value">99.9%</div>
+            <div class="stat-big-label">Uptime</div>
+        </div>
+    </div>
 
     <!-- Pricing Section -->
     <section id="pricing">
         <div class="container">
-            <h2>Simple, Transparent Pricing</h2>
+            <h2>Simple Pricing</h2>
             <p class="section-subtitle">Choose the plan that fits your needs. Scale as you grow.</p>
             
             <div class="pricing-toggle">
@@ -1120,112 +1046,138 @@
                 <div class="toggle-switch" id="pricing-toggle">
                     <div class="toggle-slider"></div>
                 </div>
-                <span class="toggle-option" id="yearly-label">Yearly <span class="pricing-badge-yearly">Save 2 months</span></span>
+                <span class="toggle-option" id="yearly-label">Yearly <span class="yearly-badge">Save 2 months</span></span>
             </div>
 
             <div class="pricing-cards">
                 <div class="pricing-card reveal">
+                    <div class="trial-badge">14-day free trial</div>
                     <h3>Starter</h3>
                     <div class="pricing-amount">
                         <span class="monthly-price">€149</span>
                         <span class="yearly-price" style="display:none;">€124</span>
-                        <span class="pricing-period">/month</span>
+                        <span class="pricing-period">/mo</span>
                     </div>
                     <ul class="pricing-features">
-                        <li>1 AI Agent</li>
-                        <li>Managed Hosting & Monitoring</li>
-                        <li>Automatic Updates</li>
+                        <li>1 AI Agent (your choice)</li>
+                        <li>24/7 Operation</li>
+                        <li>Standard Response Time (&lt;5 Min)</li>
                         <li>Email Support</li>
                         <li>Monthly Performance Report</li>
+                        <li>Up to 1,000 Interactions/mo</li>
+                        <li>Basic Customization</li>
+                        <li>GDPR Compliant, EU Hosting</li>
                     </ul>
                     <button class="btn btn-secondary stripe-checkout-btn" 
                             data-price-monthly="price_1T9ORBEyYaMQFVgY3W65nKWm"
                             data-price-yearly="price_1T9ORBEyYaMQFVgYkVjzy5h3">
-                        Start Free Trial
+                        Subscribe Now
                     </button>
                 </div>
 
                 <div class="pricing-card popular reveal">
+                    <div class="trial-badge">14-day free trial</div>
                     <h3>Professional</h3>
                     <div class="pricing-amount">
                         <span class="monthly-price">€349</span>
-                        <span class="yearly-price" style="display:none;">€290</span>
-                        <span class="pricing-period">/month</span>
+                        <span class="yearly-price" style="display:none;">€291</span>
+                        <span class="pricing-period">/mo</span>
                     </div>
                     <ul class="pricing-features">
-                        <li>3 AI Agents</li>
-                        <li>Priority Support (4h Response)</li>
-                        <li>Custom Training on YOUR Data</li>
-                        <li>Analytics Dashboard</li>
-                        <li>Monthly Strategy Call</li>
+                        <li>3 AI Agents (your choice)</li>
+                        <li>24/7 Operation</li>
+                        <li>Priority Response Time (&lt;1 Min)</li>
+                        <li>Priority Support (Chat + Email)</li>
+                        <li>Weekly Performance Reports</li>
+                        <li>Up to 10,000 Interactions/mo</li>
+                        <li>Custom Training on your data</li>
+                        <li>CRM Integration</li>
+                        <li>Multi-Language Support</li>
+                        <li>A/B Testing for Responses</li>
+                        <li>GDPR Compliant, EU Hosting</li>
                     </ul>
                     <button class="btn btn-primary stripe-checkout-btn"
                             data-price-monthly="price_1T9ORCEyYaMQFVgY0MGpCA2S"
                             data-price-yearly="price_1T9ORDEyYaMQFVgYBNKiiZpj">
-                        Get Started
+                        Subscribe Now
                     </button>
                 </div>
 
                 <div class="pricing-card reveal">
+                    <div class="trial-badge">14-day free trial</div>
                     <h3>Business</h3>
                     <div class="pricing-amount">
                         <span class="monthly-price">€799</span>
-                        <span class="yearly-price" style="display:none;">€665</span>
-                        <span class="pricing-period">/month</span>
+                        <span class="yearly-price" style="display:none;">€666</span>
+                        <span class="pricing-period">/mo</span>
                     </div>
                     <ul class="pricing-features">
                         <li>Unlimited AI Agents</li>
+                        <li>24/7 Operation</li>
+                        <li>Instant Response Time</li>
                         <li>Dedicated Account Manager</li>
-                        <li>Custom Integrations (CRM, ERP, etc.)</li>
+                        <li>Daily Performance Reports + Dashboard</li>
+                        <li>Unlimited Interactions</li>
+                        <li>Custom Training + Fine-Tuning</li>
+                        <li>Full API Access</li>
                         <li>White-Label Option</li>
-                        <li>Weekly Strategy Call</li>
-                        <li>API Access</li>
+                        <li>Custom Integrations (CRM, ERP, Slack, WhatsApp)</li>
+                        <li>Multi-Language Support</li>
+                        <li>Advanced Analytics + Insights</li>
+                        <li>Priority Feature Requests</li>
+                        <li>GDPR Compliant, EU Hosting</li>
                     </ul>
                     <button class="btn btn-primary stripe-checkout-btn"
                             data-price-monthly="price_1T9ORDEyYaMQFVgYw9aj99Ff"
                             data-price-yearly="price_1T9OREEyYaMQFVgYbiqVoGi2">
-                        Get Started
+                        Subscribe Now
                     </button>
                 </div>
 
                 <div class="pricing-card reveal">
                     <h3>Enterprise</h3>
-                    <div class="pricing-amount" style="font-size: 2rem; color: var(--text-primary);">
-                        Let's Talk
+                    <div class="pricing-amount" style="font-size: 2rem; margin-top: 3rem;">
+                        Custom
                     </div>
                     <ul class="pricing-features">
                         <li>Everything in Business</li>
-                        <li>SLA with Uptime Guarantee</li>
+                        <li>On-Premise Deployment Option</li>
+                        <li>Custom SLA</li>
                         <li>Dedicated Infrastructure</li>
-                        <li>Onboarding Workshop</li>
+                        <li>Security Audit + Compliance</li>
                         <li>Custom Development</li>
                         <li>24/7 Priority Support</li>
+                        <li>Onboarding Workshop</li>
                     </ul>
-                    <a href="mailto:nani@agic.me" class="btn btn-secondary">Contact Us</a>
+                    <a href="#enterprise-form" class="btn btn-secondary">Get Custom Quote</a>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- Social Proof -->
-    <section id="testimonials">
-        <div class="container">
-            <h2>What Our Clients Say</h2>
-            <div class="reviews">
-                <div class="review reveal">
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <p class="review-text">"He went above and beyond my expectations. Highly recommended."</p>
-                </div>
-                <div class="review reveal">
-                    <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <p class="review-text">"Excellently clear instructions, very knowledgeable."</p>
-                </div>
-            </div>
-            <div style="text-align: center; margin-top: 3rem;">
-                <h3 style="color: var(--text-secondary); font-size: 1.1rem; margin-bottom: 2rem;">Trusted by businesses worldwide</h3>
-                <div class="trust-logos">
-                    <p>Client logos coming soon</p>
-                </div>
+            <!-- Enterprise Form -->
+            <div class="enterprise-form reveal" id="enterprise-form">
+                <h3>Get a Custom Quote</h3>
+                <p>Tell us about your needs and we'll create a tailored solution for your business.</p>
+                <form action="mailto:nani@agic.me" method="get" enctype="text/plain">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group full">
+                            <label for="company">Company</label>
+                            <input type="text" id="company" name="company" required>
+                        </div>
+                        <div class="form-group full">
+                            <label for="message">Tell us about your needs</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 1.5rem;">Send Request</button>
+                </form>
             </div>
         </div>
     </section>
@@ -1233,36 +1185,26 @@
     <!-- FAQ Section -->
     <section id="faq">
         <div class="container">
-            <h2>Frequently Asked Questions</h2>
+            <h2>FAQ</h2>
             <p class="section-subtitle">Everything you need to know</p>
             <div class="faq-container">
                 <div class="faq-item">
                     <div class="faq-question">
-                        <span>What is an AI Agent?</span>
+                        <span>What happens after I subscribe?</span>
                         <span class="faq-icon">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <p>An AI agent is a software program powered by artificial intelligence that can perform tasks autonomously. Think of it as a digital employee that works 24/7, learns from your business, and handles repetitive tasks so you can focus on growth.</p>
+                        <p>After subscribing, you'll receive an email with next steps. Our team will contact you within 24 hours to configure your AI agents. Setup typically takes 24-48h, then your agents go live.</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">
-                        <span>Do I need technical skills?</span>
+                        <span>How long does setup take?</span>
                         <span class="faq-icon">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <p>Absolutely not! NexAgent is designed for business owners, not developers. Our one-click setup takes just minutes, and our support team is always ready to help if needed.</p>
-                    </div>
-                </div>
-
-                <div class="faq-item">
-                    <div class="faq-question">
-                        <span>What's the setup time?</span>
-                        <span class="faq-icon">▼</span>
-                    </div>
-                    <div class="faq-answer">
-                        <p>Most agents are up and running in under 10 minutes. Complex integrations might take a bit longer, but we're talking minutes, not days or weeks.</p>
+                        <p>Most setups are completed within 24-48 hours. For Enterprise customers with complex integrations, it may take up to 1 week. We'll keep you updated every step of the way.</p>
                     </div>
                 </div>
 
@@ -1272,39 +1214,50 @@
                         <span class="faq-icon">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <p>Yes! No lock-in, no long-term contracts. Cancel your subscription anytime with just one click. We believe in earning your business every month.</p>
+                        <p>Yes! No lock-in contracts. You can cancel your subscription anytime from your account dashboard. Your agents will continue working until the end of your billing period.</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">
-                        <span>How does 'Bring Your Own API Key' work?</span>
+                        <span>How secure is my data?</span>
                         <span class="faq-icon">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <p>You use your own API keys from providers like OpenAI, Claude, or others. This means you pay AI costs directly to the provider at their rates, and we only charge for the platform and support. Total transparency, no markup.</p>
+                        <p>We're GDPR compliant with EU data hosting. All data is encrypted in transit (TLS 1.3) and at rest (AES-256). We follow zero-knowledge architecture wherever possible. Your data stays yours, always.</p>
                     </div>
                 </div>
 
                 <div class="faq-item">
                     <div class="faq-question">
-                        <span>Is my data safe?</span>
+                        <span>What is Custom Training?</span>
                         <span class="faq-icon">▼</span>
                     </div>
                     <div class="faq-answer">
-                        <p>Absolutely. We're GDPR compliant, all data is encrypted in transit and at rest, and we follow a zero-knowledge architecture wherever possible. Your data stays yours, always.</p>
+                        <p>Custom Training means we fine-tune your AI agents on your specific data (docs, FAQs, past conversations). This makes them smarter and more accurate for your business. Available in Professional and Business plans.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>What integrations do you support?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We support HubSpot, Salesforce, Slack, WhatsApp, Telegram, Discord, Email, and many more. Custom integrations are available for Business and Enterprise plans. Just tell us what you need.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <span>Can I upgrade my plan later?</span>
+                        <span class="faq-icon">▼</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! You can upgrade anytime from your dashboard. The price difference will be prorated, and your new features activate immediately.</p>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section id="cta" class="cta-section">
-        <div class="container">
-            <h2>Ready to Automate Your Business?</h2>
-            <p>Start your free trial today. No credit card required.</p>
-            <a href="trial.html" class="btn btn-primary" style="font-size: 1.2rem; padding: 1.2rem 3rem;">Start Free Trial</a>
         </div>
     </section>
 
@@ -1313,38 +1266,34 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h4>NexAgent</h4>
-                <p style="color: var(--text-secondary); line-height: 1.7;">Your AI Workforce. On Demand.</p>
+                <p>Your AI Workforce. Ready Now.</p>
+                <div class="social-links">
+                    <a href="#" title="Twitter">𝕏</a>
+                    <a href="#" title="LinkedIn">in</a>
+                    <a href="#" title="GitHub">⚡</a>
+                </div>
             </div>
             <div class="footer-section">
-                <h4>Products</h4>
+                <h4>Product</h4>
                 <ul>
                     <li><a href="#agents">AI Agents</a></li>
                     <li><a href="#pricing">Pricing</a></li>
-                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
                 </ul>
             </div>
             <div class="footer-section">
                 <h4>Company</h4>
                 <ul>
                     <li><a href="#faq">FAQ</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="mailto:nani@agic.me">Contact: nani@agic.me</a></li>
+                    <li><a href="mailto:nani@agic.me">Contact</a></li>
                 </ul>
             </div>
             <div class="footer-section">
                 <h4>Legal</h4>
                 <ul>
-                    <li><a href="impressum.html">Impressum</a></li>
-                    <li><a href="terms.html#datenschutz">Privacy Policy</a></li>
-                    <li><a href="terms.html">Terms of Service</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h4>Connect</h4>
-                <ul>
-                    <li><a href="https://twitter.com" target="_blank">Twitter</a></li>
-                    <li><a href="https://linkedin.com" target="_blank">LinkedIn</a></li>
-                    <li><a href="https://github.com" target="_blank">GitHub</a></li>
+                    <li><a href="#">Impressum</a></li>
+                    <li><a href="#">Privacy</a></li>
+                    <li><a href="#">Terms</a></li>
                 </ul>
             </div>
         </div>
@@ -1354,20 +1303,20 @@
     </footer>
 
     <!-- AI Chat Widget -->
-    <div id="chat-widget">
-        <div id="chat-button" title="Chat with NexAgent AI">
+    <div id="chat-widget" style="position: fixed; bottom: 24px; right: 24px; z-index: 9999;">
+        <div id="chat-button" style="width: 60px; height: 60px; border-radius: 50%; background: var(--accent-blue); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0, 102, 255, 0.4); transition: all 0.3s ease;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
         </div>
         
-        <div id="chat-window">
-            <div id="chat-header">
+        <div id="chat-window" style="position: absolute; bottom: 80px; right: 0; width: 400px; height: 500px; background: var(--glass-bg); border-radius: 16px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); border: 1px solid var(--glass-border); backdrop-filter: blur(20px); display: none; flex-direction: column; overflow: hidden;">
+            <div id="chat-header" style="padding: 1.2rem 1.5rem; background: linear-gradient(135deg, var(--accent-blue), #0052cc); color: white; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <div style="font-weight: 700; font-size: 1.1rem;">NexAgent AI</div>
-                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Always here to help</div>
+                    <div style="font-size: 0.85rem; opacity: 0.9;">Always here to help</div>
                 </div>
-                <button id="chat-close" title="Close chat">
+                <button id="chat-close" style="background: transparent; border: none; color: white; cursor: pointer; padding: 0.4rem; border-radius: 6px; transition: background 0.2s ease; display: flex; align-items: center; justify-content: center;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1375,11 +1324,11 @@
                 </button>
             </div>
             
-            <div id="chat-messages"></div>
+            <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; background: var(--bg-black);"></div>
             
-            <div id="chat-input-container">
-                <input type="text" id="chat-input" placeholder="Ask me anything..." autocomplete="off">
-                <button id="chat-send">
+            <div id="chat-input-container" style="padding: 1rem 1.5rem; background: var(--glass-bg); border-top: 1px solid var(--glass-border); display: flex; gap: 0.8rem;">
+                <input type="text" id="chat-input" placeholder="Ask me anything..." style="flex: 1; padding: 0.8rem 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.3); color: var(--text-white); font-size: 0.95rem; font-family: 'Inter', sans-serif;">
+                <button id="chat-send" style="width: 40px; height: 40px; border-radius: 8px; background: var(--accent-blue); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <line x1="22" y1="2" x2="11" y2="13"></line>
                         <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
@@ -1388,278 +1337,6 @@
             </div>
         </div>
     </div>
-
-    <style>
-        #chat-widget {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            z-index: 9999;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-        }
-
-        #chat-button {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--accent-blue);
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 24px rgba(0, 102, 255, 0.4);
-            transition: all 0.3s ease;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        #chat-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 12px 32px rgba(0, 102, 255, 0.6);
-        }
-
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 8px 24px rgba(0, 102, 255, 0.4); }
-            50% { box-shadow: 0 8px 24px rgba(0, 102, 255, 0.7), 0 0 0 8px rgba(0, 102, 255, 0.1); }
-        }
-
-        #chat-window {
-            position: absolute;
-            bottom: 80px;
-            right: 0;
-            width: 400px;
-            height: 500px;
-            background: var(--bg-card);
-            border-radius: 16px;
-            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border-subtle);
-            display: none;
-            flex-direction: column;
-            overflow: hidden;
-            animation: slideUp 0.3s ease-out;
-        }
-
-        #chat-window.active {
-            display: flex;
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        #chat-header {
-            padding: 1.2rem 1.5rem;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-light));
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        #chat-close {
-            background: transparent;
-            border: none;
-            color: white;
-            cursor: pointer;
-            padding: 0.4rem;
-            border-radius: 6px;
-            transition: background 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #chat-close:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        #chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            background: var(--bg-dark);
-        }
-
-        #chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #chat-messages::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        #chat-messages::-webkit-scrollbar-thumb {
-            background: rgba(0, 102, 255, 0.3);
-            border-radius: 3px;
-        }
-
-        #chat-messages::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 102, 255, 0.5);
-        }
-
-        .chat-message {
-            max-width: 80%;
-            padding: 0.8rem 1.1rem;
-            border-radius: 12px;
-            line-height: 1.5;
-            word-wrap: break-word;
-            animation: messageSlide 0.3s ease-out;
-        }
-
-        @keyframes messageSlide {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .chat-message.user {
-            align-self: flex-end;
-            background: var(--accent-blue);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .chat-message.ai {
-            align-self: flex-start;
-            background: var(--bg-card);
-            color: var(--text-primary);
-            border: 1px solid var(--border-subtle);
-            border-bottom-left-radius: 4px;
-        }
-
-        .chat-message.ai strong {
-            color: var(--accent-blue);
-        }
-
-        .chat-message.ai a {
-            color: var(--accent-blue);
-            text-decoration: underline;
-        }
-
-        .typing-indicator {
-            align-self: flex-start;
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            padding: 0.8rem 1.1rem;
-            border-radius: 12px;
-            border-bottom-left-radius: 4px;
-            display: flex;
-            gap: 4px;
-            align-items: center;
-        }
-
-        .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background: var(--text-secondary);
-            border-radius: 50%;
-            animation: typingBounce 1.4s ease-in-out infinite;
-        }
-
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typingBounce {
-            0%, 60%, 100% { transform: translateY(0); }
-            30% { transform: translateY(-8px); }
-        }
-
-        #chat-input-container {
-            padding: 1rem 1.5rem;
-            background: var(--bg-card);
-            border-top: 1px solid var(--border-subtle);
-            display: flex;
-            gap: 0.8rem;
-        }
-
-        #chat-input {
-            flex: 1;
-            padding: 0.8rem 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-subtle);
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            font-size: 0.95rem;
-            transition: border-color 0.2s ease;
-        }
-
-        #chat-input:focus {
-            outline: none;
-            border-color: var(--accent-blue);
-        }
-
-        #chat-input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        #chat-send {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: var(--accent-blue);
-            border: none;
-            color: white;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            flex-shrink: 0;
-        }
-
-        #chat-send:hover {
-            background: var(--accent-blue-light);
-            transform: translateY(-2px);
-        }
-
-        #chat-send:active {
-            transform: translateY(0);
-        }
-
-        #chat-send:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        @media (max-width: 768px) {
-            #chat-window {
-                position: fixed;
-                bottom: 0;
-                right: 0;
-                left: 0;
-                width: 100%;
-                height: 100vh;
-                border-radius: 0;
-            }
-
-            #chat-widget {
-                bottom: 16px;
-                right: 16px;
-            }
-        }
-    </style>
 
     <script>
         // Pricing Toggle
@@ -1692,14 +1369,12 @@
             question.addEventListener('click', () => {
                 const isActive = item.classList.contains('active');
                 
-                // Close all other items
                 faqItems.forEach(otherItem => {
                     if (otherItem !== item) {
                         otherItem.classList.remove('active');
                     }
                 });
                 
-                // Toggle current item
                 if (isActive) {
                     item.classList.remove('active');
                 } else {
@@ -1725,7 +1400,7 @@
         };
 
         window.addEventListener('scroll', revealOnScroll);
-        revealOnScroll(); // Initial check
+        revealOnScroll();
 
         // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -1733,7 +1408,7 @@
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    const offsetTop = target.offsetTop - 80; // Account for fixed nav
+                    const offsetTop = target.offsetTop - 80;
                     window.scrollTo({
                         top: offsetTop,
                         behavior: 'smooth'
@@ -1742,7 +1417,7 @@
             });
         });
 
-        // ============= AI CHAT WIDGET =============
+        // AI Chat Widget
         (function() {
             const PROXY_URL = 'https://nexagent-chat.nani-0a3.workers.dev/chat';
             const MAX_MESSAGES = 20;
@@ -1757,59 +1432,37 @@
             let conversationHistory = [];
             let isProcessing = false;
 
-            // Simple markdown parser for bold, lists, and links
             function parseMarkdown(text) {
                 return text
                     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
+                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color: var(--accent-blue); text-decoration: underline;">$1</a>')
                     .replace(/\n- (.*?)(?=\n|$)/g, '\n• $1')
                     .replace(/\n/g, '<br>');
             }
 
-            function addQuickReplyButtons(replies) {
-                const container = document.createElement('div');
-                container.className = 'quick-replies';
-                container.style.cssText = 'display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem;';
-                
-                replies.forEach(reply => {
-                    const btn = document.createElement('button');
-                    btn.className = 'quick-reply-btn';
-                    btn.textContent = reply;
-                    btn.style.cssText = `
-                        background: transparent;
-                        border: 1.5px solid var(--accent-blue);
-                        color: var(--accent-blue);
-                        padding: 0.5rem 1rem;
-                        border-radius: 20px;
-                        font-size: 0.85rem;
-                        font-weight: 600;
-                        cursor: pointer;
-                        transition: all 0.2s ease;
-                    `;
-                    btn.onmouseover = () => {
-                        btn.style.background = 'rgba(0, 102, 255, 0.1)';
-                        btn.style.transform = 'translateY(-2px)';
-                    };
-                    btn.onmouseout = () => {
-                        btn.style.background = 'transparent';
-                        btn.style.transform = 'translateY(0)';
-                    };
-                    btn.onclick = () => {
-                        chatInput.value = reply;
-                        sendMessage();
-                        container.remove(); // Remove buttons after use
-                    };
-                    container.appendChild(btn);
-                });
-                
-                chatMessages.appendChild(container);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-
             function addMessage(content, role) {
                 const messageDiv = document.createElement('div');
-                messageDiv.className = `chat-message ${role}`;
+                messageDiv.style.cssText = `
+                    max-width: 80%;
+                    padding: 0.8rem 1.1rem;
+                    border-radius: 12px;
+                    line-height: 1.5;
+                    word-wrap: break-word;
+                    animation: fadeInUp 0.3s ease-out;
+                    ${role === 'user' ? `
+                        align-self: flex-end;
+                        background: var(--accent-blue);
+                        color: white;
+                        border-bottom-right-radius: 4px;
+                    ` : `
+                        align-self: flex-start;
+                        background: var(--glass-bg);
+                        color: var(--text-white);
+                        border: 1px solid var(--glass-border);
+                        border-bottom-left-radius: 4px;
+                    `}
+                `;
                 
                 if (role === 'ai') {
                     messageDiv.innerHTML = parseMarkdown(content);
@@ -1820,10 +1473,8 @@
                 chatMessages.appendChild(messageDiv);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
                 
-                // Store in history
                 conversationHistory.push({ role: role === 'user' ? 'user' : 'assistant', content });
                 
-                // Keep only last 20 messages
                 if (conversationHistory.length > MAX_MESSAGES) {
                     conversationHistory = conversationHistory.slice(-MAX_MESSAGES);
                 }
@@ -1831,29 +1482,35 @@
 
             function showTypingIndicator() {
                 const indicator = document.createElement('div');
-                indicator.className = 'typing-indicator';
                 indicator.id = 'typing-indicator';
-                indicator.innerHTML = '<span></span><span></span><span></span>';
+                indicator.style.cssText = `
+                    align-self: flex-start;
+                    background: var(--glass-bg);
+                    border: 1px solid var(--glass-border);
+                    padding: 0.8rem 1.1rem;
+                    border-radius: 12px;
+                    border-bottom-left-radius: 4px;
+                    display: flex;
+                    gap: 4px;
+                    align-items: center;
+                `;
+                indicator.innerHTML = '<span style="width: 8px; height: 8px; background: var(--text-gray); border-radius: 50%; animation: typingBounce 1.4s ease-in-out infinite;"></span><span style="width: 8px; height: 8px; background: var(--text-gray); border-radius: 50%; animation: typingBounce 1.4s ease-in-out 0.2s infinite;"></span><span style="width: 8px; height: 8px; background: var(--text-gray); border-radius: 50%; animation: typingBounce 1.4s ease-in-out 0.4s infinite;"></span>';
                 chatMessages.appendChild(indicator);
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
             function hideTypingIndicator() {
                 const indicator = document.getElementById('typing-indicator');
-                if (indicator) {
-                    indicator.remove();
-                }
+                if (indicator) indicator.remove();
             }
 
             async function sendMessage() {
                 const message = chatInput.value.trim();
                 if (!message || isProcessing) return;
 
-                // Add user message
                 addMessage(message, 'user');
                 chatInput.value = '';
                 
-                // Show typing indicator
                 isProcessing = true;
                 chatSend.disabled = true;
                 showTypingIndicator();
@@ -1861,19 +1518,13 @@
                 try {
                     const response = await fetch(PROXY_URL, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            messages: conversationHistory
-                        })
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ messages: conversationHistory })
                     });
 
                     hideTypingIndicator();
 
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}`);
-                    }
+                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
                     const data = await response.json();
                     addMessage(data.response, 'ai');
@@ -1889,21 +1540,18 @@
                 }
             }
 
-            // Event listeners
             chatButton.addEventListener('click', () => {
-                chatWindow.classList.add('active');
+                chatWindow.style.display = 'flex';
                 chatButton.style.display = 'none';
                 chatInput.focus();
                 
-                // Show welcome message if first time
                 if (conversationHistory.length === 0) {
                     addMessage("Hi! 👋 I'm NexAgent AI. Ask me anything about our AI agents, pricing, or how we can automate your business.", 'ai');
-                    addQuickReplyButtons(['💰 Pricing', '🤖 How it works', '🚀 Free Trial']);
                 }
             });
 
             chatClose.addEventListener('click', () => {
-                chatWindow.classList.remove('active');
+                chatWindow.style.display = 'none';
                 chatButton.style.display = 'flex';
             });
 
@@ -1916,46 +1564,47 @@
                 }
             });
 
-            // Close chat on Escape
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && chatWindow.classList.contains('active')) {
+                if (e.key === 'Escape' && chatWindow.style.display === 'flex') {
                     chatClose.click();
                 }
             });
+
+            // Add keyframes for typing animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes typingBounce {
+                    0%, 60%, 100% { transform: translateY(0); }
+                    30% { transform: translateY(-8px); }
+                }
+            `;
+            document.head.appendChild(style);
         })();
 
-        // ============= STRIPE CHECKOUT INTEGRATION =============
+        // Stripe Checkout Integration
         (function() {
             const STRIPE_PUBLISHABLE_KEY = 'pk_test_51T9OG6EyYaMQFVgYByiMdb4CLanngxD6CfFMPydhZpdF4xsSxzhlIhJgh9a5kHBriOGNhEhIZdmIf2zNvZhNUSNK003DwvB2cZ';
             const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
             
-            // Check for success/cancel in URL
             const urlParams = new URLSearchParams(window.location.search);
             
             if (urlParams.has('success')) {
-                showNotification('✅ Payment successful! Welcome to NexAgent. Check your email for next steps.', 'success');
-                // Clean URL
+                alert('✅ Payment successful! Welcome to NexAgent. Check your email for next steps.');
                 window.history.replaceState({}, document.title, window.location.pathname);
             } else if (urlParams.has('canceled')) {
-                showNotification('❌ Payment canceled. No worries, you can try again anytime!', 'info');
-                // Clean URL
+                alert('❌ Payment canceled. No worries, you can try again anytime!');
                 window.history.replaceState({}, document.title, window.location.pathname);
             }
             
-            // Handle checkout button clicks
             const checkoutButtons = document.querySelectorAll('.stripe-checkout-btn');
             
             checkoutButtons.forEach(button => {
                 button.addEventListener('click', async () => {
-                    // Determine if yearly or monthly
                     const isYearly = pricingToggle.classList.contains('active');
-                    const priceId = isYearly 
-                        ? button.dataset.priceYearly 
-                        : button.dataset.priceMonthly;
+                    const priceId = isYearly ? button.dataset.priceYearly : button.dataset.priceMonthly;
                     
-                    // Disable button during redirect
                     button.disabled = true;
-                    button.textContent = 'Redirecting to checkout...';
+                    button.textContent = 'Redirecting...';
                     
                     try {
                         const { error } = await stripe.redirectToCheckout({
@@ -1967,98 +1616,18 @@
                         
                         if (error) {
                             console.error('Stripe error:', error);
-                            showNotification('❌ ' + error.message, 'error');
+                            alert('❌ ' + error.message);
                             button.disabled = false;
-                            button.textContent = button.classList.contains('btn-primary') ? 'Get Started' : 'Start Free Trial';
+                            button.textContent = 'Subscribe Now';
                         }
                     } catch (err) {
                         console.error('Checkout error:', err);
-                        showNotification('❌ Something went wrong. Please try again.', 'error');
+                        alert('❌ Something went wrong. Please try again.');
                         button.disabled = false;
-                        button.textContent = button.classList.contains('btn-primary') ? 'Get Started' : 'Start Free Trial';
+                        button.textContent = 'Subscribe Now';
                     }
                 });
             });
-            
-            // Notification system
-            function showNotification(message, type = 'info') {
-                // Remove any existing notification
-                const existing = document.getElementById('stripe-notification');
-                if (existing) existing.remove();
-                
-                const notification = document.createElement('div');
-                notification.id = 'stripe-notification';
-                notification.className = `stripe-notification ${type}`;
-                notification.textContent = message;
-                
-                // Add styles if not already present
-                if (!document.getElementById('stripe-notification-styles')) {
-                    const style = document.createElement('style');
-                    style.id = 'stripe-notification-styles';
-                    style.textContent = `
-                        .stripe-notification {
-                            position: fixed;
-                            top: 100px;
-                            left: 50%;
-                            transform: translateX(-50%);
-                            background: var(--bg-card);
-                            color: var(--text-primary);
-                            padding: 1.2rem 2rem;
-                            border-radius: 12px;
-                            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
-                            z-index: 10000;
-                            border: 2px solid var(--border-subtle);
-                            animation: slideDown 0.4s ease-out;
-                            max-width: 90%;
-                            text-align: center;
-                            font-weight: 600;
-                        }
-                        
-                        .stripe-notification.success {
-                            border-color: #00ff64;
-                            background: rgba(0, 255, 100, 0.1);
-                        }
-                        
-                        .stripe-notification.error {
-                            border-color: #ff4444;
-                            background: rgba(255, 68, 68, 0.1);
-                        }
-                        
-                        .stripe-notification.info {
-                            border-color: var(--accent-blue);
-                            background: rgba(0, 102, 255, 0.1);
-                        }
-                        
-                        @keyframes slideDown {
-                            from {
-                                opacity: 0;
-                                transform: translateX(-50%) translateY(-20px);
-                            }
-                            to {
-                                opacity: 1;
-                                transform: translateX(-50%) translateY(0);
-                            }
-                        }
-                        
-                        @media (max-width: 768px) {
-                            .stripe-notification {
-                                top: 80px;
-                                font-size: 0.9rem;
-                                padding: 1rem 1.5rem;
-                            }
-                        }
-                    `;
-                    document.head.appendChild(style);
-                }
-                
-                document.body.appendChild(notification);
-                
-                // Auto-remove after 5 seconds
-                setTimeout(() => {
-                    notification.style.animation = 'slideDown 0.4s ease-out reverse';
-                    setTimeout(() => notification.remove(), 400);
-                }, 5000);
-            }
         })();
     </script>
 </body>
