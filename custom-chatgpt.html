@@ -13,7 +13,12 @@
             padding: 0;
             box-sizing: border-box;
         }
+        }
         
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
         body {
             text-align: center;
             font-family: 'Inter', sans-serif;
@@ -95,6 +100,7 @@
         }
         
         .dashboard {
+            max-width: 100%;
             display: grid;
             grid-template-columns: 350px 1fr;
             gap: 2rem;
@@ -102,6 +108,8 @@
         }
         
         .card {
+            max-width: 100%;
+            overflow: hidden;
             text-align: left;
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
@@ -449,10 +457,15 @@
         }
         
         @media (max-width: 768px) {
-            body {
+            html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        body {
             text-align: center; padding: 1rem; }
             h1 { text-align: center; font-size: 1.8rem; }
             .dashboard {
+            max-width: 100%;
                 grid-template-columns: 1fr;
             }
             .analytics-grid {
