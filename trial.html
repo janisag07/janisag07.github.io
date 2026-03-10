@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Your Free Trial - NexAgent</title>
+    <meta name="description" content="Get started with NexAgent. 14-day free trial, no credit card required. Set up your AI workforce in under 10 minutes.">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a14;
+            --bg-card: #141420;
+            --bg-card-hover: #1a1a2e;
+            --accent-blue: #0066FF;
+            --accent-blue-dark: #0052cc;
+            --accent-blue-light: #1a7fff;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b8;
+            --border-subtle: rgba(0, 102, 255, 0.15);
+            --success-green: #00ff64;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 10, 20, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-subtle);
+            z-index: 1000;
+            padding: 1rem 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-blue);
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            opacity: 0.8;
+        }
+
+        .nav-back {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-back:hover {
+            color: var(--text-primary);
+        }
+
+        /* Main Content */
+        .main-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 2rem 4rem;
+        }
+
+        .content-wrapper {
+            max-width: 1200px;
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        /* Form Section */
+        .form-section {
+            background: var(--bg-card);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 8px 32px rgba(0, 102, 255, 0.15);
+        }
+
+        .form-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+        }
+
+        .form-section .subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+        }
+
+        .required {
+            color: var(--accent-blue);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.9rem 1.2rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-subtle);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23a0a0b8' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            padding-right: 3rem;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            box-shadow: 0 8px 24px rgba(0, 102, 255, 0.4);
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-blue-light);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 102, 255, 0.5);
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        /* Benefits Section */
+        .benefits-section {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .benefits-section h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .trust-badge {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-subtle);
+            transition: all 0.3s ease;
+        }
+
+        .trust-badge:hover {
+            border-color: var(--accent-blue);
+            transform: translateY(-5px);
+        }
+
+        .trust-badge h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .trust-badge-icon {
+            font-size: 1.8rem;
+        }
+
+        .trust-badge p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .benefits-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .benefits-list li {
+            padding: 1rem 0;
+            color: var(--text-secondary);
+            border-bottom: 1px solid rgba(160, 160, 184, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .benefits-list li:last-child {
+            border-bottom: none;
+        }
+
+        .benefit-icon {
+            color: var(--accent-blue);
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .stars {
+            color: #ffd700;
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .testimonial {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-subtle);
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        /* Success Message */
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 3rem;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        .success-message h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--success-green);
+            font-weight: 800;
+        }
+
+        .success-message p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .btn-back {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--accent-blue);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back:hover {
+            background: var(--accent-blue-light);
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-card);
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--border-subtle);
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-section a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: var(--text-primary);
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-subtle);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+
+            .form-section {
+                padding: 2rem;
+            }
+
+            .form-section h1 {
+                font-size: 2rem;
+            }
+
+            .benefits-section h2 {
+                font-size: 1.6rem;
+            }
+
+            .main-container {
+                padding: 5rem 1.5rem 3rem;
+            }
+        }
+
+        @media (max-width: 568px) {
+            .nav-container {
+                padding: 0 1.5rem;
+            }
+
+            .form-section h1 {
+                font-size: 1.8rem;
+            }
+
+            .trust-badge {
+                padding: 1.5rem;
+            }
+
+            .btn-submit {
+                padding: 1rem;
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="nexagent.html" class="nav-logo">NexAgent</a>
+            <a href="nexagent.html" class="nav-back">
+                <span>←</span> Back to Home
+            </a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <div class="content-wrapper">
+            <!-- Form Section -->
+            <div class="form-section" id="form-container">
+                <h1>Start Your Free Trial</h1>
+                <p class="subtitle">Get your AI workforce up and running in under 10 minutes.</p>
+
+                <form id="trial-form">
+                    <div class="form-group">
+                        <label for="full-name">Full Name <span class="required">*</span></label>
+                        <input type="text" id="full-name" name="full-name" required placeholder="John Doe">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="business-name">Business Name <span class="required">*</span></label>
+                        <input type="text" id="business-name" name="business-name" required placeholder="Acme Inc.">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Email Address <span class="required">*</span></label>
+                        <input type="email" id="email" name="email" required placeholder="you@company.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number (Optional)</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="agent-interest">Which agent are you interested in? <span class="required">*</span></label>
+                        <select id="agent-interest" name="agent-interest" required>
+                            <option value="">Select an agent...</option>
+                            <option value="discord">Discord Community Manager</option>
+                            <option value="social">Social Media Growth</option>
+                            <option value="support">Customer Support</option>
+                            <option value="telegram">Telegram Business Bot</option>
+                            <option value="lead-gen">Lead Generation</option>
+                            <option value="content">Content Pipeline</option>
+                            <option value="not-sure">Not sure yet</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="company-size">Company Size <span class="required">*</span></label>
+                        <select id="company-size" name="company-size" required>
+                            <option value="">Select size...</option>
+                            <option value="solo">Solo/Freelancer</option>
+                            <option value="2-10">2-10 employees</option>
+                            <option value="11-50">11-50 employees</option>
+                            <option value="51-200">51-200 employees</option>
+                            <option value="200+">200+ employees</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="referral">How did you hear about us? <span class="required">*</span></label>
+                        <select id="referral" name="referral" required>
+                            <option value="">Select source...</option>
+                            <option value="google">Google</option>
+                            <option value="twitter">Twitter/X</option>
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="upwork">Upwork</option>
+                            <option value="referral">Referral</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">What are you looking to automate? (Optional)</label>
+                        <textarea id="message" name="message" placeholder="Tell us about your automation goals..."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Start Your Free Trial →</button>
+                </form>
+
+                <!-- Success Message (Hidden Initially) -->
+                <div class="success-message" id="success-message">
+                    <div class="success-icon">✓</div>
+                    <h2>You're All Set!</h2>
+                    <p>Thanks for signing up! We'll be in touch within 24 hours to set up your agent.</p>
+                    <a href="nexagent.html" class="btn-back">← Back to Home</a>
+                </div>
+            </div>
+
+            <!-- Benefits Section -->
+            <div class="benefits-section">
+                <h2>Why NexAgent?</h2>
+
+                <div class="trust-badge">
+                    <h3><span class="trust-badge-icon">🎁</span> 14-Day Free Trial</h3>
+                    <p>No credit card required. Cancel anytime. Try any agent risk-free.</p>
+                </div>
+
+                <div class="trust-badge">
+                    <h3><span class="trust-badge-icon">⚡</span> Setup in Under 10 Minutes</h3>
+                    <p>One-click deployment. No coding, no complexity. Your agent starts working immediately.</p>
+                </div>
+
+                <div class="trust-badge">
+                    <h3><span class="trust-badge-icon">❌</span> Cancel Anytime</h3>
+                    <p>No lock-in contracts. No questions asked. We earn your business every month.</p>
+                </div>
+
+                <ul class="benefits-list">
+                    <li>
+                        <span class="benefit-icon">⭐</span>
+                        <span><strong>Rated 5/5 by our clients</strong> — Trusted by businesses worldwide</span>
+                    </li>
+                    <li>
+                        <span class="benefit-icon">🔒</span>
+                        <span><strong>GDPR Compliant</strong> — Your data is encrypted and secure</span>
+                    </li>
+                    <li>
+                        <span class="benefit-icon">✓</span>
+                        <span><strong>Your data stays yours</strong> — Zero-knowledge architecture</span>
+                    </li>
+                </ul>
+
+                <div class="testimonial">
+                    <div class="stars">⭐⭐⭐⭐⭐</div>
+                    "He went above and beyond my expectations. Highly recommended."
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>NexAgent</h4>
+                <p style="color: var(--text-secondary); line-height: 1.7;">Your AI Workforce. On Demand.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Products</h4>
+                <ul>
+                    <li><a href="nexagent.html#agents">AI Agents</a></li>
+                    <li><a href="nexagent.html#pricing">Pricing</a></li>
+                    <li><a href="nexagent.html#features">Features</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="nexagent.html#faq">FAQ</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="mailto:hello@nexagent.ai">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Impressum</a></li>
+                    <li><a href="#">Datenschutz</a></li>
+                    <li><a href="#">AGB</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Connect</h4>
+                <ul>
+                    <li><a href="https://twitter.com" target="_blank">Twitter</a></li>
+                    <li><a href="https://linkedin.com" target="_blank">LinkedIn</a></li>
+                    <li><a href="https://github.com" target="_blank">GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 NexAgent. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Form Submission Handler
+        const form = document.getElementById('trial-form');
+        const formContainer = document.getElementById('form-container');
+        const successMessage = document.getElementById('success-message');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Get form data
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+
+            // Log to console (for debugging)
+            console.log('Form submitted:', data);
+
+            // Show success message
+            form.style.display = 'none';
+            successMessage.classList.add('show');
+
+            // Optional: Send to backend or email
+            // For now, we just show the success message
+            
+            // Alternative: mailto link (uncomment if you want email submission)
+            /*
+            const emailBody = `
+                Name: ${data['full-name']}
+                Business: ${data['business-name']}
+                Email: ${data.email}
+                Phone: ${data.phone || 'Not provided'}
+                Agent Interest: ${data['agent-interest']}
+                Company Size: ${data['company-size']}
+                Referral: ${data.referral}
+                Message: ${data.message || 'None'}
+            `;
+            window.location.href = `mailto:hello@nexagent.ai?subject=New Trial Signup&body=${encodeURIComponent(emailBody)}`;
+            */
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
