@@ -594,20 +594,76 @@
             background: var(--ewm-blue-light);
         }
 
+        /* Floating Chat Button (Mobile only) */
+        .floating-chat-btn {
+            display: none;
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--ewm-blue), var(--ewm-blue-light));
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(0, 102, 204, 0.4);
+            z-index: 1000;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            color: white;
+            font-size: 24px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-chat-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 24px rgba(0, 102, 204, 0.6);
+        }
+
+        .floating-chat-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Circle Reveal Animation */
+        @keyframes circleReveal {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(100);
+                opacity: 0.3;
+            }
+        }
+
+        .circle-reveal-overlay {
+            position: fixed;
+            bottom: 52px;
+            right: 52px;
+            width: 0;
+            height: 0;
+            background: var(--ewm-blue);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .circle-reveal-overlay.active {
+            animation: circleReveal 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
         /* Responsive */
-        @media (max-width: 1200px) {
+        @media (max-width: 1024px) {
             .main-container {
                 grid-template-columns: 1fr;
             }
 
             .chat-sidebar {
-                position: relative;
-                height: 600px;
-                top: 0;
+                display: none !important;
             }
 
-            .kanban-board {
-                grid-template-columns: repeat(2, 1fr);
+            .floating-chat-btn {
+                display: flex;
             }
         }
 
@@ -639,6 +695,11 @@
 
             .stat-value {
                 font-size: 1.5rem;
+            }
+
+            .floating-chat-btn {
+                bottom: 20px;
+                right: 20px;
             }
         }
     </style>
@@ -1113,6 +1174,24 @@
         window.addEventListener('load', () => {
             chatInput.focus();
         });
+
+        // Floating Chat Button Click Handler
+        function openMobileChat() {
+            // Create circle reveal overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'circle-reveal-overlay active';
+            document.body.appendChild(overlay);
+
+            // Redirect after animation
+            setTimeout(() => {
+                window.location.href = 'denis-schnorer-chat.html';
+            }, 400);
+        }
     </script>
+
+    <!-- Floating Chat Button (Mobile only) -->
+    <button class="floating-chat-btn" onclick="openMobileChat()" aria-label="Chat öffnen">
+        💬
+    </button>
 </body>
 </html>
