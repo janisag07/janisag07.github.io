@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram DM Automation – AI Lead-Qualifizierung & Terminbuchung</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        }
+        
+        html, body {
+            overflow-x: hidden;
+            max-width: 100vw;
+        }
+        body {
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #000 0%, #0a0a14 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: glow 3s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.3)); }
+            50% { filter: drop-shadow(0 0 40px rgba(102, 126, 234, 0.6)); }
+        }
+        
+        .subtitle {
+            color: #999;
+            margin-bottom: 2.5rem;
+            font-size: 1.15rem;
+        }
+        
+        .kpi-grid {
+            max-width: 100%;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .kpi-card {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 1.75rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transition: transform 0.5s ease;
+        }
+        
+        .kpi-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .kpi-card:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
+        }
+        
+        .kpi-label {
+            color: #999;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .kpi-value {
+            font-size: 2.75rem;
+            font-weight: 900;
+            color: #667eea;
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .kpi-change {
+            font-size: 0.9rem;
+            color: #4caf50;
+            margin-top: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .dashboard {
+            max-width: 100%;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .card {
+            max-width: 100%;
+            overflow: hidden;
+            text-align: left;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
+        .card h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: #667eea;
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+            font-weight: 700;
+        }
+        
+        .dm-inbox {
+            grid-column: 1 / -1;
+        }
+        
+        .dm-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 3px solid #667eea;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .dm-item:hover {
+            background: rgba(102, 126, 234, 0.15);
+            transform: translateX(8px);
+            border-left-width: 5px;
+        }
+        
+        .dm-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .dm-user {
+            font-weight: 700;
+            color: #fff;
+            font-size: 1.05rem;
+        }
+        
+        .dm-time {
+            color: #666;
+            font-size: 0.85rem;
+        }
+        
+        .dm-preview {
+            color: #ccc;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-neu {
+            background: rgba(255, 193, 7, 0.25);
+            color: #ffc107;
+        }
+        
+        .status-qualifiziert {
+            background: rgba(76, 175, 80, 0.25);
+            color: #4caf50;
+        }
+        
+        .status-termin {
+            background: rgba(102, 126, 234, 0.25);
+            color: #667eea;
+        }
+        
+        .pipeline {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+        
+        .pipeline-stage {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px dashed rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .pipeline-stage:hover {
+            border-color: rgba(102, 126, 234, 0.5);
+            background: rgba(102, 126, 234, 0.08);
+        }
+        
+        .pipeline-stage h3 {
+            font-size: 0.95rem;
+            color: #999;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .pipeline-count {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #667eea;
+            text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .pipeline-change {
+            font-size: 0.8rem;
+            color: #4caf50;
+            margin-top: 0.5rem;
+        }
+        
+        .chat-container {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-height: 500px;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 10px;
+        }
+        
+        .message {
+            margin-bottom: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            animation: messageSlide 0.3s ease;
+        }
+        
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .message.user {
+            align-items: flex-end;
+        }
+        
+        .message.ai {
+            align-items: flex-start;
+        }
+        
+        .message-bubble {
+            max-width: 75%;
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .message.ai .message-bubble {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .input-container {
+            display: flex;
+            gap: 0.5rem;
+            max-width: 100%;
+            overflow: hidden;
+        }
+        
+        input[type="text"] {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 1.25rem;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            white-space: nowrap;
+            flex-shrink: 0;
+            letter-spacing: 0.5px;
+        }
+        
+        .quick-reply-btn {
+            background: rgba(102, 126, 234, 0.15);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            padding: 0.6rem 1.25rem;
+            color: #667eea;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+        
+        .quick-reply-btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .quick-replies {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
+        }
+        
+        .calendly-mock {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .calendly-header {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+        
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+        
+        .time-slot {
+            background: rgba(102, 126, 234, 0.15);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+        }
+        
+        .time-slot:hover {
+            background: rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+        }
+        
+        .conversation-list {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .conversation-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.25rem;
+            border-left: 3px solid;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .conversation-card.hot { border-left-color: #f44336; }
+        .conversation-card.warm { border-left-color: #ffc107; }
+        .conversation-card.cold { border-left-color: #2196f3; }
+        
+        .conversation-card:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(5px);
+        }
+        
+        .conv-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        
+        .conv-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+        }
+        
+        .conv-score {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        
+        .conv-preview {
+            color: #999;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        
+        @media (max-width: 1200px) {
+            .kpi-grid {
+            max-width: 100%;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .pipeline {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        .bottom-grid {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        @media (max-width: 768px) {
+            html, body {
+                overflow-x: hidden;
+                max-width: 100vw;
+            }
+            body {
+                text-align: center;
+                padding: 1rem;
+            }
+            .dashboard,
+            .bottom-grid {
+                max-width: 100%;
+                grid-template-columns: 1fr !important;
+            }
+            .kpi-grid,
+            .pipeline,
+            .time-slots {
+                grid-template-columns: 1fr;
+            }
+            .kpi-card {
+                text-align: center;
+            }
+            h1 {
+                font-size: 1.8rem;
+                text-align: center;
+            }
+            .header p {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Instagram DM Automation</h1>
+        <p class="subtitle">KI-gestützte Lead-Qualifizierung mit natürlichen deutschen Antworten & automatischer Terminbuchung</p>
+
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Leads / Tag</div>
+                <div class="kpi-value" data-target="42">0</div>
+                <div class="kpi-change">↑ 18% vs. letzte Woche</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Response Time</div>
+                <div class="kpi-value" data-target="12" data-suffix="s">0s</div>
+                <div class="kpi-change">↓ 45 Sek. schneller</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Conversion Rate</div>
+                <div class="kpi-value" data-target="34" data-suffix="%">0%</div>
+                <div class="kpi-change">↑ 7% Verbesserung</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Termine gebucht</div>
+                <div class="kpi-value" data-target="23">0</div>
+                <div class="kpi-change">↑ 11 mehr als gestern</div>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="card dm-inbox">
+                <h2>📬 DM-Inbox (Live-Feed)</h2>
+                <div id="dmList">
+                    <div class="dm-item" onclick="openChat('sarah_mueller', 'neu')">
+                        <div class="dm-header">
+                            <span class="dm-user">@sarah_mueller <span class="status-badge status-neu">Neu</span></span>
+                            <span class="dm-time">vor 3 Min.</span>
+                        </div>
+                        <div class="dm-preview">Hallo! Ich interessiere mich für eure Instagram-Automatisierung. Was kostet das?</div>
+                    </div>
+                    
+                    <div class="dm-item" onclick="openChat('max_business', 'qualifiziert')">
+                        <div class="dm-header">
+                            <span class="dm-user">@max_business <span class="status-badge status-qualifiziert">Qualifiziert</span></span>
+                            <span class="dm-time">vor 18 Min.</span>
+                        </div>
+                        <div class="dm-preview">Perfekt! Budget ist kein Problem. Wann können wir einen Termin vereinbaren?</div>
+                    </div>
+                    
+                    <div class="dm-item" onclick="openChat('lisa_startup', 'termin')">
+                        <div class="dm-header">
+                            <span class="dm-user">@lisa_startup <span class="status-badge status-termin">Termin gebucht</span></span>
+                            <span class="dm-time">vor 1 Std.</span>
+                        </div>
+                        <div class="dm-preview">Super! Danke für die schnelle Antwort. Termin am Donnerstag 14:00 ist perfekt 👍</div>
+                    </div>
+                    
+                    <div class="dm-item" onclick="openChat('jonas_coach', 'neu')">
+                        <div class="dm-header">
+                            <span class="dm-user">@jonas_coach <span class="status-badge status-neu">Neu</span></span>
+                            <span class="dm-time">vor 2 Std.</span>
+                        </div>
+                        <div class="dm-preview">Ich brauche Hilfe mit meinen Instagram DMs. Bekomme täglich 50+ Anfragen, kann unmöglich alle beantworten...</div>
+                    </div>
+                    
+                    <div class="dm-item" onclick="openChat('anna_agency', 'qualifiziert')">
+                        <div class="dm-header">
+                            <span class="dm-user">@anna_agency <span class="status-badge status-qualifiziert">Qualifiziert</span></span>
+                            <span class="dm-time">vor 3 Std.</span>
+                        </div>
+                        <div class="dm-preview">Wir sind eine Agentur mit 8 Kunden. Brauchen White-Label-Lösung. Budget: 5-stellig möglich.</div>
+                    </div>
+                    
+                    <div class="dm-item" onclick="openChat('tom_fitness', 'termin')">
+                        <div class="dm-header">
+                            <span class="dm-user">@tom_fitness <span class="status-badge status-termin">Termin gebucht</span></span>
+                            <span class="dm-time">vor 5 Std.</span>
+                        </div>
+                        <div class="dm-preview">Gebucht für Dienstag 10:00! Freue mich drauf 💪</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>📊 Lead-Pipeline</h2>
+                <div class="pipeline">
+                    <div class="pipeline-stage">
+                        <h3>Neu</h3>
+                        <div class="pipeline-count" data-target="18">0</div>
+                        <div class="pipeline-change">+6 heute</div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <h3>Qualifiziert</h3>
+                        <div class="pipeline-count" data-target="12">0</div>
+                        <div class="pipeline-change">+4 heute</div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <h3>Termin</h3>
+                        <div class="pipeline-count" data-target="7">0</div>
+                        <div class="pipeline-change">+3 heute</div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <h3>Kunde</h3>
+                        <div class="pipeline-count" data-target="23">0</div>
+                        <div class="pipeline-change">+2 diese Woche</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🤖 KI-Assistent testen</h2>
+                <p style="color: #999; font-size: 0.9rem; margin-bottom: 1rem;">Simuliere eine DM-Konversation und erlebe, wie natürlich die KI auf Deutsch antwortet:</p>
+                
+                <div class="quick-replies">
+                    <button class="quick-reply-btn" onclick="quickReply('Wie viel kostet eure Lösung?')">💰 Preis-Anfrage</button>
+                    <button class="quick-reply-btn" onclick="quickReply('Ich möchte einen Termin buchen')">📅 Termin buchen</button>
+                    <button class="quick-reply-btn" onclick="quickReply('Was macht eure Lösung genau?')">❓ Features</button>
+                </div>
+                
+                <div class="chat-container" id="chatContainer">
+                    <div class="message ai">
+                        <div class="message-bubble">Hey! 👋 Schön, dass du dich meldest. Ich bin dein KI-Assistent für Instagram DM Automation. Wie kann ich dir helfen?</div>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="userInput" placeholder="Schreib eine Nachricht...">
+                    <button onclick="sendMessage()">Senden</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard bottom-grid">
+            <div class="card">
+                <h2>📆 Calendly-Integration (Mock)</h2>
+                <p style="color: #999; font-size: 0.9rem; margin-bottom: 1rem;">
+                    Wenn ein Lead bereit ist, bietet die KI automatisch freie Termine an:
+                </p>
+                <div class="calendly-mock">
+                    <div class="calendly-header">📅 Verfügbare Termine diese Woche:</div>
+                    <div class="time-slots">
+                        <div class="time-slot">Mo 14:00</div>
+                        <div class="time-slot">Di 10:00</div>
+                        <div class="time-slot">Di 15:30</div>
+                        <div class="time-slot">Mi 11:00</div>
+                        <div class="time-slot">Do 14:00</div>
+                        <div class="time-slot">Fr 09:30</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>💬 Konversations-Historie</h2>
+                <div class="conversation-list">
+                    <div class="conversation-card hot">
+                        <div class="conv-header">
+                            <div class="conv-name">@max_business</div>
+                            <div class="conv-score" style="color: #f44336;">HOT 🔥</div>
+                        </div>
+                        <div class="conv-preview">
+                            "Budget ist kein Problem. Brauchen ASAP eine Lösung für 50+ DMs/Tag."
+                        </div>
+                    </div>
+
+                    <div class="conversation-card warm">
+                        <div class="conv-header">
+                            <div class="conv-name">@anna_agency</div>
+                            <div class="conv-score" style="color: #ffc107;">WARM 🌡️</div>
+                        </div>
+                        <div class="conv-preview">
+                            "White-Label für 8 Kunden. Können wir nächste Woche Demo machen?"
+                        </div>
+                    </div>
+
+                    <div class="conversation-card hot">
+                        <div class="conv-header">
+                            <div class="conv-name">@jonas_coach</div>
+                            <div class="conv-score" style="color: #f44336;">HOT 🔥</div>
+                        </div>
+                        <div class="conv-preview">
+                            "Täglich 50+ Anfragen. Brauche dringend Automatisierung. Was kostet das?"
+                        </div>
+                    </div>
+
+                    <div class="conversation-card warm">
+                        <div class="conv-header">
+                            <div class="conv-name">@sarah_mueller</div>
+                            <div class="conv-score" style="color: #ffc107;">WARM 🌡️</div>
+                        </div>
+                        <div class="conv-preview">
+                            "Interessiert an Instagram Automation. Gibt es eine kostenlose Testphase?"
+                        </div>
+                    </div>
+
+                    <div class="conversation-card cold">
+                        <div class="conv-header">
+                            <div class="conv-name">@mark_student</div>
+                            <div class="conv-score" style="color: #2196f3;">COLD ❄️</div>
+                        </div>
+                        <div class="conv-preview">
+                            "Coole Sache! Bin aber noch Student, kein Budget. Vielleicht später."
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Counter-Animationen für KPI-Karten und Pipeline
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const suffix = element.getAttribute('data-suffix') || '';
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    element.textContent = target + suffix;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current) + suffix;
+                }
+            }, 16);
+        }
+        
+        document.querySelectorAll('[data-target]').forEach(animateCounter);
+
+        function openChat(username, status) {
+            alert(`💬 Chat mit ${username} (${status.toUpperCase()})\n\nIn der Vollversion würdest du hier:\n• Die komplette Konversation sehen\n• KI-Antworten live generieren\n• Lead-Score & Details anzeigen\n• Termin direkt buchen`);
+        }
+
+        function quickReply(text) {
+            document.getElementById('userInput').value = text;
+            sendMessage();
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const chatContainer = document.getElementById('chatContainer');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerHTML = `<div class="message-bubble">${message}</div>`;
+            chatContainer.appendChild(userMsg);
+            
+            input.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+
+            try {
+                const response = await fetch('https://nexagent-chat.nani-0a3.workers.dev/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        messages: [
+                            { 
+                                role: 'system', 
+                                content: 'Du bist ein Instagram DM Automation Assistant für ein deutsches Creator-Business. Du hilfst beim Antworten auf Instagram DMs, qualifizierst Leads und buchst Termine über Calendly. Antworte immer auf Deutsch, natürlich und nicht roboterhaft. NIEMALS über NexAgent, 14-Tage-Testphasen oder Preispläne sprechen.'
+                            },
+                            { role: 'user', content: message }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai';
+                aiMsg.innerHTML = `<div class="message-bubble">${data.reply || data.response || 'Entschuldigung, da gab es ein Problem. Kannst du das nochmal versuchen?'}</div>`;
+                chatContainer.appendChild(aiMsg);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            } catch (error) {
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'message ai';
+                errorMsg.innerHTML = `<div class="message-bubble">Hey! 😊 Super, dass du dich für unsere Lösung interessierst!\n\nUnsere Instagram DM Automation qualifiziert automatisch Leads, beantwortet Fragen 24/7 auf Deutsch und bucht Termine direkt in deinen Kalender.\n\nUm dir ein passendes Angebot zu machen: Wie viele DMs bekommst du ungefähr pro Tag? Und hast du schon eine grobe Vorstellung vom Budget?</div>`;
+                chatContainer.appendChild(errorMsg);
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Live-Feed Simulation
+        const newLeads = [
+            { user: '@kevin_marketing', status: 'neu', preview: 'Eure Lösung klingt interessant. Wie funktioniert die Integration?' },
+            { user: '@sophia_influencer', status: 'neu', preview: 'Ich bekomme hunderte DMs täglich. Kann eure KI das bewältigen?' },
+            { user: '@michael_ecom', status: 'qualifiziert', preview: 'Für meinen Online-Shop perfekt! Wann Demo?' }
+        ];
+
+        setInterval(() => {
+            if (Math.random() > 0.85) {
+                const dmList = document.getElementById('dmList');
+                const lead = newLeads[Math.floor(Math.random() * newLeads.length)];
+                
+                const item = document.createElement('div');
+                item.className = 'dm-item';
+                item.onclick = () => openChat(lead.user, lead.status);
+                item.innerHTML = `
+                    <div class="dm-header">
+                        <span class="dm-user">${lead.user} <span class="status-badge status-${lead.status}">${lead.status.toUpperCase()}</span></span>
+                        <span class="dm-time">Gerade eben</span>
+                    </div>
+                    <div class="dm-preview">${lead.preview}</div>
+                `;
+                
+                dmList.insertBefore(item, dmList.firstChild);
+                
+                if (dmList.children.length > 8) {
+                    dmList.removeChild(dmList.lastChild);
+                }
+            }
+        }, 10000);
+    </script>
+</body>
+</html>
