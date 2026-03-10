@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NexAgent - Your AI Workforce. On Demand.</title>
     <meta name="description" content="Pre-built AI agents that run your business 24/7. Set up in minutes, not months. Subscription-based AI workforce for modern businesses.">
+    
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
     <style>
         * {
             margin: 0;
@@ -1134,7 +1138,11 @@
                         <li>Email Support</li>
                         <li>Monthly Performance Report</li>
                     </ul>
-                    <a href="trial.html" class="btn btn-secondary">Start Free Trial</a>
+                    <button class="btn btn-secondary stripe-checkout-btn" 
+                            data-price-monthly="price_1T9ORBEyYaMQFVgY3W65nKWm"
+                            data-price-yearly="price_1T9ORBEyYaMQFVgYkVjzy5h3">
+                        Start Free Trial
+                    </button>
                 </div>
 
                 <div class="pricing-card popular reveal">
@@ -1151,7 +1159,11 @@
                         <li>Analytics Dashboard</li>
                         <li>Monthly Strategy Call</li>
                     </ul>
-                    <a href="trial.html" class="btn btn-primary">Get Started</a>
+                    <button class="btn btn-primary stripe-checkout-btn"
+                            data-price-monthly="price_1T9ORCEyYaMQFVgY0MGpCA2S"
+                            data-price-yearly="price_1T9ORDEyYaMQFVgYBNKiiZpj">
+                        Get Started
+                    </button>
                 </div>
 
                 <div class="pricing-card reveal">
@@ -1169,7 +1181,11 @@
                         <li>Weekly Strategy Call</li>
                         <li>API Access</li>
                     </ul>
-                    <a href="trial.html" class="btn btn-primary">Get Started</a>
+                    <button class="btn btn-primary stripe-checkout-btn"
+                            data-price-monthly="price_1T9ORDEyYaMQFVgYw9aj99Ff"
+                            data-price-yearly="price_1T9OREEyYaMQFVgYbiqVoGi2">
+                        Get Started
+                    </button>
                 </div>
 
                 <div class="pricing-card reveal">
@@ -1185,7 +1201,7 @@
                         <li>Custom Development</li>
                         <li>24/7 Priority Support</li>
                     </ul>
-                    <a href="mailto:hello@nexagent.ai" class="btn btn-secondary">Contact Us</a>
+                    <a href="mailto:nani@agic.me" class="btn btn-secondary">Contact Us</a>
                 </div>
             </div>
         </div>
@@ -1312,15 +1328,15 @@
                 <ul>
                     <li><a href="#faq">FAQ</a></li>
                     <li><a href="#">Blog</a></li>
-                    <li><a href="mailto:hello@nexagent.ai">Contact</a></li>
+                    <li><a href="mailto:nani@agic.me">Contact: nani@agic.me</a></li>
                 </ul>
             </div>
             <div class="footer-section">
                 <h4>Legal</h4>
                 <ul>
-                    <li><a href="#">Impressum</a></li>
-                    <li><a href="#">Datenschutz</a></li>
-                    <li><a href="#">AGB</a></li>
+                    <li><a href="impressum.html">Impressum</a></li>
+                    <li><a href="terms.html#datenschutz">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms of Service</a></li>
                 </ul>
             </div>
             <div class="footer-section">
@@ -1336,6 +1352,314 @@
             <p>© 2026 NexAgent. All rights reserved.</p>
         </div>
     </footer>
+
+    <!-- AI Chat Widget -->
+    <div id="chat-widget">
+        <div id="chat-button" title="Chat with NexAgent AI">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </div>
+        
+        <div id="chat-window">
+            <div id="chat-header">
+                <div>
+                    <div style="font-weight: 700; font-size: 1.1rem;">NexAgent AI</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">Always here to help</div>
+                </div>
+                <button id="chat-close" title="Close chat">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <div id="chat-messages"></div>
+            
+            <div id="chat-input-container">
+                <input type="text" id="chat-input" placeholder="Ask me anything..." autocomplete="off">
+                <button id="chat-send">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="22" y1="2" x2="11" y2="13"></line>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        #chat-widget {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        #chat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(0, 102, 255, 0.4);
+            transition: all 0.3s ease;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        #chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 32px rgba(0, 102, 255, 0.6);
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 8px 24px rgba(0, 102, 255, 0.4); }
+            50% { box-shadow: 0 8px 24px rgba(0, 102, 255, 0.7), 0 0 0 8px rgba(0, 102, 255, 0.1); }
+        }
+
+        #chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 400px;
+            height: 500px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-subtle);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        #chat-window.active {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #chat-header {
+            padding: 1.2rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-blue-light));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #chat-close {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.4rem;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #chat-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            background: var(--bg-dark);
+        }
+
+        #chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chat-messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        #chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(0, 102, 255, 0.3);
+            border-radius: 3px;
+        }
+
+        #chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 102, 255, 0.5);
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 0.8rem 1.1rem;
+            border-radius: 12px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.user {
+            align-self: flex-end;
+            background: var(--accent-blue);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.ai {
+            align-self: flex-start;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-subtle);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message.ai strong {
+            color: var(--accent-blue);
+        }
+
+        .chat-message.ai a {
+            color: var(--accent-blue);
+            text-decoration: underline;
+        }
+
+        .typing-indicator {
+            align-self: flex-start;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            padding: 0.8rem 1.1rem;
+            border-radius: 12px;
+            border-bottom-left-radius: 4px;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .typing-indicator span {
+            width: 8px;
+            height: 8px;
+            background: var(--text-secondary);
+            border-radius: 50%;
+            animation: typingBounce 1.4s ease-in-out infinite;
+        }
+
+        .typing-indicator span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-indicator span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+
+        #chat-input-container {
+            padding: 1rem 1.5rem;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border-subtle);
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        #chat-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease;
+        }
+
+        #chat-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        #chat-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        #chat-send {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--accent-blue);
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        #chat-send:hover {
+            background: var(--accent-blue-light);
+            transform: translateY(-2px);
+        }
+
+        #chat-send:active {
+            transform: translateY(0);
+        }
+
+        #chat-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            #chat-window {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                width: 100%;
+                height: 100vh;
+                border-radius: 0;
+            }
+
+            #chat-widget {
+                bottom: 16px;
+                right: 16px;
+            }
+        }
+    </style>
 
     <script>
         // Pricing Toggle
@@ -1417,6 +1741,325 @@
                 }
             });
         });
+
+        // ============= AI CHAT WIDGET =============
+        (function() {
+            const PROXY_URL = 'https://nexagent-chat.nani-0a3.workers.dev/chat';
+            const MAX_MESSAGES = 20;
+            
+            const chatButton = document.getElementById('chat-button');
+            const chatWindow = document.getElementById('chat-window');
+            const chatClose = document.getElementById('chat-close');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const chatSend = document.getElementById('chat-send');
+            
+            let conversationHistory = [];
+            let isProcessing = false;
+
+            // Simple markdown parser for bold, lists, and links
+            function parseMarkdown(text) {
+                return text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank">$1</a>')
+                    .replace(/\n- (.*?)(?=\n|$)/g, '\n• $1')
+                    .replace(/\n/g, '<br>');
+            }
+
+            function addQuickReplyButtons(replies) {
+                const container = document.createElement('div');
+                container.className = 'quick-replies';
+                container.style.cssText = 'display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.8rem;';
+                
+                replies.forEach(reply => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quick-reply-btn';
+                    btn.textContent = reply;
+                    btn.style.cssText = `
+                        background: transparent;
+                        border: 1.5px solid var(--accent-blue);
+                        color: var(--accent-blue);
+                        padding: 0.5rem 1rem;
+                        border-radius: 20px;
+                        font-size: 0.85rem;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: all 0.2s ease;
+                    `;
+                    btn.onmouseover = () => {
+                        btn.style.background = 'rgba(0, 102, 255, 0.1)';
+                        btn.style.transform = 'translateY(-2px)';
+                    };
+                    btn.onmouseout = () => {
+                        btn.style.background = 'transparent';
+                        btn.style.transform = 'translateY(0)';
+                    };
+                    btn.onclick = () => {
+                        chatInput.value = reply;
+                        sendMessage();
+                        container.remove(); // Remove buttons after use
+                    };
+                    container.appendChild(btn);
+                });
+                
+                chatMessages.appendChild(container);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function addMessage(content, role) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `chat-message ${role}`;
+                
+                if (role === 'ai') {
+                    messageDiv.innerHTML = parseMarkdown(content);
+                } else {
+                    messageDiv.textContent = content;
+                }
+                
+                chatMessages.appendChild(messageDiv);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Store in history
+                conversationHistory.push({ role: role === 'user' ? 'user' : 'assistant', content });
+                
+                // Keep only last 20 messages
+                if (conversationHistory.length > MAX_MESSAGES) {
+                    conversationHistory = conversationHistory.slice(-MAX_MESSAGES);
+                }
+            }
+
+            function showTypingIndicator() {
+                const indicator = document.createElement('div');
+                indicator.className = 'typing-indicator';
+                indicator.id = 'typing-indicator';
+                indicator.innerHTML = '<span></span><span></span><span></span>';
+                chatMessages.appendChild(indicator);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function hideTypingIndicator() {
+                const indicator = document.getElementById('typing-indicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+            }
+
+            async function sendMessage() {
+                const message = chatInput.value.trim();
+                if (!message || isProcessing) return;
+
+                // Add user message
+                addMessage(message, 'user');
+                chatInput.value = '';
+                
+                // Show typing indicator
+                isProcessing = true;
+                chatSend.disabled = true;
+                showTypingIndicator();
+
+                try {
+                    const response = await fetch(PROXY_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            messages: conversationHistory
+                        })
+                    });
+
+                    hideTypingIndicator();
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    addMessage(data.response, 'ai');
+
+                } catch (error) {
+                    hideTypingIndicator();
+                    console.error('Chat error:', error);
+                    addMessage("Sorry, I couldn't connect right now. Please try again in a moment.", 'ai');
+                } finally {
+                    isProcessing = false;
+                    chatSend.disabled = false;
+                    chatInput.focus();
+                }
+            }
+
+            // Event listeners
+            chatButton.addEventListener('click', () => {
+                chatWindow.classList.add('active');
+                chatButton.style.display = 'none';
+                chatInput.focus();
+                
+                // Show welcome message if first time
+                if (conversationHistory.length === 0) {
+                    addMessage("Hi! 👋 I'm NexAgent AI. Ask me anything about our AI agents, pricing, or how we can automate your business.", 'ai');
+                    addQuickReplyButtons(['💰 Pricing', '🤖 How it works', '🚀 Free Trial']);
+                }
+            });
+
+            chatClose.addEventListener('click', () => {
+                chatWindow.classList.remove('active');
+                chatButton.style.display = 'flex';
+            });
+
+            chatSend.addEventListener('click', sendMessage);
+
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            // Close chat on Escape
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && chatWindow.classList.contains('active')) {
+                    chatClose.click();
+                }
+            });
+        })();
+
+        // ============= STRIPE CHECKOUT INTEGRATION =============
+        (function() {
+            const STRIPE_PUBLISHABLE_KEY = 'pk_test_51T9OG6EyYaMQFVgYByiMdb4CLanngxD6CfFMPydhZpdF4xsSxzhlIhJgh9a5kHBriOGNhEhIZdmIf2zNvZhNUSNK003DwvB2cZ';
+            const stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+            
+            // Check for success/cancel in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            if (urlParams.has('success')) {
+                showNotification('✅ Payment successful! Welcome to NexAgent. Check your email for next steps.', 'success');
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (urlParams.has('canceled')) {
+                showNotification('❌ Payment canceled. No worries, you can try again anytime!', 'info');
+                // Clean URL
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+            
+            // Handle checkout button clicks
+            const checkoutButtons = document.querySelectorAll('.stripe-checkout-btn');
+            
+            checkoutButtons.forEach(button => {
+                button.addEventListener('click', async () => {
+                    // Determine if yearly or monthly
+                    const isYearly = pricingToggle.classList.contains('active');
+                    const priceId = isYearly 
+                        ? button.dataset.priceYearly 
+                        : button.dataset.priceMonthly;
+                    
+                    // Disable button during redirect
+                    button.disabled = true;
+                    button.textContent = 'Redirecting to checkout...';
+                    
+                    try {
+                        const { error } = await stripe.redirectToCheckout({
+                            lineItems: [{ price: priceId, quantity: 1 }],
+                            mode: 'subscription',
+                            successUrl: window.location.origin + window.location.pathname + '?success=true',
+                            cancelUrl: window.location.origin + window.location.pathname + '?canceled=true',
+                        });
+                        
+                        if (error) {
+                            console.error('Stripe error:', error);
+                            showNotification('❌ ' + error.message, 'error');
+                            button.disabled = false;
+                            button.textContent = button.classList.contains('btn-primary') ? 'Get Started' : 'Start Free Trial';
+                        }
+                    } catch (err) {
+                        console.error('Checkout error:', err);
+                        showNotification('❌ Something went wrong. Please try again.', 'error');
+                        button.disabled = false;
+                        button.textContent = button.classList.contains('btn-primary') ? 'Get Started' : 'Start Free Trial';
+                    }
+                });
+            });
+            
+            // Notification system
+            function showNotification(message, type = 'info') {
+                // Remove any existing notification
+                const existing = document.getElementById('stripe-notification');
+                if (existing) existing.remove();
+                
+                const notification = document.createElement('div');
+                notification.id = 'stripe-notification';
+                notification.className = `stripe-notification ${type}`;
+                notification.textContent = message;
+                
+                // Add styles if not already present
+                if (!document.getElementById('stripe-notification-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'stripe-notification-styles';
+                    style.textContent = `
+                        .stripe-notification {
+                            position: fixed;
+                            top: 100px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            background: var(--bg-card);
+                            color: var(--text-primary);
+                            padding: 1.2rem 2rem;
+                            border-radius: 12px;
+                            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+                            z-index: 10000;
+                            border: 2px solid var(--border-subtle);
+                            animation: slideDown 0.4s ease-out;
+                            max-width: 90%;
+                            text-align: center;
+                            font-weight: 600;
+                        }
+                        
+                        .stripe-notification.success {
+                            border-color: #00ff64;
+                            background: rgba(0, 255, 100, 0.1);
+                        }
+                        
+                        .stripe-notification.error {
+                            border-color: #ff4444;
+                            background: rgba(255, 68, 68, 0.1);
+                        }
+                        
+                        .stripe-notification.info {
+                            border-color: var(--accent-blue);
+                            background: rgba(0, 102, 255, 0.1);
+                        }
+                        
+                        @keyframes slideDown {
+                            from {
+                                opacity: 0;
+                                transform: translateX(-50%) translateY(-20px);
+                            }
+                            to {
+                                opacity: 1;
+                                transform: translateX(-50%) translateY(0);
+                            }
+                        }
+                        
+                        @media (max-width: 768px) {
+                            .stripe-notification {
+                                top: 80px;
+                                font-size: 0.9rem;
+                                padding: 1rem 1.5rem;
+                            }
+                        }
+                    `;
+                    document.head.appendChild(style);
+                }
+                
+                document.body.appendChild(notification);
+                
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    notification.style.animation = 'slideDown 0.4s ease-out reverse';
+                    setTimeout(() => notification.remove(), 400);
+                }, 5000);
+            }
+        })();
     </script>
 </body>
 </html>
