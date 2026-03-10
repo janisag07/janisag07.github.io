@@ -942,6 +942,17 @@
                 margin-top: 0.3rem;
             }
         }
+        @media (max-width: 480px) {
+            #chat-widget {
+                right: 12px !important;
+                bottom: 16px !important;
+            }
+            #chat-window {
+                width: calc(100vw - 24px) !important;
+                height: 70vh !important;
+                right: -12px !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1344,8 +1355,8 @@
     </footer>
 
     <!-- AI Chat Widget -->
-    <div id="chat-widget" style="position: fixed; bottom: 24px; right: 24px; z-index: 9999;">
-        <div id="chat-button" style="width: 60px; height: 60px; border-radius: 50%; background: var(--accent-blue); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0, 102, 255, 0.4); transition: all 0.3s ease;">
+    <div id="chat-widget" style="position: fixed; bottom: 20px; right: 16px; z-index: 9999;">
+        <div id="chat-button" style="width: 56px; height: 56px; border-radius: 50%; background: var(--accent-blue); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0, 102, 255, 0.4); transition: all 0.3s ease;">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             </svg>
