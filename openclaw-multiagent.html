@@ -560,7 +560,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         messages: [
-                            { role: 'system', content: 'You are a Support Agent in an OpenClaw multi-agent system. Explain how agents coordinate, distribute tasks, and communicate. Be concise and helpful.' },
+                            { role: 'system', content: 'You are the OpenClaw Support Agent, part of a multi-agent AI system. You help with customer queries, explain how multi-agent coordination works, and demonstrate intelligent task routing. NEVER mention NexAgent, pricing plans, or trial periods.' },
                             { role: 'user', content: message }
                         ]
                     })
