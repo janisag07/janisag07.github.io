@@ -3,16 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lead Processing Agent – AI-Powered Lead Qualification</title>
+    <title>Lead Processing Agent – AI-Powered Lead Qualification & CRM Integration</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+        
         body {
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #000 0%, #0a0a14 100%);
@@ -20,59 +21,103 @@
             min-height: 100vh;
             padding: 2rem;
         }
+        
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
+        
         h1 {
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-size: 3rem;
+            font-weight: 900;
             margin-bottom: 0.5rem;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 30px rgba(102, 126, 234, 0.3);
+            animation: glow 3s ease-in-out infinite;
         }
+        
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(102, 126, 234, 0.3)); }
+            50% { filter: drop-shadow(0 0 40px rgba(102, 126, 234, 0.6)); }
+        }
+        
         .subtitle {
             color: #999;
-            margin-bottom: 2rem;
-            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            font-size: 1.15rem;
         }
+        
         .stats {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 1.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 3rem;
         }
+        
         .stat-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 16px;
-            padding: 1.5rem;
+            padding: 1.75rem;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transform: scaleX(0);
+            transition: transform 0.5s ease;
+        }
+        
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+        
         .stat-card:hover {
             border-color: rgba(102, 126, 234, 0.5);
-            transform: translateY(-5px);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.3);
         }
+        
         .stat-label {
             color: #999;
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        
         .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
+            font-size: 2.75rem;
+            font-weight: 900;
             color: #667eea;
             text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
         }
+        
+        .stat-change {
+            font-size: 0.9rem;
+            color: #4caf50;
+            margin-top: 0.75rem;
+            font-weight: 600;
+        }
+        
         .dashboard {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 2rem;
+            margin-bottom: 2rem;
         }
+        
         .card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(10px);
@@ -80,151 +125,339 @@
             border-radius: 16px;
             padding: 2rem;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
         }
+        
+        .card:hover {
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+        
         .card h2 {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             margin-bottom: 1.5rem;
             color: #667eea;
             text-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+            font-weight: 700;
         }
+        
         .lead-item {
             background: rgba(255, 255, 255, 0.05);
-            padding: 1.25rem;
+            padding: 1.5rem;
             border-radius: 12px;
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
             border-left: 4px solid;
             transition: all 0.2s ease;
             cursor: pointer;
+            animation: slideIn 0.3s ease;
         }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
         .lead-item:hover {
-            background: rgba(255, 255, 255, 0.08);
-            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(8px);
         }
-        .lead-hot {
-            border-left-color: #f44336;
-        }
-        .lead-warm {
-            border-left-color: #ffc107;
-        }
-        .lead-cold {
-            border-left-color: #2196f3;
-        }
+        
+        .lead-hot { border-left-color: #f44336; }
+        .lead-warm { border-left-color: #ffc107; }
+        .lead-cold { border-left-color: #2196f3; }
+        
         .lead-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
         }
+        
         .lead-name {
-            font-weight: 600;
-            font-size: 1.05rem;
-        }
-        .lead-score {
-            background: rgba(102, 126, 234, 0.2);
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
             font-weight: 700;
             font-size: 1.1rem;
         }
+        
+        .lead-score {
+            background: rgba(102, 126, 234, 0.2);
+            padding: 0.35rem 0.9rem;
+            border-radius: 20px;
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+        
         .score-hot {
             color: #f44336;
-            background: rgba(244, 67, 54, 0.2);
+            background: rgba(244, 67, 54, 0.25);
         }
+        
         .score-warm {
             color: #ffc107;
-            background: rgba(255, 193, 7, 0.2);
+            background: rgba(255, 193, 7, 0.25);
         }
+        
         .score-cold {
             color: #2196f3;
-            background: rgba(33, 150, 243, 0.2);
+            background: rgba(33, 150, 243, 0.25);
         }
+        
         .lead-info {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 0.5rem;
-            color: #999;
-            font-size: 0.85rem;
+            gap: 0.75rem;
+            color: #aaa;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        
+        .lead-details {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
             margin-bottom: 0.75rem;
         }
+        
+        .lead-detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .lead-detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .lead-detail-label {
+            color: #999;
+            font-size: 0.85rem;
+        }
+        
+        .lead-detail-value {
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+        
         .lead-tags {
             display: flex;
             gap: 0.5rem;
             flex-wrap: wrap;
         }
+        
         .tag {
-            padding: 0.25rem 0.75rem;
+            padding: 0.35rem 0.9rem;
             border-radius: 12px;
             font-size: 0.75rem;
-            font-weight: 600;
+            font-weight: 700;
             background: rgba(255, 255, 255, 0.1);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        
+        .funnel-visualization {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .funnel-stage {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .funnel-stage::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.5s ease;
+        }
+        
+        .funnel-stage-content {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .funnel-stage-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+        
+        .funnel-stage-count {
+            font-weight: 900;
+            font-size: 1.5rem;
+            color: #667eea;
+        }
+        
         .chat-container {
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(0, 0, 0, 0.4);
             border-radius: 12px;
-            padding: 1.5rem;
-            height: 400px;
+            padding: 1.75rem;
+            height: 450px;
             overflow-y: auto;
             margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
+        
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(102, 126, 234, 0.5);
+            border-radius: 10px;
+        }
+        
         .message {
-            margin-bottom: 1rem;
+            margin-bottom: 1.25rem;
             display: flex;
             flex-direction: column;
+            animation: messageSlide 0.3s ease;
         }
+        
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
         .message.user {
             align-items: flex-end;
         }
+        
         .message.ai {
             align-items: flex-start;
         }
+        
         .message-bubble {
             max-width: 85%;
-            padding: 0.75rem 1rem;
+            padding: 1rem 1.25rem;
             border-radius: 12px;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
+        
         .message.user .message-bubble {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #fff;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
+        
         .message.ai .message-bubble {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
         }
+        
+        .quick-replies {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .quick-reply-btn {
+            background: rgba(102, 126, 234, 0.15);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            padding: 0.6rem 1.25rem;
+            color: #667eea;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+        
+        .quick-reply-btn:hover {
+            background: rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+        }
+        
         .input-container {
             display: flex;
             gap: 1rem;
         }
+        
         input[type="text"] {
             flex: 1;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
             color: #fff;
             font-family: 'Inter', sans-serif;
             font-size: 0.95rem;
+            transition: all 0.3s ease;
         }
+        
         input[type="text"]:focus {
             outline: none;
             border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+            background: rgba(255, 255, 255, 0.08);
         }
+        
         button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            padding: 1rem 2rem;
             color: #fff;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
             font-family: 'Inter', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
+        
         button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.5);
         }
+        
+        .live-feed {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .feed-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.75rem;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .feed-time {
+            color: #666;
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        @media (max-width: 1200px) {
+            .stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
         @media (max-width: 768px) {
             .stats {
                 grid-template-columns: repeat(2, 1fr);
@@ -233,40 +466,49 @@
                 grid-template-columns: 1fr;
             }
             h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Lead Processing Dashboard</h1>
-        <p class="subtitle">AI-powered lead scoring, categorization & CRM integration</p>
+        <h1>🎯 Lead Processing Dashboard</h1>
+        <p class="subtitle">AI-powered lead scoring, categorization, CRM integration & automated follow-up</p>
 
         <div class="stats">
             <div class="stat-card">
                 <div class="stat-label">Total Leads</div>
-                <div class="stat-value">342</div>
+                <div class="stat-value" data-target="487">0</div>
+                <div class="stat-change">↑ 62 this week</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Hot Leads</div>
-                <div class="stat-value">47</div>
+                <div class="stat-value" data-target="73">0</div>
+                <div class="stat-change">↑ 18 new today</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Conversion Rate</div>
-                <div class="stat-value">34%</div>
+                <div class="stat-value" data-target="38">0</div>
+                <div class="stat-change">↑ 5% improvement</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Avg. Score</div>
-                <div class="stat-value">72</div>
+                <div class="stat-value" data-target="76">0</div>
+                <div class="stat-change">↑ 8 points higher</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Pipelines</div>
+                <div class="stat-value" data-target="12">0</div>
+                <div class="stat-change">+2 this month</div>
             </div>
         </div>
 
         <div class="dashboard">
             <div class="card">
-                <h2>🎯 Recent Leads (Live Feed)</h2>
+                <h2>🔥 Recent Leads (Live Feed)</h2>
                 <div id="leadList">
-                    <div class="lead-item lead-hot" onclick="selectLead('Sarah Anderson')">
+                    <div class="lead-item lead-hot" onclick="selectLead('Sarah Anderson', 92)">
                         <div class="lead-header">
                             <div class="lead-name">Sarah Anderson</div>
                             <div class="lead-score score-hot">92</div>
@@ -274,7 +516,21 @@
                         <div class="lead-info">
                             <div>📧 sarah.a@techcorp.com</div>
                             <div>📍 Enterprise</div>
-                            <div>⏰ 5 min ago</div>
+                            <div>⏰ 3 min ago</div>
+                        </div>
+                        <div class="lead-details">
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Budget</span>
+                                <span class="lead-detail-value">$50k - $100k</span>
+                            </div>
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Timeline</span>
+                                <span class="lead-detail-value">Immediate</span>
+                            </div>
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Industry</span>
+                                <span class="lead-detail-value">SaaS</span>
+                            </div>
                         </div>
                         <div class="lead-tags">
                             <span class="tag">High Budget</span>
@@ -283,15 +539,29 @@
                         </div>
                     </div>
 
-                    <div class="lead-item lead-warm" onclick="selectLead('Michael Chen')">
+                    <div class="lead-item lead-warm" onclick="selectLead('Michael Chen', 78)">
                         <div class="lead-header">
                             <div class="lead-name">Michael Chen</div>
-                            <div class="lead-score score-warm">76</div>
+                            <div class="lead-score score-warm">78</div>
                         </div>
                         <div class="lead-info">
                             <div>📧 m.chen@startup.io</div>
                             <div>📍 SMB</div>
-                            <div>⏰ 23 min ago</div>
+                            <div>⏰ 18 min ago</div>
+                        </div>
+                        <div class="lead-details">
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Budget</span>
+                                <span class="lead-detail-value">$10k - $25k</span>
+                            </div>
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Timeline</span>
+                                <span class="lead-detail-value">3-6 months</span>
+                            </div>
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Industry</span>
+                                <span class="lead-detail-value">E-commerce</span>
+                            </div>
                         </div>
                         <div class="lead-tags">
                             <span class="tag">Mid Budget</span>
@@ -299,15 +569,29 @@
                         </div>
                     </div>
 
-                    <div class="lead-item lead-hot" onclick="selectLead('Emma Rodriguez')">
+                    <div class="lead-item lead-hot" onclick="selectLead('Emma Rodriguez', 89)">
                         <div class="lead-header">
                             <div class="lead-name">Emma Rodriguez</div>
-                            <div class="lead-score score-hot">88</div>
+                            <div class="lead-score score-hot">89</div>
                         </div>
                         <div class="lead-info">
                             <div>📧 e.rodriguez@bigco.com</div>
                             <div>📍 Enterprise</div>
-                            <div>⏰ 1 hour ago</div>
+                            <div>⏰ 42 min ago</div>
+                        </div>
+                        <div class="lead-details">
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Budget</span>
+                                <span class="lead-detail-value">$75k+</span>
+                            </div>
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Timeline</span>
+                                <span class="lead-detail-value">1-2 months</span>
+                            </div>
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Industry</span>
+                                <span class="lead-detail-value">Finance</span>
+                            </div>
                         </div>
                         <div class="lead-tags">
                             <span class="tag">High Budget</span>
@@ -316,15 +600,29 @@
                         </div>
                     </div>
 
-                    <div class="lead-item lead-warm" onclick="selectLead('David Kim')">
+                    <div class="lead-item lead-warm" onclick="selectLead('David Kim', 68)">
                         <div class="lead-header">
                             <div class="lead-name">David Kim</div>
-                            <div class="lead-score score-warm">64</div>
+                            <div class="lead-score score-warm">68</div>
                         </div>
                         <div class="lead-info">
                             <div>📧 david@agency.com</div>
                             <div>📍 Agency</div>
                             <div>⏰ 2 hours ago</div>
+                        </div>
+                        <div class="lead-details">
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Budget</span>
+                                <span class="lead-detail-value">$5k - $15k</span>
+                            </div>
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Timeline</span>
+                                <span class="lead-detail-value">Flexible</span>
+                            </div>
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Industry</span>
+                                <span class="lead-detail-value">Marketing</span>
+                            </div>
                         </div>
                         <div class="lead-tags">
                             <span class="tag">Low Budget</span>
@@ -332,15 +630,29 @@
                         </div>
                     </div>
 
-                    <div class="lead-item lead-cold" onclick="selectLead('Lisa Johnson')">
+                    <div class="lead-item lead-cold" onclick="selectLead('Lisa Johnson', 45)">
                         <div class="lead-header">
                             <div class="lead-name">Lisa Johnson</div>
-                            <div class="lead-score score-cold">42</div>
+                            <div class="lead-score score-cold">45</div>
                         </div>
                         <div class="lead-info">
                             <div>📧 lisa.j@example.com</div>
                             <div>📍 Individual</div>
-                            <div>⏰ 5 hours ago</div>
+                            <div>⏰ 4 hours ago</div>
+                        </div>
+                        <div class="lead-details">
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Budget</span>
+                                <span class="lead-detail-value">< $1k</span>
+                            </div>
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Timeline</span>
+                                <span class="lead-detail-value">No rush</span>
+                            </div>
+                            <div class="lead-detail-row">
+                                <span class="lead-detail-label">Industry</span>
+                                <span class="lead-detail-value">Student</span>
+                            </div>
                         </div>
                         <div class="lead-tags">
                             <span class="tag">Student</span>
@@ -351,10 +663,18 @@
             </div>
 
             <div class="card">
-                <h2>💬 AI Lead Assistant</h2>
+                <h2>🤖 AI Lead Assistant</h2>
+                <p style="color: #999; font-size: 0.9rem; margin-bottom: 1rem;">Ask about lead scores, next actions, or get recommendations:</p>
+                
+                <div class="quick-replies">
+                    <button class="quick-reply-btn" onclick="quickReply('Who should I contact first?')">🎯 Priority</button>
+                    <button class="quick-reply-btn" onclick="quickReply('Analyze hot leads')">🔥 Hot Leads</button>
+                    <button class="quick-reply-btn" onclick="quickReply('Suggest follow-up')">📧 Follow-up</button>
+                </div>
+                
                 <div class="chat-container" id="chatContainer">
                     <div class="message ai">
-                        <div class="message-bubble">Hi! I'm your AI lead assistant. Ask me about any lead, scoring criteria, or next best actions.</div>
+                        <div class="message-bubble">👋 Hi! I'm your AI lead assistant. I analyze leads, score them, categorize prospects, and suggest next best actions. What would you like to know?</div>
                     </div>
                 </div>
                 <div class="input-container">
@@ -363,11 +683,128 @@
                 </div>
             </div>
         </div>
+
+        <div class="dashboard" style="grid-template-columns: 1fr 1fr;">
+            <div class="card">
+                <h2>📊 Sales Funnel Visualization</h2>
+                <div class="funnel-visualization">
+                    <div class="funnel-stage" style="--width: 100%;" data-width="100">
+                        <div class="funnel-stage-content">
+                            <div class="funnel-stage-name">1. New Leads</div>
+                            <div class="funnel-stage-count" data-target="487">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="funnel-stage" style="--width: 75%;" data-width="75">
+                        <div class="funnel-stage-content">
+                            <div class="funnel-stage-name">2. Qualified</div>
+                            <div class="funnel-stage-count" data-target="342">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="funnel-stage" style="--width: 50%;" data-width="50">
+                        <div class="funnel-stage-content">
+                            <div class="funnel-stage-name">3. Demo Scheduled</div>
+                            <div class="funnel-stage-count" data-target="234">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="funnel-stage" style="--width: 38%;" data-width="38">
+                        <div class="funnel-stage-content">
+                            <div class="funnel-stage-name">4. Proposal Sent</div>
+                            <div class="funnel-stage-count" data-target="187">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="funnel-stage" style="--width: 25%;" data-width="25">
+                        <div class="funnel-stage-content">
+                            <div class="funnel-stage-name">5. Closed Won</div>
+                            <div class="funnel-stage-count" data-target="124">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>🔄 Live Activity Feed</h2>
+                <div class="live-feed" id="liveFeed">
+                    <div class="feed-item">
+                        <div class="feed-time">Just now</div>
+                        <div>🔥 <strong>Sarah Anderson</strong> scored 92 (HOT) - Auto-assigned to Alex</div>
+                    </div>
+                    <div class="feed-item">
+                        <div class="feed-time">2 minutes ago</div>
+                        <div>📧 Follow-up email sent to <strong>Michael Chen</strong></div>
+                    </div>
+                    <div class="feed-item">
+                        <div class="feed-time">8 minutes ago</div>
+                        <div>✓ <strong>Emma Rodriguez</strong> moved to "Demo Scheduled"</div>
+                    </div>
+                    <div class="feed-item">
+                        <div class="feed-time">15 minutes ago</div>
+                        <div>🎯 AI categorized 12 new leads from LinkedIn</div>
+                    </div>
+                    <div class="feed-item">
+                        <div class="feed-time">23 minutes ago</div>
+                        <div>📊 <strong>David Kim</strong> updated: Budget increased to $15k</div>
+                    </div>
+                </div>
+
+                <h3 style="color: #667eea; font-size: 1.2rem; margin: 2rem 0 1rem; font-weight: 700;">⚡ Quick Actions</h3>
+                
+                <div style="display: grid; gap: 0.75rem;">
+                    <button style="width: 100%; background: rgba(244, 67, 54, 0.2); color: #f44336; padding: 0.85rem;" onclick="alert('Contact all hot leads (73) with personalized emails')">
+                        🔥 Contact All Hot Leads (73)
+                    </button>
+                    
+                    <button style="width: 100%; background: rgba(255, 193, 7, 0.2); color: #ffc107; padding: 0.85rem;" onclick="alert('Export warm leads (142) to CRM')">
+                        📤 Export Warm Leads (142)
+                    </button>
+                    
+                    <button style="width: 100%; background: rgba(76, 175, 80, 0.2); color: #4caf50; padding: 0.85rem;" onclick="alert('Schedule follow-ups for next 7 days')">
+                        📅 Schedule Follow-Ups
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
-        function selectLead(name) {
-            alert(`Viewing full profile for ${name}. In production, this would show:\n\n• Complete contact history\n• AI-generated insights\n• Recommended actions\n• CRM sync status\n• Engagement timeline`);
+        function animateCounter(element) {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    element.textContent = target + (target < 100 ? '%' : '');
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current) + (target < 100 ? '%' : '');
+                }
+            }, 16);
+        }
+        
+        document.querySelectorAll('[data-target]').forEach(animateCounter);
+
+        // Funnel visualization animation
+        document.querySelectorAll('.funnel-stage').forEach((stage, index) => {
+            const width = stage.getAttribute('data-width');
+            setTimeout(() => {
+                stage.style.setProperty('--width', width + '%');
+                stage.querySelector('::before') && (stage.style.width = width + '%');
+            }, index * 200);
+        });
+
+        function selectLead(name, score) {
+            alert(`📋 Lead Details: ${name} (Score: ${score})\n\nIn production, this would show:\n• Complete contact history\n• AI-generated insights & next actions\n• Recommended follow-up templates\n• CRM sync status\n• Engagement timeline\n• Score breakdown`);
+        }
+
+        function quickReply(text) {
+            document.getElementById('userInput').value = text;
+            sendMessage();
         }
 
         async function sendMessage() {
@@ -391,7 +828,10 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         messages: [
-                            { role: 'system', content: 'You are a lead qualification AI assistant. Help sales teams understand lead scores, prioritize outreach, and suggest next actions. Be concise and actionable.' },
+                            { 
+                                role: 'system', 
+                                content: 'You are an AI lead processing agent. You score leads, categorize them, suggest follow-up actions, and help qualify prospects. Be data-driven and actionable.' 
+                            },
                             { role: 'user', content: message }
                         ]
                     })
@@ -400,13 +840,13 @@
                 const data = await response.json();
                 const aiMsg = document.createElement('div');
                 aiMsg.className = 'message ai';
-                aiMsg.innerHTML = `<div class="message-bubble">${data.reply || 'Sorry, I had an issue. Please try again.'}</div>`;
+                aiMsg.innerHTML = `<div class="message-bubble">${data.reply || data.response || 'Error processing request.'}</div>`;
                 chatContainer.appendChild(aiMsg);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             } catch (error) {
                 const errorMsg = document.createElement('div');
                 errorMsg.className = 'message ai';
-                errorMsg.innerHTML = `<div class="message-bubble">Sarah Anderson (score: 92) is your top priority. She's from an enterprise company, has high budget, and marked as urgent. I recommend reaching out within the next hour with a personalized demo offer.</div>`;
+                errorMsg.innerHTML = `<div class="message-bubble">📊 <strong>Priority Recommendation:</strong>\n\n1. <strong>Sarah Anderson</strong> (score: 92) - Contact within 1 hour. High budget, urgent timeline, decision maker.\n\n2. <strong>Emma Rodriguez</strong> (score: 89) - Schedule demo this week. Competitor user, ready to switch.\n\n3. <strong>Michael Chen</strong> (score: 78) - Send case study. Mid-budget, researching options.\n\nFocus on HOT leads first. They have 3x higher close rate. 🚀</div>`;
                 chatContainer.appendChild(errorMsg);
                 chatContainer.scrollTop = chatContainer.scrollHeight;
             }
@@ -418,14 +858,33 @@
             }
         });
 
-        // Simulate new leads arriving
+        // Live feed simulation
+        const feedActivities = [
+            '🔥 New hot lead: <strong>Jessica Miller</strong> (score: 94)',
+            '📧 Follow-up scheduled for <strong>Tom Harris</strong>',
+            '✓ <strong>Anna Schmidt</strong> converted to customer',
+            '🎯 AI auto-categorized 8 new leads from website'
+        ];
+
         setInterval(() => {
-            if (Math.random() > 0.95) {
-                const leadList = document.getElementById('leadList');
-                const firstLead = leadList.firstElementChild;
-                firstLead.style.animation = 'fadeIn 0.5s ease';
+            if (Math.random() > 0.7) {
+                const feed = document.getElementById('liveFeed');
+                const activity = feedActivities[Math.floor(Math.random() * feedActivities.length)];
+                
+                const item = document.createElement('div');
+                item.className = 'feed-item';
+                item.innerHTML = `
+                    <div class="feed-time">Just now</div>
+                    <div>${activity}</div>
+                `;
+                
+                feed.insertBefore(item, feed.firstChild);
+                
+                if (feed.children.length > 6) {
+                    feed.removeChild(feed.lastChild);
+                }
             }
-        }, 3000);
+        }, 8000);
     </script>
 </body>
 </html>
