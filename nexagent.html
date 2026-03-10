@@ -1398,6 +1398,83 @@
     </style>
 
     <script>
+        // Pricing Toggle (Monthly/Yearly)
+        const toggle = document.getElementById('pricing-toggle');
+        const monthlyLabel = document.getElementById('monthly-label');
+        const yearlyLabel = document.getElementById('yearly-label');
+        const monthlyPrices = document.querySelectorAll('.monthly-price');
+        const yearlyPrices = document.querySelectorAll('.yearly-price');
+        
+        let isYearly = false;
+        
+        function updatePricing() {
+            if (isYearly) {
+                toggle.classList.remove('active');
+                monthlyLabel.classList.remove('active');
+                yearlyLabel.classList.add('active');
+                monthlyPrices.forEach(el => el.style.display = 'none');
+                yearlyPrices.forEach(el => el.style.display = 'inline');
+            } else {
+                toggle.classList.add('active');
+                monthlyLabel.classList.add('active');
+                yearlyLabel.classList.remove('active');
+                monthlyPrices.forEach(el => el.style.display = 'inline');
+                yearlyPrices.forEach(el => el.style.display = 'none');
+            }
+        }
+        
+        toggle.addEventListener('click', () => {
+            isYearly = !isYearly;
+            updatePricing();
+        });
+        
+        monthlyLabel.addEventListener('click', () => {
+            if (isYearly) {
+                isYearly = false;
+                updatePricing();
+            }
+        });
+        
+        yearlyLabel.addEventListener('click', () => {
+            if (!isYearly) {
+                isYearly = true;
+                updatePricing();
+            }
+        });
+        
+        // Initialize with monthly
+        updatePricing();
+
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                const isActive = item.classList.contains('active');
+                // Close all others
+                faqItems.forEach(i => i.classList.remove('active'));
+                // Toggle current
+                if (!isActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Scroll Reveal Animation
+        const revealElements = document.querySelectorAll('.reveal');
+        const revealOnScroll = () => {
+            const windowHeight = window.innerHeight;
+            revealElements.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                if (elementTop < windowHeight - 100) {
+                    el.classList.add('active');
+                }
+            });
+        };
+        
+        window.addEventListener('scroll', revealOnScroll);
+        revealOnScroll(); // Initial check
+
         // Chat Button - Smooth Transition to chat.html
         document.getElementById('chat-button').addEventListener('click', () => {
             // Circle reveal animation
