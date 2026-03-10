@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Titanium AI — Automated TikTok Content Pipeline</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a14;
+            --bg-card: rgba(15, 15, 25, 0.6);
+            --bg-card-hover: rgba(20, 20, 35, 0.8);
+            --tiktok-cyan: #00f2ea;
+            --tiktok-pink: #ff0050;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --border: rgba(255, 255, 255, 0.1);
+            --border-glow: rgba(0, 242, 234, 0.3);
+            --success: #00ff88;
+            --warning: #ffa500;
+            --danger: #ff4444;
+            --pending: #888;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            min-width: 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 12px;
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, rgba(0, 242, 234, 0.1) 0%, rgba(255, 0, 80, 0.1) 100%);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--tiktok-cyan) 0%, var(--tiktok-pink) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 30px 15px;
+            }
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .header p {
+                font-size: 0.95rem;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            max-width: 100%;
+            overflow: hidden;
+            min-width: 0;
+        }
+
+        .card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--border-glow);
+            box-shadow: 0 8px 32px rgba(0, 242, 234, 0.15);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink));
+            border-radius: 2px;
+        }
+
+        /* Grid Layouts */
+        .grid {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .grid-3 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        @media (max-width: 1200px) {
+            .grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* KPI Cards */
+        .kpi-card {
+            background: linear-gradient(135deg, rgba(0, 242, 234, 0.05) 0%, rgba(255, 0, 80, 0.05) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            min-width: 0;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 242, 234, 0.2);
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .kpi-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Pipeline Steps */
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            min-width: 0;
+        }
+
+        .pipeline-step {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            padding: 20px 15px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-step.active {
+            background: linear-gradient(135deg, rgba(0, 242, 234, 0.15) 0%, rgba(255, 0, 80, 0.15) 100%);
+            border-color: var(--tiktok-cyan);
+            box-shadow: 0 0 20px rgba(0, 242, 234, 0.3);
+        }
+
+        .pipeline-step.complete {
+            background: rgba(0, 255, 136, 0.1);
+            border-color: var(--success);
+        }
+
+        .step-icon {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 10px;
+            background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .pipeline-step.complete .step-icon {
+            background: var(--success);
+        }
+
+        .pipeline-step.active .step-icon {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(0, 242, 234, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(0, 242, 234, 0);
+            }
+        }
+
+        .step-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .step-status {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .pipeline {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .pipeline-step {
+                width: 100%;
+                min-width: 0;
+            }
+        }
+
+        /* Video Queue Table */
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        thead {
+            background: rgba(0, 242, 234, 0.05);
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-rendering {
+            background: rgba(255, 165, 0, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+
+        .status-posted {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+
+        .status-scheduled {
+            background: rgba(0, 242, 234, 0.2);
+            color: var(--tiktok-cyan);
+            border: 1px solid var(--tiktok-cyan);
+        }
+
+        /* Performance Chart */
+        .chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            gap: 15px;
+            padding: 20px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .chart-bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+        }
+
+        .chart-bars {
+            display: flex;
+            gap: 5px;
+            align-items: flex-end;
+            height: 150px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .chart-bar {
+            width: 30px;
+            background: linear-gradient(180deg, var(--tiktok-cyan) 0%, var(--tiktok-pink) 100%);
+            border-radius: 4px 4px 0 0;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.05);
+        }
+
+        .chart-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        /* Workflow Status */
+        .workflow-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .workflow-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .workflow-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+            min-width: 0;
+        }
+
+        .workflow-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .workflow-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .workflow-label {
+            flex: 1;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            transition: all 0.2s ease;
+            min-width: 0;
+        }
+
+        .activity-item:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .activity-icon {
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink));
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .activity-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .activity-text {
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+            word-wrap: break-word;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Product Input */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--tiktok-cyan);
+            box-shadow: 0 0 0 3px rgba(0, 242, 234, 0.1);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 242, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Telegram Notifications */
+        .telegram-preview {
+            background: rgba(0, 136, 204, 0.1);
+            border: 1px solid rgba(0, 136, 204, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        .telegram-message {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .telegram-message:last-child {
+            margin-bottom: 0;
+        }
+
+        .telegram-icon {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        /* Chat Interface */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 12px;
+            max-width: 85%;
+            animation: slideIn 0.3s ease;
+            min-width: 0;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .chat-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .chat-message.user .chat-avatar {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-bubble {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            min-width: 0;
+        }
+
+        .chat-message.user .chat-bubble {
+            background: linear-gradient(135deg, rgba(0, 242, 234, 0.15), rgba(255, 0, 80, 0.15));
+            border-color: var(--tiktok-cyan);
+        }
+
+        .chat-input-container {
+            padding: 15px;
+            border-top: 1px solid var(--border);
+            background: rgba(0, 0, 0, 0.3);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            border-radius: 25px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            min-width: 0;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--tiktok-cyan);
+        }
+
+        .chat-send {
+            width: 44px;
+            height: 44px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink));
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .chat-send:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(0, 242, 234, 0.4);
+        }
+
+        .chat-send:active {
+            transform: scale(0.95);
+        }
+
+        /* Loading Animation */
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .loading-dots span {
+            width: 6px;
+            height: 6px;
+            background: var(--tiktok-cyan);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+
+        .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+        .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% {
+                transform: scale(0);
+            }
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink));
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #00d9d2, #e6004a);
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .kpi-value {
+                font-size: 2rem;
+            }
+            .card {
+                padding: 16px;
+            }
+            .card-title {
+                font-size: 1.1rem;
+            }
+            .chat-container {
+                height: 400px;
+            }
+        }
+
+        /* Counter Animation */
+        .counter {
+            display: inline-block;
+        }
+
+        /* Glow Effect */
+        .glow {
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 10px rgba(0, 242, 234, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 30px rgba(0, 242, 234, 0.5), 0 0 60px rgba(255, 0, 80, 0.3);
+            }
+        }
+
+        /* Notification Badge */
+        .notification-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink));
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>⚡ Titanium AI</h1>
+            <p>Automated TikTok Shop Affiliate Content Pipeline</p>
+        </div>
+
+        <!-- KPI Cards -->
+        <div class="grid grid-4">
+            <div class="kpi-card">
+                <div class="kpi-value counter" data-target="847">0</div>
+                <div class="kpi-label">Videos Generated</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value counter" data-target="2400000">0</div>
+                <div class="kpi-label">Total Views</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value">$<span class="counter" data-target="12847">0</span></div>
+                <div class="kpi-label">Affiliate Revenue</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value"><span class="counter" data-target="4.2">0</span>%</div>
+                <div class="kpi-label">Avg Engagement</div>
+            </div>
+        </div>
+
+        <div class="grid grid-2">
+            <div class="kpi-card">
+                <div class="kpi-value counter" data-target="23">0</div>
+                <div class="kpi-label">Products in Queue</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value counter" data-target="12">0</div>
+                <div class="kpi-label">Auto-Posts Today</div>
+            </div>
+        </div>
+
+        <!-- Pipeline Visualization -->
+        <div class="card glow">
+            <div class="card-title">Pipeline Status</div>
+            <div class="pipeline">
+                <div class="pipeline-step complete">
+                    <div class="step-icon">1</div>
+                    <div class="step-label">Product Input</div>
+                    <div class="step-status">Complete</div>
+                </div>
+                <div class="pipeline-step complete">
+                    <div class="step-icon">2</div>
+                    <div class="step-label">AI Concept</div>
+                    <div class="step-status">Complete</div>
+                </div>
+                <div class="pipeline-step active">
+                    <div class="step-icon">3</div>
+                    <div class="step-label">Voice Script</div>
+                    <div class="step-status">Processing</div>
+                </div>
+                <div class="pipeline-step active">
+                    <div class="step-icon">4</div>
+                    <div class="step-label">Video Render</div>
+                    <div class="step-status">Processing</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-icon">5</div>
+                    <div class="step-label">TikTok Post</div>
+                    <div class="step-status">Pending</div>
+                </div>
+                <div class="pipeline-step">
+                    <div class="step-icon">6</div>
+                    <div class="step-label">Analytics</div>
+                    <div class="step-status">Pending</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-2">
+            <!-- AI Chat -->
+            <div class="card">
+                <div class="card-title">🤖 Titanium AI Assistant</div>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message">
+                            <div class="chat-avatar">T</div>
+                            <div class="chat-bubble">
+                                👋 Welcome to Titanium AI! I help manage your automated TikTok content pipeline. Ask me about product inputs, video concepts, performance metrics, or workflow optimization.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask about your pipeline...">
+                        <button class="chat-send" id="chatSend">➤</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Input -->
+            <div class="card">
+                <div class="card-title">📦 New Product Input</div>
+                <div class="input-group">
+                    <label class="input-label">Product URL or Text</label>
+                    <input type="text" class="input-field" placeholder="https://example.com/product or Product Name">
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Product Description</label>
+                    <textarea class="input-field" rows="3" placeholder="Describe the product..."></textarea>
+                </div>
+                <div class="input-group">
+                    <label class="input-label">Target Audience</label>
+                    <input type="text" class="input-field" placeholder="e.g., Tech enthusiasts, 18-35">
+                </div>
+                <button class="btn" onclick="simulateProductSubmit()">🚀 Generate Content</button>
+            </div>
+        </div>
+
+        <!-- n8n Workflow Status -->
+        <div class="card">
+            <div class="card-title">🔧 n8n Workflow Nodes</div>
+            <div class="workflow-grid">
+                <div class="workflow-item">
+                    <div class="workflow-icon">✅</div>
+                    <div class="workflow-label">Product Research</div>
+                </div>
+                <div class="workflow-item">
+                    <div class="workflow-icon">✅</div>
+                    <div class="workflow-label">Concept Generation</div>
+                </div>
+                <div class="workflow-item">
+                    <div class="workflow-icon">⏳</div>
+                    <div class="workflow-label">ElevenLabs Voice</div>
+                </div>
+                <div class="workflow-item">
+                    <div class="workflow-icon">⏳</div>
+                    <div class="workflow-label">Creatomate Render</div>
+                </div>
+                <div class="workflow-item">
+                    <div class="workflow-icon">🔲</div>
+                    <div class="workflow-label">TikTok Post</div>
+                </div>
+                <div class="workflow-item">
+                    <div class="workflow-icon">✅</div>
+                    <div class="workflow-label">Airtable Sync</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Queue Dashboard -->
+        <div class="card">
+            <div class="card-title">🎬 Video Queue <span class="notification-badge">23</span></div>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Product Name</th>
+                            <th>Status</th>
+                            <th>Views</th>
+                            <th>Likes</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody id="videoQueue">
+                        <tr>
+                            <td>847</td>
+                            <td>Smart Watch Pro X</td>
+                            <td><span class="status-badge status-rendering">Rendering</span></td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>$0</td>
+                        </tr>
+                        <tr>
+                            <td>846</td>
+                            <td>LED Gaming Keyboard</td>
+                            <td><span class="status-badge status-scheduled">Scheduled</span></td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>$0</td>
+                        </tr>
+                        <tr>
+                            <td>845</td>
+                            <td>Wireless Earbuds Plus</td>
+                            <td><span class="status-badge status-posted">Posted</span></td>
+                            <td>12.3K</td>
+                            <td>847</td>
+                            <td>$127</td>
+                        </tr>
+                        <tr>
+                            <td>844</td>
+                            <td>Portable Phone Charger</td>
+                            <td><span class="status-badge status-posted">Posted</span></td>
+                            <td>8.5K</td>
+                            <td>523</td>
+                            <td>$94</td>
+                        </tr>
+                        <tr>
+                            <td>843</td>
+                            <td>RGB Desk Lamp</td>
+                            <td><span class="status-badge status-posted">Posted</span></td>
+                            <td>15.7K</td>
+                            <td>1.2K</td>
+                            <td>$186</td>
+                        </tr>
+                        <tr>
+                            <td>842</td>
+                            <td>Fitness Tracker Band</td>
+                            <td><span class="status-badge status-posted">Posted</span></td>
+                            <td>23.4K</td>
+                            <td>1.8K</td>
+                            <td>$312</td>
+                        </tr>
+                        <tr>
+                            <td>841</td>
+                            <td>Smart Home Hub</td>
+                            <td><span class="status-badge status-posted">Posted</span></td>
+                            <td>19.2K</td>
+                            <td>1.4K</td>
+                            <td>$267</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Performance Analytics -->
+        <div class="card">
+            <div class="card-title">📊 Performance Analytics (Last 7 Days)</div>
+            <div class="chart">
+                <div class="chart-bar-group">
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 60%;" title="Views: 180K"></div>
+                        <div class="chart-bar" style="height: 40%; background: linear-gradient(180deg, #ffa500, #ff6b00);" title="Revenue: $1.2K"></div>
+                    </div>
+                    <div class="chart-label">Mon</div>
+                </div>
+                <div class="chart-bar-group">
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 75%;" title="Views: 225K"></div>
+                        <div class="chart-bar" style="height: 55%; background: linear-gradient(180deg, #ffa500, #ff6b00);" title="Revenue: $1.7K"></div>
+                    </div>
+                    <div class="chart-label">Tue</div>
+                </div>
+                <div class="chart-bar-group">
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 85%;" title="Views: 255K"></div>
+                        <div class="chart-bar" style="height: 65%; background: linear-gradient(180deg, #ffa500, #ff6b00);" title="Revenue: $2.0K"></div>
+                    </div>
+                    <div class="chart-label">Wed</div>
+                </div>
+                <div class="chart-bar-group">
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 70%;" title="Views: 210K"></div>
+                        <div class="chart-bar" style="height: 50%; background: linear-gradient(180deg, #ffa500, #ff6b00);" title="Revenue: $1.5K"></div>
+                    </div>
+                    <div class="chart-label">Thu</div>
+                </div>
+                <div class="chart-bar-group">
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 95%;" title="Views: 285K"></div>
+                        <div class="chart-bar" style="height: 75%; background: linear-gradient(180deg, #ffa500, #ff6b00);" title="Revenue: $2.3K"></div>
+                    </div>
+                    <div class="chart-label">Fri</div>
+                </div>
+                <div class="chart-bar-group">
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 100%;" title="Views: 300K"></div>
+                        <div class="chart-bar" style="height: 85%; background: linear-gradient(180deg, #ffa500, #ff6b00);" title="Revenue: $2.6K"></div>
+                    </div>
+                    <div class="chart-label">Sat</div>
+                </div>
+                <div class="chart-bar-group">
+                    <div class="chart-bars">
+                        <div class="chart-bar" style="height: 80%;" title="Views: 240K"></div>
+                        <div class="chart-bar" style="height: 60%; background: linear-gradient(180deg, #ffa500, #ff6b00);" title="Revenue: $1.8K"></div>
+                    </div>
+                    <div class="chart-label">Sun</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity & Telegram -->
+        <div class="grid grid-2">
+            <!-- Recent Activity -->
+            <div class="card">
+                <div class="card-title">📋 Recent Activity</div>
+                <div class="activity-feed" id="activityFeed">
+                    <div class="activity-item">
+                        <div class="activity-icon"></div>
+                        <div class="activity-content">
+                            <div class="activity-text">Product #847 concept generated</div>
+                            <div class="activity-time">2 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon"></div>
+                        <div class="activity-content">
+                            <div class="activity-text">Video #845 posted to TikTok — 12.3K views</div>
+                            <div class="activity-time">15 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon"></div>
+                        <div class="activity-content">
+                            <div class="activity-text">Revenue alert: $127 from Product #845</div>
+                            <div class="activity-time">18 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon"></div>
+                        <div class="activity-content">
+                            <div class="activity-text">Video #844 rendering complete</div>
+                            <div class="activity-time">32 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon"></div>
+                        <div class="activity-content">
+                            <div class="activity-text">ElevenLabs voice generation: Product #846</div>
+                            <div class="activity-time">45 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon"></div>
+                        <div class="activity-content">
+                            <div class="activity-text">New product added to queue: Smart Watch Pro X</div>
+                            <div class="activity-time">1 hour ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon"></div>
+                        <div class="activity-content">
+                            <div class="activity-text">Video #843 reached 10K views milestone</div>
+                            <div class="activity-time">1 hour ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon"></div>
+                        <div class="activity-content">
+                            <div class="activity-text">Airtable sync completed — 23 records updated</div>
+                            <div class="activity-time">2 hours ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Telegram Notifications -->
+            <div class="card">
+                <div class="card-title">💬 Telegram Notifications</div>
+                <div class="telegram-preview">
+                    <div class="telegram-message">
+                        <strong><span class="telegram-icon">🤖</span> Titanium Bot</strong><br>
+                        ✅ Video #845 successfully posted!<br>
+                        📊 Product: Wireless Earbuds Plus<br>
+                        👀 Initial views: 523<br>
+                        ⏰ Posted at 14:23
+                    </div>
+                    <div class="telegram-message">
+                        <strong><span class="telegram-icon">🤖</span> Titanium Bot</strong><br>
+                        💰 Revenue Alert!<br>
+                        Product #845 earned $127<br>
+                        Total today: $847
+                    </div>
+                    <div class="telegram-message">
+                        <strong><span class="telegram-icon">🤖</span> Titanium Bot</strong><br>
+                        🎬 Rendering complete: Video #844<br>
+                        ⏭️ Next: Auto-post in 15 minutes
+                    </div>
+                    <div class="telegram-message">
+                        <strong><span class="telegram-icon">🤖</span> Titanium Bot</strong><br>
+                        ⚠️ Queue Alert: 23 products pending<br>
+                        Estimated completion: 6 hours
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.9rem;">
+            <p>🚀 Powered by n8n · OpenAI · ElevenLabs · Creatomate · TikTok API</p>
+            <p style="margin-top: 10px; font-size: 0.8rem;">Automated TikTok Shop Affiliate Content Pipeline</p>
+        </div>
+    </div>
+
+    <script>
+        // Counter Animation
+        function animateCounter(element, target, duration = 2000) {
+            const isDecimal = target.toString().includes('.');
+            const decimals = isDecimal ? target.toString().split('.')[1].length : 0;
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                
+                let displayValue = current;
+                if (current >= 1000000) {
+                    displayValue = (current / 1000000).toFixed(1) + 'M';
+                } else if (current >= 1000) {
+                    displayValue = (current / 1000).toFixed(1) + 'K';
+                } else if (isDecimal) {
+                    displayValue = current.toFixed(decimals);
+                } else {
+                    displayValue = Math.floor(current);
+                }
+                
+                element.textContent = displayValue;
+            }, 16);
+        }
+
+        // Initialize counters
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.counter').forEach(counter => {
+                const target = parseFloat(counter.dataset.target);
+                animateCounter(counter, target);
+            });
+
+            // Start pipeline animation
+            animatePipeline();
+
+            // Start activity feed updates
+            setInterval(addRandomActivity, 10000);
+        });
+
+        // Pipeline Animation
+        function animatePipeline() {
+            const steps = document.querySelectorAll('.pipeline-step');
+            let currentIndex = 0;
+
+            setInterval(() => {
+                steps.forEach(step => {
+                    step.classList.remove('active');
+                    step.querySelector('.step-status').textContent = 'Complete';
+                });
+
+                if (currentIndex < steps.length) {
+                    const currentStep = steps[currentIndex];
+                    currentStep.classList.add('active');
+                    currentStep.classList.remove('complete');
+                    currentStep.querySelector('.step-status').textContent = 'Processing';
+
+                    currentIndex++;
+                    if (currentIndex >= steps.length) {
+                        currentIndex = 0;
+                        setTimeout(() => {
+                            steps.forEach(step => {
+                                step.classList.remove('complete');
+                                step.querySelector('.step-status').textContent = 'Pending';
+                            });
+                        }, 2000);
+                    }
+                }
+            }, 3000);
+        }
+
+        // Chat Functionality
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const chatSend = document.getElementById('chatSend');
+
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addChatMessage(message, 'user');
+            chatInput.value = '';
+
+            // Show loading
+            const loadingId = addChatMessage('<div class="loading-dots"><span></span><span></span><span></span></div>', 'assistant');
+
+            try {
+                const response = await fetch('https://nexagent-chat.nani-0a3.workers.dev/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        messages: [
+                            {
+                                role: 'system',
+                                content: 'You are Titanium AI, an automated TikTok content pipeline assistant. You help manage product inputs, generate video concepts, track performance metrics, and optimize TikTok Shop affiliate content. You understand n8n workflows, ElevenLabs voice generation, Creatomate video rendering, and TikTok API posting. Be technical but clear. NEVER mention NexAgent, pricing plans, or trial periods.'
+                            },
+                            {
+                                role: 'user',
+                                content: message
+                            }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Remove loading message
+                document.getElementById(loadingId).remove();
+
+                // Add AI response
+                if (data.response) {
+                    addChatMessage(data.response, 'assistant');
+                } else {
+                    addChatMessage('Sorry, I encountered an error. Please try again.', 'assistant');
+                }
+            } catch (error) {
+                document.getElementById(loadingId).remove();
+                addChatMessage('Connection error. Please check your internet and try again.', 'assistant');
+            }
+        }
+
+        function addChatMessage(text, sender) {
+            const messageId = 'msg-' + Date.now();
+            const messageDiv = document.createElement('div');
+            messageDiv.id = messageId;
+            messageDiv.className = `chat-message ${sender}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'chat-avatar';
+            avatar.textContent = sender === 'user' ? 'U' : 'T';
+            
+            const bubble = document.createElement('div');
+            bubble.className = 'chat-bubble';
+            bubble.innerHTML = text;
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(bubble);
+            chatMessages.appendChild(messageDiv);
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            return messageId;
+        }
+
+        chatSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // Activity Feed Updates
+        const activities = [
+            'New product analyzed: Premium Headphones',
+            'Video #848 rendering started',
+            'Concept generated for Product #849',
+            'TikTok API sync successful',
+            'Performance milestone: 1M total views',
+            'ElevenLabs voice generated for Product #850',
+            'Revenue threshold reached: $15K this month',
+            'Video #846 reached 5K views',
+            'Airtable database updated',
+            'New affiliate commission: $89',
+            'Creatomate rendering queue: 3 videos',
+            'Auto-post scheduled for 18:00',
+        ];
+
+        function addRandomActivity() {
+            const activityFeed = document.getElementById('activityFeed');
+            const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+            
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            activityItem.innerHTML = `
+                <div class="activity-icon"></div>
+                <div class="activity-content">
+                    <div class="activity-text">${randomActivity}</div>
+                    <div class="activity-time">Just now</div>
+                </div>
+            `;
+            
+            activityFeed.insertBefore(activityItem, activityFeed.firstChild);
+            
+            // Keep only last 10 activities
+            while (activityFeed.children.length > 10) {
+                activityFeed.removeChild(activityFeed.lastChild);
+            }
+        }
+
+        // Product Submit Simulation
+        function simulateProductSubmit() {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, var(--tiktok-cyan), var(--tiktok-pink));
+                color: white;
+                padding: 15px 25px;
+                border-radius: 12px;
+                font-weight: 600;
+                box-shadow: 0 10px 40px rgba(0, 242, 234, 0.4);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.textContent = '✅ Product added to pipeline!';
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+
+            // Add to activity feed
+            addRandomActivity();
+        }
+
+        // Add slide out animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideOut {
+                from {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+                to {
+                    opacity: 0;
+                    transform: translateX(100px);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Update time stamps
+        setInterval(() => {
+            document.querySelectorAll('.activity-time').forEach((timeEl, index) => {
+                if (index === 0 && timeEl.textContent === 'Just now') {
+                    timeEl.textContent = '1 minute ago';
+                }
+            });
+        }, 60000);
+    </script>
+</body>
+</html>
