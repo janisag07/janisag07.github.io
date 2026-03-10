@@ -401,22 +401,21 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
             background: rgba(255, 255, 255, 0.08);
         }
-        
         button {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
-            border-radius: 10px;
-            padding: 0.75rem 1rem;
-            font-size: 0.8rem;
-            white-space: nowrap;
-            flex-shrink: 0;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
             color: #fff;
-            font-weight: 700;
+            font-size: 1.2rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
         }
         
         button:hover {
@@ -570,7 +569,7 @@
                 </div>
                 <div class="input-container">
                     <input type="text" id="userInput" placeholder="Ask about code, PRs, or issues...">
-                    <button onclick="sendMessage()">Send</button>
+                    <button onclick="sendMessage()" title="Send">➤</button>
                 </div>
             </div>
         </div>
