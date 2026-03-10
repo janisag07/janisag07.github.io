@@ -423,6 +423,59 @@
             line-height: 1.6;
         }
 
+        /* Value Comparison Section */
+        .value-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .comparison-card {
+            background: var(--bg-card);
+            padding: 2.5rem 2rem;
+            border-radius: 16px;
+            border: 2px solid var(--border-subtle);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .comparison-card.highlight {
+            border-color: var(--accent-blue);
+            background: rgba(0, 102, 255, 0.05);
+            transform: scale(1.05);
+            box-shadow: 0 12px 32px rgba(0, 102, 255, 0.3);
+        }
+
+        .comparison-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .comparison-card.highlight h3 {
+            color: var(--accent-blue);
+        }
+
+        .comparison-features {
+            list-style: none;
+            margin: 1.5rem 0;
+            text-align: left;
+        }
+
+        .comparison-features li {
+            padding: 0.7rem 0;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .comparison-result {
+            font-size: 2.5rem;
+            margin-top: 1.5rem;
+            font-weight: 700;
+        }
+
         /* Pricing Section */
         .pricing-toggle {
             display: flex;
@@ -808,8 +861,13 @@
             .steps,
             .agents-grid,
             .features-grid,
+            .value-comparison,
             .pricing-cards {
                 grid-template-columns: 1fr;
+            }
+
+            .comparison-card.highlight {
+                transform: scale(1);
             }
 
             .cta-group {
@@ -864,16 +922,13 @@
             </div>
             <div class="stats-bar">
                 <div class="stat">
-                    <div class="stat-value">500+</div>
-                    <div class="stat-label">Agents Deployed</div>
+                    <div class="stat-label">Managed AI Service</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value">99.9%</div>
-                    <div class="stat-label">Uptime</div>
+                    <div class="stat-label">24/7 Monitoring</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value">24/7</div>
-                    <div class="stat-label">Support</div>
+                    <div class="stat-label">5-Star Rated</div>
                 </div>
             </div>
         </div>
@@ -1008,6 +1063,48 @@
         </div>
     </section>
 
+    <!-- Value Comparison Section -->
+    <section id="value-comparison">
+        <div class="container">
+            <h2>Why NexAgent?</h2>
+            <p class="section-subtitle">The smarter choice for modern businesses</p>
+            <div class="value-comparison">
+                <div class="comparison-card reveal">
+                    <h3>Hire an Employee</h3>
+                    <ul class="comparison-features">
+                        <li>€2,500+/month</li>
+                        <li>Works 8 hours</li>
+                        <li>Needs training</li>
+                        <li>Takes vacation</li>
+                    </ul>
+                    <div class="comparison-result">❌</div>
+                </div>
+
+                <div class="comparison-card reveal">
+                    <h3>DIY with AI Tools</h3>
+                    <ul class="comparison-features">
+                        <li>€500+/month + your time</li>
+                        <li>You manage everything</li>
+                        <li>You fix every bug</li>
+                        <li>No support</li>
+                    </ul>
+                    <div class="comparison-result">❌</div>
+                </div>
+
+                <div class="comparison-card highlight reveal">
+                    <h3>NexAgent</h3>
+                    <ul class="comparison-features">
+                        <li>From €149/month</li>
+                        <li>Works 24/7</li>
+                        <li>We manage everything</li>
+                        <li>Dedicated support</li>
+                    </ul>
+                    <div class="comparison-result">✅</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Pricing Section -->
     <section id="pricing">
         <div class="container">
@@ -1026,15 +1123,16 @@
                 <div class="pricing-card reveal">
                     <h3>Starter</h3>
                     <div class="pricing-amount">
-                        <span class="monthly-price">€99</span>
-                        <span class="yearly-price" style="display:none;">€82</span>
+                        <span class="monthly-price">€149</span>
+                        <span class="yearly-price" style="display:none;">€124</span>
                         <span class="pricing-period">/month</span>
                     </div>
                     <ul class="pricing-features">
                         <li>1 AI Agent</li>
-                        <li>Basic Support</li>
-                        <li>Email Updates</li>
-                        <li>Community Access</li>
+                        <li>Managed Hosting & Monitoring</li>
+                        <li>Automatic Updates</li>
+                        <li>Email Support</li>
+                        <li>Monthly Performance Report</li>
                     </ul>
                     <a href="trial.html" class="btn btn-secondary">Start Free Trial</a>
                 </div>
@@ -1042,16 +1140,16 @@
                 <div class="pricing-card popular reveal">
                     <h3>Professional</h3>
                     <div class="pricing-amount">
-                        <span class="monthly-price">€249</span>
-                        <span class="yearly-price" style="display:none;">€207</span>
+                        <span class="monthly-price">€349</span>
+                        <span class="yearly-price" style="display:none;">€290</span>
                         <span class="pricing-period">/month</span>
                     </div>
                     <ul class="pricing-features">
                         <li>3 AI Agents</li>
-                        <li>Priority Support</li>
-                        <li>Custom Training</li>
+                        <li>Priority Support (4h Response)</li>
+                        <li>Custom Training on YOUR Data</li>
                         <li>Analytics Dashboard</li>
-                        <li>Integration Support</li>
+                        <li>Monthly Strategy Call</li>
                     </ul>
                     <a href="trial.html" class="btn btn-primary">Get Started</a>
                 </div>
@@ -1059,31 +1157,33 @@
                 <div class="pricing-card reveal">
                     <h3>Business</h3>
                     <div class="pricing-amount">
-                        <span class="monthly-price">€499</span>
-                        <span class="yearly-price" style="display:none;">€415</span>
+                        <span class="monthly-price">€799</span>
+                        <span class="yearly-price" style="display:none;">€665</span>
                         <span class="pricing-period">/month</span>
                     </div>
                     <ul class="pricing-features">
-                        <li>Unlimited Agents</li>
-                        <li>Dedicated Support</li>
-                        <li>Custom Integrations</li>
-                        <li>API Access</li>
+                        <li>Unlimited AI Agents</li>
+                        <li>Dedicated Account Manager</li>
+                        <li>Custom Integrations (CRM, ERP, etc.)</li>
                         <li>White-Label Option</li>
+                        <li>Weekly Strategy Call</li>
+                        <li>API Access</li>
                     </ul>
                     <a href="trial.html" class="btn btn-primary">Get Started</a>
                 </div>
 
                 <div class="pricing-card reveal">
                     <h3>Enterprise</h3>
-                    <div class="pricing-amount">
-                        Custom
+                    <div class="pricing-amount" style="font-size: 2rem; color: var(--text-primary);">
+                        Let's Talk
                     </div>
                     <ul class="pricing-features">
-                        <li>Custom Build</li>
-                        <li>SLA Guarantee</li>
+                        <li>Everything in Business</li>
+                        <li>SLA with Uptime Guarantee</li>
                         <li>Dedicated Infrastructure</li>
-                        <li>Onboarding & Training</li>
-                        <li>24/7 Premium Support</li>
+                        <li>Onboarding Workshop</li>
+                        <li>Custom Development</li>
+                        <li>24/7 Priority Support</li>
                     </ul>
                     <a href="mailto:hello@nexagent.ai" class="btn btn-secondary">Contact Us</a>
                 </div>
