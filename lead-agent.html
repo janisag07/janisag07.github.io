@@ -117,7 +117,7 @@
             font-weight: 600;
         }
         
-        .dashboard {
+        .dashboard, .bottom-grid {
             max-width: 100%;
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -266,7 +266,7 @@
         
         .funnel-visualization {
             display: grid;
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr !important;
             gap: 1rem;
             margin-top: 1.5rem;
         }
@@ -468,6 +468,7 @@
             }
         }
         
+        .bottom-grid { grid-template-columns: 1fr 1fr; }
         @media (max-width: 768px) {
             html, body {
             overflow-x: hidden;
@@ -479,9 +480,9 @@
             .stats {
                 grid-template-columns: repeat(2, 1fr);
             }
-            .dashboard {
+            .dashboard, .bottom-grid {
             max-width: 100%;
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr !important;
             }
             h1 {
                 font-size: 2.2rem;
@@ -702,7 +703,7 @@
             </div>
         </div>
 
-        <div class="dashboard" style="grid-template-columns: 1fr 1fr;">
+        <div class="dashboard bottom-grid">
             <div class="card">
                 <h2>📊 Sales Funnel Visualization</h2>
                 <div class="funnel-visualization">

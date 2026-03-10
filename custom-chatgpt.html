@@ -99,7 +99,7 @@
             font-weight: 600;
         }
         
-        .dashboard {
+        .dashboard, .bottom-grid {
             max-width: 100%;
             display: grid;
             grid-template-columns: 350px 1fr;
@@ -456,6 +456,7 @@
             }
         }
         
+        .bottom-grid { grid-template-columns: 1fr 1fr; }
         @media (max-width: 768px) {
             html, body {
             overflow-x: hidden;
@@ -464,12 +465,12 @@
         body {
             text-align: center; padding: 1rem; }
             h1 { text-align: center; font-size: 1.8rem; }
-            .dashboard {
+            .dashboard, .bottom-grid {
             max-width: 100%;
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr !important;
             }
             .analytics-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr !important;
             }
             h1 {
                 font-size: 2.2rem;
@@ -596,7 +597,7 @@
             </div>
         </div>
 
-        <div class="dashboard" style="grid-template-columns: 1fr 1fr;">
+        <div class="dashboard bottom-grid">
             <div class="card">
                 <h2>📜 Konversations-Historie</h2>
                 <div class="conversation-history">
