@@ -1355,40 +1355,339 @@
     </footer>
 
     <!-- AI Chat Widget -->
-    <div id="chat-widget" style="position: fixed; bottom: 20px; right: 16px; z-index: 9999;">
-        <div id="chat-button" style="width: 56px; height: 56px; border-radius: 50%; background: var(--accent-blue); color: white; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 24px rgba(0, 102, 255, 0.4); transition: all 0.3s ease;">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
-        </div>
-        
-        <div id="chat-window" style="position: absolute; bottom: 80px; right: 0; width: 400px; height: 500px; background: var(--glass-bg); border-radius: 16px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6); border: 1px solid var(--glass-border); backdrop-filter: blur(20px); display: none; flex-direction: column; overflow: hidden;">
-            <div id="chat-header" style="padding: 1.2rem 1.5rem; background: linear-gradient(135deg, var(--accent-blue), #0052cc); color: white; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <div style="font-weight: 700; font-size: 1.1rem;">NexAgent AI</div>
-                    <div style="font-size: 0.85rem; opacity: 0.9;">Always here to help</div>
-                </div>
-                <button id="chat-close" style="background: transparent; border: none; color: white; cursor: pointer; padding: 0.4rem; border-radius: 6px; transition: background 0.2s ease; display: flex; align-items: center; justify-content: center;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-            
-            <div id="chat-messages" style="flex: 1; overflow-y: auto; padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; background: var(--bg-black);"></div>
-            
-            <div id="chat-input-container" style="padding: 1rem 1.5rem; background: var(--glass-bg); border-top: 1px solid var(--glass-border); display: flex; gap: 0.8rem;">
-                <input type="text" id="chat-input" placeholder="Ask me anything..." style="flex: 1; padding: 0.8rem 1rem; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0, 0, 0, 0.3); color: var(--text-white); font-size: 0.95rem; font-family: 'Inter', sans-serif;">
-                <button id="chat-send" style="width: 40px; height: 40px; border-radius: 8px; background: var(--accent-blue); border: none; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="22" y1="2" x2="11" y2="13"></line>
-                        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                    </svg>
-                </button>
-            </div>
-        </div>
-    </div>
+    <div id="chat-widget"></div>
+
+    <style id="chat-widget-styles">
+        #chat-button {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: #0066FF;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0, 102, 255, 0.5);
+            z-index: 9999;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        #chat-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 24px rgba(0, 102, 255, 0.6);
+        }
+
+        #chat-button svg {
+            color: white;
+        }
+
+        #chat-window {
+            position: fixed;
+            bottom: 96px;
+            right: 24px;
+            width: 400px;
+            height: 520px;
+            background: rgba(10, 10, 20, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            z-index: 9998;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            transform-origin: bottom right;
+            animation: chatOpen 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #chat-window.closing {
+            animation: chatClose 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes chatOpen {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        @keyframes chatClose {
+            from {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+            to {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+        }
+
+        #chat-header {
+            padding: 1.2rem 1.5rem;
+            background: linear-gradient(135deg, #0066FF, #0052cc);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #chat-header-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #chat-status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #00ff88;
+            box-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+        }
+
+        #chat-title-text {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        #chat-status-text {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #chat-close {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
+        #chat-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        #chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        #chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #chat-messages::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+
+        #chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        #chat-messages::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .chat-message {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            animation: messageSlideIn 0.3s ease-out;
+        }
+
+        .chat-message.user {
+            align-self: flex-end;
+            background: #0066FF;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-message.ai {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-bottom-left-radius: 4px;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .quick-reply-btn {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .quick-reply-btn:hover {
+            background: rgba(0, 102, 255, 0.2);
+            border-color: #0066FF;
+        }
+
+        #typing-indicator {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border-bottom-left-radius: 4px;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: typingBounce 1.4s ease-in-out infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-8px);
+            }
+        }
+
+        #chat-input-container {
+            padding: 1rem 1.5rem;
+            background: rgba(20, 20, 30, 0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        #chat-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 0.95rem;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.2s ease;
+        }
+
+        #chat-input:focus {
+            outline: none;
+            border-color: #0066FF;
+        }
+
+        #chat-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        #chat-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        #chat-send {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: #0066FF;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s ease;
+        }
+
+        #chat-send:hover:not(:disabled) {
+            background: #0052cc;
+        }
+
+        #chat-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            #chat-button {
+                bottom: 16px;
+                right: 16px;
+            }
+
+            #chat-window {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+                transform-origin: center;
+            }
+
+            .chat-message {
+                max-width: 90%;
+            }
+        }
+    </style>
 
     <script>
         // Pricing Toggle
@@ -1480,86 +1779,133 @@
             });
         });
 
-        // AI Chat Widget
+        // AI Chat Widget - Premium Edition
         (function() {
-            const PROXY_URL = 'https://nexagent-chat.nani-0a3.workers.dev/chat';
-            const MAX_MESSAGES = 20;
-            
-            const chatButton = document.getElementById('chat-button');
-            const chatWindow = document.getElementById('chat-window');
-            const chatClose = document.getElementById('chat-close');
-            const chatMessages = document.getElementById('chat-messages');
-            const chatInput = document.getElementById('chat-input');
-            const chatSend = document.getElementById('chat-send');
-            
+            const CHAT_API = 'https://nexagent-chat.nani-0a3.workers.dev/chat';
+            const MAX_HISTORY = 20;
+
             let conversationHistory = [];
             let isProcessing = false;
+            let chatInitialized = false;
 
+            // Create Chat Widget DOM
+            function initChatWidget() {
+                const widget = document.getElementById('chat-widget');
+                
+                widget.innerHTML = `
+                    <button id="chat-button">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                        </svg>
+                    </button>
+
+                    <div id="chat-window">
+                        <div id="chat-header">
+                            <div>
+                                <div id="chat-header-title">
+                                    <span id="chat-title-text">NexAgent AI</span>
+                                </div>
+                                <div id="chat-status-text">
+                                    <span id="chat-status-dot"></span>
+                                    Online
+                                </div>
+                            </div>
+                            <button id="chat-close">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div id="chat-messages"></div>
+
+                        <div id="chat-input-container">
+                            <input type="text" id="chat-input" placeholder="Type your message...">
+                            <button id="chat-send">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+
+                attachEventListeners();
+            }
+
+            // Parse Markdown to HTML
             function parseMarkdown(text) {
                 return text
                     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color: var(--accent-blue); text-decoration: underline;">$1</a>')
+                    .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" target="_blank" style="color: #0066FF; text-decoration: underline;">$1</a>')
                     .replace(/\n- (.*?)(?=\n|$)/g, '\n• $1')
                     .replace(/\n/g, '<br>');
             }
 
-            function addMessage(content, role) {
+            // Add Message to Chat
+            function addMessage(content, sender, withQuickReplies = false) {
+                const messagesContainer = document.getElementById('chat-messages');
                 const messageDiv = document.createElement('div');
-                messageDiv.style.cssText = `
-                    max-width: 80%;
-                    padding: 0.8rem 1.1rem;
-                    border-radius: 12px;
-                    line-height: 1.5;
-                    word-wrap: break-word;
-                    animation: fadeInUp 0.3s ease-out;
-                    ${role === 'user' ? `
-                        align-self: flex-end;
-                        background: var(--accent-blue);
-                        color: white;
-                        border-bottom-right-radius: 4px;
-                    ` : `
-                        align-self: flex-start;
-                        background: var(--glass-bg);
-                        color: var(--text-white);
-                        border: 1px solid var(--glass-border);
-                        border-bottom-left-radius: 4px;
-                    `}
-                `;
+                messageDiv.className = `chat-message ${sender}`;
                 
-                if (role === 'ai') {
+                if (sender === 'ai') {
                     messageDiv.innerHTML = parseMarkdown(content);
                 } else {
                     messageDiv.textContent = content;
                 }
-                
-                chatMessages.appendChild(messageDiv);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-                
-                conversationHistory.push({ role: role === 'user' ? 'user' : 'assistant', content });
-                
-                if (conversationHistory.length > MAX_MESSAGES) {
-                    conversationHistory = conversationHistory.slice(-MAX_MESSAGES);
+
+                messagesContainer.appendChild(messageDiv);
+
+                // Add Quick Replies if first message
+                if (withQuickReplies) {
+                    const quickReplies = document.createElement('div');
+                    quickReplies.className = 'quick-replies';
+                    quickReplies.innerHTML = `
+                        <button class="quick-reply-btn" data-reply="Tell me about your pricing">💰 Pricing</button>
+                        <button class="quick-reply-btn" data-reply="How does NexAgent work?">🤖 How it works</button>
+                        <button class="quick-reply-btn" data-reply="Start a free trial">🚀 Free Trial</button>
+                    `;
+                    messagesContainer.appendChild(quickReplies);
+
+                    // Attach click handlers
+                    quickReplies.querySelectorAll('.quick-reply-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            const reply = btn.dataset.reply;
+                            quickReplies.remove();
+                            sendMessage(reply);
+                        });
+                    });
+                }
+
+                scrollToBottom();
+
+                // Update conversation history
+                if (sender === 'user' || sender === 'ai') {
+                    conversationHistory.push({
+                        role: sender === 'user' ? 'user' : 'assistant',
+                        content: content
+                    });
+
+                    if (conversationHistory.length > MAX_HISTORY) {
+                        conversationHistory = conversationHistory.slice(-MAX_HISTORY);
+                    }
                 }
             }
 
+            // Show/Hide Typing Indicator
             function showTypingIndicator() {
+                const messagesContainer = document.getElementById('chat-messages');
                 const indicator = document.createElement('div');
                 indicator.id = 'typing-indicator';
-                indicator.style.cssText = `
-                    align-self: flex-start;
-                    background: var(--glass-bg);
-                    border: 1px solid var(--glass-border);
-                    padding: 0.8rem 1.1rem;
-                    border-radius: 12px;
-                    border-bottom-left-radius: 4px;
-                    display: flex;
-                    gap: 4px;
-                    align-items: center;
+                indicator.innerHTML = `
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
                 `;
-                indicator.innerHTML = '<span style="width: 8px; height: 8px; background: var(--text-gray); border-radius: 50%; animation: typingBounce 1.4s ease-in-out infinite;"></span><span style="width: 8px; height: 8px; background: var(--text-gray); border-radius: 50%; animation: typingBounce 1.4s ease-in-out 0.2s infinite;"></span><span style="width: 8px; height: 8px; background: var(--text-gray); border-radius: 50%; animation: typingBounce 1.4s ease-in-out 0.4s infinite;"></span>';
-                chatMessages.appendChild(indicator);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+                messagesContainer.appendChild(indicator);
+                scrollToBottom();
             }
 
             function hideTypingIndicator() {
@@ -1567,19 +1913,30 @@
                 if (indicator) indicator.remove();
             }
 
-            async function sendMessage() {
-                const message = chatInput.value.trim();
+            // Scroll to Bottom
+            function scrollToBottom() {
+                const messagesContainer = document.getElementById('chat-messages');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+
+            // Send Message
+            async function sendMessage(customMessage = null) {
+                const input = document.getElementById('chat-input');
+                const sendBtn = document.getElementById('chat-send');
+                const message = customMessage || input.value.trim();
+
                 if (!message || isProcessing) return;
 
                 addMessage(message, 'user');
-                chatInput.value = '';
-                
+                if (!customMessage) input.value = '';
+
                 isProcessing = true;
-                chatSend.disabled = true;
+                input.disabled = true;
+                sendBtn.disabled = true;
                 showTypingIndicator();
 
                 try {
-                    const response = await fetch(PROXY_URL, {
+                    const response = await fetch(CHAT_API, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ messages: conversationHistory })
@@ -1587,7 +1944,9 @@
 
                     hideTypingIndicator();
 
-                    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}`);
+                    }
 
                     const data = await response.json();
                     addMessage(data.response, 'ai');
@@ -1595,53 +1954,75 @@
                 } catch (error) {
                     hideTypingIndicator();
                     console.error('Chat error:', error);
-                    addMessage("Sorry, I couldn't connect right now. Please try again in a moment.", 'ai');
+                    addMessage("Sorry, couldn't connect. Please try again.", 'ai');
                 } finally {
                     isProcessing = false;
-                    chatSend.disabled = false;
-                    chatInput.focus();
+                    input.disabled = false;
+                    sendBtn.disabled = false;
+                    input.focus();
                 }
             }
 
-            chatButton.addEventListener('click', () => {
+            // Open Chat
+            function openChat() {
+                const chatWindow = document.getElementById('chat-window');
+                const chatButton = document.getElementById('chat-button');
+
                 chatWindow.style.display = 'flex';
                 chatButton.style.display = 'none';
-                chatInput.focus();
+
+                if (!chatInitialized) {
+                    chatInitialized = true;
+                    addMessage("Hi! 👋 I'm NexAgent AI. Ask me anything about our plans, features, or how we can help your business.", 'ai', true);
+                }
+
+                document.getElementById('chat-input').focus();
+            }
+
+            // Close Chat
+            function closeChat() {
+                const chatWindow = document.getElementById('chat-window');
+                const chatButton = document.getElementById('chat-button');
+
+                chatWindow.classList.add('closing');
                 
-                if (conversationHistory.length === 0) {
-                    addMessage("Hi! 👋 I'm NexAgent AI. Ask me anything about our AI agents, pricing, or how we can automate your business.", 'ai');
-                }
-            });
+                setTimeout(() => {
+                    chatWindow.style.display = 'none';
+                    chatWindow.classList.remove('closing');
+                    chatButton.style.display = 'flex';
+                }, 300);
+            }
 
-            chatClose.addEventListener('click', () => {
-                chatWindow.style.display = 'none';
-                chatButton.style.display = 'flex';
-            });
+            // Attach Event Listeners
+            function attachEventListeners() {
+                const chatButton = document.getElementById('chat-button');
+                const chatClose = document.getElementById('chat-close');
+                const chatInput = document.getElementById('chat-input');
+                const chatSend = document.getElementById('chat-send');
 
-            chatSend.addEventListener('click', sendMessage);
+                chatButton.addEventListener('click', openChat);
+                chatClose.addEventListener('click', closeChat);
+                chatSend.addEventListener('click', () => sendMessage());
 
-            chatInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        sendMessage();
+                    }
+                });
 
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && chatWindow.style.display === 'flex') {
-                    chatClose.click();
-                }
-            });
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        const chatWindow = document.getElementById('chat-window');
+                        if (chatWindow && chatWindow.style.display === 'flex') {
+                            closeChat();
+                        }
+                    }
+                });
+            }
 
-            // Add keyframes for typing animation
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes typingBounce {
-                    0%, 60%, 100% { transform: translateY(0); }
-                    30% { transform: translateY(-8px); }
-                }
-            `;
-            document.head.appendChild(style);
+            // Initialize
+            initChatWidget();
         })();
 
         // Stripe Checkout Integration
