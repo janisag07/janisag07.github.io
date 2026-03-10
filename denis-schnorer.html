@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Automation für EWM GmbH | Personalisierte Demo</title>
+    <title>EWM Sales Processing Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -15,153 +15,448 @@
         }
 
         :root {
-            --bg-dark: #000000;
-            --bg-darker: #0a0a14;
+            --bg-dark: #0a0a14;
+            --bg-darker: #050508;
+            --bg-card: rgba(20, 20, 35, 0.6);
             --text-primary: #ffffff;
-            --text-secondary: #a0a0b0;
-            --accent-blue: #4da6ff;
-            --accent-purple: #9d4edd;
-            --glow-blue: rgba(77, 166, 255, 0.3);
-            --glow-purple: rgba(157, 78, 221, 0.3);
+            --text-secondary: #a0a8c0;
+            --text-muted: #6b7280;
+            --ewm-blue: #0066cc;
+            --ewm-blue-light: #3388dd;
+            --ewm-gray: #4a5568;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --glow-blue: rgba(0, 102, 204, 0.4);
+            --border-color: rgba(255, 255, 255, 0.08);
         }
 
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
+            background: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(0, 102, 204, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(74, 85, 104, 0.05) 0%, transparent 50%);
             color: var(--text-primary);
             line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Glassmorphism Container */
+        /* Glass effect */
         .glass {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
 
         /* Header */
-        header {
-            padding: 2rem 1rem;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        .header {
+            padding: 1.2rem 2rem;
+            background: rgba(10, 10, 20, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        header h1 {
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+        }
+
+        .logo-separator {
+            color: var(--text-muted);
+            font-weight: 300;
+        }
+
+        .logo-nexagent {
+            background: linear-gradient(135deg, var(--ewm-blue), var(--ewm-blue-light));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 0.5rem;
         }
 
-        header p {
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .user-badge {
+            padding: 0.5rem 1rem;
+            background: rgba(0, 102, 204, 0.1);
+            border: 1px solid rgba(0, 102, 204, 0.3);
+            border-radius: 8px;
             color: var(--text-secondary);
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-size: 0.9rem;
         }
 
-        /* Main Container */
-        .container {
-            max-width: 1200px;
+        .user-name {
+            color: var(--ewm-blue-light);
+            font-weight: 600;
+        }
+
+        /* Main Layout */
+        .main-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            max-width: 1800px;
             margin: 0 auto;
-            padding: 2rem 1rem;
         }
 
-        /* Section */
-        section {
-            margin-bottom: 3rem;
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
-        section h2 {
-            font-size: clamp(1.3rem, 3vw, 2rem);
-            margin-bottom: 1.5rem;
+        /* Dashboard Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            padding: 1.5rem;
             position: relative;
-            display: inline-block;
+            overflow: hidden;
         }
 
-        section h2::after {
+        .stat-card::before {
             content: '';
             position: absolute;
-            bottom: -8px;
+            top: 0;
             left: 0;
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
-            border-radius: 2px;
+            width: 4px;
+            height: 100%;
+            background: var(--ewm-blue);
         }
 
-        /* Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Card */
-        .card {
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-trend {
+            font-size: 0.8rem;
+            color: var(--accent-green);
+        }
+
+        .stat-trend.negative {
+            color: var(--text-muted);
+        }
+
+        /* Kanban Pipeline */
+        .kanban {
             padding: 1.5rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 12px 40px var(--glow-blue);
+        .kanban-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
 
-        .card h3 {
-            font-size: 1.3rem;
+        .kanban-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            overflow-x: auto;
+        }
+
+        .kanban-column {
+            background: rgba(10, 10, 20, 0.4);
+            border-radius: 8px;
+            padding: 1rem;
+            min-width: 250px;
+        }
+
+        .kanban-column-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .column-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .column-count {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        .kanban-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
             margin-bottom: 0.8rem;
-            color: var(--accent-blue);
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .card p {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
+        .kanban-card:hover {
+            border-color: var(--ewm-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--glow-blue);
         }
 
-        .card ul {
-            margin-top: 1rem;
-            padding-left: 1.2rem;
-            color: var(--text-secondary);
-        }
-
-        .card ul li {
+        .kanban-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 0.5rem;
         }
 
-        /* Chat Demo */
-        .chat-demo {
-            padding: 2rem;
-            margin-top: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+        .order-number {
+            font-size: 0.85rem;
+            color: var(--ewm-blue-light);
+            font-weight: 600;
         }
 
-        .chat-messages {
-            height: 350px;
+        .ai-badge {
+            background: linear-gradient(135deg, var(--ewm-blue), var(--ewm-blue-light));
+            color: white;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .kanban-card-company {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.3rem;
+        }
+
+        .kanban-card-product {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .kanban-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .order-value {
+            font-size: 0.85rem;
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .order-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            padding: 1.5rem;
+            max-height: 400px;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .activity-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--accent-green);
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            max-height: 320px;
             overflow-y: auto;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
+            padding-right: 0.5rem;
         }
 
-        .message {
-            margin-bottom: 1rem;
-            padding: 0.8rem 1.2rem;
-            border-radius: 12px;
-            max-width: 80%;
+        .activity-item {
+            padding: 1rem;
+            background: rgba(10, 10, 20, 0.4);
+            border-left: 3px solid var(--ewm-blue);
+            border-radius: 6px;
             animation: slideIn 0.3s ease;
         }
 
         @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .activity-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-company {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .activity-message {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        .activity-status.pending {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-yellow);
+        }
+
+        /* Chat Sidebar */
+        .chat-sidebar {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 4rem);
+            position: sticky;
+            top: 4rem;
+        }
+
+        .chat-container {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .chat-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .chat-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .chat-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            background: rgba(10, 10, 20, 0.4);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            padding: 0.8rem 1rem;
+            border-radius: 12px;
+            max-width: 85%;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
             from {
                 opacity: 0;
                 transform: translateY(10px);
@@ -172,131 +467,118 @@
             }
         }
 
-        .message.user {
-            background: var(--accent-blue);
-            margin-left: auto;
-            text-align: right;
+        .chat-message.user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--ewm-blue), var(--ewm-blue-light));
+            color: white;
         }
 
-        .message.ai {
-            background: rgba(255, 255, 255, 0.1);
-            margin-right: auto;
+        .chat-message.ai {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
         }
 
-        .chat-input {
+        .chat-message.typing {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+        }
+
+        .typing-indicator {
+            display: flex;
+            gap: 0.3rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .quick-reply {
+            padding: 0.5rem 1rem;
+            background: rgba(0, 102, 204, 0.1);
+            border: 1px solid rgba(0, 102, 204, 0.3);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--ewm-blue-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .quick-reply:hover {
+            background: rgba(0, 102, 204, 0.2);
+            border-color: var(--ewm-blue);
+        }
+
+        .chat-input-container {
             display: flex;
             gap: 0.5rem;
         }
 
-        .chat-input input {
+        .chat-input {
             flex: 1;
-            padding: 1rem;
+            padding: 0.9rem 1.2rem;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             color: var(--text-primary);
             font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
+            resize: none;
+            height: 50px;
         }
 
-        .chat-input input:focus {
+        .chat-input:focus {
             outline: none;
-            border-color: var(--accent-blue);
+            border-color: var(--ewm-blue);
             box-shadow: 0 0 0 3px var(--glow-blue);
         }
 
-        .chat-input button {
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+        .chat-send-btn {
+            padding: 0.9rem 1.5rem;
+            background: linear-gradient(135deg, var(--ewm-blue), var(--ewm-blue-light));
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
             color: white;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .chat-input button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px var(--glow-purple);
-        }
-
-        /* Dashboard Mock */
-        .dashboard {
-            padding: 2rem;
-            margin-top: 2rem;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .stat-card {
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .stat-label {
-            color: var(--text-secondary);
-            margin-top: 0.5rem;
+            transition: all 0.2s ease;
             font-size: 0.9rem;
         }
 
-        /* CTA Section */
-        .cta {
-            text-align: center;
-            padding: 3rem 2rem;
-            margin-top: 3rem;
-            background: linear-gradient(135deg, rgba(77, 166, 255, 0.1), rgba(157, 78, 221, 0.1));
+        .chat-send-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--glow-blue);
         }
 
-        .cta h2 {
-            margin-bottom: 1rem;
-        }
-
-        .cta-button {
-            display: inline-block;
-            margin-top: 1.5rem;
-            padding: 1rem 3rem;
-            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 20px var(--glow-purple);
-        }
-
-        .cta-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 30px var(--glow-blue);
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 2rem 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-secondary);
-            font-size: 0.9rem;
+        .chat-send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
 
         /* Scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
+            height: 6px;
         }
 
         ::-webkit-scrollbar-track {
@@ -304,264 +586,532 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--accent-blue);
-            border-radius: 4px;
+            background: var(--ewm-blue);
+            border-radius: 3px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-purple);
+            background: var(--ewm-blue-light);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .main-container {
+                grid-template-columns: 1fr;
+            }
+
+            .chat-sidebar {
+                position: relative;
+                height: 600px;
+                top: 0;
+            }
+
+            .kanban-board {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         @media (max-width: 768px) {
-            .grid {
-                grid-template-columns: 1fr;
+            .header {
+                padding: 1rem;
+            }
+
+            .logo-text {
+                font-size: 1rem;
+            }
+
+            .user-badge {
+                display: none;
+            }
+
+            .main-container {
+                padding: 1rem;
+                gap: 1rem;
             }
 
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
 
-            .message {
-                max-width: 90%;
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🚀 AI-Automation für EWM GmbH</h1>
-        <p>Personalisierte Demo für Denis Schnorr | Leiter Verkaufsabwicklung</p>
-    </header>
-
-    <div class="container">
-        <!-- Intro Section -->
-        <section>
-            <h2>Hallo Denis,</h2>
-            <div class="glass" style="padding: 2rem; margin-top: 1.5rem;">
-                <p style="font-size: 1.1rem; line-height: 1.8;">
-                    Als <strong>Leiter Verkaufsabwicklung bei EWM GmbH</strong> kennst du die Herausforderungen in der Schweißtechnik-Branche:<br><br>
-                    ⚡ Komplexe Kundenanfragen zu technischen Spezifikationen<br>
-                    📦 Auftragsabwicklung mit vielen manuellen Schritten<br>
-                    🤖 Automatisierung der Verkaufsprozesse<br>
-                    📊 Lead-Qualifizierung und Follow-up<br><br>
-                    <strong style="color: var(--accent-blue);">Genau hier setzen unsere AI-Lösungen an.</strong>
-                </p>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <span class="logo-text">EWM <span class="logo-separator">×</span> <span class="logo-nexagent">NexAgent</span></span>
+        </div>
+        <div class="header-right">
+            <div class="user-badge">
+                <span>Dashboard — Verkaufsabwicklung</span> · <span class="user-name">Denis Schnorer</span>
             </div>
-        </section>
-
-        <!-- Use Cases -->
-        <section>
-            <h2>Was wir für EWM automatisieren können</h2>
-            <div class="grid">
-                <div class="card glass">
-                    <h3>🤖 AI Sales Assistant</h3>
-                    <p>Automatische Beantwortung von Kundenanfragen zu Schweißgeräten, Spezifikationen und Anwendungen.</p>
-                    <ul>
-                        <li>24/7 Verfügbarkeit</li>
-                        <li>Technische Produktberatung</li>
-                        <li>Lead-Qualifizierung</li>
-                        <li>Multilingual (11 Sprachen)</li>
-                    </ul>
-                </div>
-
-                <div class="card glass">
-                    <h3>📊 Verkaufsabwicklung</h3>
-                    <p>Automatisierung repetitiver Aufgaben in der Order-to-Cash-Kette.</p>
-                    <ul>
-                        <li>Auftragserfassung & -prüfung</li>
-                        <li>Dokumenten-Generierung</li>
-                        <li>Status-Updates an Kunden</li>
-                        <li>Rechnungserstellung</li>
-                    </ul>
-                </div>
-
-                <div class="card glass">
-                    <h3>🎯 Lead Management</h3>
-                    <p>Intelligente Bewertung und Nachverfolgung von Leads aus verschiedenen Kanälen.</p>
-                    <ul>
-                        <li>Automatisches Lead-Scoring</li>
-                        <li>Personalisierte Follow-ups</li>
-                        <li>CRM-Integration</li>
-                        <li>Pipeline-Optimierung</li>
-                    </ul>
-                </div>
-
-                <div class="card glass">
-                    <h3>💬 Customer Support</h3>
-                    <p>AI-gestützter Support für technische Fragen zu Schweißprozessen und Gerätebedienung.</p>
-                    <ul>
-                        <li>Troubleshooting-Assistent</li>
-                        <li>Wartungshinweise</li>
-                        <li>Ersatzteil-Empfehlungen</li>
-                        <li>Ticket-Automatisierung</li>
-                    </ul>
-                </div>
-
-                <div class="card glass">
-                    <h3>📈 Analytics & Reporting</h3>
-                    <p>Automatische Auswertung von Verkaufsdaten und Trendanalysen.</p>
-                    <ul>
-                        <li>Sales Performance Dashboards</li>
-                        <li>Forecast-Modelle</li>
-                        <li>Kundenverhalten-Analyse</li>
-                        <li>Automatische Reports</li>
-                    </ul>
-                </div>
-
-                <div class="card glass">
-                    <h3>🔗 EWM Xnet Integration</h3>
-                    <p>Nahtlose Anbindung an euer bestehendes Schweißmanagement-System.</p>
-                    <ul>
-                        <li>Datenextraktion & -analyse</li>
-                        <li>Predictive Maintenance</li>
-                        <li>Prozessoptimierung</li>
-                        <li>Quality Control Automation</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- Chat Demo -->
-        <section>
-            <h2>Live Demo: AI Sales Assistant</h2>
-            <div class="chat-demo glass">
-                <div class="chat-messages" id="chatMessages">
-                    <div class="message ai">
-                        Guten Tag! Ich bin der AI-Assistent von EWM. Wie kann ich Ihnen heute helfen?
-                    </div>
-                </div>
-                <div class="chat-input">
-                    <input type="text" id="chatInput" placeholder="Frage eingeben... (z.B. 'Welches Gerät für TIG-Schweißen?')">
-                    <button onclick="sendMessage()">Senden</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Dashboard Mock -->
-        <section>
-            <h2>Dashboard: Verkaufsautomation in Aktion</h2>
-            <div class="dashboard glass">
-                <div class="stats-grid">
-                    <div class="stat-card glass">
-                        <div class="stat-value">87%</div>
-                        <div class="stat-label">Automatisierte Anfragen</div>
-                    </div>
-                    <div class="stat-card glass">
-                        <div class="stat-value">-42%</div>
-                        <div class="stat-label">Bearbeitungszeit</div>
-                    </div>
-                    <div class="stat-card glass">
-                        <div class="stat-value">24/7</div>
-                        <div class="stat-label">Verfügbarkeit</div>
-                    </div>
-                    <div class="stat-card glass">
-                        <div class="stat-value">+31%</div>
-                        <div class="stat-label">Lead Conversion</div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ROI Section -->
-        <section>
-            <h2>ROI für EWM</h2>
-            <div class="glass" style="padding: 2rem; margin-top: 1.5rem;">
-                <p style="font-size: 1.05rem; line-height: 1.8; color: var(--text-secondary);">
-                    <strong style="color: var(--text-primary);">Zeitersparnis:</strong> ~20 Stunden/Woche pro Vertriebsmitarbeiter<br>
-                    <strong style="color: var(--text-primary);">Kostenreduktion:</strong> -35% Prozesskosten in der Auftragsabwicklung<br>
-                    <strong style="color: var(--text-primary);">Umsatzsteigerung:</strong> +25% durch besseres Lead-Management<br>
-                    <strong style="color: var(--text-primary);">Kundenzufriedenheit:</strong> +40% durch schnellere Reaktionszeiten<br><br>
-                    <strong style="color: var(--accent-blue); font-size: 1.2rem;">→ Break-Even nach ca. 4-6 Monaten</strong>
-                </p>
-            </div>
-        </section>
-
-        <!-- CTA -->
-        <div class="cta glass">
-            <h2>Bereit, EWM auf das nächste Level zu bringen?</h2>
-            <p style="color: var(--text-secondary); margin-top: 1rem; font-size: 1.1rem;">
-                Lass uns in einem 15-minütigen Call besprechen, wie wir eure Verkaufsabwicklung automatisieren können.
-            </p>
-            <a href="https://linkedin.com/in/janisag07" class="cta-button" target="_blank">
-                Jetzt Austausch vereinbaren
-            </a>
         </div>
     </div>
 
-    <footer>
-        <p>🤖 Powered by AI Automation | Janis Agic | <a href="https://linkedin.com/in/janisag07" style="color: var(--accent-blue); text-decoration: none;">LinkedIn</a></p>
-    </footer>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Stats -->
+            <div class="stats-grid">
+                <div class="stat-card glass">
+                    <div class="stat-label">Offene Aufträge</div>
+                    <div class="stat-value" id="openOrders">47</div>
+                    <div class="stat-trend">+12% diese Woche</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-label">Bearbeitungszeit Ø</div>
+                    <div class="stat-value">2.3h</div>
+                    <div class="stat-trend negative">vorher 8h — 71% schneller</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-label">Kundenzufriedenheit</div>
+                    <div class="stat-value">96%</div>
+                    <div class="stat-trend">+8% seit AI-Einsatz</div>
+                </div>
+                <div class="stat-card glass">
+                    <div class="stat-label">Umsatz diese Woche</div>
+                    <div class="stat-value" id="revenue">€284k</div>
+                    <div class="stat-trend">+23% vs. Vorwoche</div>
+                </div>
+            </div>
+
+            <!-- Kanban Pipeline -->
+            <div class="kanban glass">
+                <div class="kanban-header">
+                    <div class="kanban-title">Auftrags-Pipeline</div>
+                </div>
+                <div class="kanban-board">
+                    <!-- Column 1: Eingang -->
+                    <div class="kanban-column">
+                        <div class="kanban-column-header">
+                            <div class="column-title">Eingang</div>
+                            <div class="column-count">3</div>
+                        </div>
+                        <div class="kanban-card">
+                            <div class="kanban-card-header">
+                                <div class="order-number">#EWM-2847</div>
+                                <div class="ai-badge">✓ AI</div>
+                            </div>
+                            <div class="kanban-card-company">Müller Metallbau GmbH</div>
+                            <div class="kanban-card-product">Titan XQ 400 Puls + Zubehör</div>
+                            <div class="kanban-card-footer">
+                                <div class="order-value">€12.400</div>
+                                <div class="order-time">vor 12 Min</div>
+                            </div>
+                        </div>
+                        <div class="kanban-card">
+                            <div class="kanban-card-header">
+                                <div class="order-number">#EWM-2849</div>
+                                <div class="ai-badge">✓ AI</div>
+                            </div>
+                            <div class="kanban-card-company">Schmidt & Co</div>
+                            <div class="kanban-card-product">Phoenix 355 Expert 2.0 puls</div>
+                            <div class="kanban-card-footer">
+                                <div class="order-value">€8.900</div>
+                                <div class="order-time">vor 28 Min</div>
+                            </div>
+                        </div>
+                        <div class="kanban-card">
+                            <div class="kanban-card-header">
+                                <div class="order-number">#EWM-2851</div>
+                            </div>
+                            <div class="kanban-card-company">Bauer Schweißtechnik</div>
+                            <div class="kanban-card-product">Tetrix XQ 300 SiC AC/DC</div>
+                            <div class="kanban-card-footer">
+                                <div class="order-value">€7.200</div>
+                                <div class="order-time">vor 1h</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Prüfung -->
+                    <div class="kanban-column">
+                        <div class="kanban-column-header">
+                            <div class="column-title">Prüfung</div>
+                            <div class="column-count">2</div>
+                        </div>
+                        <div class="kanban-card">
+                            <div class="kanban-card-header">
+                                <div class="order-number">#EWM-2843</div>
+                                <div class="ai-badge">✓ AI</div>
+                            </div>
+                            <div class="kanban-card-company">Wagner Stahlbau AG</div>
+                            <div class="kanban-card-product">Taurus 355 Basic EWM puls 5P TG</div>
+                            <div class="kanban-card-footer">
+                                <div class="order-value">€15.700</div>
+                                <div class="order-time">vor 2h</div>
+                            </div>
+                        </div>
+                        <div class="kanban-card">
+                            <div class="kanban-card-header">
+                                <div class="order-number">#EWM-2840</div>
+                                <div class="ai-badge">✓ Auto</div>
+                            </div>
+                            <div class="kanban-card-company">Fischer Industriebedarf</div>
+                            <div class="kanban-card-product">Phoenix 355 Comfort 2.0 puls</div>
+                            <div class="kanban-card-footer">
+                                <div class="order-value">€9.500</div>
+                                <div class="order-time">vor 3h</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 3: Freigabe -->
+                    <div class="kanban-column">
+                        <div class="kanban-column-header">
+                            <div class="column-title">Freigabe</div>
+                            <div class="column-count">2</div>
+                        </div>
+                        <div class="kanban-card">
+                            <div class="kanban-card-header">
+                                <div class="order-number">#EWM-2835</div>
+                                <div class="ai-badge">✓ AI</div>
+                            </div>
+                            <div class="kanban-card-company">Schneider Maschinenbau</div>
+                            <div class="kanban-card-product">Phoenix 355 Expert 2.0 puls MM TKM</div>
+                            <div class="kanban-card-footer">
+                                <div class="order-value">€11.300</div>
+                                <div class="order-time">gestern</div>
+                            </div>
+                        </div>
+                        <div class="kanban-card">
+                            <div class="kanban-card-header">
+                                <div class="order-number">#EWM-2832</div>
+                            </div>
+                            <div class="kanban-card-company">Hoffmann GmbH & Co. KG</div>
+                            <div class="kanban-card-product">Titan XQ 400 Puls + Drahtvorschub</div>
+                            <div class="kanban-card-footer">
+                                <div class="order-value">€18.900</div>
+                                <div class="order-time">gestern</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 4: Versand -->
+                    <div class="kanban-column">
+                        <div class="kanban-column-header">
+                            <div class="column-title">Versand</div>
+                            <div class="column-count">1</div>
+                        </div>
+                        <div class="kanban-card">
+                            <div class="kanban-card-header">
+                                <div class="order-number">#EWM-2828</div>
+                                <div class="ai-badge">✓ AI</div>
+                            </div>
+                            <div class="kanban-card-company">Becker Automotive</div>
+                            <div class="kanban-card-product">Taurus 355 Basic S EWM puls</div>
+                            <div class="kanban-card-footer">
+                                <div class="order-value">€13.200</div>
+                                <div class="order-time">vor 1 Tag</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Feed -->
+            <div class="activity-feed glass">
+                <div class="activity-header">
+                    <div class="activity-title">Live Kundenanfragen</div>
+                    <div class="live-indicator">
+                        <div class="live-dot"></div>
+                        <span>Live</span>
+                    </div>
+                </div>
+                <div class="activity-list" id="activityList">
+                    <!-- Activities will be added here dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Sidebar -->
+        <div class="chat-sidebar glass">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="chat-title">AI Sales Assistant</div>
+                    <div class="chat-subtitle">Fragen zu EWM-Produkten, Verfügbarkeit & Preisen</div>
+                </div>
+
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-message ai">
+                        Guten Tag! Ich bin Ihr AI Sales Assistant für EWM Schweißtechnik. Wie kann ich Ihnen heute helfen?
+                    </div>
+                </div>
+
+                <div class="quick-replies">
+                    <div class="quick-reply" onclick="sendQuickReply('Preisanfrage Titan XQ 400 Puls')">Preisanfrage Titan XQ</div>
+                    <div class="quick-reply" onclick="sendQuickReply('Verfügbarkeit Phoenix 355 prüfen')">Verfügbarkeit prüfen</div>
+                    <div class="quick-reply" onclick="sendQuickReply('Technische Specs Taurus 355')">Technische Specs</div>
+                </div>
+
+                <div class="chat-input-container">
+                    <textarea 
+                        class="chat-input" 
+                        id="chatInput" 
+                        placeholder="Ihre Frage eingeben..."
+                        onkeydown="handleEnter(event)"
+                    ></textarea>
+                    <button class="chat-send-btn" id="sendBtn" onclick="sendMessage()">Senden</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        // Chat Demo Logic
-        const responses = {
-            "tig": "Für TIG-Schweißen empfehle ich die Tetrix XQ 300 SiC – höchste Energieeffizienz durch SiC-Halbleiter, robuste Bauweise und flexible Einsatzmöglichkeiten. Möchten Sie mehr über die technischen Specs erfahren?",
-            "automatisierung": "Unsere Phoenix-Serie in Kombination mit Cobot-Lösungen bietet vollautomatisierte Schweißzellen. Perfekt für repetitive Schweißaufgaben in der Serienfertigung. Soll ich Ihnen ein Angebot erstellen?",
-            "preis": "Gerne erstelle ich Ihnen ein individuelles Angebot. Welche Gerätekategorie interessiert Sie? (TIG, MIG/MAG, MMA, Automatisierung)",
-            "xnet": "EWM Xnet ist unser Schweißmanagement-System für Dokumentation, Qualitätssicherung und Prozessoptimierung. Mit unserer AI-Integration können Sie noch mehr aus Ihren Daten herausholen – z.B. Predictive Maintenance und automatische Fehleranalyse.",
-            "default": "Interessante Frage! Als AI-Assistent kann ich Sie zu allen EWM-Produkten beraten: Schweißgeräte, Automatisierung, Zubehör und Services. Was genau möchten Sie wissen?"
-        };
+        // Counter animations
+        function animateCounter(id, target) {
+            const element = document.getElementById(id);
+            const start = 0;
+            const duration = 2000;
+            const startTime = performance.now();
 
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const messagesContainer = document.getElementById('chatMessages');
-            const userMessage = input.value.trim();
-
-            if (!userMessage) return;
-
-            // User message
-            const userDiv = document.createElement('div');
-            userDiv.className = 'message user';
-            userDiv.textContent = userMessage;
-            messagesContainer.appendChild(userDiv);
-
-            // Clear input
-            input.value = '';
-
-            // AI response
-            setTimeout(() => {
-                const aiDiv = document.createElement('div');
-                aiDiv.className = 'message ai';
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const current = Math.floor(progress * target);
                 
-                let response = responses.default;
-                const lowerMessage = userMessage.toLowerCase();
-                
-                if (lowerMessage.includes('tig') || lowerMessage.includes('tetrix')) {
-                    response = responses.tig;
-                } else if (lowerMessage.includes('automat') || lowerMessage.includes('robot') || lowerMessage.includes('cobot')) {
-                    response = responses.automatisierung;
-                } else if (lowerMessage.includes('preis') || lowerMessage.includes('kosten') || lowerMessage.includes('angebot')) {
-                    response = responses.preis;
-                } else if (lowerMessage.includes('xnet') || lowerMessage.includes('software') || lowerMessage.includes('management')) {
-                    response = responses.xnet;
+                if (id === 'revenue') {
+                    element.textContent = '€' + current + 'k';
+                } else {
+                    element.textContent = current;
                 }
-                
-                aiDiv.textContent = response;
-                messagesContainer.appendChild(aiDiv);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 800);
 
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+
+            requestAnimationFrame(update);
         }
 
-        // Enter key to send
-        document.getElementById('chatInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
+        // Animate counters on load
+        window.addEventListener('load', () => {
+            animateCounter('openOrders', 47);
+            animateCounter('revenue', 284);
+        });
+
+        // Activity Feed Data
+        const activities = [
+            {
+                company: "Müller GmbH",
+                message: "Anfrage zu Titan XQ 400 Puls — Lieferzeit & Preis",
+                status: "AI-Antwort gesendet ✓",
+                time: "vor 3 Min",
+                type: "success"
+            },
+            {
+                company: "Schmidt Metallbau",
+                message: "Lieferzeit Phoenix 355 Comfort 2.0",
+                status: "Weitergeleitet an Vertrieb",
+                time: "vor 8 Min",
+                type: "pending"
+            },
+            {
+                company: "Wagner Stahlbau AG",
+                message: "Technische Frage zu Taurus 355 Prozesssteuerung",
+                status: "AI-Antwort gesendet ✓",
+                time: "vor 15 Min",
+                type: "success"
+            },
+            {
+                company: "Becker Automotive",
+                message: "Angebot für Roboter-Schweißzelle angefordert",
+                status: "Weitergeleitet an Vertrieb",
+                time: "vor 22 Min",
+                type: "pending"
+            },
+            {
+                company: "Fischer Industriebedarf",
+                message: "Ersatzteil-Anfrage für Phoenix 355",
+                status: "AI-Antwort gesendet ✓",
+                time: "vor 34 Min",
+                type: "success"
+            },
+            {
+                company: "Hoffmann GmbH",
+                message: "Preisvergleich Titan XQ 400 vs. Tetrix XQ 300",
+                status: "AI-Antwort gesendet ✓",
+                time: "vor 41 Min",
+                type: "success"
+            }
+        ];
+
+        // Populate activity feed
+        function populateActivities() {
+            const activityList = document.getElementById('activityList');
+            activityList.innerHTML = '';
+
+            activities.forEach((activity, index) => {
+                setTimeout(() => {
+                    const item = document.createElement('div');
+                    item.className = 'activity-item';
+                    item.innerHTML = `
+                        <div class="activity-item-header">
+                            <div class="activity-company">${activity.company}</div>
+                            <div class="activity-time">${activity.time}</div>
+                        </div>
+                        <div class="activity-message">${activity.message}</div>
+                        <div class="activity-status ${activity.type}">${activity.status}</div>
+                    `;
+                    activityList.insertBefore(item, activityList.firstChild);
+                }, index * 200);
+            });
+        }
+
+        // Add new activity periodically
+        function addRandomActivity() {
+            const companies = ["Neumann Maschinenbau", "Lehmann & Söhne", "Koch Metalltechnik", "Richter Schweißerei"];
+            const messages = [
+                "Anfrage zu Titan XQ 400 — Verfügbarkeit",
+                "Technische Frage zu Phoenix 355 puls",
+                "Angebot für Taurus 355 + Zubehör",
+                "Lieferzeit-Anfrage Tetrix XQ 300"
+            ];
+            
+            const company = companies[Math.floor(Math.random() * companies.length)];
+            const message = messages[Math.floor(Math.random() * messages.length)];
+            const isAI = Math.random() > 0.3;
+            
+            const newActivity = {
+                company: company,
+                message: message,
+                status: isAI ? "AI-Antwort gesendet ✓" : "Weitergeleitet an Vertrieb",
+                time: "jetzt",
+                type: isAI ? "success" : "pending"
+            };
+
+            const activityList = document.getElementById('activityList');
+            const item = document.createElement('div');
+            item.className = 'activity-item';
+            item.innerHTML = `
+                <div class="activity-item-header">
+                    <div class="activity-company">${newActivity.company}</div>
+                    <div class="activity-time">${newActivity.time}</div>
+                </div>
+                <div class="activity-message">${newActivity.message}</div>
+                <div class="activity-status ${newActivity.type}">${newActivity.status}</div>
+            `;
+            
+            activityList.insertBefore(item, activityList.firstChild);
+
+            // Remove last item if more than 6
+            if (activityList.children.length > 6) {
+                activityList.removeChild(activityList.lastChild);
+            }
+        }
+
+        populateActivities();
+        setInterval(addRandomActivity, 15000); // Add new activity every 15s
+
+        // Chat functionality
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        function addMessage(message, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isUser ? 'user' : 'ai'}`;
+            messageDiv.textContent = message;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTyping() {
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chat-message typing';
+            typingDiv.id = 'typing';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            chatMessages.appendChild(typingDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            const typing = document.getElementById('typing');
+            if (typing) typing.remove();
+        }
+
+        async function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, true);
+            chatInput.value = '';
+            sendBtn.disabled = true;
+
+            // Show typing indicator
+            showTyping();
+
+            try {
+                // Call API
+                const response = await fetch('https://nexagent-chat.nani-0a3.workers.dev/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        messages: [
+                            {
+                                role: "system",
+                                content: "Du bist ein AI Sales Assistant für EWM GmbH, Weltmarktführer in Schweißtechnik. Du hilfst bei Kundenanfragen zu Schweißgeräten (Titan XQ, Phoenix, Taurus), Preisanfragen, Verfügbarkeit und technischen Spezifikationen. Antworte auf Deutsch, professionell aber freundlich."
+                            },
+                            {
+                                role: "user",
+                                content: message
+                            }
+                        ]
+                    })
+                });
+
+                const data = await response.json();
+                hideTyping();
+                
+                // Add AI response
+                if (data.response) {
+                    addMessage(data.response);
+                } else {
+                    addMessage("Entschuldigung, ich konnte keine Antwort generieren. Bitte versuchen Sie es erneut.");
+                }
+            } catch (error) {
+                hideTyping();
+                console.error('Chat error:', error);
+                addMessage("Entschuldigung, es gab einen Verbindungsfehler. Bitte versuchen Sie es später erneut.");
+            }
+
+            sendBtn.disabled = false;
+            chatInput.focus();
+        }
+
+        function sendQuickReply(message) {
+            chatInput.value = message;
+            sendMessage();
+        }
+
+        function handleEnter(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
                 sendMessage();
             }
-        });
+        }
 
-        // Animate stats on scroll
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animation = 'slideIn 0.6s ease';
-                }
-            });
-        });
-
-        document.querySelectorAll('.stat-card').forEach(card => {
-            observer.observe(card);
+        // Focus input on load
+        window.addEventListener('load', () => {
+            chatInput.focus();
         });
     </script>
 </body>
