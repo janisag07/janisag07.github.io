@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw AI - Twitter/X Outreach Campaign</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .api-key-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .api-input {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 250px;
+            transition: all 0.3s;
+        }
+
+        .api-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .btn-danger {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #e53e3e;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .tweet-draft {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s;
+        }
+
+        .tweet-draft:hover {
+            background: #edf2f7;
+            transform: translateX(5px);
+        }
+
+        .tweet-content {
+            margin-bottom: 10px;
+            color: #2d3748;
+            line-height: 1.6;
+        }
+
+        .tweet-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .approval-flow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: #fff5f5;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .approval-icon {
+            font-size: 24px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f7fafc;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-approved {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-pending {
+            background: #fef5e7;
+            color: #975a16;
+        }
+
+        .status-rejected {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .chat-container {
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f7fafc;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .message-user {
+            text-align: right;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 70%;
+        }
+
+        .message-user .message-bubble {
+            background: #667eea;
+            color: white;
+        }
+
+        .message-ai .message-bubble {
+            background: white;
+            color: #2d3748;
+            border: 1px solid #e0e0e0;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger div {
+            width: 25px;
+            height: 3px;
+            background: #667eea;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .api-key-section {
+                width: 100%;
+            }
+
+            .api-input {
+                width: 100%;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">🚀 OpenClaw AI - Twitter Campaign</div>
+            <div class="hamburger">
+                <div></div>
+                <div></div>
+                <div></div>
+            </div>
+            <div class="api-key-section">
+                <input type="password" class="api-input" placeholder="Enter your API key to enable AI features" id="apiKey">
+                <button class="btn btn-primary" onclick="saveApiKey()">Connect</button>
+            </div>
+        </header>
+
+        <!-- Campaign Analytics -->
+        <div class="card">
+            <div class="card-title">📊 Campaign Analytics</div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">2,845</div>
+                    <div class="stat-label">Impressions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">342</div>
+                    <div class="stat-label">Clicks</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">+127</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">12.3%</div>
+                    <div class="stat-label">Engagement</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Tweet Drafts & Approval Flow -->
+            <div class="card">
+                <div class="card-title">✍️ AI Generated Tweets</div>
+                
+                <div class="tweet-draft">
+                    <div class="tweet-content">
+                        "Just launched our new AI-powered automation tool! 🚀 Say goodbye to manual workflows and hello to productivity. Try it free for 14 days! #AI #Automation #ProductivityHack"
+                    </div>
+                    <div class="tweet-actions">
+                        <button class="btn btn-success" onclick="approveTweet(1)">✓ Approve</button>
+                        <button class="btn btn-danger" onclick="rejectTweet(1)">✗ Reject</button>
+                    </div>
+                </div>
+
+                <div class="tweet-draft">
+                    <div class="tweet-content">
+                        "Pro tip: The best time to automate is when you find yourself doing the same task for the third time. What's your most annoying repetitive task? 🤔"
+                    </div>
+                    <div class="tweet-actions">
+                        <button class="btn btn-success" onclick="approveTweet(2)">✓ Approve</button>
+                        <button class="btn btn-danger" onclick="rejectTweet(2)">✗ Reject</button>
+                    </div>
+                </div>
+
+                <div class="card-title" style="margin-top: 20px;">💬 Telegram Approval Flow</div>
+                <div class="approval-flow">
+                    <div class="approval-icon">📱</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: 600;">Pending Approval</div>
+                        <div style="font-size: 14px; color: #718096;">2 tweets waiting in Telegram</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openTelegram()">Open Telegram</button>
+                </div>
+            </div>
+
+            <!-- AI Chat Assistant -->
+            <div class="card">
+                <div class="card-title">💬 AI Tweet Assistant</div>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message message-ai">
+                            <div class="message-bubble">
+                                Hi! I'm your AI tweet assistant. Ask me to draft a tweet about any topic, and I'll create engaging content for your campaign! 🚀
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask me to draft a tweet about...">
+                        <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notion-Style Tracker -->
+        <div class="card">
+            <div class="card-title">📋 Campaign Tracker</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tweet</th>
+                        <th>Status</th>
+                        <th>Impressions</th>
+                        <th>Engagement</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>New AI automation tool launch announcement</td>
+                        <td><span class="status-badge status-approved">Approved</span></td>
+                        <td>1,234</td>
+                        <td>15.2%</td>
+                        <td>2026-03-09</td>
+                    </tr>
+                    <tr>
+                        <td>Pro tip about automation timing</td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>2026-03-10</td>
+                    </tr>
+                    <tr>
+                        <td>Customer success story thread</td>
+                        <td><span class="status-badge status-approved">Approved</span></td>
+                        <td>892</td>
+                        <td>18.7%</td>
+                        <td>2026-03-08</td>
+                    </tr>
+                    <tr>
+                        <td>Industry insights and trends</td>
+                        <td><span class="status-badge status-rejected">Rejected</span></td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>2026-03-07</td>
+                    </tr>
+                    <tr>
+                        <td>Behind the scenes development update</td>
+                        <td><span class="status-badge status-approved">Approved</span></td>
+                        <td>719</td>
+                        <td>12.4%</td>
+                        <td>2026-03-06</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function saveApiKey() {
+            const apiKey = document.getElementById('apiKey').value;
+            if (apiKey) {
+                alert('API Key saved! AI features are now enabled.');
+            } else {
+                alert('Please enter a valid API key.');
+            }
+        }
+
+        function approveTweet(id) {
+            alert(`Tweet ${id} approved! Sent to Telegram for final confirmation.`);
+        }
+
+        function rejectTweet(id) {
+            alert(`Tweet ${id} rejected. AI will generate a new version.`);
+        }
+
+        function openTelegram() {
+            alert('Opening Telegram approval flow...');
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message message-user';
+            userMsg.innerHTML = `<div class="message-bubble">${message}</div>`;
+            chatMessages.appendChild(userMsg);
+            
+            input.value = '';
+            
+            // Simulate AI response
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message message-ai';
+                
+                let response = '';
+                if (message.toLowerCase().includes('tweet')) {
+                    response = `Here's a draft tweet: "Exciting news! 🎉 We're revolutionizing the way teams work with AI-powered automation. Join 10,000+ happy users who've saved 20+ hours per week. Start your free trial today! #AI #Productivity #Innovation"`;
+                } else if (message.toLowerCase().includes('engagement')) {
+                    response = `To boost engagement, try: 1) Post during peak hours (8-10 AM, 6-9 PM), 2) Use 1-2 relevant hashtags, 3) Ask questions to spark conversation, 4) Add eye-catching visuals. Want me to draft a high-engagement tweet?`;
+                } else {
+                    response = `I can help you with that! I'll generate engaging content tailored to your campaign goals. What specific topic or product would you like to focus on?`;
+                }
+                
+                aiMsg.innerHTML = `<div class="message-bubble">${response}</div>`;
+                chatMessages.appendChild(aiMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
