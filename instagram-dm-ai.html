@@ -486,6 +486,9 @@
         }
         
         @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
             .dashboard {
                 grid-template-columns: 1fr;
             }
@@ -494,8 +497,15 @@
             .time-slots {
                 grid-template-columns: 1fr;
             }
+            .kpi-card {
+                text-align: center;
+            }
             h1 {
-                font-size: 2.2rem;
+                font-size: 1.8rem;
+                text-align: center;
+            }
+            .header p {
+                text-align: center;
             }
         }
     </style>
@@ -513,12 +523,12 @@
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">Response Time</div>
-                <div class="kpi-value" data-target="12">0</div>
+                <div class="kpi-value" data-target="12" data-suffix="s">0s</div>
                 <div class="kpi-change">↓ 45 Sek. schneller</div>
             </div>
             <div class="kpi-card">
                 <div class="kpi-label">Conversion Rate</div>
-                <div class="kpi-value" data-target="34">0</div>
+                <div class="kpi-value" data-target="34" data-suffix="%">0%</div>
                 <div class="kpi-change">↑ 7% Verbesserung</div>
             </div>
             <div class="kpi-card">
@@ -710,6 +720,7 @@
         // Counter-Animationen für KPI-Karten und Pipeline
         function animateCounter(element) {
             const target = parseInt(element.getAttribute('data-target'));
+            const suffix = element.getAttribute('data-suffix') || '';
             const duration = 2000;
             const step = target / (duration / 16);
             let current = 0;
@@ -717,10 +728,10 @@
             const timer = setInterval(() => {
                 current += step;
                 if (current >= target) {
-                    element.textContent = target + (element.classList.contains('kpi-value') && target < 100 ? 's' : '');
+                    element.textContent = target + suffix;
                     clearInterval(timer);
                 } else {
-                    element.textContent = Math.floor(current) + (element.classList.contains('kpi-value') && target < 100 ? 's' : '');
+                    element.textContent = Math.floor(current) + suffix;
                 }
             }, 16);
         }

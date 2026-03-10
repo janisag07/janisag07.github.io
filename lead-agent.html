@@ -459,6 +459,8 @@
         }
         
         @media (max-width: 768px) {
+            body { padding: 1rem; }
+            h1 { text-align: center; font-size: 1.8rem; }
             .stats {
                 grid-template-columns: repeat(2, 1fr);
             }
@@ -779,10 +781,10 @@
             const timer = setInterval(() => {
                 current += step;
                 if (current >= target) {
-                    element.textContent = target + (target < 100 ? '%' : '');
+                    element.textContent = target + (element.getAttribute('data-suffix') || '');
                     clearInterval(timer);
                 } else {
-                    element.textContent = Math.floor(current) + (target < 100 ? '%' : '');
+                    element.textContent = Math.floor(current) + (element.getAttribute('data-suffix') || '');
                 }
             }, 16);
         }
