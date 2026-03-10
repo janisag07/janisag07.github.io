@@ -1073,11 +1073,11 @@
             <p class="section-subtitle">Choose the plan that fits your needs. Scale as you grow.</p>
             
             <div class="pricing-toggle">
-                <span class="toggle-option" id="monthly-label">Monthly</span>
-                <div class="toggle-switch active" id="pricing-toggle">
+                <span class="toggle-option active" id="yearly-label">Yearly <span class="yearly-badge">Save 2 months</span></span>
+                <div class="toggle-switch" id="pricing-toggle">
                     <div class="toggle-slider"></div>
                 </div>
-                <span class="toggle-option active" id="yearly-label">Yearly <span class="yearly-badge">Save 2 months</span></span>
+                <span class="toggle-option" id="monthly-label">Monthly</span>
             </div>
 
             <div class="pricing-cards">
@@ -1383,11 +1383,13 @@
             yearlyLabel.classList.toggle('active');
 
             if (pricingToggle.classList.contains('active')) {
-                monthlyPrices.forEach(el => el.style.display = 'none');
-                yearlyPrices.forEach(el => el.style.display = 'inline');
-            } else {
+                // Toggle ON (rechts, blau) = Monthly (teurer)
                 monthlyPrices.forEach(el => el.style.display = 'inline');
                 yearlyPrices.forEach(el => el.style.display = 'none');
+            } else {
+                // Toggle OFF (links, grau) = Yearly (günstiger)
+                monthlyPrices.forEach(el => el.style.display = 'none');
+                yearlyPrices.forEach(el => el.style.display = 'inline');
             }
         });
 
