@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImmoAI — Katip Immobilien GmbH</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+/* ============================================
+   ImmoAI — Personalisierte Demo
+   ============================================ */
+:root {
+    --bg: #F8FAFC; --bg-card: #FFFFFF; --bg-sidebar: #0F172A; --bg-hover: #F1F5F9;
+    --text: #1E293B; --text-light: #64748B; --text-muted: #94A3B8;
+    --primary: #D4AF37; --primary-hover: #B8941F; --primary-light: #F5EFD8;
+    --green: #10B981; --green-light: #D1FAE5; --yellow: #F59E0B; --yellow-light: #FEF3C7;
+    --red: #EF4444; --red-light: #FEE2E2; --purple: #8B5CF6; --purple-light: #EDE9FE;
+    --orange: #F97316; --orange-light: #FFEDD5; --emerald: #059669;
+    --border: #E2E8F0; --shadow: 0 1px 3px rgba(0,0,0,0.08); --shadow-lg: 0 4px 16px rgba(0,0,0,0.1);
+    --radius: 12px; --radius-sm: 8px;
+    --font: 'Inter', -apple-system, sans-serif;
+    --sidebar-w: 260px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); font-size: 14px; color: var(--text); background: var(--bg); display: flex; min-height: 100vh; }
+h1 { font-size: 1.6rem; font-weight: 700; } h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; } h3 { font-size: 1rem; font-weight: 600; }
+a { text-decoration: none; color: inherit; }
+::selection { background: var(--primary-light); }
+
+/* Sidebar */
+.sidebar { width: var(--sidebar-w); background: var(--bg-sidebar); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transition: transform 0.3s; }
+.sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { font-size: 1.5rem; }
+.logo-text { font-size: 1.2rem; font-weight: 700; }
+.logo-ai { color: var(--primary); }
+.logo-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+.sidebar-nav { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--text-muted); font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.nav-item.active { background: rgba(212,175,55,0.15); color: var(--primary); }
+.nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+.user-badge { display: flex; align-items: center; gap: 12px; }
+.user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; color: var(--bg-sidebar); }
+.user-name { font-size: 0.8rem; font-weight: 600; }
+.user-role { font-size: 0.7rem; color: var(--text-muted); }
+
+/* Mobile */
+.mobile-header { display: none; }
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); } .sidebar.open { transform: none; }
+    .mobile-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg-sidebar); color: #fff; position: fixed; top: 0; left: 0; right: 0; z-index: 40; }
+    .menu-toggle { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+    .main { margin-left: 0 !important; padding-top: 56px; }
+    .page { padding: 20px 16px; }
+    .page-header { flex-direction: column; }
+    .page-header h1 { font-size: 1.3rem; }
+    .header-actions { width: 100%; }
+    .header-actions .btn { width: 100%; justify-content: center; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .matching-layout { grid-template-columns: 1fr; }
+    .facility-grid { grid-template-columns: 1fr; }
+}
+
+/* Main */
+.main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; }
+.page { display: none; padding: 32px; max-width: 1200px; }
+.page.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+
+/* Page Header */
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+.page-subtitle { color: var(--text-light); margin-top: 4px; }
+.header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+/* Buttons */
+.btn { padding: 8px 20px; border: none; border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+.btn-primary { background: var(--primary); color: var(--bg-sidebar); } .btn-primary:hover { background: var(--primary-hover); }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); } .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+.btn-sm { padding: 5px 12px; font-size: 0.75rem; }
+.btn-full { width: 100%; justify-content: center; }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+@media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 16px; position: relative; }
+.stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+.stat-icon.blue { background: #DBEAFE; } .stat-icon.green { background: var(--green-light); }
+.stat-icon.purple { background: var(--purple-light); } .stat-icon.orange { background: var(--orange-light); }
+.stat-value { font-size: 1.5rem; font-weight: 700; } .stat-label { font-size: 0.75rem; color: var(--text-light); }
+.stat-trend { position: absolute; top: 12px; right: 16px; font-size: 0.7rem; font-weight: 500; color: var(--green); }
+
+/* Cards */
+.section-card { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Pipeline */
+.pipeline { display: flex; flex-direction: column; gap: 12px; }
+.stage-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8rem; }
+.stage-dot { width: 8px; height: 8px; border-radius: 50%; }
+.stage-dot.blue { background: #3B82F6; } .stage-dot.yellow { background: var(--yellow); }
+.stage-dot.purple { background: var(--purple); } .stage-dot.green { background: var(--green); } .stage-dot.emerald { background: var(--emerald); }
+.stage-count { margin-left: auto; font-weight: 600; }
+.stage-bar { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.stage-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+.stage-fill.blue { background: #3B82F6; } .stage-fill.yellow { background: var(--yellow); }
+.stage-fill.purple { background: var(--purple); } .stage-fill.green { background: var(--green); } .stage-fill.emerald { background: var(--emerald); }
+
+/* Alerts */
+.alert-list { display: flex; flex-direction: column; gap: 12px; }
+.alert-item { padding: 12px 16px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.alert-item.urgent { background: var(--red-light); } .alert-item.warning { background: var(--yellow-light); } .alert-item.info { background: var(--primary-light); }
+.alert-badge { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: var(--red); color: #fff; }
+.alert-badge.warn { background: var(--yellow); } .alert-badge.info { background: var(--primary); color: var(--bg-sidebar); }
+.alert-item p { flex: 1; font-size: 0.85rem; }
+
+/* Activity */
+.activity-list { display: flex; flex-direction: column; gap: 12px; }
+.activity-item { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.activity-item:last-child { border: none; }
+.activity-time { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; min-width: 60px; padding-top: 2px; }
+.activity-item p { font-size: 0.85rem; }
+
+/* Facility Grid */
+.facility-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 900px) { .facility-grid { grid-template-columns: 1fr; } }
+.facility-card { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+.facility-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.facility-type { font-size: 0.8rem; color: var(--text-light); margin-bottom: 16px; }
+.facility-stats { display: flex; gap: 24px; margin-bottom: 16px; text-align: center; }
+.facility-stats div { display: flex; flex-direction: column; }
+.facility-stats strong { font-size: 1.3rem; } .facility-stats span { font-size: 0.7rem; color: var(--text-muted); }
+
+/* Badges */
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+.badge.green { background: var(--green-light); color: #065F46; }
+.badge.blue { background: #DBEAFE; color: #1E40AF; }
+.badge.yellow { background: var(--yellow-light); color: #92400E; }
+.badge.red { background: var(--red-light); color: #991B1B; }
+.badge.orange { background: var(--orange-light); color: #9A3412; }
+
+/* Matching */
+.matching-layout { display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+@media (max-width: 900px) { .matching-layout { grid-template-columns: 1fr; } }
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); }
+.empty-state p:first-child { font-size: 2rem; margin-bottom: 8px; }
+.ai-loading { text-align: center; padding: 48px; }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.match-card { border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 12px; transition: all 0.2s; }
+.match-card:hover { box-shadow: var(--shadow-lg); }
+.match-card.top-match { border-color: var(--primary); background: linear-gradient(135deg, var(--primary-light) 0%, #fff 100%); }
+.top-match-label { font-size: 0.7rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+.match-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+.match-person { display: flex; align-items: center; gap: 10px; }
+.match-person strong { display: block; } .match-person span { font-size: 0.8rem; color: var(--text-light); }
+.score-ring { width: 56px; height: 56px; border-radius: 50%; background: conic-gradient(var(--primary) calc(var(--score) * 1%), var(--border) 0); display: flex; align-items: center; justify-content: center; position: relative; }
+.score-ring::before { content: ''; position: absolute; width: 44px; height: 44px; border-radius: 50%; background: #fff; }
+.score-ring span { position: relative; z-index: 1; font-size: 0.8rem; font-weight: 700; color: var(--primary); }
+.match-details { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.8rem; color: var(--text-light); margin-bottom: 12px; }
+.match-reason { background: var(--bg); padding: 12px; border-radius: var(--radius-sm); margin-bottom: 12px; font-size: 0.8rem; }
+.ai-label { font-size: 0.7rem; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
+.match-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.select-input { padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.85rem; width: 100%; background: #fff; outline: none; margin-bottom: 12px; }
+.select-input:focus { border-color: var(--primary); }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.data-table th { text-align: left; padding: 12px 16px; font-size: 0.75rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; background: var(--bg); border-bottom: 1px solid var(--border); }
+.data-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+.data-table tr:hover { background: var(--bg-hover); }
+
+/* Chatbot */
+.chatbot-btn { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; border-radius: 50%; background: #2563EB; color: #fff; border: none; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.4); z-index: 100; transition: all 0.3s; }
+.chatbot-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(37,99,235,0.5); }
+.chatbot-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.chatbot-overlay.open { display: flex; }
+.chatbot-window { background: #fff; border-radius: 16px; width: 100%; max-width: 500px; height: 600px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.3s; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; } }
+.chatbot-header { padding: 20px; background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%); color: #fff; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; }
+.chatbot-header h3 { font-size: 1rem; }
+.chatbot-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; opacity: 0.8; }
+.chatbot-close:hover { opacity: 1; }
+.chatbot-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.chat-message { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 0.85rem; line-height: 1.5; animation: fadeIn 0.3s; }
+.chat-message.bot { background: var(--bg); align-self: flex-start; }
+.chat-message.user { background: #2563EB; color: #fff; align-self: flex-end; }
+.chatbot-input-area { padding: 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+.chatbot-input { flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 20px; font-family: var(--font); font-size: 0.85rem; outline: none; }
+.chatbot-input:focus { border-color: #2563EB; }
+.chatbot-send { padding: 10px 20px; background: #2563EB; color: #fff; border: none; border-radius: 20px; font-family: var(--font); font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+.chatbot-send:hover { background: #1E40AF; }
+.api-key-notice { background: var(--yellow-light); padding: 12px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 12px; text-align: center; }
+.api-key-input-group { display: flex; gap: 8px; margin-top: 8px; }
+.api-key-input { flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.75rem; }
+.api-key-btn { padding: 6px 12px; background: var(--primary); color: var(--bg-sidebar); border: none; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-sidebar); color: #fff; padding: 12px 24px; border-radius: var(--radius-sm); font-size: 0.85rem; opacity: 0; transition: all 0.3s; z-index: 300; }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">🏠</span>
+                <span class="logo-text">Immo<span class="logo-ai">AI</span></span>
+            </div>
+            <p class="logo-sub">Demo für Katip Immobilien GmbH</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+                <span class="nav-icon">📊</span> Dashboard
+            </div>
+            <div class="nav-item" data-page="properties" onclick="showPage('properties')">
+                <span class="nav-icon">🏠</span> Objekte
+            </div>
+            <div class="nav-item" data-page="leads" onclick="showPage('leads')">
+                <span class="nav-icon">👤</span> Interessenten
+            </div>
+            <div class="nav-item" data-page="matching" onclick="showPage('matching')">
+                <span class="nav-icon">🤖</span> AI-Matching
+            </div>
+            <div class="nav-item" data-page="viewings" onclick="showPage('viewings')">
+                <span class="nav-icon">📅</span> Besichtigungen
+            </div>
+            <div class="nav-item" data-page="expose" onclick="showPage('expose')">
+                <span class="nav-icon">📄</span> Exposé-Generator
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-badge">
+                <div class="user-avatar">AK</div>
+                <div>
+                    <p class="user-name">Ayhan Katip</p>
+                    <p class="user-role">Geschäftsführer</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <header class="mobile-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <span class="logo-text">Immo<span class="logo-ai">AI</span></span>
+    </header>
+
+    <main class="main">
+        <!-- DASHBOARD -->
+        <div class="page active" id="page-dashboard">
+            <div class="page-header">
+                <div>
+                    <h1>Guten Tag, Ayhan 👋</h1>
+                    <p class="page-subtitle">Ihr Immobilien-Überblick für heute — Augsburg & Umgebung</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showPage('matching')">🤖 AI-Match starten</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">🏠</div>
+                    <div class="stat-info">
+                        <p class="stat-value">34</p>
+                        <p class="stat-label">Aktive Objekte</p>
+                    </div>
+                    <span class="stat-trend">+5 diese Woche</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">👤</div>
+                    <div class="stat-info">
+                        <p class="stat-value">187</p>
+                        <p class="stat-label">Interessenten</p>
+                    </div>
+                    <span class="stat-trend">+28 neu</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">📅</div>
+                    <div class="stat-info">
+                        <p class="stat-value">15</p>
+                        <p class="stat-label">Besichtigungen (Woche)</p>
+                    </div>
+                    <span class="stat-trend">geplant</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">🤝</div>
+                    <div class="stat-info">
+                        <p class="stat-value">4</p>
+                        <p class="stat-label">Abschlüsse (Monat)</p>
+                    </div>
+                    <span class="stat-trend">+2 vs. Vormonat</span>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>Verkaufs-Pipeline</h2>
+                <div class="pipeline">
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot blue"></span>
+                            <span>Neue Anfragen</span>
+                            <span class="stage-count">52</span>
+                        </div>
+                        <div class="stage-bar">
+                            <div class="stage-fill blue" style="width:100%"></div>
+                        </div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot yellow"></span>
+                            <span>AI-Match / Qualifiziert</span>
+                            <span class="stage-count">34</span>
+                        </div>
+                        <div class="stage-bar">
+                            <div class="stage-fill yellow" style="width:65%"></div>
+                        </div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot purple"></span>
+                            <span>Besichtigung geplant</span>
+                            <span class="stage-count">15</span>
+                        </div>
+                        <div class="stage-bar">
+                            <div class="stage-fill purple" style="width:29%"></div>
+                        </div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot green"></span>
+                            <span>Angebot / Verhandlung</span>
+                            <span class="stage-count">7</span>
+                        </div>
+                        <div class="stage-bar">
+                            <div class="stage-fill green" style="width:13%"></div>
+                        </div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot emerald"></span>
+                            <span>Verkauft / Vermietet ✓</span>
+                            <span class="stage-count">4</span>
+                        </div>
+                        <div class="stage-bar">
+                            <div class="stage-fill emerald" style="width:8%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="section-card">
+                    <h2>⚠️ Handlungsbedarf</h2>
+                    <div class="alert-list">
+                        <div class="alert-item urgent">
+                            <span class="alert-badge">Dringend</span>
+                            <p><strong>3-Zi-ETW Pfersee</strong> — 12 ungelesene Anfragen seit gestern</p>
+                            <button class="btn btn-sm" onclick="showPage('leads')">Anfragen →</button>
+                        </div>
+                        <div class="alert-item warning">
+                            <span class="alert-badge warn">Heute</span>
+                            <p><strong>4 Besichtigungen</strong> heute (10:00, 14:00, 15:30, 17:00)</p>
+                            <button class="btn btn-sm" onclick="showPage('viewings')">Kalender →</button>
+                        </div>
+                        <div class="alert-item info">
+                            <span class="alert-badge info">AI</span>
+                            <p>🤖 AI hat <strong>8 perfekte Matches</strong> für Einfamilienhaus Göggingen gefunden</p>
+                            <button class="btn btn-sm" onclick="showPage('matching')">Matches →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2>📋 Letzte Aktivitäten</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-time">vor 45min</span>
+                            <p>🤖 AI hat <strong>28 neue Anfragen</strong> automatisch vorqualifiziert</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">vor 2h</span>
+                            <p>📧 Automatische Exposé-Mail an <strong>Familie Wagner</strong> gesendet</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">gestern</span>
+                            <p>✅ <strong>Doppelhaushälfte Haunstetten</strong> — Kaufvertrag unterschrieben! 🎉</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">gestern</span>
+                            <p>📅 <strong>6 Besichtigungstermine</strong> automatisch koordiniert</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">vor 2 Tagen</span>
+                            <p>🏠 Neues Objekt <strong>Penthouse Augsburg-Zentrum</strong> eingestellt</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROPERTIES -->
+        <div class="page" id="page-properties">
+            <div class="page-header">
+                <div>
+                    <h1>🏠 Objekte</h1>
+                    <p class="page-subtitle">34 aktive Immobilien in Augsburg & Umgebung</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary">+ Neues Objekt</button>
+                </div>
+            </div>
+            <div class="facility-grid" id="propGrid"></div>
+        </div>
+
+        <!-- LEADS -->
+        <div class="page" id="page-leads">
+            <div class="page-header">
+                <div>
+                    <h1>👤 Interessenten</h1>
+                    <p class="page-subtitle">187 aktive Interessenten</p>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Sucht</th>
+                            <th>Budget</th>
+                            <th>AI-Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leadBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- AI MATCHING -->
+        <div class="page" id="page-matching">
+            <div class="page-header">
+                <div>
+                    <h1>🤖 AI-Matching</h1>
+                    <p class="page-subtitle">Intelligente Zuordnung: Interessent ↔ Objekt</p>
+                </div>
+            </div>
+            <div class="matching-layout">
+                <div class="section-card">
+                    <h2>Objekt auswählen</h2>
+                    <select class="select-input" id="matchProp" onchange="runMatch()">
+                        <option value="">— Objekt wählen —</option>
+                    </select>
+                    <div id="propInfo" style="display:none"></div>
+                </div>
+                <div class="section-card">
+                    <h2>AI-Ergebnisse</h2>
+                    <div id="matchResults">
+                        <div class="empty-state">
+                            <p>🤖</p>
+                            <p>Wählen Sie ein Objekt, um passende Interessenten zu finden</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEWINGS -->
+        <div class="page" id="page-viewings">
+            <div class="page-header">
+                <div>
+                    <h1>📅 Besichtigungen</h1>
+                    <p class="page-subtitle">Geplante Termine diese Woche</p>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Datum</th>
+                            <th>Uhrzeit</th>
+                            <th>Objekt</th>
+                            <th>Interessent</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="viewBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- EXPOSE -->
+        <div class="page" id="page-expose">
+            <div class="page-header">
+                <div>
+                    <h1>📄 Exposé-Generator</h1>
+                    <p class="page-subtitle">Automatische Exposé-Erstellung mit AI</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <h2>Objekt auswählen</h2>
+                <select class="select-input">
+                    <option>3-Zi-ETW Pfersee — €289.000</option>
+                    <option>Einfamilienhaus Göggingen — €645.000</option>
+                    <option>4-Zi-Wohnung Augsburg-Zentrum — €395.000</option>
+                </select>
+                <button class="btn btn-primary" onclick="toast('🤖 Exposé wird generiert...')">🤖 Exposé generieren</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- CHATBOT -->
+    <button class="chatbot-btn" onclick="openChat()">💬</button>
+    <div class="chatbot-overlay" id="chatOverlay" onclick="if(event.target===this)closeChat()">
+        <div class="chatbot-window">
+            <div class="chatbot-header">
+                <h3>🤖 Katip Immobilien AI-Assistent</h3>
+                <button class="chatbot-close" onclick="closeChat()">×</button>
+            </div>
+            <div class="chatbot-messages" id="chatMessages">
+                <div id="apiKeyNotice" class="api-key-notice">
+                    🔑 Für Live-AI benötigen Sie einen OpenAI API Key
+                    <div class="api-key-input-group">
+                        <input type="password" class="api-key-input" id="apiKeyInput" placeholder="sk-...">
+                        <button class="api-key-btn" onclick="saveApiKey()">Speichern</button>
+                    </div>
+                </div>
+                <div class="chat-message bot">
+                    Hallo Ayhan! Ich bin Ihr AI-Assistent für die Katip Immobilien GmbH. Wie kann ich Ihnen heute helfen?
+                </div>
+            </div>
+            <div class="chatbot-input-area">
+                <input type="text" class="chatbot-input" id="chatInput" placeholder="Nachricht eingeben..." onkeypress="if(event.key==='Enter')sendMessage()">
+                <button class="chatbot-send" onclick="sendMessage()">Senden</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    const PROPS=[
+        {name:"3-Zi-ETW Pfersee",type:"Eigentumswohnung",price:"€289.000",size:"85 m²",rooms:3,loc:"Augsburg-Pfersee",status:"heiß",inquiries:12},
+        {name:"Einfamilienhaus Göggingen",type:"Haus",price:"€645.000",size:"165 m²",rooms:6,loc:"Augsburg-Göggingen",status:"neu",inquiries:5},
+        {name:"4-Zi-Wohnung Zentrum",type:"Eigentumswohnung",price:"€395.000",size:"110 m²",rooms:4,loc:"Augsburg-Zentrum",status:"aktiv",inquiries:8},
+        {name:"2-Zi-Apartment Haunstetten",type:"Mietwohnung",price:"€780/Mo",size:"58 m²",rooms:2,loc:"Augsburg-Haunstetten",status:"aktiv",inquiries:15},
+        {name:"Doppelhaushälfte Stadtbergen",type:"Haus",price:"€485.000",size:"140 m²",rooms:5,loc:"Stadtbergen",status:"aktiv",inquiries:6},
+        {name:"Penthouse Augsburg-Zentrum",type:"Eigentumswohnung",price:"€625.000",size:"155 m²",rooms:5,loc:"Augsburg-Zentrum",status:"neu",inquiries:4},
+    ];
+    const LEADS=[
+        {name:"Familie Wagner",wants:"Haus, 5-6 Zimmer",budget:"bis €700k",score:92},
+        {name:"Herr Schmidt",wants:"3-4 Zi ETW",budget:"bis €320k",score:87},
+        {name:"Frau Müller",wants:"Penthouse / gehobene Lage",budget:"bis €650k",score:89},
+        {name:"Familie Hoffmann",wants:"Doppelhaushälfte",budget:"bis €520k",score:84},
+        {name:"Herr Weber",wants:"2-Zi Mietwohnung",budget:"bis €850/Mo",score:91},
+        {name:"Frau Becker",wants:"4-Zi Wohnung Zentrum",budget:"bis €420k",score:86},
+    ];
+    const VIEWINGS=[
+        {date:"Di 11.03.",time:"10:00",prop:"3-Zi-ETW Pfersee",lead:"Herr Schmidt",status:'<span class="badge green">Bestätigt</span>'},
+        {date:"Di 11.03.",time:"14:00",prop:"Einfamilienhaus Göggingen",lead:"Familie Wagner",status:'<span class="badge green">Bestätigt</span>'},
+        {date:"Di 11.03.",time:"15:30",prop:"2-Zi-Apartment Haunstetten",lead:"Herr Weber",status:'<span class="badge green">Bestätigt</span>'},
+        {date:"Di 11.03.",time:"17:00",prop:"4-Zi-Wohnung Zentrum",lead:"Frau Becker",status:'<span class="badge green">Bestätigt</span>'},
+        {date:"Mi 12.03.",time:"11:00",prop:"Penthouse Zentrum",lead:"Frau Müller",status:'<span class="badge yellow">Angefragt</span>'},
+        {date:"Do 13.03.",time:"15:00",prop:"Doppelhaushälfte Stadtbergen",lead:"Familie Hoffmann",status:'<span class="badge blue">Vorgeschlagen</span>'},
+    ];
+
+    function showPage(p){
+        document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+        document.getElementById('page-'+p).classList.add('active');
+        document.querySelector('[data-page="'+p+'"]')?.classList.add('active');
+        document.getElementById('sidebar').classList.remove('open');
+        if(p==='properties')renderProps();
+        if(p==='leads')renderLeads();
+        if(p==='matching')initMatch();
+        if(p==='viewings')renderViewings();
+        window.scrollTo(0,0);
+    }
+    function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+    function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+    
+    function renderProps(){
+        const st={'heiß':'red','neu':'blue','aktiv':'green'};
+        document.getElementById('propGrid').innerHTML=PROPS.map(p=>`<div class="facility-card"><div class="facility-header"><h3>${p.name}</h3><span class="badge ${st[p.status]}">${p.status}</span></div><p class="facility-type">${p.type} • ${p.loc}</p><div class="facility-stats"><div><strong>${p.price}</strong><span>Preis</span></div><div><strong>${p.size}</strong><span>Fläche</span></div><div><strong>${p.inquiries}</strong><span>Anfragen</span></div></div><button class="btn btn-primary btn-full" onclick="showPage('matching')">🤖 Interessenten matchen</button></div>`).join('');
+    }
+    function renderLeads(){
+        document.getElementById('leadBody').innerHTML=LEADS.map(l=>`<tr><td><strong>${l.name}</strong></td><td>${l.wants}</td><td>${l.budget}</td><td><div class="score-ring" style="--score:${l.score};width:40px;height:40px"><span style="font-size:0.65rem">${l.score}%</span></div></td></tr>`).join('');
+    }
+    function initMatch(){
+        document.getElementById('matchProp').innerHTML='<option value="">— Objekt wählen —</option>'+PROPS.map((p,i)=>`<option value="${i}">${p.name} (${p.price})</option>`).join('');
+    }
+    function runMatch(){
+        const i=document.getElementById('matchProp').value;if(i==='')return;const prop=PROPS[i];
+        const nd=document.getElementById('propInfo');nd.style.display='block';
+        nd.innerHTML=`<p><strong>${prop.name}</strong></p><p>${prop.type} • ${prop.price} • ${prop.size}</p><p style="margin-top:8px">${prop.inquiries} Anfragen</p>`;
+        const r=document.getElementById('matchResults');r.innerHTML='<div class="ai-loading"><div class="spinner"></div><p>🤖 AI analysiert 187 Interessenten...</p></div>';
+        setTimeout(()=>{
+            const matches=LEADS.sort((a,b)=>b.score-a.score).slice(0,4);
+            r.innerHTML=matches.map((m,idx)=>`<div class="match-card ${idx===0?'top-match':''}">${idx===0?'<div class="top-match-label">⭐ Beste Übereinstimmung</div>':''}<div class="match-header"><div class="match-person"><div><strong>${m.name}</strong><span>${m.wants}</span></div></div><div class="match-score"><div class="score-ring" style="--score:${m.score}"><span>${m.score}%</span></div></div></div><div class="match-details"><span>💰 ${m.budget}</span><span>🔍 ${m.wants}</span></div><div class="match-reason"><p class="ai-label">🤖 AI-Begründung:</p><p>Budget passt zum Preis. Suchprofil (${m.wants}) deckt sich mit Objekteigenschaften. Standortpräferenz Augsburg stimmt überein.</p></div><div class="match-actions"><button class="btn btn-primary btn-sm" onclick="toast('📧 Exposé an ${m.name} gesendet!')">Exposé senden</button><button class="btn btn-ghost btn-sm" onclick="toast('📅 Besichtigung vorgeschlagen!')">Besichtigung</button></div></div>`).join('');
+        },1800);
+    }
+    function renderViewings(){
+        document.getElementById('viewBody').innerHTML=VIEWINGS.map(v=>`<tr><td><strong>${v.date}</strong></td><td>${v.time}</td><td>${v.prop}</td><td>${v.lead}</td><td>${v.status}</td></tr>`).join('');
+    }
+
+    // Chatbot
+    let apiKey = localStorage.getItem('openai_api_key') || '';
+    if(apiKey){document.getElementById('apiKeyNotice').style.display='none';}
+    
+    function openChat(){document.getElementById('chatOverlay').classList.add('open');}
+    function closeChat(){document.getElementById('chatOverlay').classList.remove('open');}
+    function saveApiKey(){
+        apiKey=document.getElementById('apiKeyInput').value.trim();
+        if(!apiKey.startsWith('sk-')){toast('⚠️ Ungültiger API Key');return;}
+        localStorage.setItem('openai_api_key',apiKey);
+        document.getElementById('apiKeyNotice').style.display='none';
+        toast('✅ API Key gespeichert');
+    }
+    async function sendMessage(){
+        const inp=document.getElementById('chatInput');
+        const msg=inp.value.trim();if(!msg)return;
+        inp.value='';
+        const mc=document.getElementById('chatMessages');
+        mc.innerHTML+=`<div class="chat-message user">${msg}</div>`;
+        mc.scrollTop=mc.scrollHeight;
+        
+        if(!apiKey){
+            setTimeout(()=>{
+                mc.innerHTML+=`<div class="chat-message bot">🔑 Bitte geben Sie einen OpenAI API Key ein, um die AI-Chat-Funktion zu nutzen.</div>`;
+                mc.scrollTop=mc.scrollHeight;
+            },500);
+            return;
+        }
+        
+        try{
+            const res=await fetch('https://api.openai.com/v1/chat/completions',{
+                method:'POST',
+                headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+                body:JSON.stringify({
+                    model:'gpt-4o-mini',
+                    messages:[
+                        {role:'system',content:'Du bist ein hilfreicher AI-Assistent für Katip Immobilien GmbH in Augsburg. Du hilfst Ayhan Katip bei der Verwaltung seiner Immobilien, Interessenten und Besichtigungen. Sei freundlich, professionell und kurz.'},
+                        {role:'user',content:msg}
+                    ],
+                    max_tokens:300
+                })
+            });
+            const data=await res.json();
+            const reply=data.choices?.[0]?.message?.content||'⚠️ Keine Antwort erhalten';
+            mc.innerHTML+=`<div class="chat-message bot">${reply}</div>`;
+        }catch(e){
+            mc.innerHTML+=`<div class="chat-message bot">⚠️ Fehler: ${e.message}</div>`;
+        }
+        mc.scrollTop=mc.scrollHeight;
+    }
+
+    renderProps();
+    </script>
+</body>
+</html>

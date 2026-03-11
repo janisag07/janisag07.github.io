@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PremiumAI — Wandl.Immobilien</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+:root {
+    --bg: #F8FAFC; --bg-card: #FFFFFF; --bg-sidebar: #0F172A; --bg-hover: #F1F5F9;
+    --text: #1E293B; --text-light: #64748B; --text-muted: #94A3B8;
+    --primary: #881337; --primary-hover: #6B0F28; --primary-light: #FCE7F3;
+    --green: #10B981; --green-light: #D1FAE5; --yellow: #F59E0B; --yellow-light: #FEF3C7;
+    --red: #EF4444; --red-light: #FEE2E2; --purple: #8B5CF6; --purple-light: #EDE9FE;
+    --orange: #F97316; --orange-light: #FFEDD5; --emerald: #059669;
+    --border: #E2E8F0; --shadow: 0 1px 3px rgba(0,0,0,0.08); --shadow-lg: 0 4px 16px rgba(0,0,0,0.1);
+    --radius: 12px; --radius-sm: 8px;
+    --font: 'Inter', -apple-system, sans-serif;
+    --sidebar-w: 260px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); font-size: 14px; color: var(--text); background: var(--bg); display: flex; min-height: 100vh; }
+h1 { font-size: 1.6rem; font-weight: 700; } h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; } h3 { font-size: 1rem; font-weight: 600; }
+a { text-decoration: none; color: inherit; }
+::selection { background: var(--primary-light); }
+
+.sidebar { width: var(--sidebar-w); background: var(--bg-sidebar); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transition: transform 0.3s; }
+.sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { font-size: 1.5rem; }
+.logo-text { font-size: 1.2rem; font-weight: 700; }
+.logo-ai { color: var(--primary-light); }
+.logo-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+.sidebar-nav { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--text-muted); font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.nav-item.active { background: rgba(136,19,55,0.25); color: var(--primary-light); }
+.nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+.user-badge { display: flex; align-items: center; gap: 12px; }
+.user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; color: #fff; }
+.user-name { font-size: 0.8rem; font-weight: 600; }
+.user-role { font-size: 0.7rem; color: var(--text-muted); }
+
+.mobile-header { display: none; }
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); } .sidebar.open { transform: none; }
+    .mobile-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg-sidebar); color: #fff; position: fixed; top: 0; left: 0; right: 0; z-index: 40; }
+    .menu-toggle { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+    .main { margin-left: 0 !important; padding-top: 56px; }
+    .page { padding: 20px 16px; }
+    .page-header { flex-direction: column; }
+    .header-actions { width: 100%; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .facility-grid { grid-template-columns: 1fr; }
+}
+
+.main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; }
+.page { display: none; padding: 32px; max-width: 1200px; }
+.page.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+.page-subtitle { color: var(--text-light); margin-top: 4px; }
+.header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+.btn { padding: 8px 20px; border: none; border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+.btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-hover); }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); } .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+.btn-sm { padding: 5px 12px; font-size: 0.75rem; }
+.btn-full { width: 100%; justify-content: center; }
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+@media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 16px; position: relative; }
+.stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+.stat-icon.blue { background: #DBEAFE; } .stat-icon.green { background: var(--green-light); }
+.stat-icon.purple { background: var(--purple-light); } .stat-icon.orange { background: var(--orange-light); }
+.stat-value { font-size: 1.5rem; font-weight: 700; } .stat-label { font-size: 0.75rem; color: var(--text-light); }
+.stat-trend { position: absolute; top: 12px; right: 16px; font-size: 0.7rem; font-weight: 500; color: var(--green); }
+
+.section-card { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+.pipeline { display: flex; flex-direction: column; gap: 12px; }
+.stage-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8rem; }
+.stage-dot { width: 8px; height: 8px; border-radius: 50%; }
+.stage-dot.blue { background: #3B82F6; } .stage-dot.yellow { background: var(--yellow); }
+.stage-dot.purple { background: var(--purple); } .stage-dot.green { background: var(--green); } .stage-dot.emerald { background: var(--emerald); }
+.stage-count { margin-left: auto; font-weight: 600; }
+.stage-bar { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.stage-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+.stage-fill.blue { background: #3B82F6; } .stage-fill.yellow { background: var(--yellow); }
+.stage-fill.purple { background: var(--purple); } .stage-fill.green { background: var(--green); } .stage-fill.emerald { background: var(--emerald); }
+
+.alert-list { display: flex; flex-direction: column; gap: 12px; }
+.alert-item { padding: 12px 16px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.alert-item.urgent { background: var(--red-light); } .alert-item.warning { background: var(--yellow-light); } .alert-item.info { background: var(--primary-light); }
+.alert-badge { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: var(--red); color: #fff; }
+.alert-badge.warn { background: var(--yellow); } .alert-badge.info { background: var(--primary); }
+.alert-item p { flex: 1; font-size: 0.85rem; }
+
+.activity-list { display: flex; flex-direction: column; gap: 12px; }
+.activity-item { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.activity-item:last-child { border: none; }
+.activity-time { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; min-width: 60px; padding-top: 2px; }
+.activity-item p { font-size: 0.85rem; }
+
+.facility-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+@media (max-width: 900px) { .facility-grid { grid-template-columns: 1fr; } }
+.facility-card { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+.facility-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--primary) 0%, var(--primary-hover) 100%); }
+.facility-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+.facility-type { font-size: 0.8rem; color: var(--text-light); margin-bottom: 16px; }
+.facility-stats { display: flex; gap: 24px; margin-bottom: 16px; text-align: center; }
+.facility-stats div { display: flex; flex-direction: column; }
+.facility-stats strong { font-size: 1.3rem; } .facility-stats span { font-size: 0.7rem; color: var(--text-muted); }
+
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+.badge.green { background: var(--green-light); color: #065F46; }
+.badge.blue { background: #DBEAFE; color: #1E40AF; }
+.badge.yellow { background: var(--yellow-light); color: #92400E; }
+.badge.red { background: var(--red-light); color: #991B1B; }
+.badge.premium { background: var(--primary-light); color: var(--primary); }
+
+.select-input { padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.85rem; width: 100%; background: #fff; outline: none; margin-bottom: 12px; }
+.select-input:focus { border-color: var(--primary); }
+
+.premium-card { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%); color: #fff; border-radius: var(--radius); padding: 24px; margin-bottom: 20px; }
+.premium-card h2 { color: #fff; }
+.premium-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 16px; }
+.premium-item { text-align: center; }
+.premium-item strong { display: block; font-size: 1.8rem; margin-bottom: 4px; }
+.premium-item span { font-size: 0.75rem; opacity: 0.9; }
+
+.youtube-card { border: 2px solid #FF0000; }
+.youtube-badge { background: #FF0000; color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+
+.chatbot-btn { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; border-radius: 50%; background: #2563EB; color: #fff; border: none; font-size: 1.5rem; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.4); z-index: 100; transition: all 0.3s; }
+.chatbot-btn:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(37,99,235,0.5); }
+.chatbot-overlay { display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(4px); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.chatbot-overlay.open { display: flex; }
+.chatbot-window { background: #fff; border-radius: 16px; width: 100%; max-width: 500px; height: 600px; max-height: 90vh; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.3s; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; } }
+.chatbot-header { padding: 20px; background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%); color: #fff; border-radius: 16px 16px 0 0; display: flex; justify-content: space-between; align-items: center; }
+.chatbot-header h3 { font-size: 1rem; }
+.chatbot-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; opacity: 0.8; }
+.chatbot-close:hover { opacity: 1; }
+.chatbot-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+.chat-message { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 0.85rem; line-height: 1.5; animation: fadeIn 0.3s; }
+.chat-message.bot { background: var(--bg); align-self: flex-start; }
+.chat-message.user { background: #2563EB; color: #fff; align-self: flex-end; }
+.chatbot-input-area { padding: 16px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+.chatbot-input { flex: 1; padding: 10px 14px; border: 1px solid var(--border); border-radius: 20px; font-family: var(--font); font-size: 0.85rem; outline: none; }
+.chatbot-input:focus { border-color: #2563EB; }
+.chatbot-send { padding: 10px 20px; background: #2563EB; color: #fff; border: none; border-radius: 20px; font-family: var(--font); font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+.chatbot-send:hover { background: #1E40AF; }
+.api-key-notice { background: var(--yellow-light); padding: 12px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 12px; text-align: center; }
+.api-key-input-group { display: flex; gap: 8px; margin-top: 8px; }
+.api-key-input { flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.75rem; }
+.api-key-btn { padding: 6px 12px; background: var(--primary); color: #fff; border: none; border-radius: 6px; font-size: 0.75rem; font-weight: 600; cursor: pointer; }
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-sidebar); color: #fff; padding: 12px 24px; border-radius: var(--radius-sm); font-size: 0.85rem; opacity: 0; transition: all 0.3s; z-index: 300; }
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">💎</span>
+                <span class="logo-text">Premium<span class="logo-ai">AI</span></span>
+            </div>
+            <p class="logo-sub">Wandl.Immobilien — München & Gräfelfing</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+                <span class="nav-icon">📊</span> Dashboard
+            </div>
+            <div class="nav-item" data-page="properties" onclick="showPage('properties')">
+                <span class="nav-icon">💎</span> Premium-Objekte
+            </div>
+            <div class="nav-item" data-page="valuation" onclick="showPage('valuation')">
+                <span class="nav-icon">📊</span> Wertgutachten
+            </div>
+            <div class="nav-item" data-page="marketing" onclick="showPage('marketing')">
+                <span class="nav-icon">📱</span> AI-Marketing
+            </div>
+            <div class="nav-item" data-page="virtual" onclick="showPage('virtual')">
+                <span class="nav-icon">🎥</span> Virtuelle Tour
+            </div>
+            <div class="nav-item" data-page="analytics" onclick="showPage('analytics')">
+                <span class="nav-icon">📈</span> Münchner Markt
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-badge">
+                <div class="user-avatar">MW</div>
+                <div>
+                    <p class="user-name">Matthias Wandl</p>
+                    <p class="user-role">Immobilien-Makler</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <header class="mobile-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <span class="logo-text">Premium<span class="logo-ai">AI</span></span>
+    </header>
+
+    <main class="main">
+        <div class="page active" id="page-dashboard">
+            <div class="page-header">
+                <div>
+                    <h1>Willkommen, Matthias 👋</h1>
+                    <p class="page-subtitle">Premium-Immobilien München & Gräfelfing</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showPage('marketing')">📱 AI-Marketing</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">💎</div>
+                    <div class="stat-info">
+                        <p class="stat-value">24</p>
+                        <p class="stat-label">Premium-Objekte</p>
+                    </div>
+                    <span class="stat-trend">+4 diese Woche</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">💰</div>
+                    <div class="stat-info">
+                        <p class="stat-value">€42,8M</p>
+                        <p class="stat-label">Portfolio-Wert</p>
+                    </div>
+                    <span class="stat-trend">+€5,2M</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">🎥</div>
+                    <div class="stat-info">
+                        <p class="stat-value">18,5K</p>
+                        <p class="stat-label">YouTube Abonnenten</p>
+                    </div>
+                    <span class="stat-trend">+850 Monat</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">📱</div>
+                    <div class="stat-info">
+                        <p class="stat-value">256</p>
+                        <p class="stat-label">Social Media Leads</p>
+                    </div>
+                    <span class="stat-trend">+42 neu</span>
+                </div>
+            </div>
+
+            <div class="premium-card">
+                <h2>💎 Premium-Performance</h2>
+                <p style="font-size:0.85rem;opacity:0.95;margin-bottom:8px;">Hochpreisige Wohnimmobilien München — Exklusiv-Vermarktung</p>
+                <div class="premium-grid">
+                    <div class="premium-item">
+                        <strong>€1,82M</strong>
+                        <span>Ø Verkaufspreis</span>
+                    </div>
+                    <div class="premium-item">
+                        <strong>32 Tage</strong>
+                        <span>Ø Vermarktungsdauer</span>
+                    </div>
+                    <div class="premium-item">
+                        <strong>6</strong>
+                        <span>Abschlüsse (Monat)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>Verkaufs-Pipeline</h2>
+                <div class="pipeline">
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot blue"></span>
+                            <span>Neue Anfragen</span>
+                            <span class="stage-count">68</span>
+                        </div>
+                        <div class="stage-bar">
+                            <div class="stage-fill blue" style="width:100%"></div>
+                        </div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot yellow"></span>
+                            <span>Qualifiziert / Besichtigung</span>
+                            <span class="stage-count">42</span>
+                        </div>
+                        <div class="stage-bar">
+                            <div class="stage-fill yellow" style="width:62%"></div>
+                        </div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot purple"></span>
+                            <span>Angebot erstellt</span>
+                            <span class="stage-count">18</span>
+                        </div>
+                        <div class="stage-bar">
+                            <div class="stage-fill purple" style="width:26%"></div>
+                        </div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot green"></span>
+                            <span>Verhandlung</span>
+                            <span class="stage-count">9</span>
+                        </div>
+                        <div class="stage-bar">
+                            <div class="stage-fill green" style="width:13%"></div>
+                        </div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot emerald"></span>
+                            <span>Verkauft ✓</span>
+                            <span class="stage-count">6</span>
+                        </div>
+                        <div class="stage-bar">
+                            <div class="stage-fill emerald" style="width:9%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="section-card">
+                    <h2>⚠️ Prioritäten</h2>
+                    <div class="alert-list">
+                        <div class="alert-item urgent">
+                            <span class="alert-badge">Dringend</span>
+                            <p><strong>Penthouse Lehel</strong> — Notartermin Freitag 10:00 vorbereiten</p>
+                            <button class="btn btn-sm">Details →</button>
+                        </div>
+                        <div class="alert-item warning">
+                            <span class="alert-badge warn">Heute</span>
+                            <p><strong>YouTube-Video</strong> — Villa Grünwald Immobilien-Tour aufnehmen</p>
+                            <button class="btn btn-sm" onclick="showPage('marketing')">Starten →</button>
+                        </div>
+                        <div class="alert-item info">
+                            <span class="alert-badge info">AI</span>
+                            <p>🤖 <strong>Social Media Content</strong> für 3 Objekte generiert — bereit zum Posten</p>
+                            <button class="btn btn-sm" onclick="showPage('marketing')">Ansehen →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2>📋 Aktivitäten</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-time">vor 1h</span>
+                            <p>🎥 <strong>YouTube-Video</strong> "Villa Grünwald" — 1.200 Aufrufe in 24h</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">vor 3h</span>
+                            <p>💎 <strong>Wertgutachten Penthouse Bogenhausen</strong> — €2,45M erstellt</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">gestern</span>
+                            <p>✅ <strong>Penthouse Lehel</strong> — Kaufvertrag unterschrieben! €1,85M 🎉</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">gestern</span>
+                            <p>📱 <strong>Instagram-Post</strong> "Luxusvilla München" — 2.450 Likes</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">vor 2 Tagen</span>
+                            <p>🤖 AI hat <strong>45 neue Leads</strong> aus Social Media qualifiziert</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="page-properties">
+            <div class="page-header">
+                <div>
+                    <h1>💎 Premium-Objekte</h1>
+                    <p class="page-subtitle">24 exklusive Immobilien — München & Umland</p>
+                </div>
+            </div>
+            <div class="facility-grid" id="propGrid"></div>
+        </div>
+
+        <div class="page" id="page-valuation">
+            <div class="page-header">
+                <div>
+                    <h1>📊 Wertgutachten-Generator</h1>
+                    <p class="page-subtitle">AI-gestützte Immobilienbewertung</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <h2>Neue Bewertung erstellen</h2>
+                <select class="select-input">
+                    <option>— Objekt auswählen —</option>
+                    <option>Penthouse Bogenhausen — 185m²</option>
+                    <option>Villa Grünwald — 340m²</option>
+                    <option>Luxuswohnung Lehel — 160m²</option>
+                </select>
+                <button class="btn btn-primary" onclick="toast('💎 Wertgutachten wird erstellt...')">💎 Gutachten erstellen</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-marketing">
+            <div class="page-header">
+                <div>
+                    <h1>📱 AI-Marketing Suite</h1>
+                    <p class="page-subtitle">Social Media, YouTube & Premium-Exposés</p>
+                </div>
+            </div>
+            <div class="grid-2">
+                <div class="section-card youtube-card">
+                    <h2><span class="youtube-badge">▶️ YouTube</span> Content-Generator</h2>
+                    <select class="select-input">
+                        <option>— Objekt wählen —</option>
+                        <option>Villa Grünwald — €3,2M</option>
+                        <option>Penthouse Bogenhausen — €2,45M</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="toast('🎥 Video-Skript wird generiert...')">🎥 Video-Skript erstellen</button>
+                </div>
+                <div class="section-card">
+                    <h2>📱 Social Media Posts</h2>
+                    <select class="select-input">
+                        <option>— Objekt wählen —</option>
+                        <option>Luxuswohnung Lehel — €1,85M</option>
+                        <option>Villa Gräfelfing — €2,65M</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="toast('📱 Social Media Content wird generiert...')">📱 Content generieren</button>
+                </div>
+            </div>
+            <div class="section-card">
+                <h2>📄 Premium-Exposé Generator</h2>
+                <select class="select-input">
+                    <option>— Objekt auswählen —</option>
+                    <option>Penthouse Bogenhausen — €2,45M</option>
+                    <option>Villa Grünwald — €3,2M</option>
+                </select>
+                <button class="btn btn-primary" onclick="toast('📄 Premium-Exposé wird erstellt...')">📄 Exposé erstellen</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-virtual">
+            <div class="page-header">
+                <div>
+                    <h1>🎥 Virtuelle Besichtigungen</h1>
+                    <p class="page-subtitle">360°-Touren & AR-Visualisierung</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <h2>Virtuelle Tour starten</h2>
+                <select class="select-input">
+                    <option>— Objekt auswählen —</option>
+                    <option>Penthouse Lehel — €1,85M</option>
+                    <option>Villa Grünwald — €3,2M</option>
+                </select>
+                <button class="btn btn-primary" onclick="toast('🎥 Virtuelle Tour wird geladen...')">🎥 Tour öffnen</button>
+            </div>
+        </div>
+
+        <div class="page" id="page-analytics">
+            <div class="page-header">
+                <div>
+                    <h1>📈 Münchner Marktanalyse</h1>
+                    <p class="page-subtitle">Premium-Segment — Live-Daten</p>
+                </div>
+            </div>
+            <div class="section-card">
+                <h2>Markt-Dashboard</h2>
+                <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:16px;">AI-basierte Analyse des Münchner Premium-Immobilienmarkts</p>
+                <div style="padding:60px;text-align:center;background:var(--bg);border-radius:var(--radius-sm);">
+                    <p style="font-size:2rem;margin-bottom:8px;">📊</p>
+                    <p style="color:var(--text-muted);">Marktdaten werden geladen...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <button class="chatbot-btn" onclick="openChat()">💬</button>
+    <div class="chatbot-overlay" id="chatOverlay" onclick="if(event.target===this)closeChat()">
+        <div class="chatbot-window">
+            <div class="chatbot-header">
+                <h3>🤖 Wandl.Immobilien AI-Assistent</h3>
+                <button class="chatbot-close" onclick="closeChat()">×</button>
+            </div>
+            <div class="chatbot-messages" id="chatMessages">
+                <div id="apiKeyNotice" class="api-key-notice">
+                    🔑 Für Live-AI benötigen Sie einen OpenAI API Key
+                    <div class="api-key-input-group">
+                        <input type="password" class="api-key-input" id="apiKeyInput" placeholder="sk-...">
+                        <button class="api-key-btn" onclick="saveApiKey()">Speichern</button>
+                    </div>
+                </div>
+                <div class="chat-message bot">
+                    Hallo Matthias! Ich unterstütze Sie bei Marketing, Wertgutachten und Social Media Content. Wie kann ich helfen?
+                </div>
+            </div>
+            <div class="chatbot-input-area">
+                <input type="text" class="chatbot-input" id="chatInput" placeholder="Nachricht..." onkeypress="if(event.key==='Enter')sendMessage()">
+                <button class="chatbot-send" onclick="sendMessage()">Senden</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    const PROPS=[
+        {name:"Penthouse Bogenhausen",type:"Penthouse",price:"€2,45M",size:"185 m²",rooms:5,loc:"München-Bogenhausen",status:"premium"},
+        {name:"Villa Grünwald",type:"Villa",price:"€3,20M",size:"340 m²",rooms:7,loc:"Grünwald",status:"neu"},
+        {name:"Luxuswohnung Lehel",type:"ETW",price:"€1,85M",size:"160 m²",rooms:4,loc:"München-Lehel",status:"premium"},
+        {name:"Villa Gräfelfing",type:"Villa",price:"€2,65M",size:"295 m²",rooms:6,loc:"Gräfelfing",status:"neu"},
+        {name:"Penthouse Schwabing",type:"Penthouse",price:"€1,95M",size:"175 m²",rooms:5,loc:"München-Schwabing",status:"premium"},
+        {name:"Luxusvilla Starnberg",type:"Villa",price:"€4,10M",size:"420 m²",rooms:8,loc:"Starnberg",status:"neu"},
+    ];
+
+    function showPage(p){
+        document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(x=>x.classList.remove('active'));
+        document.getElementById('page-'+p).classList.add('active');
+        document.querySelector('[data-page="'+p+'"]')?.classList.add('active');
+        document.getElementById('sidebar').classList.remove('open');
+        if(p==='properties')renderProps();
+        window.scrollTo(0,0);
+    }
+    function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');}
+    function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+    
+    function renderProps(){
+        const st={'neu':'blue','premium':'premium'};
+        document.getElementById('propGrid').innerHTML=PROPS.map(p=>`<div class="facility-card"><div class="facility-header"><h3>${p.name}</h3><span class="badge ${st[p.status]}">${p.status}</span></div><p class="facility-type">${p.type} • ${p.loc}</p><div class="facility-stats"><div><strong>${p.price}</strong><span>Preis</span></div><div><strong>${p.size}</strong><span>Fläche</span></div><div><strong>${p.rooms}</strong><span>Zimmer</span></div></div><button class="btn btn-primary btn-full" onclick="toast('💎 Details werden geladen...')">Details ansehen</button></div>`).join('');
+    }
+
+    let apiKey = localStorage.getItem('openai_api_key_wandl') || '';
+    if(apiKey){document.getElementById('apiKeyNotice').style.display='none';}
+    
+    function openChat(){document.getElementById('chatOverlay').classList.add('open');}
+    function closeChat(){document.getElementById('chatOverlay').classList.remove('open');}
+    function saveApiKey(){
+        apiKey=document.getElementById('apiKeyInput').value.trim();
+        if(!apiKey.startsWith('sk-')){toast('⚠️ Ungültiger API Key');return;}
+        localStorage.setItem('openai_api_key_wandl',apiKey);
+        document.getElementById('apiKeyNotice').style.display='none';
+        toast('✅ API Key gespeichert');
+    }
+    async function sendMessage(){
+        const inp=document.getElementById('chatInput');
+        const msg=inp.value.trim();if(!msg)return;
+        inp.value='';
+        const mc=document.getElementById('chatMessages');
+        mc.innerHTML+=`<div class="chat-message user">${msg}</div>`;
+        mc.scrollTop=mc.scrollHeight;
+        
+        if(!apiKey){
+            setTimeout(()=>{
+                mc.innerHTML+=`<div class="chat-message bot">🔑 Bitte API Key eingeben für Live-Chat.</div>`;
+                mc.scrollTop=mc.scrollHeight;
+            },500);
+            return;
+        }
+        
+        try{
+            const res=await fetch('https://api.openai.com/v1/chat/completions',{
+                method:'POST',
+                headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+                body:JSON.stringify({
+                    model:'gpt-4o-mini',
+                    messages:[
+                        {role:'system',content:'Du bist AI-Assistent für Wandl.Immobilien (Matthias Wandl, München/Gräfelfing). Spezialisiert auf Premium-Immobilien, YouTube-Content, Social Media Marketing. Freundlich, hochwertig, modern. Kurz & präzise.'},
+                        {role:'user',content:msg}
+                    ],
+                    max_tokens:300
+                })
+            });
+            const data=await res.json();
+            const reply=data.choices?.[0]?.message?.content||'⚠️ Fehler';
+            mc.innerHTML+=`<div class="chat-message bot">${reply}</div>`;
+        }catch(e){
+            mc.innerHTML+=`<div class="chat-message bot">⚠️ ${e.message}</div>`;
+        }
+        mc.scrollTop=mc.scrollHeight;
+    }
+
+    renderProps();
+    </script>
+</body>
+</html>
