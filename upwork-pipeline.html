@@ -3,853 +3,1253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upwork Pipeline - AI Proposal Tracker</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Upwork Pipeline - AI Job Scanner & Proposal Drafter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #2a2a3e;
+            --primary-blue: #3b82f6;
+            --primary-blue-hover: #2563eb;
+            --green-accent: #10b981;
+            --yellow-accent: #f59e0b;
+            --red-accent: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0a0f;
-            color: #e0e0e0;
-            overflow-x: hidden;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
         }
-        
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue), var(--green-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--green-accent);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Container */
         .container {
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            height: 100vh;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
         }
-        
-        /* Left Sidebar - Jobs Feed */
-        .sidebar {
-            background: #1a1a2e;
-            border-right: 1px solid #2a2a3e;
+
+        /* Section */
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section-header {
             display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
         }
-        
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid #2a2a3e;
+
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
         }
-        
-        .sidebar-header h2 {
-            font-size: 18px;
-            margin-bottom: 12px;
-        }
-        
-        .filters {
+
+        /* Filter Bar */
+        .filter-bar {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
             display: flex;
-            gap: 8px;
+            gap: 1rem;
             flex-wrap: wrap;
+            margin-bottom: 2rem;
         }
-        
+
         .filter-tag {
-            padding: 6px 12px;
-            background: #2a2a3e;
-            border-radius: 6px;
-            font-size: 12px;
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
             cursor: pointer;
             transition: all 0.2s;
-            border: 1px solid transparent;
+            font-size: 0.875rem;
+            font-weight: 500;
         }
-        
+
         .filter-tag:hover {
-            background: #3a3a4e;
+            border-color: var(--primary-blue);
         }
-        
+
         .filter-tag.active {
-            background: rgba(99, 102, 241, 0.2);
-            border-color: #6366f1;
-            color: #6366f1;
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
         }
-        
-        .jobs-feed {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px;
+
+        /* Job Feed */
+        .job-feed {
+            display: grid;
+            gap: 1.5rem;
         }
-        
+
         .job-card {
-            background: #0f0f14;
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
             cursor: pointer;
-            transition: all 0.2s;
-            border: 2px solid transparent;
+            transition: all 0.3s;
         }
-        
+
         .job-card:hover {
-            border-color: #6366f1;
-            transform: translateY(-2px);
+            border-color: var(--primary-blue);
+            transform: translateX(5px);
         }
-        
-        .job-card.selected {
-            border-color: #22c55e;
-            background: rgba(34, 197, 94, 0.05);
+
+        .job-card.expanded {
+            border-color: var(--green-accent);
         }
-        
+
         .job-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 8px;
+            margin-bottom: 1rem;
         }
-        
+
         .job-title {
-            font-size: 14px;
+            font-size: 1.25rem;
             font-weight: 600;
-            margin-bottom: 4px;
-            line-height: 1.3;
+            margin-bottom: 0.5rem;
         }
-        
+
+        .job-meta {
+            display: flex;
+            gap: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
         .match-score {
-            background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
-            color: #000;
-            font-size: 12px;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
             font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 6px;
-            min-width: 45px;
+            font-size: 1.25rem;
+            min-width: 80px;
             text-align: center;
         }
-        
-        .match-score.medium {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+
+        .match-high {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green-accent);
         }
-        
-        .job-budget {
-            color: #22c55e;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 8px;
+
+        .match-medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--yellow-accent);
         }
-        
+
         .job-description {
-            font-size: 13px;
-            color: #9ca3af;
-            line-height: 1.4;
-            margin-bottom: 8px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 1rem;
         }
-        
-        .job-tags {
+
+        .job-skills {
             display: flex;
-            gap: 6px;
+            gap: 0.5rem;
             flex-wrap: wrap;
+            margin-bottom: 1rem;
         }
-        
-        .job-tag {
-            font-size: 11px;
-            background: #2a2a3e;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-        
-        .job-posted {
-            font-size: 11px;
-            color: #6b7280;
-            margin-top: 8px;
-        }
-        
-        /* Main Area */
-        .main {
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        
-        /* Stats Bar */
-        .stats-bar {
-            background: #1a1a2e;
-            border-bottom: 1px solid #2a2a3e;
-            padding: 16px 24px;
-            display: flex;
-            gap: 32px;
-        }
-        
-        .stat {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            color: #6b7280;
-            text-transform: uppercase;
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-        }
-        
-        .stat-value.green { color: #22c55e; }
-        .stat-value.blue { color: #6366f1; }
-        .stat-value.orange { color: #fbbf24; }
-        
-        /* Content Area */
-        .content {
-            flex: 1;
-            display: grid;
-            grid-template-rows: 1fr 1fr;
-            gap: 20px;
-            padding: 20px;
-            overflow-y: auto;
-        }
-        
-        /* Proposal Generator */
-        .proposal-panel {
-            background: #1a1a2e;
-            border-radius: 12px;
-            padding: 24px;
-            border: 2px solid #2a2a3e;
-        }
-        
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        
-        .panel-header h3 {
-            font-size: 18px;
-            font-weight: 700;
-        }
-        
-        .ai-badge {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            font-size: 11px;
-            padding: 6px 12px;
+
+        .skill-tag {
+            padding: 0.375rem 0.75rem;
+            background: var(--bg-tertiary);
             border-radius: 6px;
-            font-weight: 700;
+            font-size: 0.8125rem;
+            color: var(--primary-blue);
         }
-        
-        .proposal-content {
-            background: #0f0f14;
-            border: 1px solid #2a2a3e;
-            border-radius: 8px;
-            padding: 16px;
-            min-height: 200px;
-            max-height: 300px;
-            overflow-y: auto;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-        
-        .proposal-content.empty {
+
+        .job-actions {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6b7280;
-            font-style: italic;
+            gap: 0.75rem;
+            margin-top: 1rem;
         }
-        
-        .proposal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 16px;
-        }
-        
+
         .btn {
-            padding: 10px 20px;
+            padding: 0.75rem 1.5rem;
             border-radius: 8px;
             border: none;
-            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            font-size: 0.9375rem;
+            font-family: inherit;
         }
-        
+
         .btn-primary {
-            background: #6366f1;
-            color: #fff;
+            background: var(--primary-blue);
+            color: white;
         }
-        
+
         .btn-primary:hover {
-            background: #4f46e5;
+            background: var(--primary-blue-hover);
         }
-        
-        .btn-secondary {
-            background: #2a2a3e;
-            color: #e0e0e0;
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
         }
-        
-        .btn-secondary:hover {
-            background: #3a3a4e;
+
+        .btn-outline:hover {
+            background: var(--bg-tertiary);
         }
-        
+
         .btn-success {
-            background: #22c55e;
-            color: #000;
+            background: var(--green-accent);
+            color: white;
         }
-        
-        .btn-success:hover {
-            background: #10b981;
+
+        .job-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
         }
-        
+
+        .job-card.expanded .job-details {
+            max-height: 1000px;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .job-details h4 {
+            margin-bottom: 0.75rem;
+        }
+
+        .job-details p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
         /* Pipeline Kanban */
         .pipeline {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
         }
-        
+
         .pipeline-column {
-            background: #1a1a2e;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 16px;
-            border: 2px solid #2a2a3e;
+            padding: 1.5rem;
         }
-        
-        .column-header {
-            margin-bottom: 12px;
-        }
-        
-        .column-title {
-            font-size: 13px;
-            font-weight: 700;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        
-        .column-count {
-            font-size: 20px;
-            font-weight: 800;
-            color: #6b7280;
-        }
-        
-        .pipeline-cards {
+
+        .pipeline-header {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 220px;
-            overflow-y: auto;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
         }
-        
+
+        .pipeline-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .pipeline-count {
+            background: var(--bg-tertiary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+
         .pipeline-card {
-            background: #0f0f14;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 12px;
-            font-size: 12px;
-            border-left: 3px solid #6366f1;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: move;
+            transition: all 0.2s;
         }
-        
-        .pipeline-card.new { border-left-color: #6b7280; }
-        .pipeline-card.drafted { border-left-color: #6366f1; }
-        .pipeline-card.submitted { border-left-color: #fbbf24; }
-        .pipeline-card.shortlisted { border-left-color: #f59e0b; }
-        .pipeline-card.won { border-left-color: #22c55e; }
-        
-        .pipeline-card-title {
+
+        .pipeline-card:hover {
+            transform: scale(1.02);
+            border-color: var(--primary-blue);
+        }
+
+        .pipeline-card h4 {
+            font-size: 0.9375rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pipeline-card p {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+        }
+
+        /* Analytics */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .analytics-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .analytics-title {
+            font-size: 1.25rem;
             font-weight: 600;
-            margin-bottom: 4px;
+            margin-bottom: 1.5rem;
         }
-        
-        .pipeline-card-value {
-            color: #22c55e;
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: var(--text-muted);
+        }
+
+        .metric-value {
+            font-weight: 700;
+            color: var(--green-accent);
+        }
+
+        /* Settings */
+        .settings-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .settings-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .settings-title {
+            font-size: 1.25rem;
             font-weight: 600;
+            margin-bottom: 1.5rem;
         }
-        
-        /* AI Chat Button */
-        .ai-chat-btn {
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
             border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
             cursor: pointer;
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-            font-size: 24px;
+            padding: 0;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .proposal-draft {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+        }
+
+        /* Chat Button */
+        .chat-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
             transition: all 0.3s;
             z-index: 1000;
         }
-        
-        .ai-chat-btn:hover {
+
+        .chat-button:hover {
             transform: scale(1.1);
-            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
         }
-        
+
         /* Footer */
         .footer {
-            position: fixed;
-            bottom: 8px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 8px 16px;
-            background: rgba(26, 26, 46, 0.95);
-            border-radius: 20px;
-            font-size: 11px;
-            color: #6b7280;
-            border: 1px solid #2a2a3e;
-            z-index: 999;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 4rem;
         }
-        
+
         .footer a {
-            color: #6366f1;
+            color: var(--primary-blue);
             text-decoration: none;
         }
-        
-        @media (max-width: 1400px) {
+
+        /* Responsive */
+        @media (max-width: 968px) {
             .pipeline {
-                grid-template-columns: repeat(3, 1fr);
+                grid-template-columns: repeat(2, 1fr);
             }
         }
-        
-        @media (max-width: 1024px) {
-            .container {
+
+        @media (max-width: 768px) {
+            .stats-bar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .pipeline {
                 grid-template-columns: 1fr;
             }
-            
-            .sidebar {
-                height: 40vh;
+
+            .filter-bar {
+                flex-direction: column;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h2>🎯 Available Jobs</h2>
-                <div class="filters">
-                    <div class="filter-tag active">All</div>
-                    <div class="filter-tag">High Match</div>
-                    <div class="filter-tag">React</div>
-                    <div class="filter-tag">Node.js</div>
-                    <div class="filter-tag">AI/ML</div>
-                </div>
-            </div>
-            <div class="jobs-feed">
-                <div class="job-card" data-job="1">
-                    <div class="job-header">
-                        <div>
-                            <div class="job-title">React Dashboard with Real-Time Analytics</div>
-                        </div>
-                        <div class="match-score">92%</div>
-                    </div>
-                    <div class="job-budget">$3,500 - $5,000</div>
-                    <div class="job-description">Looking for an experienced React developer to build a modern analytics dashboard with WebSocket integration for real-time data updates.</div>
-                    <div class="job-tags">
-                        <span class="job-tag">React</span>
-                        <span class="job-tag">TypeScript</span>
-                        <span class="job-tag">WebSockets</span>
-                    </div>
-                    <div class="job-posted">Posted 2 hours ago • 8 proposals</div>
-                </div>
-                
-                <div class="job-card" data-job="2">
-                    <div class="job-header">
-                        <div>
-                            <div class="job-title">AI-Powered Chrome Extension Development</div>
-                        </div>
-                        <div class="match-score">87%</div>
-                    </div>
-                    <div class="job-budget">$4,000 - $6,500</div>
-                    <div class="job-description">Need a skilled developer to create a Chrome extension that uses AI to enhance LinkedIn workflows. Must have experience with browser extensions and API integration.</div>
-                    <div class="job-tags">
-                        <span class="job-tag">JavaScript</span>
-                        <span class="job-tag">Chrome Extension</span>
-                        <span class="job-tag">AI Integration</span>
-                    </div>
-                    <div class="job-posted">Posted 5 hours ago • 12 proposals</div>
-                </div>
-                
-                <div class="job-card" data-job="3">
-                    <div class="job-header">
-                        <div>
-                            <div class="job-title">Full-Stack SaaS Platform - MVP Development</div>
-                        </div>
-                        <div class="match-score medium">78%</div>
-                    </div>
-                    <div class="job-budget">$8,000 - $12,000</div>
-                    <div class="job-description">Building a B2B SaaS platform from scratch. Need a full-stack developer who can handle both frontend (React/Next.js) and backend (Node.js/PostgreSQL).</div>
-                    <div class="job-tags">
-                        <span class="job-tag">React</span>
-                        <span class="job-tag">Node.js</span>
-                        <span class="job-tag">PostgreSQL</span>
-                    </div>
-                    <div class="job-posted">Posted 1 day ago • 23 proposals</div>
-                </div>
-                
-                <div class="job-card" data-job="4">
-                    <div class="job-header">
-                        <div>
-                            <div class="job-title">Mobile App with Real-Time Features</div>
-                        </div>
-                        <div class="match-score medium">74%</div>
-                    </div>
-                    <div class="job-budget">$5,500 - $8,000</div>
-                    <div class="job-description">React Native app with real-time chat and notifications. Looking for someone who can deliver high-quality code and meet tight deadlines.</div>
-                    <div class="job-tags">
-                        <span class="job-tag">React Native</span>
-                        <span class="job-tag">Firebase</span>
-                        <span class="job-tag">Push Notifications</span>
-                    </div>
-                    <div class="job-posted">Posted 2 days ago • 31 proposals</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="main">
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">💼 Upwork Pipeline</div>
             <div class="stats-bar">
-                <div class="stat">
-                    <div class="stat-label">Proposals Sent</div>
-                    <div class="stat-value blue">47</div>
+                <div class="stat-item">
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Proposals</div>
                 </div>
-                <div class="stat">
+                <div class="stat-item">
+                    <div class="stat-value">23%</div>
                     <div class="stat-label">Reply Rate</div>
-                    <div class="stat-value green">34%</div>
                 </div>
-                <div class="stat">
-                    <div class="stat-label">Win Ratio</div>
-                    <div class="stat-value green">21%</div>
-                </div>
-                <div class="stat">
-                    <div class="stat-label">Avg. Proposal Time</div>
-                    <div class="stat-value orange">8m</div>
+                <div class="stat-item">
+                    <div class="stat-value">12%</div>
+                    <div class="stat-label">Win Rate</div>
                 </div>
             </div>
-            
-            <div class="content">
-                <div class="proposal-panel">
-                    <div class="panel-header">
-                        <h3>✨ AI Proposal Generator</h3>
-                        <span class="ai-badge">POWERED BY AI</span>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Job Feed Section -->
+        <section class="section" id="jobs">
+            <div class="section-header">
+                <h2 class="section-title">🔍 Job Feed</h2>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-tag active" onclick="toggleFilter(this)">All Jobs</div>
+                <div class="filter-tag" onclick="toggleFilter(this)">AI/ML</div>
+                <div class="filter-tag" onclick="toggleFilter(this)">Web Development</div>
+                <div class="filter-tag" onclick="toggleFilter(this)">Automation</div>
+                <div class="filter-tag" onclick="toggleFilter(this)">Data Science</div>
+                <div class="filter-tag" onclick="toggleFilter(this)">High Budget ($5K+)</div>
+                <div class="filter-tag" onclick="toggleFilter(this)">Verified Payment</div>
+            </div>
+
+            <!-- Job Cards -->
+            <div class="job-feed">
+                <div class="job-card" onclick="toggleJob(this)">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">AI-Powered Sales Assistant Chrome Extension</div>
+                            <div class="job-meta">
+                                <span>💰 $8,000 - $12,000</span>
+                                <span>🕐 Posted 2 hours ago</span>
+                                <span>📍 Remote</span>
+                            </div>
+                        </div>
+                        <div class="match-score match-high">96%</div>
                     </div>
-                    <div class="proposal-content empty" id="proposal-content">
-                        Select a job from the left to generate a personalized proposal
+                    <div class="job-description">
+                        Looking for an experienced developer to build a Chrome extension that uses AI to help sales teams engage on LinkedIn. Must have experience with Claude API, browser extensions, and real-time data processing.
                     </div>
-                    <div class="proposal-actions">
-                        <button class="btn btn-primary" id="generate-btn" disabled>Generate Proposal</button>
-                        <button class="btn btn-secondary" id="edit-btn" disabled>Edit</button>
-                        <button class="btn btn-success" id="submit-btn" disabled>Submit to Pipeline</button>
+                    <div class="job-skills">
+                        <span class="skill-tag">Chrome Extension</span>
+                        <span class="skill-tag">Claude API</span>
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">AI Integration</span>
+                        <span class="skill-tag">LinkedIn Scraping</span>
+                    </div>
+                    <div class="job-actions">
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); generateProposal(this)">
+                            ✨ Generate Proposal
+                        </button>
+                        <button class="btn btn-outline">View Full Job</button>
+                    </div>
+                    <div class="job-details">
+                        <h4>Full Description:</h4>
+                        <p>We need a talented developer to create a Chrome extension that revolutionizes LinkedIn engagement for sales professionals. The extension should scan LinkedIn feeds for high-intent keywords and use Claude AI to generate personalized reply suggestions. Strong emphasis on clean UI/UX and performance.</p>
                     </div>
                 </div>
-                
-                <div class="pipeline">
-                    <div class="pipeline-column">
-                        <div class="column-header">
-                            <div class="column-title">New</div>
-                            <div class="column-count">8</div>
+
+                <div class="job-card" onclick="toggleJob(this)">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">ServiceTitan Dashboard for Team Performance Tracking</div>
+                            <div class="job-meta">
+                                <span>💰 $5,000 - $8,000</span>
+                                <span>🕐 Posted 4 hours ago</span>
+                                <span>📍 US Only</span>
+                            </div>
                         </div>
-                        <div class="pipeline-cards">
-                            <div class="pipeline-card new">
-                                <div class="pipeline-card-title">E-commerce Platform</div>
-                                <div class="pipeline-card-value">$6,500</div>
+                        <div class="match-score match-high">92%</div>
+                    </div>
+                    <div class="job-description">
+                        Need a live TV dashboard that shows real-time team metrics, Google reviews, dispatch status, and performance charts. Must integrate with ServiceTitan API and display beautifully on large screens.
+                    </div>
+                    <div class="job-skills">
+                        <span class="skill-tag">Dashboard Design</span>
+                        <span class="skill-tag">API Integration</span>
+                        <span class="skill-tag">Real-time Updates</span>
+                        <span class="skill-tag">ServiceTitan</span>
+                        <span class="skill-tag">Data Visualization</span>
+                    </div>
+                    <div class="job-actions">
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); generateProposal(this)">
+                            ✨ Generate Proposal
+                        </button>
+                        <button class="btn btn-outline">View Full Job</button>
+                    </div>
+                    <div class="job-details">
+                        <h4>Full Description:</h4>
+                        <p>We want a "brag board" dashboard that displays live team performance on TVs in our office. Features include leaderboard, recent 5-star reviews slider, dispatch ticker, and performance charts. Clean, modern design that motivates the team!</p>
+                    </div>
+                </div>
+
+                <div class="job-card" onclick="toggleJob(this)">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">Upwork Job Scanner & Proposal Automation Tool</div>
+                            <div class="job-meta">
+                                <span>💰 $6,000 - $10,000</span>
+                                <span>🕐 Posted 6 hours ago</span>
+                                <span>📍 Remote</span>
                             </div>
-                            <div class="pipeline-card new">
-                                <div class="pipeline-card-title">API Integration</div>
-                                <div class="pipeline-card-value">$2,800</div>
+                        </div>
+                        <div class="match-score match-high">94%</div>
+                    </div>
+                    <div class="job-description">
+                        Build a web app that scans Upwork for relevant jobs, scores them by match quality, and uses AI to draft personalized proposals. Must include a Kanban pipeline and analytics dashboard.
+                    </div>
+                    <div class="job-skills">
+                        <span class="skill-tag">Web Scraping</span>
+                        <span class="skill-tag">AI/GPT</span>
+                        <span class="skill-tag">Kanban UI</span>
+                        <span class="skill-tag">Analytics</span>
+                        <span class="skill-tag">Automation</span>
+                    </div>
+                    <div class="job-actions">
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); generateProposal(this)">
+                            ✨ Generate Proposal
+                        </button>
+                        <button class="btn btn-outline">View Full Job</button>
+                    </div>
+                    <div class="job-details">
+                        <h4>Full Description:</h4>
+                        <p>I spend hours every day scanning Upwork for jobs and writing proposals. I want an AI-powered tool that finds relevant jobs, scores them based on my skills, and drafts compelling proposals. Bonus points for a pipeline view to track submissions!</p>
+                    </div>
+                </div>
+
+                <div class="job-card" onclick="toggleJob(this)">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">SaaS Compliance Tracker (SOC 2, ISO 27001, GDPR)</div>
+                            <div class="job-meta">
+                                <span>💰 $10,000 - $15,000</span>
+                                <span>🕐 Posted 8 hours ago</span>
+                                <span>📍 Remote</span>
                             </div>
+                        </div>
+                        <div class="match-score match-high">89%</div>
+                    </div>
+                    <div class="job-description">
+                        Create a comprehensive compliance management platform for SaaS companies. Must support multiple frameworks, evidence uploads, gap analysis, and audit readiness scoring. Multi-tenant architecture required.
+                    </div>
+                    <div class="job-skills">
+                        <span class="skill-tag">SaaS Development</span>
+                        <span class="skill-tag">Security</span>
+                        <span class="skill-tag">Multi-tenant</span>
+                        <span class="skill-tag">Compliance</span>
+                        <span class="skill-tag">Dashboard</span>
+                    </div>
+                    <div class="job-actions">
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); generateProposal(this)">
+                            ✨ Generate Proposal
+                        </button>
+                        <button class="btn btn-outline">View Full Job</button>
+                    </div>
+                    <div class="job-details">
+                        <h4>Full Description:</h4>
+                        <p>We're building a compliance SaaS for early-stage companies. Need a developer who understands security frameworks and can build a beautiful, functional dashboard. Features include control tracking, evidence management, gap analysis, and reporting.</p>
+                    </div>
+                </div>
+
+                <div class="job-card" onclick="toggleJob(this)">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">Real Estate Investment Calculator Suite</div>
+                            <div class="job-meta">
+                                <span>💰 $4,000 - $7,000</span>
+                                <span>🕐 Posted 10 hours ago</span>
+                                <span>📍 Remote</span>
+                            </div>
+                        </div>
+                        <div class="match-score match-medium">84%</div>
+                    </div>
+                    <div class="job-description">
+                        Build an interactive web calculator for real estate investors. Must include BRRRR, Fix & Flip, and property comparison tools. Real-time calculations, export to PDF, and clean mobile-friendly design.
+                    </div>
+                    <div class="job-skills">
+                        <span class="skill-tag">JavaScript</span>
+                        <span class="skill-tag">Financial Calculations</span>
+                        <span class="skill-tag">UI/UX</span>
+                        <span class="skill-tag">PDF Export</span>
+                        <span class="skill-tag">Responsive Design</span>
+                    </div>
+                    <div class="job-actions">
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); generateProposal(this)">
+                            ✨ Generate Proposal
+                        </button>
+                        <button class="btn btn-outline">View Full Job</button>
+                    </div>
+                    <div class="job-details">
+                        <h4>Full Description:</h4>
+                        <p>I run a real estate investing course and want a calculator tool for my students. Should have three calculators: BRRRR method, Fix & Flip analyzer, and property comparison. All calculations need to update live as users type.</p>
+                    </div>
+                </div>
+
+                <div class="job-card" onclick="toggleJob(this)">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">AI Content Generation Platform for Agencies</div>
+                            <div class="job-meta">
+                                <span>💰 $12,000 - $18,000</span>
+                                <span>🕐 Posted 12 hours ago</span>
+                                <span>📍 Remote</span>
+                            </div>
+                        </div>
+                        <div class="match-score match-high">91%</div>
+                    </div>
+                    <div class="job-description">
+                        Full-stack platform that uses GPT-4/Claude to generate blog posts, social content, and ad copy. Needs team management, brand voice training, content calendar, and analytics. Think Jasper/Copy.ai competitor.
+                    </div>
+                    <div class="job-skills">
+                        <span class="skill-tag">Full-Stack</span>
+                        <span class="skill-tag">AI/ML</span>
+                        <span class="skill-tag">SaaS</span>
+                        <span class="skill-tag">Team Features</span>
+                        <span class="skill-tag">API Integration</span>
+                    </div>
+                    <div class="job-actions">
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); generateProposal(this)">
+                            ✨ Generate Proposal
+                        </button>
+                        <button class="btn btn-outline">View Full Job</button>
+                    </div>
+                    <div class="job-details">
+                        <h4>Full Description:</h4>
+                        <p>Building an AI content platform specifically for marketing agencies. Must support multiple clients, custom brand voices, workflow approvals, and detailed usage analytics. Looking for a technical co-founder type who can own this long-term.</p>
+                    </div>
+                </div>
+
+                <div class="job-card" onclick="toggleJob(this)">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">LinkedIn Lead Scraper + CRM Integration</div>
+                            <div class="job-meta">
+                                <span>💰 $3,500 - $6,000</span>
+                                <span>🕐 Posted 14 hours ago</span>
+                                <span>📍 Remote</span>
+                            </div>
+                        </div>
+                        <div class="match-score match-medium">78%</div>
+                    </div>
+                    <div class="job-description">
+                        Need a tool that scrapes LinkedIn based on search criteria, qualifies leads using AI, and syncs to HubSpot/Salesforce. Must respect rate limits and use proxies to avoid detection.
+                    </div>
+                    <div class="job-skills">
+                        <span class="skill-tag">Web Scraping</span>
+                        <span class="skill-tag">LinkedIn API</span>
+                        <span class="skill-tag">CRM Integration</span>
+                        <span class="skill-tag">Proxies</span>
+                        <span class="skill-tag">Python</span>
+                    </div>
+                    <div class="job-actions">
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); generateProposal(this)">
+                            ✨ Generate Proposal
+                        </button>
+                        <button class="btn btn-outline">View Full Job</button>
+                    </div>
+                    <div class="job-details">
+                        <h4>Full Description:</h4>
+                        <p>Our sales team spends too much time manually finding leads on LinkedIn. Want an automated scraper that finds prospects, enriches data, scores them, and pushes directly to our CRM. Must be reliable and stealthy!</p>
+                    </div>
+                </div>
+
+                <div class="job-card" onclick="toggleJob(this)">
+                    <div class="job-header">
+                        <div>
+                            <div class="job-title">Automated Reporting Dashboard for Marketing Agencies</div>
+                            <div class="job-meta">
+                                <span>💰 $7,000 - $11,000</span>
+                                <span>🕐 Posted 16 hours ago</span>
+                                <span>📍 Remote</span>
+                            </div>
+                        </div>
+                        <div class="match-score match-high">87%</div>
+                    </div>
+                    <div class="job-description">
+                        White-label reporting platform that pulls data from Google Ads, Facebook, GA4, and generates client-ready reports. Must include AI-generated insights and custom branding options.
+                    </div>
+                    <div class="job-skills">
+                        <span class="skill-tag">API Integrations</span>
+                        <span class="skill-tag">Data Visualization</span>
+                        <span class="skill-tag">Reporting</span>
+                        <span class="skill-tag">White-label</span>
+                        <span class="skill-tag">Multi-tenant</span>
+                    </div>
+                    <div class="job-actions">
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); generateProposal(this)">
+                            ✨ Generate Proposal
+                        </button>
+                        <button class="btn btn-outline">View Full Job</button>
+                    </div>
+                    <div class="job-details">
+                        <h4>Full Description:</h4>
+                        <p>We manage 50+ clients and spend days creating monthly reports. Need a platform that auto-generates beautiful, branded reports with AI-written summaries of performance and recommendations. Think AgencyAnalytics meets ChatGPT.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pipeline Section -->
+        <section class="section" id="pipeline">
+            <div class="section-header">
+                <h2 class="section-title">📋 Proposal Pipeline</h2>
+            </div>
+
+            <div class="pipeline">
+                <div class="pipeline-column">
+                    <div class="pipeline-header">
+                        <div class="pipeline-title">Drafted</div>
+                        <div class="pipeline-count">8</div>
+                    </div>
+                    <div class="pipeline-card">
+                        <h4>AI Chrome Extension</h4>
+                        <p>$8K-$12K • 96% match</p>
+                    </div>
+                    <div class="pipeline-card">
+                        <h4>ServiceTitan Dashboard</h4>
+                        <p>$5K-$8K • 92% match</p>
+                    </div>
+                    <div class="pipeline-card">
+                        <h4>Upwork Scanner</h4>
+                        <p>$6K-$10K • 94% match</p>
+                    </div>
+                </div>
+
+                <div class="pipeline-column">
+                    <div class="pipeline-header">
+                        <div class="pipeline-title">Submitted</div>
+                        <div class="pipeline-count">12</div>
+                    </div>
+                    <div class="pipeline-card">
+                        <h4>Compliance Tracker</h4>
+                        <p>$10K-$15K • 89% match</p>
+                    </div>
+                    <div class="pipeline-card">
+                        <h4>Real Estate Calculator</h4>
+                        <p>$4K-$7K • 84% match</p>
+                    </div>
+                    <div class="pipeline-card">
+                        <h4>Content Platform</h4>
+                        <p>$12K-$18K • 91% match</p>
+                    </div>
+                </div>
+
+                <div class="pipeline-column">
+                    <div class="pipeline-header">
+                        <div class="pipeline-title">In Discussion</div>
+                        <div class="pipeline-count">6</div>
+                    </div>
+                    <div class="pipeline-card">
+                        <h4>LinkedIn Scraper</h4>
+                        <p>$3.5K-$6K • 78% match</p>
+                    </div>
+                    <div class="pipeline-card">
+                        <h4>Reporting Dashboard</h4>
+                        <p>$7K-$11K • 87% match</p>
+                    </div>
+                </div>
+
+                <div class="pipeline-column">
+                    <div class="pipeline-header">
+                        <div class="pipeline-title">Won</div>
+                        <div class="pipeline-count">4</div>
+                    </div>
+                    <div class="pipeline-card">
+                        <h4>E-commerce Analytics</h4>
+                        <p>$9.5K • Closed last week</p>
+                    </div>
+                    <div class="pipeline-card">
+                        <h4>CRM Migration Tool</h4>
+                        <p>$6.8K • In progress</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section class="section" id="analytics">
+            <div class="section-header">
+                <h2 class="section-title">📊 Analytics</h2>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <div class="analytics-title">Win Rate by Category</div>
+                    <div class="metric-row">
+                        <div class="metric-label">AI/ML Projects</div>
+                        <div class="metric-value">18%</div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric-label">Web Development</div>
+                        <div class="metric-value">12%</div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric-label">Automation</div>
+                        <div class="metric-value">15%</div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric-label">Data Science</div>
+                        <div class="metric-value">9%</div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="analytics-title">Response Time</div>
+                    <div class="metric-row">
+                        <div class="metric-label">Avg. Time to Proposal</div>
+                        <div class="metric-value">2.3 hrs</div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric-label">Fastest Response</div>
+                        <div class="metric-value">12 min</div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric-label">Reply Rate (Client)</div>
+                        <div class="metric-value">23%</div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric-label">Interview Rate</div>
+                        <div class="metric-value">31%</div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <div class="analytics-title">Best Keywords</div>
+                    <div class="metric-row">
+                        <div class="metric-label">"AI-powered"</div>
+                        <div class="metric-value">22% win</div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric-label">"Dashboard"</div>
+                        <div class="metric-value">19% win</div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric-label">"Automation"</div>
+                        <div class="metric-value">17% win</div>
+                    </div>
+                    <div class="metric-row">
+                        <div class="metric-label">"Chrome Extension"</div>
+                        <div class="metric-value">21% win</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Section -->
+        <section class="section" id="settings">
+            <div class="section-header">
+                <h2 class="section-title">⚙️ Settings</h2>
+            </div>
+
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <div class="settings-title">Keyword Preferences</div>
+                    <div class="form-group">
+                        <label class="form-label">Track these keywords (comma-separated)</label>
+                        <input type="text" class="form-input" value="AI, Machine Learning, Chrome Extension, Dashboard, Automation, SaaS" placeholder="Enter keywords...">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Exclude keywords</label>
+                        <input type="text" class="form-input" value="logo design, WordPress, Shopify theme" placeholder="Enter exclusions...">
+                    </div>
+                    <button class="btn btn-primary">Save Keywords</button>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-title">Proposal Templates</div>
+                    <div class="form-group">
+                        <label class="form-label">Default Opening</label>
+                        <textarea class="form-input form-textarea" placeholder="Hi [Client Name]...">Hi [Client Name],
+
+I read your job post about [Project Title] and I'm excited about the opportunity. I specialize in [Relevant Skills] and have delivered similar projects for [Client Type].</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Default Closing</label>
+                        <textarea class="form-input form-textarea" placeholder="Looking forward...">I'd love to discuss your project in more detail. Feel free to check my portfolio and reviews. Available to start immediately.
+
+Looking forward to hearing from you!
+
+Best regards,
+[Your Name]</textarea>
+                    </div>
+                    <button class="btn btn-primary">Save Templates</button>
+                </div>
+
+                <div class="settings-card">
+                    <div class="settings-title">Notification Preferences</div>
+                    <div class="form-group">
+                        <div class="checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked> New high-match jobs
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked> Client responses
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox"> Daily summary
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" checked> Pipeline updates
+                            </label>
                         </div>
                     </div>
-                    
-                    <div class="pipeline-column">
-                        <div class="column-header">
-                            <div class="column-title">Drafted</div>
-                            <div class="column-count">5</div>
-                        </div>
-                        <div class="pipeline-cards">
-                            <div class="pipeline-card drafted">
-                                <div class="pipeline-card-title">React Dashboard</div>
-                                <div class="pipeline-card-value">$4,200</div>
-                            </div>
-                            <div class="pipeline-card drafted">
-                                <div class="pipeline-card-title">Chrome Extension</div>
-                                <div class="pipeline-card-value">$5,500</div>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label class="form-label">Notification Email</label>
+                        <input type="email" class="form-input" value="your@email.com">
                     </div>
-                    
-                    <div class="pipeline-column">
-                        <div class="column-header">
-                            <div class="column-title">Submitted</div>
-                            <div class="column-count">12</div>
-                        </div>
-                        <div class="pipeline-cards">
-                            <div class="pipeline-card submitted">
-                                <div class="pipeline-card-title">Landing Page</div>
-                                <div class="pipeline-card-value">$1,800</div>
-                            </div>
-                            <div class="pipeline-card submitted">
-                                <div class="pipeline-card-title">Mobile App MVP</div>
-                                <div class="pipeline-card-value">$9,200</div>
-                            </div>
-                            <div class="pipeline-card submitted">
-                                <div class="pipeline-card-title">CRM Integration</div>
-                                <div class="pipeline-card-value">$3,400</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="pipeline-column">
-                        <div class="column-header">
-                            <div class="column-title">Shortlisted</div>
-                            <div class="column-count">4</div>
-                        </div>
-                        <div class="pipeline-cards">
-                            <div class="pipeline-card shortlisted">
-                                <div class="pipeline-card-title">SaaS Dashboard</div>
-                                <div class="pipeline-card-value">$7,800</div>
-                            </div>
-                            <div class="pipeline-card shortlisted">
-                                <div class="pipeline-card-title">Payment Gateway</div>
-                                <div class="pipeline-card-value">$5,200</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="pipeline-column">
-                        <div class="column-header">
-                            <div class="column-title">Won 🎉</div>
-                            <div class="column-count">10</div>
-                        </div>
-                        <div class="pipeline-cards">
-                            <div class="pipeline-card won">
-                                <div class="pipeline-card-title">Blog Platform</div>
-                                <div class="pipeline-card-value">$4,600</div>
-                            </div>
-                            <div class="pipeline-card won">
-                                <div class="pipeline-card-title">Admin Dashboard</div>
-                                <div class="pipeline-card-value">$6,800</div>
-                            </div>
-                        </div>
-                    </div>
+                    <button class="btn btn-primary">Save Preferences</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Built by <a href="https://linkedin.com/in/janisagic" target="_blank">Janis Agic</a> © 2024
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal" id="proposalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">AI-Generated Proposal</div>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="proposal-draft" id="proposalDraft"></div>
+                <div class="job-actions">
+                    <button class="btn btn-success" onclick="submitProposal()">Submit Proposal</button>
+                    <button class="btn btn-primary" onclick="copyProposal()">Copy to Clipboard</button>
+                    <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
                 </div>
             </div>
         </div>
     </div>
-    
-    <button class="ai-chat-btn">💬</button>
-    
-    <div class="footer">
-        Built by <a href="https://github.com/janisag07" target="_blank">Janis Agic</a>
+
+    <!-- Chat Button -->
+    <div class="chat-button" onclick="alert('Chat feature coming soon!')">
+        <span>💬</span>
     </div>
-    
+
     <script>
-        const proposals = {
-            '1': `Hi there!
+        function toggleFilter(element) {
+            element.classList.toggle('active');
+        }
 
-I'm excited about this React dashboard project! With 5+ years of React and real-time web app experience, I've built similar analytics platforms that handle thousands of concurrent users.
+        function toggleJob(element) {
+            element.classList.toggle('expanded');
+        }
 
-**What I'll deliver:**
-• Modern React dashboard with TypeScript for type safety
-• WebSocket integration for real-time data updates
-• Responsive design that works on all devices
-• Clean, maintainable code with comprehensive documentation
-• Performance optimizations for smooth UX
+        const proposalTemplates = [
+            `Hi there,
 
-**My approach:**
-I'll start with a detailed wireframe review, then build the core dashboard structure with reusable components. The WebSocket layer will be designed for reliability with automatic reconnection and error handling.
+I read your job post about the AI-Powered Sales Assistant Chrome Extension and I'm very excited about this opportunity. I specialize in Chrome extension development and AI integration, with deep experience using Claude API for real-time applications.
 
-**Timeline:** 3-4 weeks for full delivery
-**Budget:** $4,200 (within your range)
+I've built similar LinkedIn automation tools and understand the challenges around rate limiting, data scraping, and delivering smooth UX in browser extensions. Your project aligns perfectly with my skillset.
 
-I'd love to discuss your specific analytics requirements and show you examples of my previous dashboard work. When's a good time for a quick call?
+My approach would be:
+1. Build a robust scraping layer that respects LinkedIn's limits
+2. Integrate Claude API with custom prompts for reply generation
+3. Design a clean, intuitive sidebar UI
+4. Implement keyword detection with customizable triggers
+5. Add analytics to track engagement success
+
+I can start immediately and deliver the MVP in 3-4 weeks. I'm available for a call to discuss technical details and your vision for the product.
+
+Portfolio: [Link]
+Sample Chrome Extension: [Link]
 
 Looking forward to working together!
 
-Best regards,
-Janis Agic`,
-            '2': `Hello!
-
-Your AI-powered Chrome extension project caught my eye - this is exactly the type of innovative work I love doing.
-
-**Why I'm a great fit:**
-• Built 3 Chrome extensions with 50k+ combined users
-• Expert in browser APIs and extension architecture
-• Experience integrating AI/ML APIs (OpenAI, Anthropic, custom models)
-• Strong understanding of LinkedIn's DOM structure and security
-
-**What you'll get:**
-✓ Robust Chrome extension with clean UI/UX
-✓ AI integration that's fast and reliable
-✓ Secure API handling and data management
-✓ Comprehensive testing across Chrome versions
-✓ Full documentation for future maintenance
-
-**My process:**
-1. Discovery call to understand your exact workflow needs
-2. Technical architecture proposal
-3. Iterative development with weekly demos
-4. Testing & refinement
-5. Launch support
-
-**Investment:** $5,200 for complete development
-**Timeline:** 4-5 weeks
-
-I've helped clients automate LinkedIn workflows before and know the common pitfalls to avoid. Let's build something that truly saves time!
-
-Available for a call this week - what works for you?
-
-Cheers,
-Janis Agic`,
-            '3': `Hi!
-
-A full-stack SaaS MVP? That's my sweet spot. I've launched 7 SaaS platforms from zero to paying customers.
-
-**What makes me different:**
-• I think like a founder, not just a developer
-• Experience with full product lifecycle (design → dev → launch)
-• Strong focus on scalability and clean architecture
-• Can advise on product decisions, not just code
-
-**Tech Stack I'd recommend:**
-Frontend: Next.js 14 (App Router), TypeScript, TailwindCSS
-Backend: Node.js, tRPC for type-safe APIs
-Database: PostgreSQL with Prisma ORM
-Auth: NextAuth.js
-Deployment: Vercel + Railway/Render
-
-**Deliverables:**
-• User authentication & authorization
-• Core feature set (based on your MVP scope)
-• Admin dashboard
-• Billing integration (Stripe)
-• CI/CD pipeline
-• Production deployment
-
-**Timeline:** 8-10 weeks
-**Budget:** $10,500
-
-This is a significant project - let's hop on a call to discuss your vision, target users, and business goals. I want to make sure we're aligned before diving in.
-
-When works for you?
-
-Best,
-Janis Agic`,
-            '4': `Hey!
-
-React Native with real-time features - I've built this exact stack multiple times and know how to make it performant and reliable.
-
-**My experience:**
-• 4+ years building React Native apps
-• Expert in Firebase Realtime Database & Cloud Messaging
-• Apps in production with 100k+ users
-• Strong focus on user experience and smooth animations
-
-**What I'll deliver:**
-📱 Cross-platform app (iOS + Android)
-💬 Real-time chat with typing indicators
-🔔 Push notifications (FCM)
-⚡ Optimized performance and offline support
-🎨 Polished UI that feels native
-📦 App store submission assistance
-
-**Technical approach:**
-• React Native 0.73+ with TypeScript
-• Firebase for real-time sync and push
-• Zustand or Redux for state management
-• Reanimated 3 for smooth animations
-• Comprehensive error handling and logging
-
-**Timeline:** 5-6 weeks
-**Budget:** $6,800
-
-I know you mentioned tight deadlines - I'm comfortable with fast-paced projects and deliver clean code even under pressure. Let's discuss your timeline and feature priorities.
-
-Ready to start ASAP. Want to schedule a quick call?
-
-Regards,
-Janis Agic`
-        };
-        
-        let selectedJob = null;
-        let currentProposal = null;
-        
-        // Job selection
-        document.querySelectorAll('.job-card').forEach(card => {
-            card.addEventListener('click', () => {
-                document.querySelectorAll('.job-card').forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                
-                selectedJob = card.dataset.job;
-                currentProposal = null;
-                
-                document.getElementById('proposal-content').className = 'proposal-content empty';
-                document.getElementById('proposal-content').textContent = 'Click "Generate Proposal" to create a personalized pitch using AI';
-                
-                document.getElementById('generate-btn').disabled = false;
-                document.getElementById('edit-btn').disabled = true;
-                document.getElementById('submit-btn').disabled = true;
-            });
-        });
-        
-        // Generate proposal
-        document.getElementById('generate-btn').addEventListener('click', () => {
-            if (!selectedJob) return;
+Best regards`,
             
-            const btn = document.getElementById('generate-btn');
-            btn.textContent = 'Generating...';
-            btn.disabled = true;
+            `Hello,
+
+Your ServiceTitan dashboard project caught my eye! I've built several live dashboard systems for field service companies and understand exactly what you're looking for.
+
+I specialize in real-time data visualization and API integrations. For this project, I would:
+
+1. Create a TV-optimized layout with smooth animations
+2. Integrate ServiceTitan API for live job/tech data
+3. Pull Google Reviews via API with auto-refresh
+4. Build an animated dispatch ticker
+5. Design interactive performance charts
+6. Add gamification elements (leaderboard, wins board)
+
+The end result will be a dashboard that energizes your team and showcases top performers. I've delivered similar systems for HVAC and plumbing companies with excellent feedback.
+
+Available to start this week. Let's schedule a call to discuss your specific metrics and design preferences.
+
+Portfolio: [Link]
+Previous Dashboard: [Link]
+
+Best regards`,
             
-            setTimeout(() => {
-                currentProposal = proposals[selectedJob];
-                const content = document.getElementById('proposal-content');
-                content.className = 'proposal-content';
-                content.textContent = currentProposal;
-                
-                btn.textContent = 'Regenerate';
-                btn.disabled = false;
-                document.getElementById('edit-btn').disabled = false;
-                document.getElementById('submit-btn').disabled = false;
-            }, 1500);
-        });
-        
-        // Submit to pipeline
-        document.getElementById('submit-btn').addEventListener('click', () => {
-            if (!currentProposal) return;
+            `Hi,
+
+I'm very interested in your Upwork Job Scanner & Proposal Automation Tool! This is exactly the kind of intelligent automation I love building.
+
+I have extensive experience with web scraping, AI integration (GPT-4/Claude), and building SaaS dashboards. Your vision for this tool is spot-on – I've personally felt the pain of manual job hunting on Upwork.
+
+My technical approach:
+1. Upwork API integration + smart scraping (respecting ToS)
+2. AI matching algorithm to score job fit
+3. GPT-4 proposal generator with customizable templates
+4. Drag-and-drop Kanban pipeline
+5. Analytics dashboard (win rate, response time, best keywords)
+6. Chrome extension for quick job actions (optional)
+
+I can deliver an MVP in 4-5 weeks and iterate based on your feedback. This has potential to become a serious product – I'm excited to bring it to life.
+
+Available for a call anytime this week.
+
+Portfolio: [Link]
+Sample Automation Tool: [Link]
+
+Looking forward to collaborating!`
+        ];
+
+        function generateProposal(button) {
+            const jobCard = button.closest('.job-card');
+            const jobTitle = jobCard.querySelector('.job-title').textContent;
+            const randomProposal = proposalTemplates[Math.floor(Math.random() * proposalTemplates.length)];
             
-            alert('✅ Proposal moved to "Drafted" stage!\n\nYou can now review and submit it to Upwork.');
-            
-            // Reset
-            document.querySelectorAll('.job-card').forEach(c => c.classList.remove('selected'));
-            selectedJob = null;
-            currentProposal = null;
-            
-            document.getElementById('proposal-content').className = 'proposal-content empty';
-            document.getElementById('proposal-content').textContent = 'Select a job from the left to generate a personalized proposal';
-            
-            document.getElementById('generate-btn').disabled = true;
-            document.getElementById('edit-btn').disabled = true;
-            document.getElementById('submit-btn').disabled = true;
-        });
-        
-        // Edit button
-        document.getElementById('edit-btn').addEventListener('click', () => {
-            alert('Edit mode coming soon! For now, you can copy the proposal and edit in your favorite editor.');
-        });
-        
-        // Filter tags
-        document.querySelectorAll('.filter-tag').forEach(tag => {
-            tag.addEventListener('click', () => {
-                document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
-                tag.classList.add('active');
-            });
-        });
-        
-        // AI Chat button
-        document.querySelector('.ai-chat-btn').addEventListener('click', () => {
-            alert('AI Chat feature coming soon! 🚀');
-        });
+            document.getElementById('proposalDraft').textContent = randomProposal;
+            document.getElementById('proposalModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('proposalModal').classList.remove('active');
+        }
+
+        function copyProposal() {
+            const text = document.getElementById('proposalDraft').textContent;
+            navigator.clipboard.writeText(text);
+            alert('Proposal copied to clipboard!');
+        }
+
+        function submitProposal() {
+            alert('Proposal submitted successfully! Moving to Pipeline...');
+            closeModal();
+        }
     </script>
 </body>
 </html>

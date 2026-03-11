@@ -3,670 +3,1177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sales Sniper - LinkedIn AI Assistant</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Sales Sniper - AI-Powered LinkedIn Engagement Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #2a2a3e;
+            --primary-blue: #3b82f6;
+            --primary-blue-hover: #2563eb;
+            --green-accent: #10b981;
+            --yellow-accent: #f59e0b;
+            --red-accent: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0a0f;
-            color: #e0e0e0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
             overflow-x: hidden;
         }
-        
-        .container {
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            background: rgba(10, 10, 15, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
             display: flex;
-            height: 100vh;
+            justify-content: space-between;
+            align-items: center;
         }
-        
-        /* LinkedIn Feed */
-        .feed {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            background: #0f0f14;
-        }
-        
-        .post {
-            background: #1a1a2e;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            border: 2px solid transparent;
-        }
-        
-        .post:hover {
-            border-color: #6366f1;
-            transform: translateY(-2px);
-        }
-        
-        .post.active {
-            border-color: #22c55e;
-        }
-        
-        .post-header {
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--green-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 12px;
+            gap: 0.5rem;
         }
-        
-        .avatar {
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: var(--primary-blue);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+            font-family: inherit;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-blue-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 6rem 0;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Live Demo Section */
+        .demo {
+            padding: 4rem 0;
+            background: var(--bg-secondary);
+            margin: 4rem 0;
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feed {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .post {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .post:hover {
+            border-color: var(--primary-blue);
+            transform: translateX(5px);
+        }
+
+        .post.active {
+            border-color: var(--green-accent);
+        }
+
+        .post-header {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .post-avatar {
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--primary-blue), var(--green-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
         }
-        
+
         .post-author {
             flex: 1;
         }
-        
-        .post-author h3 {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 2px;
+
+        .post-author h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
         }
-        
+
         .post-author p {
-            font-size: 13px;
-            color: #9ca3af;
+            font-size: 0.875rem;
+            color: var(--text-muted);
         }
-        
+
         .post-content {
-            font-size: 14px;
-            line-height: 1.6;
-            margin-bottom: 12px;
+            margin-bottom: 1rem;
+            line-height: 1.7;
         }
-        
-        .highlight {
-            background: rgba(99, 102, 241, 0.3);
-            padding: 2px 4px;
-            border-radius: 3px;
-            font-weight: 500;
+
+        .keyword {
+            background: rgba(59, 130, 246, 0.2);
+            padding: 0.125rem 0.375rem;
+            border-radius: 4px;
+            font-weight: 600;
         }
-        
+
         .post-stats {
             display: flex;
-            gap: 20px;
-            color: #6b7280;
-            font-size: 13px;
+            gap: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
         }
-        
-        /* Sidebar */
+
         .sidebar {
-            width: 420px;
-            background: #1a1a2e;
-            border-left: 1px solid #2a2a3e;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
         }
-        
-        .sidebar-header {
-            padding: 20px;
-            border-bottom: 1px solid #2a2a3e;
+
+        .sidebar h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
         }
-        
-        .sidebar-header h2 {
-            font-size: 18px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .badge {
-            background: #22c55e;
-            color: #000;
-            font-size: 11px;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-weight: 700;
-        }
-        
-        .credits {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 12px;
-            padding: 12px;
-            background: #0f0f14;
+
+        .suggestion {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
         }
-        
-        .credits-bar {
-            flex: 1;
-            height: 6px;
-            background: #2a2a3e;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-        
-        .credits-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #22c55e 0%, #10b981 100%);
-            width: 73%;
-            transition: width 0.3s;
-        }
-        
-        .tabs {
-            display: flex;
-            padding: 0 20px;
-            border-bottom: 1px solid #2a2a3e;
-        }
-        
-        .tab {
-            padding: 12px 20px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.2s;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        .tab:hover {
-            color: #fff;
-        }
-        
-        .tab.active {
-            color: #6366f1;
-            border-bottom-color: #6366f1;
-        }
-        
-        .sidebar-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-        
-        .ai-suggestion {
-            background: #0f0f14;
-            border: 1px solid #2a2a3e;
-            border-radius: 10px;
-            padding: 16px;
-            margin-bottom: 12px;
-            transition: all 0.2s;
-        }
-        
-        .ai-suggestion:hover {
-            border-color: #6366f1;
-        }
-        
-        .suggestion-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        
-        .suggestion-type {
-            font-size: 12px;
-            font-weight: 600;
-            color: #6366f1;
-            text-transform: uppercase;
-        }
-        
-        .suggestion-score {
-            font-size: 12px;
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-            padding: 4px 8px;
-            border-radius: 6px;
-        }
-        
+
         .suggestion-text {
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
         }
-        
+
         .suggestion-actions {
             display: flex;
-            gap: 8px;
+            gap: 0.5rem;
         }
-        
-        .btn {
-            padding: 8px 14px;
-            border-radius: 6px;
-            border: none;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
         }
-        
-        .btn-primary {
-            background: #6366f1;
-            color: #fff;
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
         }
-        
-        .btn-primary:hover {
-            background: #4f46e5;
+
+        .btn-outline:hover {
+            background: var(--bg-tertiary);
         }
-        
-        .btn-secondary {
-            background: #2a2a3e;
-            color: #e0e0e0;
-        }
-        
-        .btn-secondary:hover {
-            background: #3a3a4e;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #6b7280;
-        }
-        
-        .empty-state h3 {
-            font-size: 16px;
-            margin-bottom: 8px;
-        }
-        
-        .kb-item {
-            background: #0f0f14;
-            padding: 14px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #2a2a3e;
-        }
-        
-        .kb-item h4 {
-            font-size: 14px;
-            margin-bottom: 6px;
-        }
-        
-        .kb-item p {
-            font-size: 12px;
-            color: #9ca3af;
-            line-height: 1.4;
-        }
-        
-        .settings-group {
-            margin-bottom: 24px;
-        }
-        
-        .settings-group h3 {
-            font-size: 14px;
-            margin-bottom: 12px;
-            color: #6366f1;
-        }
-        
-        .setting-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: #0f0f14;
-            border-radius: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .toggle {
-            width: 44px;
-            height: 24px;
-            background: #2a2a3e;
-            border-radius: 12px;
-            position: relative;
-            cursor: pointer;
-        }
-        
-        .toggle.active {
-            background: #22c55e;
-        }
-        
-        .toggle::after {
-            content: '';
-            width: 18px;
-            height: 18px;
-            background: #fff;
-            border-radius: 50%;
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            transition: left 0.2s;
-        }
-        
-        .toggle.active::after {
-            left: 23px;
-        }
-        
-        /* AI Chat Button */
-        .ai-chat-btn {
+
+        .success-toast {
             position: fixed;
-            bottom: 24px;
-            right: 24px;
-            width: 56px;
-            height: 56px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
-            font-size: 24px;
+            top: 100px;
+            right: 2rem;
+            background: var(--green-accent);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(-20px);
             transition: all 0.3s;
             z-index: 1000;
         }
-        
-        .ai-chat-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+
+        .success-toast.show {
+            opacity: 1;
+            transform: translateY(0);
         }
-        
+
+        /* Pricing Section */
+        .pricing {
+            padding: 4rem 0;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .pricing-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary-blue);
+            position: relative;
+        }
+
+        .pricing-card.featured::before {
+            content: 'MOST POPULAR';
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary-blue);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .pricing-tier {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-price {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-price span {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--green-accent);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            padding: 4rem 0;
+            background: var(--bg-secondary);
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--green-accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 1.5rem;
+        }
+
+        .step h3 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .step p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
         /* Footer */
         .footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 12px;
-            text-align: center;
-            background: #0a0a0f;
-            border-top: 1px solid #2a2a3e;
-            font-size: 12px;
-            color: #6b7280;
+            background: var(--bg-secondary);
+            padding: 3rem 0 2rem;
+            margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
         }
-        
-        .footer a {
-            color: #6366f1;
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+        }
+
+        .footer-text a {
+            color: var(--primary-blue);
             text-decoration: none;
         }
-        
-        @media (max-width: 768px) {
-            .container {
-                flex-direction: column;
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .social-links a {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            transition: color 0.2s;
+        }
+
+        .social-links a:hover {
+            color: var(--primary-blue);
+        }
+
+        /* Chat Button */
+        .chat-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+
+        .chat-button-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Chat Window */
+        .chat-window {
+            position: fixed;
+            bottom: 5rem;
+            right: 2rem;
+            width: 400px;
+            height: 500px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .chat-window.active {
+            display: flex;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
             }
-            
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .chat-close:hover {
+            color: var(--text-primary);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .message-assistant {
+            background: var(--bg-tertiary);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border-top-left-radius: 4px;
+        }
+
+        .message-user {
+            background: var(--primary-blue);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border-top-right-radius: 4px;
+            margin-left: auto;
+            max-width: 80%;
+        }
+
+        .message-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .message-text {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .chat-input-area {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .chat-send {
+            padding: 0.75rem 1.25rem;
+            background: var(--primary-blue);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chat-send:hover {
+            background: var(--primary-blue-hover);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .nav {
+                display: none;
+            }
+
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+
             .sidebar {
-                width: 100%;
-                height: 50vh;
+                position: static;
+            }
+
+            .chat-window {
+                width: calc(100vw - 2rem);
+                right: 1rem;
+                left: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="feed">
-            <div class="post" data-post="1">
-                <div class="post-header">
-                    <div class="avatar"></div>
-                    <div class="post-author">
-                        <h3>Sarah Mitchell</h3>
-                        <p>VP of Sales @ TechCorp • 2nd</p>
-                    </div>
-                </div>
-                <div class="post-content">
-                    Looking for a <span class="highlight">sales automation</span> tool that actually works. We've tried 5 different solutions and our team is still <span class="highlight">manually</span> entering data. Any recommendations for B2B SaaS? 🤔
-                </div>
-                <div class="post-stats">
-                    <span>42 likes</span>
-                    <span>18 comments</span>
-                    <span>3 shares</span>
-                </div>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <span>🎯</span>
+                <span>Sales Sniper</span>
             </div>
-            
-            <div class="post" data-post="2">
-                <div class="post-header">
-                    <div class="avatar"></div>
-                    <div class="post-author">
-                        <h3>Marcus Johnson</h3>
-                        <p>Founder @ GrowthHub • 1st</p>
-                    </div>
-                </div>
-                <div class="post-content">
-                    Just closed our biggest deal of the year! 🎉 The key? <span class="highlight">Personalized outreach</span> at scale. If you're still sending generic messages, you're leaving money on the table. <span class="highlight">AI-powered personalization</span> is the game changer.
-                </div>
-                <div class="post-stats">
-                    <span>156 likes</span>
-                    <span>34 comments</span>
-                    <span>12 shares</span>
-                </div>
+            <nav class="nav">
+                <a href="#features">Features</a>
+                <a href="#demo">Live Demo</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#pricing" class="btn btn-primary">Get Started</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Success Toast -->
+    <div class="success-toast" id="successToast">✓ Copied to clipboard!</div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Sales Sniper</h1>
+            <p>Your AI-Powered LinkedIn Engagement Assistant. Never miss a high-value conversation again. Let AI find the signals, draft the perfect reply, and help you close more deals.</p>
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="document.getElementById('demo').scrollIntoView({behavior:'smooth'})">
+                    Try Live Demo
+                </button>
+                <button class="btn btn-outline" onclick="document.getElementById('pricing').scrollIntoView({behavior:'smooth'})">
+                    View Pricing
+                </button>
             </div>
-            
-            <div class="post" data-post="3">
-                <div class="post-header">
-                    <div class="avatar"></div>
-                    <div class="post-author">
-                        <h3>Emma Rodriguez</h3>
-                        <p>Director of Customer Success @ CloudBase</p>
-                    </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Powerful Features Built for Sales Pros</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Signal Detection</h3>
+                    <p>Automatically scans your LinkedIn feed for high-intent keywords like "looking for", "hiring", "budget approved", and "need help with". Never miss an opportunity buried in your feed again.</p>
                 </div>
-                <div class="post-content">
-                    Our <span class="highlight">response rate</span> went from 8% to 32% in just 3 months. What changed? We stopped treating LinkedIn like email. Started conversations, not pitches. Built relationships, not lists. That's the real secret to <span class="highlight">LinkedIn success</span>.
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>Context AI</h3>
+                    <p>Analyzes the full context of each post, including the author's profile, company, and conversation thread. Generates personalized replies that sound natural and build genuine relationships.</p>
                 </div>
-                <div class="post-stats">
-                    <span>89 likes</span>
-                    <span>27 comments</span>
-                    <span>8 shares</span>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📚</div>
+                    <h3>Knowledge Base</h3>
+                    <p>Train the AI on your product details, case studies, and common objections. Every suggestion is tailored to your unique value proposition and sales methodology.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <h3>Credit System</h3>
+                    <p>Pay only for what you use. Each AI suggestion costs 1 credit. Free tier includes 50 credits/month. Pro plan offers unlimited suggestions with priority processing.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Analytics Dashboard</h3>
+                    <p>Track your engagement rate, reply success rate, and deals influenced by Sales Sniper. See which keywords drive the most conversations and optimize your strategy accordingly.</p>
                 </div>
             </div>
         </div>
-        
-        <div class="sidebar">
-            <div class="sidebar-header">
-                <h2>
-                    Sales Sniper 
-                    <span class="badge">AI</span>
-                </h2>
-                <div class="credits">
-                    <span style="font-size: 13px;">Credits:</span>
-                    <div class="credits-bar">
-                        <div class="credits-fill"></div>
+    </section>
+
+    <!-- Live Demo Section -->
+    <section class="demo" id="demo">
+        <div class="container">
+            <h2 class="section-title">See It In Action</h2>
+            <p style="text-align: center; color: var(--text-secondary); max-width: 600px; margin: 0 auto 2rem;">
+                Click on any post below to see AI-generated reply suggestions. This is exactly how Sales Sniper works inside your LinkedIn feed.
+            </p>
+
+            <div class="demo-container">
+                <div class="feed">
+                    <div class="post" onclick="showSuggestions(0)">
+                        <div class="post-header">
+                            <div class="post-avatar">👨‍💼</div>
+                            <div class="post-author">
+                                <h4>Michael Chen</h4>
+                                <p>VP of Sales @ TechCorp • 2h ago</p>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Our team is <span class="keyword">looking for</span> a better CRM solution. Current system is slow and our reps hate it. <span class="keyword">Budget approved</span> for Q1. Any recommendations?
+                        </div>
+                        <div class="post-stats">
+                            <span>👍 24 likes</span>
+                            <span>💬 7 comments</span>
+                        </div>
                     </div>
-                    <span style="font-size: 13px; font-weight: 600;">730/1000</span>
+
+                    <div class="post" onclick="showSuggestions(1)">
+                        <div class="post-header">
+                            <div class="post-avatar">👩‍💼</div>
+                            <div class="post-author">
+                                <h4>Sarah Johnson</h4>
+                                <p>Head of Marketing @ GrowthLabs • 4h ago</p>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Just got off a frustrating call with our marketing automation vendor. Response times are terrible and features are outdated. <span class="keyword">Actively evaluating</span> alternatives. What are you folks using?
+                        </div>
+                        <div class="post-stats">
+                            <span>👍 45 likes</span>
+                            <span>💬 18 comments</span>
+                        </div>
+                    </div>
+
+                    <div class="post" onclick="showSuggestions(2)">
+                        <div class="post-header">
+                            <div class="post-avatar">👨‍💻</div>
+                            <div class="post-author">
+                                <h4>David Rodriguez</h4>
+                                <p>CEO @ StartupXYZ • 6h ago</p>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            We just closed our Series A! 🎉 Now <span class="keyword">hiring</span> aggressively across sales, engineering, and customer success. Also <span class="keyword">need help</span> setting up our go-to-market infrastructure. Open to advisor intros!
+                        </div>
+                        <div class="post-stats">
+                            <span>👍 189 likes</span>
+                            <span>💬 42 comments</span>
+                        </div>
+                    </div>
+
+                    <div class="post" onclick="showSuggestions(3)">
+                        <div class="post-header">
+                            <div class="post-avatar">👩</div>
+                            <div class="post-author">
+                                <h4>Emily Watson</h4>
+                                <p>Director of Operations @ Enterprise Co • 8h ago</p>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Our customer support team is drowning in tickets. Current tools aren't cutting it anymore. <span class="keyword">Looking to implement</span> AI-powered support automation in the next 60 days. Would love to hear about your experiences!
+                        </div>
+                        <div class="post-stats">
+                            <span>👍 67 likes</span>
+                            <span>💬 23 comments</span>
+                        </div>
+                    </div>
+
+                    <div class="post" onclick="showSuggestions(4)">
+                        <div class="post-header">
+                            <div class="post-avatar">👨</div>
+                            <div class="post-author">
+                                <h4>James Parker</h4>
+                                <p>VP of Engineering @ DataFlow Inc • 10h ago</p>
+                            </div>
+                        </div>
+                        <div class="post-content">
+                            Spent the morning reviewing our tech stack. Our data pipeline is becoming a bottleneck. <span class="keyword">Budget allocated</span> to modernize infrastructure. <span class="keyword">Need recommendations</span> for scalable solutions that won't break the bank.
+                        </div>
+                        <div class="post-stats">
+                            <span>👍 92 likes</span>
+                            <span>💬 31 comments</span>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="tabs">
-                <div class="tab active" data-tab="suggestions">Suggestions</div>
-                <div class="tab" data-tab="knowledge">Knowledge</div>
-                <div class="tab" data-tab="settings">Settings</div>
-            </div>
-            
-            <div class="sidebar-content">
-                <div id="suggestions-tab">
-                    <div class="empty-state">
-                        <h3>👆 Select a post</h3>
-                        <p>Click on a LinkedIn post to see AI-powered response suggestions</p>
-                    </div>
-                </div>
-                
-                <div id="knowledge-tab" style="display: none;">
-                    <div class="kb-item">
-                        <h4>🎯 Target Audience</h4>
-                        <p>B2B SaaS companies, 50-500 employees, sales teams 10-50 people</p>
-                    </div>
-                    <div class="kb-item">
-                        <h4>💼 Product Positioning</h4>
-                        <p>AI-powered sales automation that increases outreach efficiency by 300%</p>
-                    </div>
-                    <div class="kb-item">
-                        <h4>🏆 Key Benefits</h4>
-                        <p>Automated personalization, CRM integration, analytics dashboard, team collaboration</p>
-                    </div>
-                    <div class="kb-item">
-                        <h4>📊 Success Metrics</h4>
-                        <p>32% avg. response rate, 4.5x pipeline growth, 89% customer retention</p>
-                    </div>
-                </div>
-                
-                <div id="settings-tab" style="display: none;">
-                    <div class="settings-group">
-                        <h3>AI Behavior</h3>
-                        <div class="setting-item">
-                            <span>Auto-highlight keywords</span>
-                            <div class="toggle active"></div>
-                        </div>
-                        <div class="setting-item">
-                            <span>Generate suggestions</span>
-                            <div class="toggle active"></div>
-                        </div>
-                        <div class="setting-item">
-                            <span>Show confidence scores</span>
-                            <div class="toggle active"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="settings-group">
-                        <h3>Notifications</h3>
-                        <div class="setting-item">
-                            <span>High-value leads</span>
-                            <div class="toggle active"></div>
-                        </div>
-                        <div class="setting-item">
-                            <span>Daily summary</span>
-                            <div class="toggle"></div>
-                        </div>
+
+                <div class="sidebar">
+                    <h3>💡 AI Suggestions</h3>
+                    <div id="suggestionsContainer">
+                        <p style="color: var(--text-muted); text-align: center; padding: 2rem;">
+                            Click on a post to see AI-generated reply suggestions
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="container">
+            <h2 class="section-title">Simple, Transparent Pricing</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="pricing-tier">Free</div>
+                    <div class="pricing-price">$0<span>/month</span></div>
+                    <ul class="pricing-features">
+                        <li>50 AI suggestions/month</li>
+                        <li>Basic signal detection</li>
+                        <li>3 keyword tracking</li>
+                        <li>Email support</li>
+                        <li>Analytics dashboard</li>
+                    </ul>
+                    <button class="btn btn-outline">Start Free</button>
+                </div>
+
+                <div class="pricing-card featured">
+                    <div class="pricing-tier">Pro</div>
+                    <div class="pricing-price">$49<span>/month</span></div>
+                    <ul class="pricing-features">
+                        <li>Unlimited AI suggestions</li>
+                        <li>Advanced signal detection</li>
+                        <li>Unlimited keywords</li>
+                        <li>Custom knowledge base</li>
+                        <li>Priority processing</li>
+                        <li>Advanced analytics</li>
+                        <li>Slack integration</li>
+                        <li>Priority support</li>
+                    </ul>
+                    <button class="btn btn-primary">Start Pro Trial</button>
+                </div>
+
+                <div class="pricing-card">
+                    <div class="pricing-tier">Enterprise</div>
+                    <div class="pricing-price">Custom</div>
+                    <ul class="pricing-features">
+                        <li>Everything in Pro</li>
+                        <li>Team accounts (unlimited users)</li>
+                        <li>Custom AI training</li>
+                        <li>API access</li>
+                        <li>Dedicated account manager</li>
+                        <li>SLA guarantee</li>
+                        <li>SSO/SAML</li>
+                        <li>Custom integrations</li>
+                    </ul>
+                    <button class="btn btn-outline">Contact Sales</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How Sales Sniper Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Install Extension</h3>
+                    <p>Add Sales Sniper to Chrome in one click. No complex setup or configuration required. Works seamlessly with LinkedIn's interface.</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>AI Scans Your Feed</h3>
+                    <p>Our AI continuously monitors your LinkedIn feed for high-intent signals. Keywords, contexts, and opportunities are automatically detected in real-time.</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get Smart Suggestions</h3>
+                    <p>Click any highlighted post to see 3 AI-generated reply options. Each suggestion is personalized based on the context and your knowledge base.</p>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Engage & Close</h3>
+                    <p>Copy your preferred suggestion, customize if needed, and post. Track which replies drive conversations and optimize your approach over time.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-text">
+                    Built by <a href="https://linkedin.com/in/janisagic" target="_blank">Janis Agic</a> © 2024
+                </div>
+                <div class="social-links">
+                    <a href="#" title="Twitter">𝕏</a>
+                    <a href="#" title="LinkedIn">in</a>
+                    <a href="#" title="GitHub">⚡</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Chat Button -->
+    <div class="chat-button" onclick="toggleChat()">
+        <span class="chat-button-icon">💬</span>
     </div>
-    
-    <button class="ai-chat-btn">💬</button>
-    
-    <div class="footer">
-        Built by <a href="https://github.com/janisag07" target="_blank">Janis Agic</a>
+
+    <!-- Chat Window -->
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <h3 class="chat-title">Sales Sniper Assistant</h3>
+            <button class="chat-close" onclick="toggleChat()">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message">
+                <div class="message-assistant">
+                    <div class="message-label">Assistant</div>
+                    <div class="message-text">Hey! 👋 I can answer questions about Sales Sniper. Ask me about features, pricing, or how it works!</div>
+                </div>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <div class="chat-input-wrapper">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ask about Sales Sniper...">
+                <button class="chat-send" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
     </div>
-    
+
     <script>
-        // Tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                
-                const tabName = tab.dataset.tab;
-                document.getElementById('suggestions-tab').style.display = tabName === 'suggestions' ? 'block' : 'none';
-                document.getElementById('knowledge-tab').style.display = tabName === 'knowledge' ? 'block' : 'none';
-                document.getElementById('settings-tab').style.display = tabName === 'settings' ? 'block' : 'none';
-            });
-        });
-        
-        // Post selection
-        const suggestions = {
-            '1': [
-                {
-                    type: 'Helpful Solution',
-                    score: '92%',
-                    text: 'Sarah, I completely understand the frustration. We had the exact same issue at my last company. What finally worked for us was finding a tool with native CRM integration and AI-powered data entry. Happy to share what we learned - would you be open to a quick call?'
-                },
-                {
-                    type: 'Social Proof',
-                    score: '87%',
-                    text: 'Been there! We went through 7 tools before finding one that stuck. The difference maker? Our sales team actually wanted to use it. I wrote a detailed comparison of what we tested - DM me if you want the breakdown.'
-                },
-                {
-                    type: 'Direct Value',
-                    score: '84%',
-                    text: 'Hi Sarah! I work with B2B SaaS sales teams on this exact problem. The #1 mistake we see is choosing tools based on features instead of adoption. Would love to share our framework for evaluating automation tools - no pitch, just lessons learned.'
-                }
+        const suggestions = [
+            [
+                "Hey Michael! We've helped several sales teams migrate from legacy CRMs to modern solutions. The key is getting buy-in from reps early. I'd be happy to share a 2-page comparison guide we put together based on real migrations. Worth a quick chat?",
+                "Michael, congrats on getting budget approved! That's half the battle. I'm curious - what are your top 3 must-haves in the new CRM? We recently worked with a similar-sized sales org and learned some interesting lessons about feature prioritization.",
+                "Totally feel your pain on slow CRMs! We actually built a migration checklist specifically for sales teams. Happy to send it over - no strings attached. It covers data migration, training, and change management. Want me to DM it to you?"
             ],
-            '2': [
-                {
-                    type: 'Engagement',
-                    score: '89%',
-                    text: 'Congrats Marcus! 🎉 "AI-powered personalization" is the future. What surprised me most was how much time it actually saved our team. Curious - what tools are you using for this?'
-                },
-                {
-                    type: 'Value-Add',
-                    score: '86%',
-                    text: 'Love seeing this! Personalization at scale used to be impossible. Now it\'s the competitive advantage. I\'ve been researching AI personalization tools - found some wild stats on response rate improvements. Would you be interested in comparing notes?'
-                },
-                {
-                    type: 'Authority',
-                    score: '81%',
-                    text: 'Spot on, Marcus. We help companies implement AI personalization and the results are consistently mind-blowing. The teams that crack this early will dominate their markets. Congrats on the big close!'
-                }
+            [
+                "Sarah, I've been there! Marketing automation vendors can be hit or miss on support. What's your current stack? I ask because we've seen some interesting hybrid approaches where teams keep parts of their existing setup while modernizing specific workflows.",
+                "This is frustrating but also a great opportunity to reassess what you actually need vs what vendors try to sell you. Are you looking for an all-in-one platform or best-of-breed tools? We recently published a buyer's guide that might save you some headaches.",
+                "Hey Sarah! I work with a lot of marketing teams going through this same evaluation. The #1 mistake I see is focusing too much on features and not enough on integration capabilities. Would you be open to a 15-min call to walk through your must-haves?"
             ],
-            '3': [
-                {
-                    type: 'Agreement + Value',
-                    score: '91%',
-                    text: '32% response rate is incredible, Emma! You\'re absolutely right - LinkedIn isn\'t email. It\'s a conversation platform. We\'ve seen similar results with our clients. The shift from "selling" to "helping" is everything. Would love to hear more about your approach!'
-                },
-                {
-                    type: 'Expertise',
-                    score: '88%',
-                    text: 'This is the playbook right here. 8% to 32% in 3 months proves that human-first outreach wins. I help teams make this exact transition - the key is balancing personalization with volume. Emma, would be great to connect and swap strategies!'
-                },
-                {
-                    type: 'Amplification',
-                    score: '85%',
-                    text: 'Everyone needs to read this 👆 Emma just dropped the blueprint. Relationships > Lists. Conversations > Pitches. This is how you win on LinkedIn in 2024. Bookmarking this for my team!'
-                }
+            [
+                "Congrats on the Series A, David! 🎉 Go-to-market infrastructure is critical at this stage. We've helped several post-Series A startups set up their RevOps foundation. Happy to intro you to a few sharp advisors who've been through this 3-4 times. DM me?",
+                "Amazing news on the fundraise! For GTM infrastructure, I'd recommend talking to Sarah Chen at RevOps Collective - she specializes in early-stage setup. Also happy to share our 'First 90 Days Post-Funding' playbook. It's helped a few portfolio companies avoid common pitfalls.",
+                "David, huge congrats! 🚀 Since you're hiring across sales and CS, it might be worth looking at your tech stack holistically now rather than band-aiding later. We put together a 'Series A Tech Stack Audit' framework that's pretty helpful. Want me to send it over?"
+            ],
+            [
+                "Emily, AI-powered support automation is a game-changer when done right. The key is starting with high-volume, low-complexity tickets first. We helped a similar team reduce ticket volume by 40% in 60 days. Would love to share the playbook - no pitch, just genuinely helpful stuff.",
+                "Been there! The 60-day timeline is tight but doable if you scope it right. Are you looking at chatbots, ticket routing, or knowledge base automation? Happy to hop on a quick call and share what's worked for teams in similar situations.",
+                "Emily, this is super common at your stage. Before jumping to AI, it's worth auditing your current ticket categories - you might find 80% come from 20% of issues. We have a free ticket analysis template that could save you weeks. Want me to send it?"
+            ],
+            [
+                "James, data pipeline bottlenecks are painful! Before recommending solutions, I'm curious - is the issue more about ingestion speed, transformation complexity, or query performance? We've seen different solutions work better for different bottleneck types.",
+                "Totally get the budget concern! Modern infrastructure doesn't have to break the bank. We recently helped a similar-sized engineering team cut costs by 35% while 3xing throughput. The trick is right-sizing from the start. Would a quick architecture review be helpful?",
+                "Hey James! Your timing is interesting - we're seeing a lot of teams modernize pipelines right now. The biggest ROI usually comes from fixing orchestration first, not the raw compute. Happy to share our 'Pipeline Modernization ROI Calculator' - helps prioritize where to start."
             ]
+        ];
+
+        let activePostIndex = null;
+
+        function showSuggestions(index) {
+            activePostIndex = index;
+            
+            // Remove active class from all posts
+            document.querySelectorAll('.post').forEach(p => p.classList.remove('active'));
+            
+            // Add active class to clicked post
+            document.querySelectorAll('.post')[index].classList.add('active');
+            
+            // Show suggestions
+            const container = document.getElementById('suggestionsContainer');
+            const postSuggestions = suggestions[index];
+            
+            container.innerHTML = postSuggestions.map((text, i) => `
+                <div class="suggestion">
+                    <div class="suggestion-text">${text}</div>
+                    <div class="suggestion-actions">
+                        <button class="btn btn-sm btn-outline" onclick="copySuggestion('${text.replace(/'/g, "\\'")}')">
+                            📋 Copy
+                        </button>
+                        <button class="btn btn-sm btn-primary" onclick="insertSuggestion('${text.replace(/'/g, "\\'")}')">
+                            ✓ Insert
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function copySuggestion(text) {
+            navigator.clipboard.writeText(text);
+            showToast();
+        }
+
+        function insertSuggestion(text) {
+            showToast('✓ Inserted into comment box!');
+        }
+
+        function showToast(message = '✓ Copied to clipboard!') {
+            const toast = document.getElementById('successToast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // Chat functionality
+        function toggleChat() {
+            document.getElementById('chatWindow').classList.toggle('active');
+        }
+
+        const chatResponses = {
+            "price": "Sales Sniper offers 3 tiers: Free ($0, 50 suggestions/month), Pro ($49, unlimited suggestions), and Enterprise (custom pricing with team features). Most users love the Pro plan!",
+            "how": "It's super simple! Install the Chrome extension, and Sales Sniper will automatically scan your LinkedIn feed for high-intent keywords. Click any highlighted post to get 3 AI-generated reply suggestions. Copy, customize, and post!",
+            "signal": "Signal Detection scans your feed for keywords like 'looking for', 'budget approved', 'hiring', 'need help', and more. You can customize which keywords to track in the Pro plan!",
+            "credit": "On the Free plan, each AI suggestion costs 1 credit (50/month). Pro plan has unlimited suggestions with no credit limits. Enterprise gets custom allocation.",
+            "training": "You can train the AI by uploading product docs, case studies, and common objections in your Knowledge Base. This makes every suggestion more relevant to YOUR specific offering!",
+            "default": "I can help with questions about features, pricing, how Sales Sniper works, or setting up your account. What would you like to know?"
         };
-        
-        document.querySelectorAll('.post').forEach(post => {
-            post.addEventListener('click', () => {
-                document.querySelectorAll('.post').forEach(p => p.classList.remove('active'));
-                post.classList.add('active');
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage(message, 'user');
+            input.value = '';
+            
+            setTimeout(() => {
+                const lowerMessage = message.toLowerCase();
+                let response = chatResponses.default;
                 
-                const postId = post.dataset.post;
-                const postSuggestions = suggestions[postId];
+                for (const [key, value] of Object.entries(chatResponses)) {
+                    if (lowerMessage.includes(key)) {
+                        response = value;
+                        break;
+                    }
+                }
                 
-                const suggestionsTab = document.getElementById('suggestions-tab');
-                suggestionsTab.innerHTML = '';
-                
-                postSuggestions.forEach(sug => {
-                    const div = document.createElement('div');
-                    div.className = 'ai-suggestion';
-                    div.innerHTML = `
-                        <div class="suggestion-header">
-                            <span class="suggestion-type">${sug.type}</span>
-                            <span class="suggestion-score">Match: ${sug.score}</span>
-                        </div>
-                        <div class="suggestion-text">${sug.text}</div>
-                        <div class="suggestion-actions">
-                            <button class="btn btn-primary">Copy</button>
-                            <button class="btn btn-secondary">Edit</button>
-                        </div>
-                    `;
-                    suggestionsTab.appendChild(div);
-                });
-                
-                // Switch to suggestions tab
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelector('[data-tab="suggestions"]').classList.add('active');
-                document.getElementById('suggestions-tab').style.display = 'block';
-                document.getElementById('knowledge-tab').style.display = 'none';
-                document.getElementById('settings-tab').style.display = 'none';
-            });
-        });
-        
-        // Toggle switches
-        document.querySelectorAll('.toggle').forEach(toggle => {
-            toggle.addEventListener('click', () => {
-                toggle.classList.toggle('active');
-            });
-        });
-        
-        // Copy button functionality
-        document.addEventListener('click', (e) => {
-            if (e.target.classList.contains('btn-primary')) {
-                const text = e.target.closest('.ai-suggestion').querySelector('.suggestion-text').textContent;
-                navigator.clipboard.writeText(text);
-                e.target.textContent = 'Copied!';
-                setTimeout(() => {
-                    e.target.textContent = 'Copy';
-                }, 2000);
+                addMessage(response, 'assistant');
+            }, 600);
+        }
+
+        function addMessage(text, type) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message';
+            
+            messageDiv.innerHTML = `
+                <div class="message-${type}">
+                    <div class="message-label">${type === 'user' ? 'You' : 'Assistant'}</div>
+                    <div class="message-text">${text}</div>
+                </div>
+            `;
+            
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
             }
         });
-        
-        // AI Chat button
-        document.querySelector('.ai-chat-btn').addEventListener('click', () => {
-            alert('AI Chat feature coming soon! 🚀');
-        });
+
+        // Auto-select first post on page load
+        setTimeout(() => {
+            showSuggestions(0);
+        }, 500);
     </script>
 </body>
 </html>

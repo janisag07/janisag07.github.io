@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Compliance Audit Tracker - SaaS PoC</title>
+    <title>Compliance Tracker - SOC 2, ISO 27001, GDPR Management</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,606 +14,1161 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #2a2a3e;
+            --primary-blue: #3b82f6;
+            --primary-blue-hover: #2563eb;
+            --green-accent: #10b981;
+            --yellow-accent: #f59e0b;
+            --red-accent: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background: #0a0e1a;
-            color: #e4e4e7;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             line-height: 1.6;
-        }
-
-        .topbar {
-            background: #111827;
-            border-bottom: 1px solid #1f2937;
-            padding: 1rem 2rem;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            min-height: 100vh;
         }
 
-        .workspace-switcher {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: #1f2937;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s;
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
         }
 
-        .workspace-switcher:hover {
-            background: #374151;
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .workspace-name {
-            font-weight: 600;
-            color: #f3f4f6;
-        }
-
-        .user-badge {
-            width: 36px;
-            height: 36px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .logo {
+            font-size: 1.25rem;
             font-weight: 700;
-            color: white;
+            background: linear-gradient(135deg, var(--primary-blue), var(--green-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        .tenant-switcher {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            width: 100%;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .nav-menu {
+            padding: 1rem 0;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .nav-item.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary-blue);
+            border-left: 3px solid var(--primary-blue);
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
             padding: 2rem;
+            max-height: 100vh;
+            overflow-y: auto;
         }
 
-        .header {
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
             margin-bottom: 2rem;
         }
 
-        .header h1 {
+        .page-title {
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
-            color: #f9fafb;
         }
 
-        .header p {
-            color: #9ca3af;
-            font-size: 1rem;
+        .page-subtitle {
+            color: var(--text-muted);
         }
 
-        .audit-score {
-            background: linear-gradient(135deg, #1e40af, #7c3aed);
-            padding: 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .score-left h2 {
-            font-size: 3rem;
-            font-weight: 700;
-            color: white;
-        }
-
-        .score-left p {
-            color: #c7d2fe;
-            font-size: 1.1rem;
-        }
-
-        .score-right {
-            text-align: right;
-        }
-
-        .score-right .label {
-            color: #c7d2fe;
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .score-right .next-audit {
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        .frameworks-grid {
+        /* Dashboard Section */
+        .framework-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            gap: 2rem;
+            margin-bottom: 3rem;
         }
 
         .framework-card {
-            background: #111827;
-            border: 1px solid #1f2937;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 1.5rem;
-            transition: transform 0.2s, box-shadow 0.2s;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
         }
 
         .framework-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-        }
-
-        .framework-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
         }
 
         .framework-name {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: #f9fafb;
-        }
-
-        .framework-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-
-        .badge-active {
-            background: #065f46;
-            color: #6ee7b7;
-        }
-
-        .badge-pending {
-            background: #78350f;
-            color: #fcd34d;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            background: #1f2937;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 0.5rem;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981, #34d399);
-            transition: width 0.5s ease;
-        }
-
-        .progress-text {
-            font-size: 0.9rem;
-            color: #9ca3af;
-        }
-
-        .controls-section {
-            background: #111827;
-            border: 1px solid #1f2937;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 1.5rem;
         }
 
-        .section-title {
+        .progress-circle {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        .progress-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .progress-circle circle {
+            fill: none;
+            stroke-width: 8;
+        }
+
+        .progress-bg {
+            stroke: var(--bg-tertiary);
+        }
+
+        .progress-fill {
+            stroke: var(--green-accent);
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--green-accent);
+        }
+
+        .framework-stats {
+            display: flex;
+            justify-content: space-around;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .framework-stat {
+            text-align: center;
+        }
+
+        .framework-stat-value {
             font-size: 1.5rem;
             font-weight: 700;
-            color: #f9fafb;
+        }
+
+        .framework-stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Controls Section */
+        .controls-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
         }
 
         .filter-buttons {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         .filter-btn {
             padding: 0.5rem 1rem;
-            background: #1f2937;
-            border: 1px solid #374151;
-            border-radius: 6px;
-            color: #9ca3af;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
             cursor: pointer;
             transition: all 0.2s;
-            font-size: 0.9rem;
+            font-family: inherit;
         }
 
-        .filter-btn:hover, .filter-btn.active {
-            background: #374151;
-            color: #f9fafb;
-            border-color: #3b82f6;
+        .filter-btn:hover {
+            border-color: var(--primary-blue);
         }
 
-        .control-item {
-            background: #0a0e1a;
-            border: 1px solid #1f2937;
-            border-radius: 8px;
-            padding: 1.5rem;
+        .filter-btn.active {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+            color: white;
+        }
+
+        .controls-table {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr 1fr 1.5fr;
+            padding: 1rem 1.5rem;
+            background: var(--bg-tertiary);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 3fr 1fr 1fr 1fr 1.5fr;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .table-row:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+
+        .status-compliant {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--green-accent);
+        }
+
+        .status-in-progress {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--yellow-accent);
+        }
+
+        .status-not-started {
+            background: rgba(148, 163, 184, 0.2);
+            color: var(--text-muted);
+        }
+
+        .status-at-risk {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--red-accent);
+        }
+
+        .severity-badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .severity-critical {
+            background: var(--red-accent);
+            color: white;
+        }
+
+        .severity-high {
+            background: var(--yellow-accent);
+            color: white;
+        }
+
+        .severity-medium {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Evidence Panel */
+        .evidence-upload {
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .evidence-upload:hover {
+            border-color: var(--primary-blue);
+            background: var(--bg-tertiary);
+        }
+
+        .evidence-upload-icon {
+            font-size: 3rem;
             margin-bottom: 1rem;
+        }
+
+        .evidence-list {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .evidence-item {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .control-left {
-            flex: 1;
+        .evidence-item:last-child {
+            border-bottom: none;
         }
 
-        .control-id {
-            font-size: 0.85rem;
-            color: #6b7280;
+        .evidence-info h4 {
+            font-size: 1rem;
             margin-bottom: 0.25rem;
         }
 
-        .control-name {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #f9fafb;
-            margin-bottom: 0.5rem;
+        .evidence-info p {
+            font-size: 0.875rem;
+            color: var(--text-muted);
         }
 
-        .control-description {
-            font-size: 0.9rem;
-            color: #9ca3af;
-        }
-
-        .control-right {
+        .evidence-actions {
             display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-icon {
+            padding: 0.5rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1.125rem;
+        }
+
+        .btn-icon:hover {
+            background: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        /* Gap Analysis */
+        .gap-list {
+            display: grid;
             gap: 1rem;
-            align-items: center;
         }
 
-        .status-badge {
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            white-space: nowrap;
+        .gap-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid;
+            border-radius: 8px;
+            padding: 1.5rem;
+            transition: all 0.3s;
         }
 
-        .status-compliant {
-            background: #065f46;
-            color: #6ee7b7;
+        .gap-card.critical {
+            border-left-color: var(--red-accent);
         }
 
-        .status-gap {
-            background: #7f1d1d;
-            color: #fca5a5;
+        .gap-card.high {
+            border-left-color: var(--yellow-accent);
         }
 
-        .status-progress {
-            background: #78350f;
-            color: #fcd34d;
+        .gap-card.medium {
+            border-left-color: var(--primary-blue);
         }
 
-        .evidence-count {
-            background: #1f2937;
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            color: #9ca3af;
+        .gap-card:hover {
+            transform: translateX(5px);
         }
 
-        .gap-analysis {
-            background: #111827;
-            border: 1px solid #1f2937;
-            border-radius: 12px;
-            padding: 2rem;
-        }
-
-        .gap-item {
-            background: #0a0e1a;
-            border-left: 4px solid #ef4444;
-            padding: 1rem 1.5rem;
+        .gap-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
             margin-bottom: 1rem;
-            border-radius: 4px;
-        }
-
-        .gap-priority {
-            display: inline-block;
-            padding: 0.25rem 0.5rem;
-            background: #7f1d1d;
-            color: #fca5a5;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
         }
 
         .gap-title {
-            font-size: 1rem;
+            font-size: 1.125rem;
             font-weight: 600;
-            color: #f9fafb;
-            margin-bottom: 0.5rem;
         }
 
         .gap-description {
-            font-size: 0.9rem;
-            color: #9ca3af;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.7;
         }
 
-        .ai-chat-button {
+        .gap-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+
+        /* Reports */
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .report-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-blue);
+        }
+
+        .report-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .report-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .report-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .report-action {
+            padding: 0.5rem 1rem;
+            background: var(--primary-blue);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+        }
+
+        .report-action:hover {
+            background: var(--primary-blue-hover);
+        }
+
+        /* Audit Readiness Score */
+        .readiness-card {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .readiness-score {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--green-accent), var(--primary-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .readiness-label {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            margin-top: 4rem;
+        }
+
+        .footer a {
+            color: var(--primary-blue);
+            text-decoration: none;
+        }
+
+        /* Chat Button */
+        .chat-button {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background: var(--primary-blue);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
-            transition: transform 0.2s;
-            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
         }
 
-        .ai-chat-button:hover {
+        .chat-button:hover {
             transform: scale(1.1);
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
+        /* Responsive */
+        @media (max-width: 968px) {
+            .sidebar {
+                transform: translateX(-100%);
             }
 
-            .frameworks-grid {
+            .main-content {
+                margin-left: 0;
+            }
+
+            .table-header,
+            .table-row {
                 grid-template-columns: 1fr;
+                gap: 0.5rem;
             }
 
-            .control-item {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .control-right {
-                margin-top: 1rem;
-                width: 100%;
-                justify-content: space-between;
-            }
-
-            .audit-score {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .score-right {
-                margin-top: 1rem;
-                text-align: center;
+            .framework-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <div class="topbar">
-        <div class="workspace-switcher">
-            <span class="workspace-name">🏢 Acme Corp</span>
-            <span>▼</span>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">🔒 Compliance Tracker</div>
+            <select class="tenant-switcher">
+                <option>Acme Corp</option>
+                <option>TechStart Inc</option>
+                <option>DataFlow SaaS</option>
+            </select>
         </div>
-        <div class="user-badge">JD</div>
-    </div>
-
-    <div class="container">
-        <div class="header">
-            <h1>Compliance Dashboard</h1>
-            <p>Monitor your compliance status across all frameworks</p>
-        </div>
-
-        <div class="audit-score">
-            <div class="score-left">
-                <h2>73%</h2>
-                <p>Audit Readiness Score</p>
+        <nav class="nav-menu">
+            <div class="nav-item active" onclick="switchSection('dashboard')">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
             </div>
-            <div class="score-right">
-                <div class="label">Next Audit</div>
-                <div class="next-audit">June 15, 2026</div>
+            <div class="nav-item" onclick="switchSection('controls')">
+                <span class="nav-icon">📋</span>
+                <span>Controls</span>
             </div>
-        </div>
-
-        <div class="frameworks-grid">
-            <div class="framework-card">
-                <div class="framework-header">
-                    <span class="framework-name">SOC 2 Type II</span>
-                    <span class="framework-badge badge-active">Active</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 82%;"></div>
-                </div>
-                <div class="progress-text">82% Complete • 18 of 22 controls</div>
+            <div class="nav-item" onclick="switchSection('evidence')">
+                <span class="nav-icon">📎</span>
+                <span>Evidence</span>
             </div>
+            <div class="nav-item" onclick="switchSection('gap-analysis')">
+                <span class="nav-icon">⚠️</span>
+                <span>Gap Analysis</span>
+            </div>
+            <div class="nav-item" onclick="switchSection('reports')">
+                <span class="nav-icon">📄</span>
+                <span>Reports</span>
+            </div>
+        </nav>
+    </aside>
 
-            <div class="framework-card">
-                <div class="framework-header">
-                    <span class="framework-name">ISO 27001</span>
-                    <span class="framework-badge badge-active">Active</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 68%;"></div>
-                </div>
-                <div class="progress-text">68% Complete • 89 of 131 controls</div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Section -->
+        <section class="content-section active" id="dashboard">
+            <div class="page-header">
+                <h1 class="page-title">Compliance Dashboard</h1>
+                <p class="page-subtitle">Track your SOC 2, ISO 27001, and GDPR compliance progress</p>
             </div>
 
-            <div class="framework-card">
-                <div class="framework-header">
-                    <span class="framework-name">GDPR</span>
-                    <span class="framework-badge badge-pending">In Progress</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" style="width: 55%;"></div>
-                </div>
-                <div class="progress-text">55% Complete • 22 of 40 requirements</div>
+            <div class="readiness-card">
+                <div class="readiness-score" data-count="87">0</div>
+                <div class="readiness-label">Audit Readiness Score</div>
             </div>
-        </div>
 
-        <div class="controls-section">
-            <div class="section-header">
-                <h2 class="section-title">Control Library</h2>
+            <div class="framework-grid">
+                <div class="framework-card">
+                    <h3 class="framework-name">SOC 2 Type II</h3>
+                    <div class="progress-circle">
+                        <svg width="150" height="150">
+                            <circle class="progress-bg" cx="75" cy="75" r="65"></circle>
+                            <circle class="progress-fill" cx="75" cy="75" r="65" 
+                                    stroke-dasharray="408.4" stroke-dashoffset="81.68"></circle>
+                        </svg>
+                        <div class="progress-text">80%</div>
+                    </div>
+                    <div class="framework-stats">
+                        <div class="framework-stat">
+                            <div class="framework-stat-value" style="color: var(--green-accent);">42</div>
+                            <div class="framework-stat-label">Compliant</div>
+                        </div>
+                        <div class="framework-stat">
+                            <div class="framework-stat-value" style="color: var(--yellow-accent);">8</div>
+                            <div class="framework-stat-label">In Progress</div>
+                        </div>
+                        <div class="framework-stat">
+                            <div class="framework-stat-value" style="color: var(--text-muted);">3</div>
+                            <div class="framework-stat-label">Not Started</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="framework-card">
+                    <h3 class="framework-name">ISO 27001</h3>
+                    <div class="progress-circle">
+                        <svg width="150" height="150">
+                            <circle class="progress-bg" cx="75" cy="75" r="65"></circle>
+                            <circle class="progress-fill" cx="75" cy="75" r="65" 
+                                    stroke-dasharray="408.4" stroke-dashoffset="122.52"></circle>
+                        </svg>
+                        <div class="progress-text">70%</div>
+                    </div>
+                    <div class="framework-stats">
+                        <div class="framework-stat">
+                            <div class="framework-stat-value" style="color: var(--green-accent);">68</div>
+                            <div class="framework-stat-label">Compliant</div>
+                        </div>
+                        <div class="framework-stat">
+                            <div class="framework-stat-value" style="color: var(--yellow-accent);">18</div>
+                            <div class="framework-stat-label">In Progress</div>
+                        </div>
+                        <div class="framework-stat">
+                            <div class="framework-stat-value" style="color: var(--text-muted);">11</div>
+                            <div class="framework-stat-label">Not Started</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="framework-card">
+                    <h3 class="framework-name">GDPR</h3>
+                    <div class="progress-circle">
+                        <svg width="150" height="150">
+                            <circle class="progress-bg" cx="75" cy="75" r="65"></circle>
+                            <circle class="progress-fill" cx="75" cy="75" r="65" 
+                                    stroke-dasharray="408.4" stroke-dashoffset="40.84"></circle>
+                        </svg>
+                        <div class="progress-text">90%</div>
+                    </div>
+                    <div class="framework-stats">
+                        <div class="framework-stat">
+                            <div class="framework-stat-value" style="color: var(--green-accent);">27</div>
+                            <div class="framework-stat-label">Compliant</div>
+                        </div>
+                        <div class="framework-stat">
+                            <div class="framework-stat-value" style="color: var(--yellow-accent);">2</div>
+                            <div class="framework-stat-label">In Progress</div>
+                        </div>
+                        <div class="framework-stat">
+                            <div class="framework-stat-value" style="color: var(--text-muted);">1</div>
+                            <div class="framework-stat-label">Not Started</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Controls Section -->
+        <section class="content-section" id="controls">
+            <div class="page-header">
+                <h1 class="page-title">Control Library</h1>
+                <p class="page-subtitle">Manage and track all compliance controls</p>
+            </div>
+
+            <div class="controls-header">
                 <div class="filter-buttons">
-                    <button class="filter-btn active">All</button>
-                    <button class="filter-btn">✅ Compliant</button>
-                    <button class="filter-btn">❌ Gaps</button>
-                    <button class="filter-btn">🔄 In Progress</button>
+                    <button class="filter-btn active" onclick="filterControls(this, 'all')">All</button>
+                    <button class="filter-btn" onclick="filterControls(this, 'soc2')">SOC 2</button>
+                    <button class="filter-btn" onclick="filterControls(this, 'iso')">ISO 27001</button>
+                    <button class="filter-btn" onclick="filterControls(this, 'gdpr')">GDPR</button>
+                    <button class="filter-btn" onclick="filterControls(this, 'compliant')">Compliant</button>
+                    <button class="filter-btn" onclick="filterControls(this, 'in-progress')">In Progress</button>
                 </div>
             </div>
 
-            <div class="control-item">
-                <div class="control-left">
-                    <div class="control-id">SOC2-CC6.1</div>
-                    <div class="control-name">Logical and Physical Access Controls</div>
-                    <div class="control-description">The entity implements logical access security software, infrastructure, and architectures over protected information assets.</div>
+            <div class="controls-table">
+                <div class="table-header">
+                    <div>Control Name</div>
+                    <div>Framework</div>
+                    <div>Status</div>
+                    <div>Owner</div>
+                    <div>Last Updated</div>
                 </div>
-                <div class="control-right">
-                    <span class="status-badge status-compliant">✅ Compliant</span>
-                    <span class="evidence-count">📄 12 docs</span>
+                <div class="table-row">
+                    <div>Access Control Policy</div>
+                    <div>SOC 2</div>
+                    <div><span class="status-badge status-compliant">✓ Compliant</span></div>
+                    <div>IT Team</div>
+                    <div>2 days ago</div>
+                </div>
+                <div class="table-row">
+                    <div>Data Encryption at Rest</div>
+                    <div>ISO 27001</div>
+                    <div><span class="status-badge status-compliant">✓ Compliant</span></div>
+                    <div>Security</div>
+                    <div>1 week ago</div>
+                </div>
+                <div class="table-row">
+                    <div>Incident Response Plan</div>
+                    <div>SOC 2</div>
+                    <div><span class="status-badge status-in-progress">⏱ In Progress</span></div>
+                    <div>SecOps</div>
+                    <div>3 days ago</div>
+                </div>
+                <div class="table-row">
+                    <div>Data Subject Access Requests</div>
+                    <div>GDPR</div>
+                    <div><span class="status-badge status-compliant">✓ Compliant</span></div>
+                    <div>Legal</div>
+                    <div>5 days ago</div>
+                </div>
+                <div class="table-row">
+                    <div>Vendor Risk Management</div>
+                    <div>SOC 2</div>
+                    <div><span class="status-badge status-in-progress">⏱ In Progress</span></div>
+                    <div>Compliance</div>
+                    <div>1 week ago</div>
+                </div>
+                <div class="table-row">
+                    <div>Password Policy Enforcement</div>
+                    <div>ISO 27001</div>
+                    <div><span class="status-badge status-compliant">✓ Compliant</span></div>
+                    <div>IT Team</div>
+                    <div>2 weeks ago</div>
+                </div>
+                <div class="table-row">
+                    <div>Data Retention Policy</div>
+                    <div>GDPR</div>
+                    <div><span class="status-badge status-compliant">✓ Compliant</span></div>
+                    <div>Legal</div>
+                    <div>3 weeks ago</div>
+                </div>
+                <div class="table-row">
+                    <div>Change Management Process</div>
+                    <div>SOC 2</div>
+                    <div><span class="status-badge status-in-progress">⏱ In Progress</span></div>
+                    <div>DevOps</div>
+                    <div>4 days ago</div>
+                </div>
+                <div class="table-row">
+                    <div>Business Continuity Plan</div>
+                    <div>ISO 27001</div>
+                    <div><span class="status-badge status-compliant">✓ Compliant</span></div>
+                    <div>Operations</div>
+                    <div>1 month ago</div>
+                </div>
+                <div class="table-row">
+                    <div>Privacy Impact Assessment</div>
+                    <div>GDPR</div>
+                    <div><span class="status-badge status-in-progress">⏱ In Progress</span></div>
+                    <div>Legal</div>
+                    <div>1 week ago</div>
+                </div>
+                <div class="table-row">
+                    <div>Penetration Testing</div>
+                    <div>SOC 2</div>
+                    <div><span class="status-badge status-not-started">⊘ Not Started</span></div>
+                    <div>Security</div>
+                    <div>-</div>
+                </div>
+                <div class="table-row">
+                    <div>Security Awareness Training</div>
+                    <div>ISO 27001</div>
+                    <div><span class="status-badge status-compliant">✓ Compliant</span></div>
+                    <div>HR</div>
+                    <div>2 weeks ago</div>
                 </div>
             </div>
+        </section>
 
-            <div class="control-item">
-                <div class="control-left">
-                    <div class="control-id">ISO27001-A.9.2.3</div>
-                    <div class="control-name">Management of Privileged Access Rights</div>
-                    <div class="control-description">The allocation and use of privileged access rights shall be restricted and controlled.</div>
-                </div>
-                <div class="control-right">
-                    <span class="status-badge status-gap">❌ Gap</span>
-                    <span class="evidence-count">📄 3 docs</span>
-                </div>
+        <!-- Evidence Section -->
+        <section class="content-section" id="evidence">
+            <div class="page-header">
+                <h1 class="page-title">Evidence Management</h1>
+                <p class="page-subtitle">Upload and track audit evidence for each control</p>
             </div>
 
-            <div class="control-item">
-                <div class="control-left">
-                    <div class="control-id">GDPR-Art.32</div>
-                    <div class="control-name">Security of Processing</div>
-                    <div class="control-description">Taking into account state of the art, implement appropriate technical and organizational measures to ensure security appropriate to the risk.</div>
+            <div class="evidence-upload" onclick="alert('File upload would open here')">
+                <div class="evidence-upload-icon">📤</div>
+                <h3>Upload Evidence</h3>
+                <p style="color: var(--text-muted); margin-top: 0.5rem;">Click or drag files here to upload</p>
+            </div>
+
+            <div class="evidence-list">
+                <div class="evidence-item">
+                    <div class="evidence-info">
+                        <h4>Access Control Policy v3.2</h4>
+                        <p>Uploaded by John Doe • 2 days ago • PDF, 2.3 MB</p>
+                    </div>
+                    <div class="evidence-actions">
+                        <button class="btn-icon" title="View">👁️</button>
+                        <button class="btn-icon" title="Download">⬇️</button>
+                        <button class="btn-icon" title="History">🕐</button>
+                    </div>
                 </div>
-                <div class="control-right">
-                    <span class="status-badge status-progress">🔄 In Progress</span>
-                    <span class="evidence-count">📄 8 docs</span>
+
+                <div class="evidence-item">
+                    <div class="evidence-info">
+                        <h4>Encryption Configuration Screenshot</h4>
+                        <p>Uploaded by Security Team • 1 week ago • PNG, 1.8 MB</p>
+                    </div>
+                    <div class="evidence-actions">
+                        <button class="btn-icon" title="View">👁️</button>
+                        <button class="btn-icon" title="Download">⬇️</button>
+                        <button class="btn-icon" title="History">🕐</button>
+                    </div>
+                </div>
+
+                <div class="evidence-item">
+                    <div class="evidence-info">
+                        <h4>Incident Response Runbook</h4>
+                        <p>Uploaded by SecOps • 3 days ago • DOCX, 890 KB</p>
+                    </div>
+                    <div class="evidence-actions">
+                        <button class="btn-icon" title="View">👁️</button>
+                        <button class="btn-icon" title="Download">⬇️</button>
+                        <button class="btn-icon" title="History">🕐</button>
+                    </div>
+                </div>
+
+                <div class="evidence-item">
+                    <div class="evidence-info">
+                        <h4>GDPR DSAR Process Flow</h4>
+                        <p>Uploaded by Legal • 5 days ago • PDF, 1.2 MB</p>
+                    </div>
+                    <div class="evidence-actions">
+                        <button class="btn-icon" title="View">👁️</button>
+                        <button class="btn-icon" title="Download">⬇️</button>
+                        <button class="btn-icon" title="History">🕐</button>
+                    </div>
+                </div>
+
+                <div class="evidence-item">
+                    <div class="evidence-info">
+                        <h4>Vendor Security Questionnaire - AWS</h4>
+                        <p>Uploaded by Compliance • 1 week ago • XLSX, 645 KB</p>
+                    </div>
+                    <div class="evidence-actions">
+                        <button class="btn-icon" title="View">👁️</button>
+                        <button class="btn-icon" title="Download">⬇️</button>
+                        <button class="btn-icon" title="History">🕐</button>
+                    </div>
+                </div>
+
+                <div class="evidence-item">
+                    <div class="evidence-info">
+                        <h4>Password Policy Enforcement Logs</h4>
+                        <p>Uploaded by IT Team • 2 weeks ago • CSV, 3.4 MB</p>
+                    </div>
+                    <div class="evidence-actions">
+                        <button class="btn-icon" title="View">👁️</button>
+                        <button class="btn-icon" title="Download">⬇️</button>
+                        <button class="btn-icon" title="History">🕐</button>
+                    </div>
+                </div>
+
+                <div class="evidence-item">
+                    <div class="evidence-info">
+                        <h4>Data Retention Schedule</h4>
+                        <p>Uploaded by Legal • 3 weeks ago • PDF, 780 KB</p>
+                    </div>
+                    <div class="evidence-actions">
+                        <button class="btn-icon" title="View">👁️</button>
+                        <button class="btn-icon" title="Download">⬇️</button>
+                        <button class="btn-icon" title="History">🕐</button>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="control-item">
-                <div class="control-left">
-                    <div class="control-id">SOC2-CC7.2</div>
-                    <div class="control-name">System Monitoring</div>
-                    <div class="control-description">The entity monitors system components and the operation of those components for anomalies.</div>
+        <!-- Gap Analysis Section -->
+        <section class="content-section" id="gap-analysis">
+            <div class="page-header">
+                <h1 class="page-title">Gap Analysis</h1>
+                <p class="page-subtitle">Prioritized list of compliance gaps to address</p>
+            </div>
+
+            <div class="gap-list">
+                <div class="gap-card critical">
+                    <div class="gap-header">
+                        <div class="gap-title">Missing Penetration Testing Evidence</div>
+                        <span class="severity-badge severity-critical">Critical</span>
+                    </div>
+                    <div class="gap-description">
+                        SOC 2 Type II requires annual penetration testing by a third party. Last pentest was conducted 18 months ago. Schedule a new assessment immediately to meet audit requirements.
+                    </div>
+                    <div class="gap-meta">
+                        <span>📋 SOC 2</span>
+                        <span>👤 Assigned to: Security Team</span>
+                        <span>📅 Due: 2 weeks</span>
+                    </div>
                 </div>
-                <div class="control-right">
-                    <span class="status-badge status-compliant">✅ Compliant</span>
-                    <span class="evidence-count">📄 15 docs</span>
+
+                <div class="gap-card high">
+                    <div class="gap-header">
+                        <div class="gap-title">Incomplete Vendor Risk Assessments</div>
+                        <span class="severity-badge severity-high">High</span>
+                    </div>
+                    <div class="gap-description">
+                        7 vendors have not completed security questionnaires. ISO 27001 requires documented risk assessment for all third-party vendors with access to customer data.
+                    </div>
+                    <div class="gap-meta">
+                        <span>📋 ISO 27001</span>
+                        <span>👤 Assigned to: Compliance Team</span>
+                        <span>📅 Due: 1 month</span>
+                    </div>
+                </div>
+
+                <div class="gap-card high">
+                    <div class="gap-header">
+                        <div class="gap-title">Privacy Impact Assessment Not Updated</div>
+                        <span class="severity-badge severity-high">High</span>
+                    </div>
+                    <div class="gap-description">
+                        GDPR PIA was last updated 9 months ago. With recent feature launches processing new data types, an updated PIA is required before Q4 audit.
+                    </div>
+                    <div class="gap-meta">
+                        <span>📋 GDPR</span>
+                        <span>👤 Assigned to: Legal</span>
+                        <span>📅 Due: 3 weeks</span>
+                    </div>
+                </div>
+
+                <div class="gap-card medium">
+                    <div class="gap-header">
+                        <div class="gap-title">Incident Response Plan Needs Testing</div>
+                        <span class="severity-badge severity-medium">Medium</span>
+                    </div>
+                    <div class="gap-description">
+                        IR plan exists but has not been tested in a tabletop exercise. SOC 2 auditors will expect documented evidence of annual testing and lessons learned.
+                    </div>
+                    <div class="gap-meta">
+                        <span>📋 SOC 2</span>
+                        <span>👤 Assigned to: SecOps</span>
+                        <span>📅 Due: 6 weeks</span>
+                    </div>
+                </div>
+
+                <div class="gap-card medium">
+                    <div class="gap-header">
+                        <div class="gap-title">Security Awareness Training Incomplete</div>
+                        <span class="severity-badge severity-medium">Medium</span>
+                    </div>
+                    <div class="gap-description">
+                        12 employees have not completed mandatory security awareness training. ISO 27001 requires 100% completion annually. Send reminders and escalate to managers.
+                    </div>
+                    <div class="gap-meta">
+                        <span>📋 ISO 27001</span>
+                        <span>👤 Assigned to: HR</span>
+                        <span>📅 Due: 2 months</span>
+                    </div>
+                </div>
+
+                <div class="gap-card medium">
+                    <div class="gap-header">
+                        <div class="gap-title">Data Retention Policy Not Enforced</div>
+                        <span class="severity-badge severity-medium">Medium</span>
+                    </div>
+                    <div class="gap-description">
+                        Policy exists but automated deletion scripts are not running. GDPR requires demonstrable enforcement of data retention limits. DevOps to implement automation.
+                    </div>
+                    <div class="gap-meta">
+                        <span>📋 GDPR</span>
+                        <span>👤 Assigned to: DevOps</span>
+                        <span>📅 Due: 5 weeks</span>
+                    </div>
                 </div>
             </div>
+        </section>
 
-            <div class="control-item">
-                <div class="control-left">
-                    <div class="control-id">ISO27001-A.12.1.2</div>
-                    <div class="control-name">Change Management</div>
-                    <div class="control-description">Changes to the organization, business processes, information processing facilities shall be controlled.</div>
+        <!-- Reports Section -->
+        <section class="content-section" id="reports">
+            <div class="page-header">
+                <h1 class="page-title">Reports</h1>
+                <p class="page-subtitle">Generate audit-ready compliance reports</p>
+            </div>
+
+            <div class="reports-grid">
+                <div class="report-card">
+                    <div class="report-icon">📊</div>
+                    <div class="report-title">SOC 2 Readiness Report</div>
+                    <div class="report-description">
+                        Comprehensive overview of SOC 2 controls, evidence, and audit readiness score. Includes gap analysis and remediation timeline.
+                    </div>
+                    <button class="report-action" onclick="alert('Generating SOC 2 report...')">Generate Report</button>
                 </div>
-                <div class="control-right">
-                    <span class="status-badge status-gap">❌ Gap</span>
-                    <span class="evidence-count">📄 2 docs</span>
+
+                <div class="report-card">
+                    <div class="report-icon">🔐</div>
+                    <div class="report-title">ISO 27001 Status Report</div>
+                    <div class="report-description">
+                        Detailed breakdown of all ISO 27001 controls, implementation status, and evidence library. Formatted for auditor review.
+                    </div>
+                    <button class="report-action" onclick="alert('Generating ISO report...')">Generate Report</button>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-icon">🛡️</div>
+                    <div class="report-title">GDPR Compliance Report</div>
+                    <div class="report-description">
+                        Summary of GDPR controls, data processing activities, DPIAs, and subject rights management. Ready for DPA inspection.
+                    </div>
+                    <button class="report-action" onclick="alert('Generating GDPR report...')">Generate Report</button>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-icon">⚠️</div>
+                    <div class="report-title">Gap Analysis Report</div>
+                    <div class="report-description">
+                        Prioritized list of compliance gaps across all frameworks with severity ratings, owners, and due dates. Actionable remediation plan included.
+                    </div>
+                    <button class="report-action" onclick="alert('Generating gap analysis...')">Generate Report</button>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-icon">📈</div>
+                    <div class="report-title">Executive Summary</div>
+                    <div class="report-description">
+                        High-level compliance dashboard for leadership. Shows audit readiness scores, upcoming audits, and key risk areas. Board-ready format.
+                    </div>
+                    <button class="report-action" onclick="alert('Generating executive summary...')">Generate Report</button>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-icon">📅</div>
+                    <div class="report-title">Evidence Collection Report</div>
+                    <div class="report-description">
+                        Complete inventory of uploaded evidence mapped to controls. Includes version history, owners, and last review dates.
+                    </div>
+                    <button class="report-action" onclick="alert('Generating evidence report...')">Generate Report</button>
                 </div>
             </div>
+        </section>
 
-            <div class="control-item">
-                <div class="control-left">
-                    <div class="control-id">GDPR-Art.25</div>
-                    <div class="control-name">Data Protection by Design and Default</div>
-                    <div class="control-description">Implement data protection principles from the design stage and throughout the whole lifecycle.</div>
-                </div>
-                <div class="control-right">
-                    <span class="status-badge status-compliant">✅ Compliant</span>
-                    <span class="evidence-count">📄 9 docs</span>
-                </div>
-            </div>
-        </div>
+        <!-- Footer -->
+        <footer class="footer">
+            Built by <a href="https://linkedin.com/in/janisagic" target="_blank">Janis Agic</a> © 2024
+        </footer>
+    </main>
 
-        <div class="gap-analysis">
-            <div class="section-header">
-                <h2 class="section-title">Gap Analysis — Priority Actions</h2>
-            </div>
-
-            <div class="gap-item">
-                <span class="gap-priority">🔴 HIGH PRIORITY</span>
-                <div class="gap-title">ISO27001-A.9.2.3 — Management of Privileged Access Rights</div>
-                <div class="gap-description">Missing: Formal process for granting and revoking privileged access. Required: Documented workflow, approval matrix, and quarterly access review logs.</div>
-            </div>
-
-            <div class="gap-item">
-                <span class="gap-priority">🔴 HIGH PRIORITY</span>
-                <div class="gap-title">ISO27001-A.12.1.2 — Change Management</div>
-                <div class="gap-description">Missing: Change approval records for production deployments. Required: Implement change request system with audit trail (last 12 months).</div>
-            </div>
-
-            <div class="gap-item">
-                <span class="gap-priority">🟡 MEDIUM PRIORITY</span>
-                <div class="gap-title">GDPR-Art.30 — Records of Processing Activities</div>
-                <div class="gap-description">Incomplete: Data processing register needs update for 3 new systems added in Q1 2026. Required: Complete ROPA documentation.</div>
-            </div>
-
-            <div class="gap-item">
-                <span class="gap-priority">🟡 MEDIUM PRIORITY</span>
-                <div class="gap-title">SOC2-CC8.1 — Risk Assessment Process</div>
-                <div class="gap-description">Missing: Annual risk assessment documentation for 2026. Required: Complete risk assessment report with mitigation strategies.</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="ai-chat-button" onclick="alert('AI Chat Assistant coming soon!')">
-        💬
+    <!-- Chat Button -->
+    <div class="chat-button" onclick="alert('Chat feature coming soon!')">
+        <span>💬</span>
     </div>
 
     <script>
-        // Filter functionality
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const controlItems = document.querySelectorAll('.control-item');
+        // Navigation
+        function switchSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+        }
 
-        filterButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterButtons.forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
+        // Filter Controls
+        function filterControls(button, filter) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            button.classList.add('active');
+            // Filter logic would go here
+        }
 
-                const filterText = btn.textContent.trim();
-                
-                controlItems.forEach(item => {
-                    const status = item.querySelector('.status-badge').textContent;
-                    
-                    if (filterText === 'All') {
-                        item.style.display = 'flex';
-                    } else if (filterText.includes('Compliant') && status.includes('Compliant')) {
-                        item.style.display = 'flex';
-                    } else if (filterText.includes('Gaps') && status.includes('Gap')) {
-                        item.style.display = 'flex';
-                    } else if (filterText.includes('In Progress') && status.includes('In Progress')) {
-                        item.style.display = 'flex';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            });
-        });
+        // Counter Animation
+        function animateCounter(element) {
+            const target = parseInt(element.dataset.count);
+            const duration = 2000;
+            const increment = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
 
-        // Animate progress bars on load
         window.addEventListener('load', () => {
-            document.querySelectorAll('.progress-fill').forEach(bar => {
-                const width = bar.style.width;
-                bar.style.width = '0';
-                setTimeout(() => {
-                    bar.style.width = width;
-                }, 100);
-            });
+            document.querySelectorAll('[data-count]').forEach(animateCounter);
         });
     </script>
 </body>
