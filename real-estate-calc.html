@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real Estate Investment Calculators</title>
+    <title>Real Estate Investment Calculators - Analyze Any Deal in Seconds</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,782 +14,1709 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-darker: #1a1a2e;
+            --bg-card: #252538;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --green: #10b981;
+            --green-dark: #059669;
+            --red: #ef4444;
+            --red-dark: #dc2626;
+            --yellow: #f59e0b;
+            --blue: #3b82f6;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: #374151;
+            --gold: #fbbf24;
+            --silver: #d1d5db;
+            --bronze: #d97706;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background: #0f1419;
-            color: #e4e4e7;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
             line-height: 1.6;
+            overflow-x: hidden;
         }
 
+        /* Header */
         .header {
-            background: linear-gradient(135deg, #1e3a8a, #7c3aed);
-            padding: 2rem;
-            text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            z-index: 1000;
+            padding: 1rem 0;
         }
 
-        .header h1 {
-            font-size: 2.5rem;
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
             font-weight: 700;
-            color: white;
-            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .header p {
-            color: #c7d2fe;
-            font-size: 1.1rem;
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
         }
 
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        /* Container */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
+            padding: 0 2rem;
         }
 
-        .tabs {
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 6rem 0 4rem;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--blue) 50%, var(--green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
             display: flex;
+            justify-content: center;
             gap: 1rem;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #1f2937;
+            margin: 3rem 0 2rem;
             flex-wrap: wrap;
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.2s forwards;
         }
 
-        .tab {
+        .tab-btn {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border: 2px solid var(--border);
             padding: 1rem 2rem;
-            background: transparent;
-            border: none;
-            color: #9ca3af;
-            font-size: 1.1rem;
+            border-radius: 12px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
         }
 
-        .tab:hover {
-            color: #3b82f6;
+        .tab-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-2px);
         }
 
-        .tab.active {
-            color: #3b82f6;
-            border-bottom-color: #3b82f6;
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--blue));
+            border-color: var(--primary);
+            color: white;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
         }
 
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .calculator {
-            background: #1a1f2e;
-            border: 1px solid #2d3748;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
+        /* Calculator Card */
         .calc-section {
-            margin-bottom: 2rem;
+            display: none;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
         }
 
-        .calc-section h3 {
-            font-size: 1.3rem;
-            color: #3b82f6;
-            margin-bottom: 1rem;
-            font-weight: 600;
+        .calc-section.active {
+            display: block;
+        }
+
+        .calc-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 3rem;
+            margin: 2rem 0;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .calc-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .calc-header h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .calc-header p {
+            color: var(--text-muted);
+        }
+
+        /* Input Grid */
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .input-group {
-            margin-bottom: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
 
         .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #9ca3af;
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            background: #0f1419;
-            border: 1px solid #374151;
-            border-radius: 8px;
-            color: #f9fafb;
-            font-size: 1rem;
-            transition: border-color 0.2s;
-        }
-
-        .input-group input:focus {
-            outline: none;
-            border-color: #3b82f6;
-        }
-
-        .input-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .calculate-btn {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            border: none;
-            border-radius: 8px;
-            color: white;
-            font-size: 1.1rem;
             font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
         }
 
-        .calculate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
-        }
-
-        .results {
-            background: #111827;
-            border: 1px solid #1f2937;
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 2rem;
-        }
-
-        .results h3 {
-            font-size: 1.5rem;
-            color: #f9fafb;
-            margin-bottom: 1.5rem;
-            font-weight: 700;
-        }
-
-        .result-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            background: #1a1f2e;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border-left: 4px solid #3b82f6;
-        }
-
-        .result-label {
-            color: #9ca3af;
-            font-size: 1rem;
-        }
-
-        .result-value {
-            font-size: 1.3rem;
-            font-weight: 700;
-        }
-
-        .result-positive {
-            color: #10b981;
-        }
-
-        .result-negative {
-            color: #ef4444;
-        }
-
-        .result-neutral {
-            color: #3b82f6;
-        }
-
-        .chart-bar {
-            margin-bottom: 1.5rem;
-        }
-
-        .chart-label {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            color: #9ca3af;
-            font-size: 0.95rem;
-        }
-
-        .bar-container {
-            width: 100%;
-            height: 30px;
-            background: #1f2937;
-            border-radius: 6px;
-            overflow: hidden;
+        .input-wrapper {
             position: relative;
         }
 
-        .bar-fill {
+        .input-prefix {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .input-suffix {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 1rem 1rem 1rem 2.5rem;
+            background: var(--bg-darker);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        input.has-suffix {
+            padding-right: 3rem;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Results Dashboard */
+        .results-dashboard {
+            margin-top: 3rem;
+            padding-top: 3rem;
+            border-top: 2px solid var(--border);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-card {
+            background: var(--bg-darker);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 2px solid var(--border);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .result-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 2rem;
+            font-weight: 800;
+        }
+
+        .result-value.positive {
+            color: var(--green);
+        }
+
+        .result-value.negative {
+            color: var(--red);
+        }
+
+        .result-value.neutral {
+            color: var(--blue);
+        }
+
+        /* Cost Breakdown Chart */
+        .chart-container {
+            margin-top: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .chart-bar-container {
+            background: var(--bg-darker);
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .chart-bar-item {
+            margin-bottom: 1rem;
+        }
+
+        .chart-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .chart-bar-bg {
+            background: var(--bg-dark);
+            height: 30px;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .chart-bar-fill {
             height: 100%;
-            background: linear-gradient(90deg, #10b981, #34d399);
-            transition: width 0.5s ease;
+            background: linear-gradient(90deg, var(--primary), var(--blue));
+            transition: width 0.8s ease;
             display: flex;
             align-items: center;
             justify-content: flex-end;
-            padding-right: 0.5rem;
+            padding-right: 0.75rem;
             color: white;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.85rem;
         }
 
-        .bar-fill.negative {
-            background: linear-gradient(90deg, #ef4444, #f87171);
+        /* Timeline Visualization */
+        .timeline {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: var(--bg-darker);
+            border-radius: 12px;
         }
 
+        .timeline-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            margin-top: 2rem;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 25px;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: var(--border);
+            z-index: 0;
+        }
+
+        .timeline-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--blue));
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .timeline-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-value {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Property Comparison */
         .comparison-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
         }
 
         .property-card {
-            background: #1a1f2e;
-            border: 1px solid #2d3748;
-            border-radius: 12px;
-            padding: 1.5rem;
+            background: var(--bg-darker);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 2px solid var(--border);
+            position: relative;
+            transition: all 0.3s ease;
         }
 
-        .property-card h4 {
-            font-size: 1.2rem;
-            color: #3b82f6;
-            margin-bottom: 1rem;
-            font-weight: 600;
+        .property-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
         }
 
-        .property-stat {
+        .property-card.winner {
+            border-color: var(--gold);
+            box-shadow: 0 10px 40px rgba(251, 191, 36, 0.3);
+        }
+
+        .badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--gold), #f59e0b);
+            color: var(--bg-dark);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(251, 191, 36, 0.4);
+        }
+
+        .property-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .property-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .property-inputs {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .property-metric {
             display: flex;
             justify-content: space-between;
             padding: 0.75rem 0;
-            border-bottom: 1px solid #374151;
+            border-bottom: 1px solid var(--border);
         }
 
-        .property-stat:last-child {
+        .property-metric:last-child {
             border-bottom: none;
         }
 
-        .footer {
+        .metric-label {
+            color: var(--text-muted);
+        }
+
+        .metric-value {
+            font-weight: 700;
+        }
+
+        /* Radar Chart */
+        .radar-chart-container {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: var(--bg-darker);
+            border-radius: 16px;
+        }
+
+        .radar-chart {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin: 2rem auto;
+            aspect-ratio: 1;
+        }
+
+        .radar-bg {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+        }
+
+        .radar-polygon {
+            width: 80%;
+            height: 80%;
+            position: relative;
+        }
+
+        .radar-axis {
+            position: absolute;
+            width: 2px;
+            height: 50%;
+            background: var(--border);
+            top: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+        }
+
+        .radar-label {
+            position: absolute;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .radar-point {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--primary);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* How It Works Section */
+        .how-it-works {
+            margin: 6rem 0;
+            padding: 4rem 0;
+            border-top: 2px solid var(--border);
+            opacity: 0;
+            animation: fadeInUp 0.8s ease 0.4s forwards;
+        }
+
+        .how-it-works h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .steps-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .step-card {
             text-align: center;
             padding: 2rem;
-            color: #6b7280;
-            font-size: 0.95rem;
-            border-top: 1px solid #1f2937;
-            margin-top: 3rem;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
         }
 
-        .footer a {
-            color: #3b82f6;
-            text-decoration: none;
-            font-weight: 600;
+        .step-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
         }
 
-        .footer a:hover {
-            text-decoration: underline;
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary), var(--blue));
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
         }
 
-        .ai-chat-button {
+        .step-number {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 30px;
+            height: 30px;
+            background: var(--green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .step-card h3 {
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .step-card p {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--blue));
+            color: white;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--bg-darker);
+            color: var(--text-primary);
+            border-color: var(--border);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .btn-reset {
+            background: transparent;
+            color: var(--red);
+            border-color: var(--red);
+        }
+
+        .btn-reset:hover {
+            background: var(--red);
+            color: white;
+        }
+
+        /* AI Chat Button */
+        .ai-chat-fab {
             position: fixed;
             bottom: 2rem;
             right: 2rem;
             width: 60px;
             height: 60px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            background: linear-gradient(135deg, var(--primary), var(--blue));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
-            transition: transform 0.2s;
             font-size: 1.5rem;
-            z-index: 1000;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.5);
+            transition: all 0.3s ease;
+            z-index: 999;
         }
 
-        .ai-chat-button:hover {
+        .ai-chat-fab:hover {
             transform: scale(1.1);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.6);
         }
 
+        /* AI Chat Window */
+        .ai-chat-window {
+            position: fixed;
+            bottom: 5rem;
+            right: 2rem;
+            width: 380px;
+            max-height: 600px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 2px solid var(--border);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 998;
+            animation: slideUp 0.3s ease;
+        }
+
+        .ai-chat-window.active {
+            display: flex;
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            font-size: 1.25rem;
+        }
+
+        .chat-close {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+
+        .chat-close:hover {
+            color: var(--red);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            padding: 1rem;
+            border-radius: 12px;
+            max-width: 85%;
+        }
+
+        .chat-message.bot {
+            background: var(--bg-darker);
+            align-self: flex-start;
+        }
+
+        .chat-message.user {
+            background: linear-gradient(135deg, var(--primary), var(--blue));
+            align-self: flex-end;
+            color: white;
+        }
+
+        .chat-suggestions {
+            padding: 1rem 1.5rem;
+            border-top: 2px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .chat-suggestion {
+            padding: 0.75rem;
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .chat-suggestion:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 3rem 0;
+            border-top: 2px solid var(--border);
+            color: var(--text-muted);
+        }
+
+        .footer p {
+            font-size: 1rem;
+        }
+
+        .footer strong {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
+            .hero h1 {
+                font-size: 2.5rem;
             }
 
-            .container {
-                padding: 1rem;
+            .nav-links {
+                flex-direction: column;
+                gap: 1rem;
             }
 
-            .tabs {
-                gap: 0.5rem;
+            .calc-card {
+                padding: 2rem 1.5rem;
             }
 
-            .tab {
-                padding: 0.75rem 1rem;
-                font-size: 0.95rem;
-            }
-
-            .calculator {
-                padding: 1.5rem;
-            }
-
-            .input-row {
+            .input-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ai-chat-window {
+                width: calc(100vw - 2rem);
+                right: 1rem;
+            }
+
+            .timeline-steps {
+                flex-direction: column;
+                gap: 2rem;
+            }
+
+            .timeline-line {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>🏘️ Real Estate Investment Calculators</h1>
-        <p>BRRRR • Fix & Flip • Flip Analyzer</p>
-    </div>
 
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🏡 Real Estate Calc</div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#brrrr">BRRRR</a></li>
+                    <li><a href="#flip">Fix & Flip</a></li>
+                    <li><a href="#analyzer">Analyzer</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Real Estate Investment Calculators</h1>
+            <p>Analyze Any Deal in Seconds — BRRRR, Fix & Flip, and Property Comparison Tools</p>
+        </div>
+    </section>
+
+    <!-- Tab Navigation -->
     <div class="container">
-        <div class="tabs">
-            <button class="tab active" onclick="switchTab('brrrr')">BRRRR Calculator</button>
-            <button class="tab" onclick="switchTab('flip')">Fix & Flip Calculator</button>
-            <button class="tab" onclick="switchTab('analyzer')">Flip Analyzer</button>
+        <div class="tab-nav">
+            <button class="tab-btn active" data-tab="brrrr">📊 BRRRR Calculator</button>
+            <button class="tab-btn" data-tab="flip">🔨 Fix & Flip</button>
+            <button class="tab-btn" data-tab="analyzer">🏆 Property Analyzer</button>
         </div>
 
         <!-- BRRRR Calculator -->
-        <div id="brrrr" class="tab-content active">
-            <div class="calculator">
-                <div class="calc-section">
-                    <h3>💰 Purchase & Rehab</h3>
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label>Purchase Price ($)</label>
-                            <input type="number" id="brrrr-purchase" value="150000" oninput="calculateBRRRR()">
+        <div id="brrrr" class="calc-section active">
+            <div class="calc-card">
+                <div class="calc-header">
+                    <h2>BRRRR Strategy Calculator</h2>
+                    <p>Buy, Rehab, Rent, Refinance, Repeat — Calculate Your Returns</p>
+                </div>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Purchase Price</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="brrrr-purchase" value="150000" step="1000">
                         </div>
-                        <div class="input-group">
-                            <label>Rehab Cost ($)</label>
-                            <input type="number" id="brrrr-rehab" value="30000" oninput="calculateBRRRR()">
+                    </div>
+                    <div class="input-group">
+                        <label>Rehab Costs</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="brrrr-rehab" value="30000" step="1000">
                         </div>
-                        <div class="input-group">
-                            <label>After Repair Value (ARV) ($)</label>
-                            <input type="number" id="brrrr-arv" value="240000" oninput="calculateBRRRR()">
+                    </div>
+                    <div class="input-group">
+                        <label>After Repair Value (ARV)</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="brrrr-arv" value="220000" step="1000">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Down Payment %</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="brrrr-down" value="20" step="1" class="has-suffix">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Interest Rate</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="brrrr-rate" value="6.5" step="0.1" class="has-suffix">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Monthly Rental Income</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="brrrr-rent" value="1800" step="50">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Vacancy Rate</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="brrrr-vacancy" value="5" step="1" class="has-suffix">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Monthly Expenses</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="brrrr-expenses" value="600" step="50">
                         </div>
                     </div>
                 </div>
 
-                <div class="calc-section">
-                    <h3>🏠 Rental & Expenses</h3>
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label>Monthly Rental Income ($)</label>
-                            <input type="number" id="brrrr-rent" value="1800" oninput="calculateBRRRR()">
+                <div class="results-dashboard">
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <div class="result-label">Monthly Cash Flow</div>
+                            <div class="result-value neutral" id="brrrr-cashflow">$0</div>
                         </div>
-                        <div class="input-group">
-                            <label>Monthly Expenses ($)</label>
-                            <input type="number" id="brrrr-expenses" value="650" oninput="calculateBRRRR()">
+                        <div class="result-card">
+                            <div class="result-label">Cash-on-Cash ROI</div>
+                            <div class="result-value neutral" id="brrrr-coc">0%</div>
                         </div>
-                        <div class="input-group">
-                            <label>Refinance LTV (%)</label>
-                            <input type="number" id="brrrr-ltv" value="75" oninput="calculateBRRRR()">
+                        <div class="result-card">
+                            <div class="result-label">Total ROI</div>
+                            <div class="result-value neutral" id="brrrr-total-roi">0%</div>
                         </div>
+                        <div class="result-card">
+                            <div class="result-label">Equity Created</div>
+                            <div class="result-value positive" id="brrrr-equity">$0</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-container">
+                        <h3 class="chart-title">Cost Breakdown</h3>
+                        <div class="chart-bar-container" id="brrrr-chart"></div>
                     </div>
                 </div>
 
-                <button class="calculate-btn" onclick="calculateBRRRR()">Calculate BRRRR Returns</button>
-
-                <div class="results">
-                    <h3>📊 Results</h3>
-                    <div class="result-item">
-                        <span class="result-label">Total Investment</span>
-                        <span class="result-value result-neutral" id="brrrr-total-investment">$180,000</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Cash Left in Deal</span>
-                        <span class="result-value result-positive" id="brrrr-cash-left">$0</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Monthly Cash Flow</span>
-                        <span class="result-value result-positive" id="brrrr-cashflow">$1,150</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Annual Cash Flow</span>
-                        <span class="result-value result-positive" id="brrrr-annual">$13,800</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Cash-on-Cash Return</span>
-                        <span class="result-value result-positive" id="brrrr-coc">∞%</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Equity Created</span>
-                        <span class="result-value result-positive" id="brrrr-equity">$60,000</span>
-                    </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="alert('Analysis saved! (Demo)')">💾 Save Analysis</button>
+                    <button class="btn btn-secondary" onclick="alert('PDF Export (Demo)')">📄 Export PDF</button>
+                    <button class="btn btn-reset" onclick="resetBRRRR()">🔄 Reset</button>
                 </div>
             </div>
         </div>
 
         <!-- Fix & Flip Calculator -->
-        <div id="flip" class="tab-content">
-            <div class="calculator">
-                <div class="calc-section">
-                    <h3>💰 Costs</h3>
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label>Purchase Price ($)</label>
-                            <input type="number" id="flip-purchase" value="180000" oninput="calculateFlip()">
+        <div id="flip" class="calc-section">
+            <div class="calc-card">
+                <div class="calc-header">
+                    <h2>Fix & Flip Calculator</h2>
+                    <p>Calculate Your Flip Profit and ROI</p>
+                </div>
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Purchase Price</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="flip-purchase" value="200000" step="1000">
                         </div>
-                        <div class="input-group">
-                            <label>Rehab Cost ($)</label>
-                            <input type="number" id="flip-rehab" value="40000" oninput="calculateFlip()">
+                    </div>
+                    <div class="input-group">
+                        <label>Rehab Costs</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="flip-rehab" value="50000" step="1000">
                         </div>
-                        <div class="input-group">
-                            <label>Holding Costs ($)</label>
-                            <input type="number" id="flip-holding" value="8000" oninput="calculateFlip()">
+                    </div>
+                    <div class="input-group">
+                        <label>After Repair Value (ARV)</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="flip-arv" value="320000" step="1000">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Holding Period (Months)</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="flip-holding" value="6" step="1" class="has-suffix">
+                            <span class="input-suffix">mo</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Monthly Holding Costs</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="flip-holding-cost" value="2000" step="100">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Agent Commission</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="flip-commission" value="6" step="0.5" class="has-suffix">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Closing Costs (Buy)</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="flip-closing-buy" value="3000" step="500">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Closing Costs (Sell)</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="flip-closing-sell" value="2000" step="500">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Loan Interest Rate</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="flip-rate" value="8" step="0.5" class="has-suffix">
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>Loan Amount</label>
+                        <div class="input-wrapper">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="flip-loan" value="160000" step="1000">
                         </div>
                     </div>
                 </div>
 
-                <div class="calc-section">
-                    <h3>📈 Sale</h3>
-                    <div class="input-row">
-                        <div class="input-group">
-                            <label>After Repair Value (ARV) ($)</label>
-                            <input type="number" id="flip-arv" value="280000" oninput="calculateFlip()">
+                <div class="results-dashboard">
+                    <div class="results-grid">
+                        <div class="result-card">
+                            <div class="result-label">Net Profit</div>
+                            <div class="result-value neutral" id="flip-profit">$0</div>
                         </div>
-                        <div class="input-group">
-                            <label>Selling Costs (%) - Agent, Closing</label>
-                            <input type="number" id="flip-selling" value="8" oninput="calculateFlip()">
+                        <div class="result-card">
+                            <div class="result-label">ROI</div>
+                            <div class="result-value neutral" id="flip-roi">0%</div>
                         </div>
-                        <div class="input-group">
-                            <label>Holding Period (Months)</label>
-                            <input type="number" id="flip-months" value="6" oninput="calculateFlip()">
+                        <div class="result-card">
+                            <div class="result-label">Annualized ROI</div>
+                            <div class="result-value neutral" id="flip-annual-roi">0%</div>
+                        </div>
+                        <div class="result-card">
+                            <div class="result-label">Total Investment</div>
+                            <div class="result-value neutral" id="flip-investment">$0</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline">
+                        <h3 class="chart-title">Deal Timeline</h3>
+                        <div class="timeline-steps">
+                            <div class="timeline-line"></div>
+                            <div class="timeline-step">
+                                <div class="timeline-icon">🏠</div>
+                                <div class="timeline-label">Purchase</div>
+                                <div class="timeline-value" id="timeline-purchase">$200,000</div>
+                            </div>
+                            <div class="timeline-step">
+                                <div class="timeline-icon">🔨</div>
+                                <div class="timeline-label">Rehab</div>
+                                <div class="timeline-value" id="timeline-rehab">$50,000</div>
+                            </div>
+                            <div class="timeline-step">
+                                <div class="timeline-icon">💰</div>
+                                <div class="timeline-label">Sale</div>
+                                <div class="timeline-value" id="timeline-sale">$320,000</div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <button class="calculate-btn" onclick="calculateFlip()">Calculate Flip Profit</button>
-
-                <div class="results">
-                    <h3>📊 Results</h3>
-                    <div class="result-item">
-                        <span class="result-label">Total Investment</span>
-                        <span class="result-value result-neutral" id="flip-total-cost">$228,000</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Net Profit</span>
-                        <span class="result-value result-positive" id="flip-profit">$29,600</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">ROI</span>
-                        <span class="result-value result-positive" id="flip-roi">13.0%</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Annualized ROI</span>
-                        <span class="result-value result-positive" id="flip-annual-roi">26.0%</span>
-                    </div>
-
-                    <div style="margin-top: 2rem;">
-                        <h4 style="color: #9ca3af; margin-bottom: 1rem;">Cost Breakdown</h4>
-                        <div class="chart-bar">
-                            <div class="chart-label">
-                                <span>Purchase Price</span>
-                                <span id="flip-chart-purchase">$180,000</span>
-                            </div>
-                            <div class="bar-container">
-                                <div class="bar-fill" id="flip-bar-purchase" style="width: 79%;"></div>
-                            </div>
-                        </div>
-                        <div class="chart-bar">
-                            <div class="chart-label">
-                                <span>Rehab Cost</span>
-                                <span id="flip-chart-rehab">$40,000</span>
-                            </div>
-                            <div class="bar-container">
-                                <div class="bar-fill" id="flip-bar-rehab" style="width: 18%;"></div>
-                            </div>
-                        </div>
-                        <div class="chart-bar">
-                            <div class="chart-label">
-                                <span>All Other Costs</span>
-                                <span id="flip-chart-other">$30,400</span>
-                            </div>
-                            <div class="bar-container">
-                                <div class="bar-fill" id="flip-bar-other" style="width: 13%;"></div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="alert('Analysis saved! (Demo)')">💾 Save Analysis</button>
+                    <button class="btn btn-secondary" onclick="alert('PDF Export (Demo)')">📄 Export PDF</button>
+                    <button class="btn btn-reset" onclick="resetFlip()">🔄 Reset</button>
                 </div>
             </div>
         </div>
 
-        <!-- Flip Analyzer -->
-        <div id="analyzer" class="tab-content">
-            <div class="calculator">
-                <h3 style="color: #3b82f6; margin-bottom: 1.5rem;">📊 Property Comparison</h3>
+        <!-- Property Analyzer -->
+        <div id="analyzer" class="calc-section">
+            <div class="calc-card">
+                <div class="calc-header">
+                    <h2>Property Comparison Analyzer</h2>
+                    <p>Compare 3 Properties Side-by-Side</p>
+                </div>
+
                 <div class="comparison-grid">
-                    <div class="property-card">
-                        <h4>🏡 Property A</h4>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">Purchase Price</span>
-                            <input type="number" id="propA-purchase" value="180000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
+                    <!-- Property 1 -->
+                    <div class="property-card" id="prop-1">
+                        <div class="property-header">
+                            <input type="text" id="prop-1-name" value="Property A" style="background: transparent; border: none; font-size: 1.5rem; font-weight: 700; color: var(--text-primary); width: 100%;">
                         </div>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">Rehab Cost</span>
-                            <input type="number" id="propA-rehab" value="40000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
-                        </div>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">ARV</span>
-                            <input type="number" id="propA-arv" value="280000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
-                        </div>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">Holding Costs</span>
-                            <input type="number" id="propA-holding" value="8000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
-                        </div>
-                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid #374151;">
-                            <div class="property-stat">
-                                <span style="color: #f9fafb; font-weight: 600;">Net Profit</span>
-                                <span id="propA-profit" style="color: #10b981; font-weight: 700; font-size: 1.2rem;">$29,600</span>
+                        <div class="property-inputs">
+                            <div class="input-group">
+                                <label>Purchase Price</label>
+                                <div class="input-wrapper">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="prop-1-price" value="250000" step="1000">
+                                </div>
                             </div>
-                            <div class="property-stat">
-                                <span style="color: #f9fafb; font-weight: 600;">ROI</span>
-                                <span id="propA-roi" style="color: #10b981; font-weight: 700; font-size: 1.2rem;">13.0%</span>
+                            <div class="input-group">
+                                <label>Monthly Rent</label>
+                                <div class="input-wrapper">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="prop-1-rent" value="2200" step="50">
+                                </div>
                             </div>
+                            <div class="input-group">
+                                <label>Expenses/Month</label>
+                                <div class="input-wrapper">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="prop-1-expenses" value="800" step="50">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Down Payment %</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="prop-1-down" value="25" step="5" class="has-suffix">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="property-metric">
+                            <span class="metric-label">Cash Flow</span>
+                            <span class="metric-value" id="prop-1-cashflow">$0</span>
+                        </div>
+                        <div class="property-metric">
+                            <span class="metric-label">ROI</span>
+                            <span class="metric-value" id="prop-1-roi">0%</span>
+                        </div>
+                        <div class="property-metric">
+                            <span class="metric-label">Score</span>
+                            <span class="metric-value" id="prop-1-score">0</span>
                         </div>
                     </div>
 
-                    <div class="property-card">
-                        <h4>🏡 Property B</h4>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">Purchase Price</span>
-                            <input type="number" id="propB-purchase" value="150000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
+                    <!-- Property 2 -->
+                    <div class="property-card" id="prop-2">
+                        <div class="property-header">
+                            <input type="text" id="prop-2-name" value="Property B" style="background: transparent; border: none; font-size: 1.5rem; font-weight: 700; color: var(--text-primary); width: 100%;">
                         </div>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">Rehab Cost</span>
-                            <input type="number" id="propB-rehab" value="50000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
-                        </div>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">ARV</span>
-                            <input type="number" id="propB-arv" value="260000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
-                        </div>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">Holding Costs</span>
-                            <input type="number" id="propB-holding" value="6000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
-                        </div>
-                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid #374151;">
-                            <div class="property-stat">
-                                <span style="color: #f9fafb; font-weight: 600;">Net Profit</span>
-                                <span id="propB-profit" style="color: #10b981; font-weight: 700; font-size: 1.2rem;">$33,200</span>
+                        <div class="property-inputs">
+                            <div class="input-group">
+                                <label>Purchase Price</label>
+                                <div class="input-wrapper">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="prop-2-price" value="180000" step="1000">
+                                </div>
                             </div>
-                            <div class="property-stat">
-                                <span style="color: #f9fafb; font-weight: 600;">ROI</span>
-                                <span id="propB-roi" style="color: #10b981; font-weight: 700; font-size: 1.2rem;">16.1%</span>
+                            <div class="input-group">
+                                <label>Monthly Rent</label>
+                                <div class="input-wrapper">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="prop-2-rent" value="1650" step="50">
+                                </div>
                             </div>
+                            <div class="input-group">
+                                <label>Expenses/Month</label>
+                                <div class="input-wrapper">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="prop-2-expenses" value="550" step="50">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Down Payment %</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="prop-2-down" value="20" step="5" class="has-suffix">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="property-metric">
+                            <span class="metric-label">Cash Flow</span>
+                            <span class="metric-value" id="prop-2-cashflow">$0</span>
+                        </div>
+                        <div class="property-metric">
+                            <span class="metric-label">ROI</span>
+                            <span class="metric-value" id="prop-2-roi">0%</span>
+                        </div>
+                        <div class="property-metric">
+                            <span class="metric-label">Score</span>
+                            <span class="metric-value" id="prop-2-score">0</span>
                         </div>
                     </div>
 
-                    <div class="property-card">
-                        <h4>🏡 Property C</h4>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">Purchase Price</span>
-                            <input type="number" id="propC-purchase" value="220000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
+                    <!-- Property 3 -->
+                    <div class="property-card" id="prop-3">
+                        <div class="property-header">
+                            <input type="text" id="prop-3-name" value="Property C" style="background: transparent; border: none; font-size: 1.5rem; font-weight: 700; color: var(--text-primary); width: 100%;">
                         </div>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">Rehab Cost</span>
-                            <input type="number" id="propC-rehab" value="30000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
-                        </div>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">ARV</span>
-                            <input type="number" id="propC-arv" value="310000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
-                        </div>
-                        <div class="property-stat">
-                            <span style="color: #9ca3af;">Holding Costs</span>
-                            <input type="number" id="propC-holding" value="10000" style="width: 120px; padding: 0.5rem; background: #0f1419; border: 1px solid #374151; border-radius: 4px; color: #f9fafb;" oninput="compareProperties()">
-                        </div>
-                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 2px solid #374151;">
-                            <div class="property-stat">
-                                <span style="color: #f9fafb; font-weight: 600;">Net Profit</span>
-                                <span id="propC-profit" style="color: #10b981; font-weight: 700; font-size: 1.2rem;">$29,200</span>
+                        <div class="property-inputs">
+                            <div class="input-group">
+                                <label>Purchase Price</label>
+                                <div class="input-wrapper">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="prop-3-price" value="300000" step="1000">
+                                </div>
                             </div>
-                            <div class="property-stat">
-                                <span style="color: #f9fafb; font-weight: 600;">ROI</span>
-                                <span id="propC-roi" style="color: #10b981; font-weight: 700; font-size: 1.2rem;">11.3%</span>
+                            <div class="input-group">
+                                <label>Monthly Rent</label>
+                                <div class="input-wrapper">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="prop-3-rent" value="2800" step="50">
+                                </div>
                             </div>
+                            <div class="input-group">
+                                <label>Expenses/Month</label>
+                                <div class="input-wrapper">
+                                    <span class="input-prefix">$</span>
+                                    <input type="number" id="prop-3-expenses" value="950" step="50">
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <label>Down Payment %</label>
+                                <div class="input-wrapper">
+                                    <input type="number" id="prop-3-down" value="30" step="5" class="has-suffix">
+                                    <span class="input-suffix">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="property-metric">
+                            <span class="metric-label">Cash Flow</span>
+                            <span class="metric-value" id="prop-3-cashflow">$0</span>
+                        </div>
+                        <div class="property-metric">
+                            <span class="metric-label">ROI</span>
+                            <span class="metric-value" id="prop-3-roi">0%</span>
+                        </div>
+                        <div class="property-metric">
+                            <span class="metric-label">Score</span>
+                            <span class="metric-value" id="prop-3-score">0</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="results" style="margin-top: 2rem;">
-                    <h3>🏆 Winner Analysis</h3>
-                    <div class="result-item">
-                        <span class="result-label">Best ROI</span>
-                        <span class="result-value result-positive" id="best-roi">Property B (16.1%)</span>
+                <div class="radar-chart-container">
+                    <h3 class="chart-title">Performance Comparison</h3>
+                    <div class="radar-chart">
+                        <svg width="100%" height="100%" viewBox="0 0 400 400">
+                            <!-- Pentagon Grid -->
+                            <polygon points="200,80 320,160 280,300 120,300 80,160" fill="none" stroke="var(--border)" stroke-width="2"/>
+                            <polygon points="200,120 290,175 260,270 140,270 110,175" fill="none" stroke="var(--border)" stroke-width="1" opacity="0.5"/>
+                            <polygon points="200,160 260,190 240,240 160,240 140,190" fill="none" stroke="var(--border)" stroke-width="1" opacity="0.5"/>
+                            
+                            <!-- Axes -->
+                            <line x1="200" y1="200" x2="200" y2="80" stroke="var(--border)" stroke-width="1"/>
+                            <line x1="200" y1="200" x2="320" y2="160" stroke="var(--border)" stroke-width="1"/>
+                            <line x1="200" y1="200" x2="280" y2="300" stroke="var(--border)" stroke-width="1"/>
+                            <line x1="200" y1="200" x2="120" y2="300" stroke="var(--border)" stroke-width="1"/>
+                            <line x1="200" y1="200" x2="80" y2="160" stroke="var(--border)" stroke-width="1"/>
+                            
+                            <!-- Labels -->
+                            <text x="200" y="70" text-anchor="middle" fill="var(--text-secondary)" font-size="14" font-weight="600">Cash Flow</text>
+                            <text x="330" y="165" text-anchor="start" fill="var(--text-secondary)" font-size="14" font-weight="600">ROI</text>
+                            <text x="290" y="320" text-anchor="middle" fill="var(--text-secondary)" font-size="14" font-weight="600">Value</text>
+                            <text x="110" y="320" text-anchor="middle" fill="var(--text-secondary)" font-size="14" font-weight="600">Rent</text>
+                            <text x="60" y="165" text-anchor="end" fill="var(--text-secondary)" font-size="14" font-weight="600">Score</text>
+                            
+                            <!-- Data polygon (will be updated by JS) -->
+                            <polygon id="radar-data" points="200,200 200,200 200,200 200,200 200,200" 
+                                     fill="var(--primary)" fill-opacity="0.3" stroke="var(--primary)" stroke-width="3"/>
+                        </svg>
                     </div>
-                    <div class="result-item">
-                        <span class="result-label">Highest Profit</span>
-                        <span class="result-value result-positive" id="best-profit">Property B ($33,200)</span>
-                    </div>
-                    <div class="result-item">
-                        <span class="result-label">Lowest Investment</span>
-                        <span class="result-value result-neutral" id="lowest-invest">Property B ($206,000)</span>
-                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="alert('Comparison saved! (Demo)')">💾 Save Comparison</button>
+                    <button class="btn btn-secondary" onclick="alert('PDF Export (Demo)')">📄 Export PDF</button>
+                    <button class="btn btn-reset" onclick="resetAnalyzer()">🔄 Reset</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="footer">
-        Built by <a href="#">Janis Agic</a> 🚀
-    </div>
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <h2>How It Works</h2>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-icon" style="position: relative;">
+                        📊
+                        <div class="step-number">1</div>
+                    </div>
+                    <h3>Input Your Numbers</h3>
+                    <p>Enter property details, purchase price, rehab costs, rental income, and financing terms into the calculator.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon" style="position: relative;">
+                        🧮
+                        <div class="step-number">2</div>
+                    </div>
+                    <h3>Live Calculations</h3>
+                    <p>Watch real-time updates as you type. Our calculators instantly compute cash flow, ROI, and profitability metrics.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon" style="position: relative;">
+                        📈
+                        <div class="step-number">3</div>
+                    </div>
+                    <h3>Analyze Results</h3>
+                    <p>Review detailed breakdowns, charts, and visual comparisons to understand the full financial picture of your deal.</p>
+                </div>
+                <div class="step-card">
+                    <div class="step-icon" style="position: relative;">
+                        ✅
+                        <div class="step-number">4</div>
+                    </div>
+                    <h3>Make Smart Decisions</h3>
+                    <p>Use data-driven insights to confidently decide whether to move forward, negotiate, or walk away from a deal.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <div class="ai-chat-button" onclick="alert('AI Chat Assistant coming soon!')">
-        💬
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>Built by <strong>Janis Agic</strong></p>
+        </div>
+    </footer>
+
+    <!-- AI Chat FAB -->
+    <div class="ai-chat-fab" onclick="toggleChat()">💬</div>
+
+    <!-- AI Chat Window -->
+    <div class="ai-chat-window" id="chatWindow">
+        <div class="chat-header">
+            <h3>🤖 AI Real Estate Assistant</h3>
+            <div class="chat-close" onclick="toggleChat()">×</div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message bot">
+                👋 Hi! I'm your Real Estate AI Assistant. Ask me anything about investment strategies!
+            </div>
+        </div>
+        <div class="chat-suggestions">
+            <div class="chat-suggestion" onclick="askQuestion('What is the BRRRR strategy?')">What is the BRRRR strategy?</div>
+            <div class="chat-suggestion" onclick="askQuestion('How to calculate ROI?')">How to calculate ROI?</div>
+            <div class="chat-suggestion" onclick="askQuestion('Fix & Flip vs Buy & Hold?')">Fix & Flip vs Buy & Hold?</div>
+            <div class="chat-suggestion" onclick="askQuestion('What is a good cap rate?')">What is a good cap rate?</div>
+        </div>
     </div>
 
     <script>
-        function switchTab(tabName) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
+        // Tab Navigation
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.calc-section').forEach(s => s.classList.remove('active'));
+                
+                btn.classList.add('active');
+                const target = btn.getAttribute('data-tab');
+                document.getElementById(target).classList.add('active');
             });
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
+        });
 
-            // Show selected tab
-            document.getElementById(tabName).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        function formatCurrency(value) {
-            return new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD',
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-            }).format(value);
-        }
-
+        // BRRRR Calculator
         function calculateBRRRR() {
             const purchase = parseFloat(document.getElementById('brrrr-purchase').value) || 0;
             const rehab = parseFloat(document.getElementById('brrrr-rehab').value) || 0;
             const arv = parseFloat(document.getElementById('brrrr-arv').value) || 0;
+            const downPercent = parseFloat(document.getElementById('brrrr-down').value) || 0;
+            const rate = parseFloat(document.getElementById('brrrr-rate').value) || 0;
             const rent = parseFloat(document.getElementById('brrrr-rent').value) || 0;
+            const vacancy = parseFloat(document.getElementById('brrrr-vacancy').value) || 0;
             const expenses = parseFloat(document.getElementById('brrrr-expenses').value) || 0;
-            const ltv = parseFloat(document.getElementById('brrrr-ltv').value) / 100 || 0.75;
 
-            const totalInvestment = purchase + rehab;
-            const refinanceAmount = arv * ltv;
-            const cashLeft = totalInvestment - refinanceAmount;
-            const monthlyCashFlow = rent - expenses;
-            const annualCashFlow = monthlyCashFlow * 12;
-            const equity = arv - refinanceAmount;
+            const totalCost = purchase + rehab;
+            const downPayment = purchase * (downPercent / 100);
+            const loanAmount = purchase - downPayment;
+            const monthlyRate = (rate / 100) / 12;
+            const monthlyPayment = loanAmount * (monthlyRate * Math.pow(1 + monthlyRate, 360)) / (Math.pow(1 + monthlyRate, 360) - 1);
             
-            let coc = cashLeft > 0 ? ((annualCashFlow / cashLeft) * 100).toFixed(1) : '∞';
+            const effectiveRent = rent * (1 - vacancy / 100);
+            const cashFlow = effectiveRent - monthlyPayment - expenses;
+            const annualCashFlow = cashFlow * 12;
+            const cashOnCash = downPayment > 0 ? (annualCashFlow / downPayment) * 100 : 0;
+            const equity = arv - (purchase + rehab);
+            const totalROI = downPayment > 0 ? ((equity + annualCashFlow) / downPayment) * 100 : 0;
 
-            document.getElementById('brrrr-total-investment').textContent = formatCurrency(totalInvestment);
-            document.getElementById('brrrr-cash-left').textContent = formatCurrency(Math.max(0, cashLeft));
-            document.getElementById('brrrr-cashflow').textContent = formatCurrency(monthlyCashFlow);
-            document.getElementById('brrrr-annual').textContent = formatCurrency(annualCashFlow);
-            document.getElementById('brrrr-coc').textContent = coc === '∞' ? '∞%' : coc + '%';
-            document.getElementById('brrrr-equity').textContent = formatCurrency(equity);
+            document.getElementById('brrrr-cashflow').textContent = '$' + cashFlow.toFixed(0);
+            document.getElementById('brrrr-cashflow').className = 'result-value ' + (cashFlow > 0 ? 'positive' : cashFlow < 0 ? 'negative' : 'neutral');
+            
+            document.getElementById('brrrr-coc').textContent = cashOnCash.toFixed(1) + '%';
+            document.getElementById('brrrr-coc').className = 'result-value ' + (cashOnCash > 0 ? 'positive' : 'neutral');
+            
+            document.getElementById('brrrr-total-roi').textContent = totalROI.toFixed(1) + '%';
+            document.getElementById('brrrr-total-roi').className = 'result-value ' + (totalROI > 0 ? 'positive' : 'neutral');
+            
+            document.getElementById('brrrr-equity').textContent = '$' + equity.toLocaleString();
 
-            // Update colors
-            updateResultColor('brrrr-cashflow', monthlyCashFlow);
-            updateResultColor('brrrr-annual', annualCashFlow);
-            updateResultColor('brrrr-cash-left', -cashLeft);
+            // Cost Breakdown Chart
+            const chartData = [
+                { label: 'Purchase Price', value: purchase, color: 'var(--blue)' },
+                { label: 'Rehab Costs', value: rehab, color: 'var(--yellow)' },
+                { label: 'Down Payment', value: downPayment, color: 'var(--primary)' },
+                { label: 'Monthly Expenses', value: expenses * 12, color: 'var(--red)' }
+            ];
+
+            const maxValue = Math.max(...chartData.map(d => d.value));
+            const chartHTML = chartData.map(item => `
+                <div class="chart-bar-item">
+                    <div class="chart-bar-label">
+                        <span>${item.label}</span>
+                        <span>$${item.value.toLocaleString()}</span>
+                    </div>
+                    <div class="chart-bar-bg">
+                        <div class="chart-bar-fill" style="width: ${(item.value / maxValue) * 100}%; background: ${item.color};">
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('brrrr-chart').innerHTML = chartHTML;
         }
 
+        function resetBRRRR() {
+            document.getElementById('brrrr-purchase').value = 150000;
+            document.getElementById('brrrr-rehab').value = 30000;
+            document.getElementById('brrrr-arv').value = 220000;
+            document.getElementById('brrrr-down').value = 20;
+            document.getElementById('brrrr-rate').value = 6.5;
+            document.getElementById('brrrr-rent').value = 1800;
+            document.getElementById('brrrr-vacancy').value = 5;
+            document.getElementById('brrrr-expenses').value = 600;
+            calculateBRRRR();
+        }
+
+        // Fix & Flip Calculator
         function calculateFlip() {
             const purchase = parseFloat(document.getElementById('flip-purchase').value) || 0;
             const rehab = parseFloat(document.getElementById('flip-rehab').value) || 0;
-            const holding = parseFloat(document.getElementById('flip-holding').value) || 0;
             const arv = parseFloat(document.getElementById('flip-arv').value) || 0;
-            const sellingPercent = parseFloat(document.getElementById('flip-selling').value) / 100 || 0.08;
-            const months = parseFloat(document.getElementById('flip-months').value) || 6;
+            const holding = parseFloat(document.getElementById('flip-holding').value) || 1;
+            const holdingCost = parseFloat(document.getElementById('flip-holding-cost').value) || 0;
+            const commission = parseFloat(document.getElementById('flip-commission').value) || 0;
+            const closingBuy = parseFloat(document.getElementById('flip-closing-buy').value) || 0;
+            const closingSell = parseFloat(document.getElementById('flip-closing-sell').value) || 0;
+            const rate = parseFloat(document.getElementById('flip-rate').value) || 0;
+            const loan = parseFloat(document.getElementById('flip-loan').value) || 0;
 
-            const sellingCosts = arv * sellingPercent;
-            const totalCost = purchase + rehab + holding + sellingCosts;
-            const profit = arv - totalCost;
-            const roi = ((profit / totalCost) * 100).toFixed(1);
-            const annualROI = ((roi / months) * 12).toFixed(1);
-
-            document.getElementById('flip-total-cost').textContent = formatCurrency(totalCost);
-            document.getElementById('flip-profit').textContent = formatCurrency(profit);
-            document.getElementById('flip-roi').textContent = roi + '%';
-            document.getElementById('flip-annual-roi').textContent = annualROI + '%';
-
-            // Update chart
-            const maxValue = totalCost;
-            document.getElementById('flip-chart-purchase').textContent = formatCurrency(purchase);
-            document.getElementById('flip-chart-rehab').textContent = formatCurrency(rehab);
-            document.getElementById('flip-chart-other').textContent = formatCurrency(holding + sellingCosts);
+            const totalHoldingCost = holdingCost * holding;
+            const loanInterest = (loan * (rate / 100) / 12) * holding;
+            const agentFee = arv * (commission / 100);
             
-            document.getElementById('flip-bar-purchase').style.width = ((purchase / maxValue) * 100) + '%';
-            document.getElementById('flip-bar-rehab').style.width = ((rehab / maxValue) * 100) + '%';
-            document.getElementById('flip-bar-other').style.width = (((holding + sellingCosts) / maxValue) * 100) + '%';
+            const totalCosts = purchase + rehab + closingBuy + closingSell + totalHoldingCost + loanInterest + agentFee;
+            const profit = arv - totalCosts;
+            const investment = purchase - loan + rehab + closingBuy;
+            const roi = investment > 0 ? (profit / investment) * 100 : 0;
+            const annualizedROI = holding > 0 ? (roi / holding) * 12 : 0;
 
-            // Update colors
-            updateResultColor('flip-profit', profit);
-            updateResultColor('flip-roi', profit);
-            updateResultColor('flip-annual-roi', profit);
+            document.getElementById('flip-profit').textContent = '$' + profit.toLocaleString();
+            document.getElementById('flip-profit').className = 'result-value ' + (profit > 0 ? 'positive' : profit < 0 ? 'negative' : 'neutral');
+            
+            document.getElementById('flip-roi').textContent = roi.toFixed(1) + '%';
+            document.getElementById('flip-roi').className = 'result-value ' + (roi > 0 ? 'positive' : 'neutral');
+            
+            document.getElementById('flip-annual-roi').textContent = annualizedROI.toFixed(1) + '%';
+            document.getElementById('flip-annual-roi').className = 'result-value ' + (annualizedROI > 0 ? 'positive' : 'neutral');
+            
+            document.getElementById('flip-investment').textContent = '$' + investment.toLocaleString();
+
+            // Update timeline
+            document.getElementById('timeline-purchase').textContent = '$' + purchase.toLocaleString();
+            document.getElementById('timeline-rehab').textContent = '$' + rehab.toLocaleString();
+            document.getElementById('timeline-sale').textContent = '$' + arv.toLocaleString();
         }
 
-        function compareProperties() {
-            const props = ['A', 'B', 'C'];
-            let results = [];
+        function resetFlip() {
+            document.getElementById('flip-purchase').value = 200000;
+            document.getElementById('flip-rehab').value = 50000;
+            document.getElementById('flip-arv').value = 320000;
+            document.getElementById('flip-holding').value = 6;
+            document.getElementById('flip-holding-cost').value = 2000;
+            document.getElementById('flip-commission').value = 6;
+            document.getElementById('flip-closing-buy').value = 3000;
+            document.getElementById('flip-closing-sell').value = 2000;
+            document.getElementById('flip-rate').value = 8;
+            document.getElementById('flip-loan').value = 160000;
+            calculateFlip();
+        }
 
-            props.forEach(prop => {
-                const purchase = parseFloat(document.getElementById(`prop${prop}-purchase`).value) || 0;
-                const rehab = parseFloat(document.getElementById(`prop${prop}-rehab`).value) || 0;
-                const arv = parseFloat(document.getElementById(`prop${prop}-arv`).value) || 0;
-                const holding = parseFloat(document.getElementById(`prop${prop}-holding`).value) || 0;
+        // Property Analyzer
+        function calculateProperty(propId) {
+            const price = parseFloat(document.getElementById(`prop-${propId}-price`).value) || 0;
+            const rent = parseFloat(document.getElementById(`prop-${propId}-rent`).value) || 0;
+            const expenses = parseFloat(document.getElementById(`prop-${propId}-expenses`).value) || 0;
+            const downPercent = parseFloat(document.getElementById(`prop-${propId}-down`).value) || 0;
 
-                const sellingCosts = arv * 0.08;
-                const totalCost = purchase + rehab + holding + sellingCosts;
-                const profit = arv - totalCost;
-                const roi = ((profit / totalCost) * 100).toFixed(1);
+            const downPayment = price * (downPercent / 100);
+            const loanAmount = price - downPayment;
+            const monthlyPayment = loanAmount * 0.005; // Simplified
+            
+            const cashFlow = rent - monthlyPayment - expenses;
+            const annualCashFlow = cashFlow * 12;
+            const roi = downPayment > 0 ? (annualCashFlow / downPayment) * 100 : 0;
+            const score = Math.round((cashFlow * 0.5) + (roi * 2));
 
-                document.getElementById(`prop${prop}-profit`).textContent = formatCurrency(profit);
-                document.getElementById(`prop${prop}-roi`).textContent = roi + '%';
+            document.getElementById(`prop-${propId}-cashflow`).textContent = '$' + cashFlow.toFixed(0);
+            document.getElementById(`prop-${propId}-roi`).textContent = roi.toFixed(1) + '%';
+            document.getElementById(`prop-${propId}-score`).textContent = score;
 
-                updateResultColor(`prop${prop}-profit`, profit);
-                updateResultColor(`prop${prop}-roi`, profit);
+            return { cashFlow, roi, score, price, rent };
+        }
 
-                results.push({ prop: `Property ${prop}`, profit, roi: parseFloat(roi), totalCost });
+        function calculateAnalyzer() {
+            const prop1 = calculateProperty(1);
+            const prop2 = calculateProperty(2);
+            const prop3 = calculateProperty(3);
+
+            // Find winner
+            const scores = [
+                { id: 1, score: prop1.score },
+                { id: 2, score: prop2.score },
+                { id: 3, score: prop3.score }
+            ];
+            scores.sort((a, b) => b.score - a.score);
+            
+            // Remove all badges and winner classes
+            document.querySelectorAll('.property-card').forEach(card => {
+                card.classList.remove('winner');
+                const badge = card.querySelector('.badge');
+                if (badge) badge.remove();
             });
 
-            // Find best
-            const bestROI = results.reduce((max, p) => p.roi > max.roi ? p : max);
-            const bestProfit = results.reduce((max, p) => p.profit > max.profit ? p : max);
-            const lowestInvest = results.reduce((min, p) => p.totalCost < min.totalCost ? p : min);
-
-            document.getElementById('best-roi').textContent = `${bestROI.prop} (${bestROI.roi}%)`;
-            document.getElementById('best-profit').textContent = `${bestProfit.prop} (${formatCurrency(bestProfit.profit)})`;
-            document.getElementById('lowest-invest').textContent = `${lowestInvest.prop} (${formatCurrency(lowestInvest.totalCost)})`;
-        }
-
-        function updateResultColor(elementId, value) {
-            const element = document.getElementById(elementId);
-            if (!element) return;
-            
-            element.classList.remove('result-positive', 'result-negative', 'result-neutral');
-            
-            if (value > 0) {
-                element.classList.add('result-positive');
-            } else if (value < 0) {
-                element.classList.add('result-negative');
-            } else {
-                element.classList.add('result-neutral');
+            // Add badge to winner
+            if (scores[0].score > 0) {
+                const winnerCard = document.getElementById(`prop-${scores[0].id}`);
+                winnerCard.classList.add('winner');
+                const badge = document.createElement('div');
+                badge.className = 'badge';
+                badge.textContent = '🏆 Winner';
+                winnerCard.appendChild(badge);
             }
+
+            // Update radar chart (simplified)
+            updateRadarChart(prop1, prop2, prop3);
         }
 
-        // Initial calculations
-        calculateBRRRR();
-        calculateFlip();
-        compareProperties();
+        function updateRadarChart(prop1, prop2, prop3) {
+            // Normalize values for radar chart (simplified winner visualization)
+            const maxCashFlow = Math.max(prop1.cashFlow, prop2.cashFlow, prop3.cashFlow) || 1;
+            const maxROI = Math.max(prop1.roi, prop2.roi, prop3.roi) || 1;
+            const maxScore = Math.max(prop1.score, prop2.score, prop3.score) || 1;
+            const maxPrice = Math.max(prop1.price, prop2.price, prop3.price) || 1;
+            const maxRent = Math.max(prop1.rent, prop2.rent, prop3.rent) || 1;
+
+            // Use property 1 data for demo (in production, show all 3)
+            const cf = 80 + (prop1.cashFlow / maxCashFlow) * 120;
+            const roi = 160 + (prop1.roi / maxROI) * 160;
+            const val = 300 - (prop1.price / maxPrice) * 30;
+            const rent = 300 - (prop1.rent / maxRent) * 30;
+            const score = 160 - (prop1.score / maxScore) * 80;
+
+            const points = `200,${200-cf} ${200+roi*0.9},${160} ${200+val*0.6},${300} ${200-rent*0.6},${300} ${200-score*0.9},${160}`;
+            document.getElementById('radar-data').setAttribute('points', points);
+        }
+
+        function resetAnalyzer() {
+            document.getElementById('prop-1-name').value = 'Property A';
+            document.getElementById('prop-1-price').value = 250000;
+            document.getElementById('prop-1-rent').value = 2200;
+            document.getElementById('prop-1-expenses').value = 800;
+            document.getElementById('prop-1-down').value = 25;
+
+            document.getElementById('prop-2-name').value = 'Property B';
+            document.getElementById('prop-2-price').value = 180000;
+            document.getElementById('prop-2-rent').value = 1650;
+            document.getElementById('prop-2-expenses').value = 550;
+            document.getElementById('prop-2-down').value = 20;
+
+            document.getElementById('prop-3-name').value = 'Property C';
+            document.getElementById('prop-3-price').value = 300000;
+            document.getElementById('prop-3-rent').value = 2800;
+            document.getElementById('prop-3-expenses').value = 950;
+            document.getElementById('prop-3-down').value = 30;
+
+            calculateAnalyzer();
+        }
+
+        // AI Chat
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.classList.toggle('active');
+        }
+
+        function askQuestion(question) {
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // User message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-message user';
+            userMsg.textContent = question;
+            chatMessages.appendChild(userMsg);
+
+            // Bot response (pre-programmed)
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'chat-message bot';
+                
+                const responses = {
+                    'What is the BRRRR strategy?': 'BRRRR stands for Buy, Rehab, Rent, Refinance, Repeat. It\'s a strategy where you buy a distressed property, fix it up, rent it out, then refinance to pull your capital out and repeat the process!',
+                    'How to calculate ROI?': 'ROI = (Annual Cash Flow / Total Investment) × 100. For example, if you invest $50k and earn $5k/year, your ROI is 10%. Use our calculators above for detailed breakdowns!',
+                    'Fix & Flip vs Buy & Hold?': 'Fix & Flip gives you quick profits (3-6 months) but is active work. Buy & Hold builds long-term wealth through appreciation and cash flow. Both strategies have their place!',
+                    'What is a good cap rate?': 'A good cap rate depends on the market, but generally 8-12% is solid for rental properties. Higher cap rates mean better returns but potentially more risk. Our BRRRR calculator can help you analyze this!'
+                };
+                
+                botMsg.textContent = responses[question] || 'Great question! Use the calculators above to run the numbers on your specific deal. Real estate investing is all about the math! 📊';
+                chatMessages.appendChild(botMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 500);
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Event Listeners for Live Calculations
+        document.querySelectorAll('#brrrr input').forEach(input => {
+            input.addEventListener('input', calculateBRRRR);
+        });
+
+        document.querySelectorAll('#flip input').forEach(input => {
+            input.addEventListener('input', calculateFlip);
+        });
+
+        document.querySelectorAll('#analyzer input[type="number"]').forEach(input => {
+            input.addEventListener('input', calculateAnalyzer);
+        });
+
+        // Initialize calculations on load
+        window.addEventListener('load', () => {
+            calculateBRRRR();
+            calculateFlip();
+            calculateAnalyzer();
+        });
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
     </script>
+
 </body>
 </html>
