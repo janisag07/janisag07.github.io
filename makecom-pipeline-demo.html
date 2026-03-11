@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Make.com + Claude API — Premium PDF Report Pipeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1a202c;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card h3 {
+            font-size: 0.875rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-card .label {
+            font-size: 0.875rem;
+            color: #a0aec0;
+            margin-top: 4px;
+        }
+        
+        .main-content {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .pipeline-flow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(to bottom, #f7fafc, #edf2f7);
+            border-radius: 12px;
+        }
+        
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .flow-step:hover .step-icon {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .step-label {
+            font-weight: 600;
+            color: #2d3748;
+            text-align: center;
+            font-size: 0.875rem;
+        }
+        
+        .flow-arrow {
+            font-size: 2rem;
+            color: #cbd5e0;
+            animation: slide 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes slide {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #a0aec0;
+            transition: color 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            color: #2d3748;
+        }
+        
+        .modal-content h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.75rem;
+        }
+        
+        .modal-content p {
+            color: #4a5568;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .modal-content ul {
+            margin-left: 20px;
+            color: #4a5568;
+            line-height: 1.8;
+        }
+        
+        .airtable-schema {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .table-card {
+            background: linear-gradient(135deg, #f7fafc, #edf2f7);
+            border-radius: 12px;
+            padding: 24px;
+            border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .table-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .table-card h3 {
+            color: #667eea;
+            margin-bottom: 16px;
+            font-size: 1.25rem;
+        }
+        
+        .table-card ul {
+            list-style: none;
+        }
+        
+        .table-card li {
+            padding: 8px 0;
+            color: #4a5568;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 0.875rem;
+        }
+        
+        .table-card li:last-child {
+            border-bottom: none;
+        }
+        
+        .pdf-preview {
+            background: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: 2px solid #e2e8f0;
+        }
+        
+        .pdf-preview h2 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .pdf-preview .company {
+            color: #718096;
+            font-size: 1.25rem;
+            margin-bottom: 30px;
+        }
+        
+        .score-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: linear-gradient(to right, #f7fafc, #edf2f7);
+            border-radius: 8px;
+        }
+        
+        .score-section h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+        }
+        
+        .score-bar {
+            background: #e2e8f0;
+            height: 40px;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 20px;
+            color: white;
+            font-weight: 700;
+            transition: width 2s ease;
+        }
+        
+        .recommendations {
+            margin-top: 30px;
+        }
+        
+        .recommendations h3 {
+            color: #2d3748;
+            margin-bottom: 16px;
+        }
+        
+        .recommendation-item {
+            background: white;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border-left: 4px solid #48bb78;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .recommendation-item h4 {
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        
+        .recommendation-item p {
+            color: #718096;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .main-content {
+                padding: 24px;
+            }
+            
+            .pipeline-flow {
+                flex-direction: column;
+                padding: 20px;
+            }
+            
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .step-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+            
+            .modal-content {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Premium PDF Report Pipeline</h1>
+            <p>Automatisierte digitale Reifegrad-Analyse für KMUs</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Reports Generated</h3>
+                <div class="value">847</div>
+                <div class="label">+23% this month</div>
+            </div>
+            <div class="stat-card">
+                <h3>Avg Processing Time</h3>
+                <div class="value">4.2s</div>
+                <div class="label">95% faster than manual</div>
+            </div>
+            <div class="stat-card">
+                <h3>Success Rate</h3>
+                <div class="value">99.8%</div>
+                <div class="label">Highly reliable</div>
+            </div>
+            <div class="stat-card">
+                <h3>Customer Satisfaction</h3>
+                <div class="value">4.9/5</div>
+                <div class="label">Based on 312 reviews</div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="section-title">
+                ⚡ Automatisierter Pipeline Flow
+            </div>
+            
+            <div class="pipeline-flow">
+                <div class="flow-step" onclick="showModal('pointerpro')">
+                    <div class="step-icon">📊</div>
+                    <div class="step-label">Pointerpro<br>Assessment</div>
+                </div>
+                
+                <div class="flow-arrow">→</div>
+                
+                <div class="flow-step" onclick="showModal('makecom')">
+                    <div class="step-icon">⚙️</div>
+                    <div class="step-label">Make.com<br>Automation</div>
+                </div>
+                
+                <div class="flow-arrow">→</div>
+                
+                <div class="flow-step" onclick="showModal('airtable')">
+                    <div class="step-icon">🗄️</div>
+                    <div class="step-label">Airtable<br>Database</div>
+                </div>
+                
+                <div class="flow-arrow">→</div>
+                
+                <div class="flow-step" onclick="showModal('claude')">
+                    <div class="step-icon">🤖</div>
+                    <div class="step-label">Claude API<br>Analysis</div>
+                </div>
+                
+                <div class="flow-arrow">→</div>
+                
+                <div class="flow-step" onclick="showModal('template')">
+                    <div class="step-icon">📄</div>
+                    <div class="step-label">HTML<br>Template</div>
+                </div>
+                
+                <div class="flow-arrow">→</div>
+                
+                <div class="flow-step" onclick="showModal('docraptor')">
+                    <div class="step-icon">📑</div>
+                    <div class="step-label">DocRaptor<br>PDF Gen</div>
+                </div>
+                
+                <div class="flow-arrow">→</div>
+                
+                <div class="flow-step" onclick="showModal('r2')">
+                    <div class="step-icon">☁️</div>
+                    <div class="step-label">Cloudflare R2<br>Storage</div>
+                </div>
+                
+                <div class="flow-arrow">→</div>
+                
+                <div class="flow-step" onclick="showModal('email')">
+                    <div class="step-icon">📧</div>
+                    <div class="step-label">Postmark<br>Delivery</div>
+                </div>
+            </div>
+            
+            <div class="section-title">
+                🗂️ Airtable Schema
+            </div>
+            
+            <div class="airtable-schema">
+                <div class="table-card">
+                    <h3>📋 CRM</h3>
+                    <ul>
+                        <li>Company Name</li>
+                        <li>Contact Person</li>
+                        <li>Email</li>
+                        <li>Industry</li>
+                        <li>Company Size</li>
+                        <li>Status</li>
+                    </ul>
+                </div>
+                
+                <div class="table-card">
+                    <h3>📊 Evaluations</h3>
+                    <ul>
+                        <li>Evaluation ID</li>
+                        <li>Company (Link to CRM)</li>
+                        <li>Assessment Data (JSON)</li>
+                        <li>Score</li>
+                        <li>Completed At</li>
+                    </ul>
+                </div>
+                
+                <div class="table-card">
+                    <h3>📑 Reports</h3>
+                    <ul>
+                        <li>Report ID</li>
+                        <li>Evaluation (Link)</li>
+                        <li>PDF URL</li>
+                        <li>Generated At</li>
+                        <li>Status</li>
+                        <li>Sent At</li>
+                    </ul>
+                </div>
+                
+                <div class="table-card">
+                    <h3>📨 Sequences</h3>
+                    <ul>
+                        <li>Sequence ID</li>
+                        <li>Company (Link)</li>
+                        <li>Email Type</li>
+                        <li>Scheduled For</li>
+                        <li>Sent At</li>
+                        <li>Status</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section-title">
+                📄 Sample PDF Report Preview
+            </div>
+            
+            <div class="pdf-preview">
+                <h2>Digitaler Reifegrad Report</h2>
+                <div class="company">Mustermann GmbH</div>
+                
+                <div class="score-section">
+                    <h3>Gesamtscore: Digitaler Reifegrad</h3>
+                    <div class="score-bar">
+                        <div class="score-fill" style="width: 73%;">73/100</div>
+                    </div>
+                </div>
+                
+                <div class="score-section">
+                    <h3>Kategorie-Breakdown</h3>
+                    <div style="margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #4a5568;">
+                            <span>📱 Digitale Infrastruktur</span>
+                            <span style="font-weight: 600;">82/100</span>
+                        </div>
+                        <div class="score-bar" style="height: 20px;">
+                            <div class="score-fill" style="width: 82%; font-size: 0.75rem; padding-right: 10px;"></div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #4a5568;">
+                            <span>🎯 Prozessautomatisierung</span>
+                            <span style="font-weight: 600;">65/100</span>
+                        </div>
+                        <div class="score-bar" style="height: 20px;">
+                            <div class="score-fill" style="width: 65%; font-size: 0.75rem; padding-right: 10px;"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; color: #4a5568;">
+                            <span>👥 Digitale Kompetenzen</span>
+                            <span style="font-weight: 600;">71/100</span>
+                        </div>
+                        <div class="score-bar" style="height: 20px;">
+                            <div class="score-fill" style="width: 71%; font-size: 0.75rem; padding-right: 10px;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recommendations">
+                    <h3>🎯 Top Empfehlungen</h3>
+                    
+                    <div class="recommendation-item">
+                        <h4>1. CRM-System implementieren</h4>
+                        <p>Ein zentrales CRM würde Ihre Kundendaten strukturieren und Marketing-Automation ermöglichen. Empfehlung: HubSpot oder Pipedrive.</p>
+                    </div>
+                    
+                    <div class="recommendation-item">
+                        <h4>2. E-Mail-Marketing automatisieren</h4>
+                        <p>Automatische Follow-up-Sequenzen können Ihre Conversion-Rate um 20-30% steigern. Integration mit Ihrem CRM empfohlen.</p>
+                    </div>
+                    
+                    <div class="recommendation-item">
+                        <h4>3. Team-Schulung: KI-Tools</h4>
+                        <p>Investieren Sie in Schulungen für ChatGPT, Claude und weitere KI-Assistenten. ROI innerhalb von 3 Monaten erwartet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <div id="modal-pointerpro" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('pointerpro')">&times;</span>
+            <h2>📊 Pointerpro Assessment</h2>
+            <p><strong>Funktion:</strong> Kunden füllen ein interaktives Assessment mit 40+ Fragen aus.</p>
+            <p><strong>Output:</strong> Strukturierte JSON-Daten mit allen Antworten und einem initialen Score.</p>
+            <p><strong>Integration:</strong> Webhook triggert Make.com Szenario bei Completion.</p>
+            <ul>
+                <li>Anpassbare Fragen pro Industrie</li>
+                <li>Progress-Tracking für Teilnehmer</li>
+                <li>Automatische Benachrichtigungen</li>
+            </ul>
+        </div>
+    </div>
+    
+    <div id="modal-makecom" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('makecom')">&times;</span>
+            <h2>⚙️ Make.com Automation</h2>
+            <p><strong>Funktion:</strong> Orchestriert den gesamten Workflow zwischen allen Services.</p>
+            <p><strong>Hauptaufgaben:</strong></p>
+            <ul>
+                <li>Webhook von Pointerpro empfangen</li>
+                <li>Daten validieren und transformieren</li>
+                <li>Airtable-Records erstellen/updaten</li>
+                <li>Claude API aufrufen</li>
+                <li>PDF generieren und hochladen</li>
+                <li>E-Mail-Versand triggern</li>
+                <li>Error-Handling und Logging</li>
+            </ul>
+            <p><strong>Vorteil:</strong> No-Code, visuell, schnell anpassbar.</p>
+        </div>
+    </div>
+    
+    <div id="modal-airtable" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('airtable')">&times;</span>
+            <h2>🗄️ Airtable Database</h2>
+            <p><strong>Funktion:</strong> Zentrale Datenbank für alle Kundendaten, Evaluations und Reports.</p>
+            <p><strong>4 Haupttabellen:</strong></p>
+            <ul>
+                <li><strong>CRM:</strong> Alle Firmen und Kontakte</li>
+                <li><strong>Evaluations:</strong> Assessment-Daten und Scores</li>
+                <li><strong>Reports:</strong> Generierte PDFs mit Links und Status</li>
+                <li><strong>Sequences:</strong> Follow-up-E-Mails und Automation</li>
+            </ul>
+            <p><strong>Vorteil:</strong> Einfache UI für manuelle Überprüfung, API für Automation.</p>
+        </div>
+    </div>
+    
+    <div id="modal-claude" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('claude')">&times;</span>
+            <h2>🤖 Claude API Analysis</h2>
+            <p><strong>Funktion:</strong> Intelligente Auswertung der Assessment-Daten.</p>
+            <p><strong>Was Claude macht:</strong></p>
+            <ul>
+                <li>Antworten analysieren und gewichten</li>
+                <li>Branchen-spezifische Scores berechnen</li>
+                <li>Personalisierte Empfehlungen generieren</li>
+                <li>Executive Summary erstellen</li>
+                <li>Priorisierung von Maßnahmen</li>
+            </ul>
+            <p><strong>Prompt Engineering:</strong> Optimiert für konsistente, professionelle Outputs.</p>
+        </div>
+    </div>
+    
+    <div id="modal-template" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('template')">&times;</span>
+            <h2>📄 HTML Template</h2>
+            <p><strong>Funktion:</strong> Professionelle Report-Vorlage mit dynamischen Daten.</p>
+            <p><strong>Features:</strong></p>
+            <ul>
+                <li>Responsives Design</li>
+                <li>Charts und Visualisierungen</li>
+                <li>Firmen-Branding (Logo, Farben)</li>
+                <li>Strukturiertes Layout (Executive Summary, Details, Empfehlungen)</li>
+                <li>Print-optimiert</li>
+            </ul>
+            <p><strong>Technologie:</strong> HTML + CSS + Chart.js für Grafiken.</p>
+        </div>
+    </div>
+    
+    <div id="modal-docraptor" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('docraptor')">&times;</span>
+            <h2>📑 DocRaptor PDF Generation</h2>
+            <p><strong>Funktion:</strong> Konvertiert HTML zu hochwertigem PDF.</p>
+            <p><strong>Features:</strong></p>
+            <ul>
+                <li>Prince XML Engine (beste HTML→PDF Qualität)</li>
+                <li>Unterstützt CSS3, Flexbox, Grid</li>
+                <li>Seitenzahlen, Kopf-/Fußzeilen</li>
+                <li>Inhaltsverzeichnis-Generierung</li>
+                <li>Perfekte Chart-Darstellung</li>
+            </ul>
+            <p><strong>Output:</strong> Professionelles PDF, 15-30 Seiten, print-ready.</p>
+        </div>
+    </div>
+    
+    <div id="modal-r2" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('r2')">&times;</span>
+            <h2>☁️ Cloudflare R2 Storage</h2>
+            <p><strong>Funktion:</strong> Sicherer, skalierbarer PDF-Speicher.</p>
+            <p><strong>Vorteile:</strong></p>
+            <ul>
+                <li>Günstiger als S3 (keine Egress-Gebühren)</li>
+                <li>S3-kompatible API</li>
+                <li>Globales CDN für schnellen Download</li>
+                <li>Automatische Backups</li>
+                <li>Presigned URLs für sicheren Zugriff</li>
+            </ul>
+            <p><strong>Archivierung:</strong> PDFs werden dauerhaft gespeichert für spätere Downloads.</p>
+        </div>
+    </div>
+    
+    <div id="modal-email" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal('email')">&times;</span>
+            <h2>📧 Postmark Email Delivery</h2>
+            <p><strong>Funktion:</strong> Zuverlässiger E-Mail-Versand mit hoher Zustellrate.</p>
+            <p><strong>Features:</strong></p>
+            <ul>
+                <li>Professionelle HTML-E-Mails</li>
+                <li>PDF als Anhang oder Download-Link</li>
+                <li>Template-System für Branding</li>
+                <li>Tracking (Öffnungen, Klicks)</li>
+                <li>Follow-up-Sequenzen</li>
+                <li>99%+ Zustellrate</li>
+            </ul>
+            <p><strong>Personalisierung:</strong> Firmenname, Ansprechpartner, individuelle Insights im E-Mail-Text.</p>
+        </div>
+    </div>
+    
+    <script>
+        function showModal(id) {
+            document.getElementById('modal-' + id).classList.add('active');
+        }
+        
+        function closeModal(id) {
+            document.getElementById('modal-' + id).classList.remove('active');
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+        
+        // Animate score bars on load
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                document.querySelectorAll('.score-fill').forEach(function(bar) {
+                    bar.style.width = bar.style.width;
+                });
+            }, 500);
+        });
+    </script>
+</body>
+</html>

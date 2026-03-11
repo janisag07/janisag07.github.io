@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channable → Amazon Product Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #232f3e 0%, #FF9900 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #1a202c;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border-top: 4px solid #FF9900;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card h3 {
+            font-size: 0.875rem;
+            color: #718096;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .stat-card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #232f3e;
+        }
+        
+        .stat-card .label {
+            font-size: 0.875rem;
+            color: #a0aec0;
+            margin-top: 4px;
+        }
+        
+        .stat-card .positive {
+            color: #48bb78;
+        }
+        
+        .stat-card .negative {
+            color: #f56565;
+        }
+        
+        .main-content {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: #2d3748;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .integration-status {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            padding: 40px;
+            background: linear-gradient(to bottom, #f7fafc, #edf2f7);
+            border-radius: 12px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .platform-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .platform-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .platform-logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .channable-logo {
+            background: linear-gradient(135deg, #4A90E2, #357ABD);
+            color: white;
+        }
+        
+        .amazon-logo {
+            background: linear-gradient(135deg, #232f3e, #37475a);
+            color: #FF9900;
+        }
+        
+        .platform-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1.25rem;
+        }
+        
+        .sync-arrow {
+            font-size: 3rem;
+            color: #48bb78;
+            animation: pulse-sync 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-sync {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-top: 8px;
+        }
+        
+        .status-active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .status-syncing {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .status-error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .product-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 40px;
+            overflow-x: auto;
+            display: block;
+        }
+        
+        .product-table table {
+            width: 100%;
+            min-width: 800px;
+        }
+        
+        .product-table th {
+            background: linear-gradient(to right, #232f3e, #37475a);
+            color: white;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .product-table td {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+        }
+        
+        .product-table tr:hover {
+            background: #f7fafc;
+        }
+        
+        .product-name {
+            font-weight: 600;
+            color: #2d3748;
+        }
+        
+        .product-sku {
+            font-size: 0.75rem;
+            color: #a0aec0;
+            margin-top: 4px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        .badge-warning {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+        
+        .badge-danger {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+        
+        .badge-info {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+        
+        .mapping-visualizer {
+            background: linear-gradient(to bottom, #f7fafc, #edf2f7);
+            border-radius: 12px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+        
+        .mapping-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .mapping-field {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .field-label {
+            font-size: 0.75rem;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+        
+        .field-value {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 1rem;
+        }
+        
+        .mapping-arrow {
+            color: #4A90E2;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        
+        .last-sync {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(to right, #f7fafc, #edf2f7);
+            border-radius: 8px;
+            margin-top: 40px;
+        }
+        
+        .last-sync .time {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-top: 8px;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 1rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #FF9900, #FF7700);
+            color: white;
+            box-shadow: 0 4px 12px rgba(255, 153, 0, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 153, 0, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #232f3e;
+            border: 2px solid #232f3e;
+        }
+        
+        .btn-secondary:hover {
+            background: #232f3e;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.75rem;
+            }
+            
+            .header p {
+                font-size: 1rem;
+            }
+            
+            .main-content {
+                padding: 24px;
+            }
+            
+            .integration-status {
+                padding: 24px;
+                gap: 20px;
+            }
+            
+            .platform-logo {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+            }
+            
+            .sync-arrow {
+                transform: rotate(90deg);
+                font-size: 2rem;
+            }
+            
+            .mapping-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .mapping-arrow {
+                transform: rotate(90deg);
+                align-self: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 Channable → Amazon Integration</h1>
+            <p>Automatisierte Produkt-Synchronisation in Echtzeit</p>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Products Synced</h3>
+                <div class="value">1,247</div>
+                <div class="label positive">↑ 156 today</div>
+            </div>
+            <div class="stat-card">
+                <h3>Sync Errors</h3>
+                <div class="value">3</div>
+                <div class="label">0.24% error rate</div>
+            </div>
+            <div class="stat-card">
+                <h3>Last Sync</h3>
+                <div class="value">2m</div>
+                <div class="label">ago</div>
+            </div>
+            <div class="stat-card">
+                <h3>Avg Sync Time</h3>
+                <div class="value">1.8s</div>
+                <div class="label">per product</div>
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <div class="section-title">
+                🔄 Integration Status
+            </div>
+            
+            <div class="integration-status">
+                <div class="platform-box">
+                    <div class="platform-logo channable-logo">C</div>
+                    <div class="platform-name">Channable</div>
+                    <div class="status-badge status-active">
+                        <span class="pulse-dot"></span>
+                        Connected
+                    </div>
+                </div>
+                
+                <div class="sync-arrow">⇄</div>
+                
+                <div class="platform-box">
+                    <div class="platform-logo amazon-logo">a</div>
+                    <div class="platform-name">Amazon</div>
+                    <div class="status-badge status-syncing">
+                        <span class="pulse-dot"></span>
+                        Syncing
+                    </div>
+                </div>
+            </div>
+            
+            <div class="section-title">
+                📦 Product Feed Preview
+            </div>
+            
+            <div class="product-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Status</th>
+                            <th>Last Updated</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="product-name">Premium Bluetooth Kopfhörer XZ-500</div>
+                                <div class="product-sku">SKU: TECH-BT-500</div>
+                            </td>
+                            <td style="font-weight: 600;">€89.99</td>
+                            <td>247</td>
+                            <td><span class="badge badge-success">✓ Synced</span></td>
+                            <td>2 min ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="product-name">Wireless Gaming Maus Pro</div>
+                                <div class="product-sku">SKU: GAME-MS-PRO</div>
+                            </td>
+                            <td style="font-weight: 600;">€59.99</td>
+                            <td>412</td>
+                            <td><span class="badge badge-success">✓ Synced</span></td>
+                            <td>5 min ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="product-name">4K Webcam UltraHD</div>
+                                <div class="product-sku">SKU: CAM-4K-01</div>
+                            </td>
+                            <td style="font-weight: 600;">€129.99</td>
+                            <td>89</td>
+                            <td><span class="badge badge-warning">⟳ Updating</span></td>
+                            <td>1 min ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="product-name">Mechanische Tastatur RGB</div>
+                                <div class="product-sku">SKU: KEY-MECH-RGB</div>
+                            </td>
+                            <td style="font-weight: 600;">€119.99</td>
+                            <td>156</td>
+                            <td><span class="badge badge-success">✓ Synced</span></td>
+                            <td>8 min ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="product-name">USB-C Hub 7-in-1</div>
+                                <div class="product-sku">SKU: ACC-HUB-7IN1</div>
+                            </td>
+                            <td style="font-weight: 600;">€39.99</td>
+                            <td>0</td>
+                            <td><span class="badge badge-danger">✗ Out of Stock</span></td>
+                            <td>12 min ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="product-name">Laptop Ständer Aluminium</div>
+                                <div class="product-sku">SKU: ACC-STAND-AL</div>
+                            </td>
+                            <td style="font-weight: 600;">€49.99</td>
+                            <td>324</td>
+                            <td><span class="badge badge-success">✓ Synced</span></td>
+                            <td>3 min ago</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="product-name">Monitor 27" QHD 144Hz</div>
+                                <div class="product-sku">SKU: MON-27-QHD</div>
+                            </td>
+                            <td style="font-weight: 600;">€349.99</td>
+                            <td>67</td>
+                            <td><span class="badge badge-info">★ Featured</span></td>
+                            <td>1 min ago</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="section-title">
+                🗺️ Field Mapping
+            </div>
+            
+            <div class="mapping-visualizer">
+                <div class="mapping-row">
+                    <div class="mapping-field">
+                        <div class="field-label">Channable</div>
+                        <div class="field-value">product_title</div>
+                    </div>
+                    <div class="mapping-arrow">→</div>
+                    <div class="mapping-field">
+                        <div class="field-label">Amazon</div>
+                        <div class="field-value">item_name</div>
+                    </div>
+                </div>
+                
+                <div class="mapping-row">
+                    <div class="mapping-field">
+                        <div class="field-label">Channable</div>
+                        <div class="field-value">sku</div>
+                    </div>
+                    <div class="mapping-arrow">→</div>
+                    <div class="mapping-field">
+                        <div class="field-label">Amazon</div>
+                        <div class="field-value">external_product_id</div>
+                    </div>
+                </div>
+                
+                <div class="mapping-row">
+                    <div class="mapping-field">
+                        <div class="field-label">Channable</div>
+                        <div class="field-value">description_long</div>
+                    </div>
+                    <div class="mapping-arrow">→</div>
+                    <div class="mapping-field">
+                        <div class="field-label">Amazon</div>
+                        <div class="field-value">product_description</div>
+                    </div>
+                </div>
+                
+                <div class="mapping-row">
+                    <div class="mapping-field">
+                        <div class="field-label">Channable</div>
+                        <div class="field-value">price</div>
+                    </div>
+                    <div class="mapping-arrow">→</div>
+                    <div class="mapping-field">
+                        <div class="field-label">Amazon</div>
+                        <div class="field-value">standard_price</div>
+                    </div>
+                </div>
+                
+                <div class="mapping-row">
+                    <div class="mapping-field">
+                        <div class="field-label">Channable</div>
+                        <div class="field-value">stock_quantity</div>
+                    </div>
+                    <div class="mapping-arrow">→</div>
+                    <div class="mapping-field">
+                        <div class="field-label">Amazon</div>
+                        <div class="field-value">quantity</div>
+                    </div>
+                </div>
+                
+                <div class="mapping-row">
+                    <div class="mapping-field">
+                        <div class="field-label">Channable</div>
+                        <div class="field-value">image_urls[]</div>
+                    </div>
+                    <div class="mapping-arrow">→</div>
+                    <div class="mapping-field">
+                        <div class="field-label">Amazon</div>
+                        <div class="field-value">main_image_url</div>
+                    </div>
+                </div>
+                
+                <div class="mapping-row">
+                    <div class="mapping-field">
+                        <div class="field-label">Channable</div>
+                        <div class="field-value">category_path</div>
+                    </div>
+                    <div class="mapping-arrow">→</div>
+                    <div class="mapping-field">
+                        <div class="field-label">Amazon</div>
+                        <div class="field-value">item_type</div>
+                    </div>
+                </div>
+                
+                <div class="mapping-row">
+                    <div class="mapping-field">
+                        <div class="field-label">Channable</div>
+                        <div class="field-value">brand</div>
+                    </div>
+                    <div class="mapping-arrow">→</div>
+                    <div class="mapping-field">
+                        <div class="field-label">Amazon</div>
+                        <div class="field-value">brand_name</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="last-sync">
+                <div style="color: #718096; font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.5px;">Last Full Sync</div>
+                <div class="time">2 minutes ago</div>
+                <div style="margin-top: 8px; color: #48bb78; font-weight: 600;">✓ 1,244 products synchronized successfully</div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="alert('Sync wird gestartet...')">🔄 Sync Now</button>
+                <button class="btn btn-secondary" onclick="alert('Mapping-Einstellungen öffnen...')">⚙️ Configure Mapping</button>
+                <button class="btn btn-secondary" onclick="alert('Export wird vorbereitet...')">📥 Export Feed</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Simulate live sync updates
+        setInterval(function() {
+            const badges = document.querySelectorAll('.badge-warning');
+            badges.forEach(function(badge) {
+                if (Math.random() > 0.5) {
+                    badge.className = 'badge badge-success';
+                    badge.textContent = '✓ Synced';
+                }
+            });
+        }, 5000);
+        
+        // Update "last sync" time
+        let minutes = 2;
+        setInterval(function() {
+            minutes++;
+            document.querySelector('.last-sync .time').textContent = minutes + ' minutes ago';
+        }, 60000);
+    </script>
+</body>
+</html>
