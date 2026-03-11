@@ -1,0 +1,2115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgencyAI Command Center - OpenClaw Marketing Automation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --primary-blue: #3b82f6;
+            --primary-blue-hover: #2563eb;
+            --green-accent: #10b981;
+            --yellow-accent: #f59e0b;
+            --red-accent: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 2rem 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-blue) 0%, var(--green-accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--green-accent));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 1.5rem 0;
+        }
+
+        .nav-item {
+            margin: 0.25rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-blue);
+        }
+
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--primary-blue);
+            border-left: 3px solid var(--primary-blue);
+        }
+
+        .nav-icon {
+            font-size: 1.25rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 2rem;
+            max-width: calc(100vw - 260px);
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-blue), var(--green-accent));
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-change {
+            font-size: 0.875rem;
+            color: var(--green-accent);
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Agent Grid */
+        .agent-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .agent-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .agent-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .agent-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .agent-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--primary-blue), var(--green-accent));
+        }
+
+        .agent-info h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .agent-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .agent-status.running {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--green-accent);
+        }
+
+        .agent-status.idle {
+            background: rgba(148, 163, 184, 0.1);
+            color: var(--text-muted);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .agent-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .agent-stats {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .agent-stat {
+            flex: 1;
+        }
+
+        .agent-stat-label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .agent-stat-value {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .agent-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-blue-hover);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #475569;
+        }
+
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8125rem;
+        }
+
+        /* Activity Feed */
+        .activity-feed {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary-blue);
+            flex-shrink: 0;
+        }
+
+        .activity-content h4 {
+            font-size: 0.9375rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .activity-content p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .activity-time {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Workflow Cards */
+        .workflow-grid {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .workflow-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .workflow-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .workflow-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .workflow-steps {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .workflow-step {
+            padding: 0.75rem 1.25rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+
+        .workflow-step::after {
+            content: '→';
+            position: absolute;
+            right: -1rem;
+            color: var(--text-muted);
+        }
+
+        .workflow-step:last-child::after {
+            content: '';
+        }
+
+        .step-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green-accent);
+        }
+
+        /* Server Monitor */
+        .monitor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .monitor-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .monitor-card h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .spec-list {
+            list-style: none;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .spec-item:last-child {
+            border-bottom: none;
+        }
+
+        .spec-label {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .spec-value {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .container-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+        }
+
+        .container-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .container-name {
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        .container-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            color: var(--green-accent);
+            font-weight: 600;
+        }
+
+        .checkmark {
+            color: var(--green-accent);
+            font-size: 1.25rem;
+        }
+
+        /* Documentation */
+        .doc-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .doc-toggle {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            color: var(--text-primary);
+            text-align: left;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .doc-toggle:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .doc-toggle-icon {
+            transition: transform 0.3s;
+        }
+
+        .doc-toggle.active .doc-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .doc-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .doc-content.active {
+            max-height: 1000px;
+        }
+
+        .doc-content-inner {
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .doc-content-inner h4 {
+            color: var(--text-primary);
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-content-inner ul {
+            margin-left: 1.5rem;
+        }
+
+        .doc-content-inner code {
+            background: var(--bg-tertiary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Chat Button */
+        .chat-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .chat-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+
+        .chat-button-icon {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        /* Chat Window */
+        .chat-window {
+            position: fixed;
+            bottom: 5rem;
+            right: 2rem;
+            width: 400px;
+            height: 600px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .chat-window.active {
+            display: flex;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-title {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .chat-close {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .chat-close:hover {
+            color: var(--text-primary);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .chat-message {
+            margin-bottom: 1rem;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateX(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .message-assistant {
+            background: var(--bg-tertiary);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border-top-left-radius: 4px;
+        }
+
+        .message-user {
+            background: var(--primary-blue);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            border-top-right-radius: 4px;
+            margin-left: auto;
+            max-width: 80%;
+        }
+
+        .message-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+        }
+
+        .message-text {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .chat-input-area {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .api-key-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+            font-family: inherit;
+        }
+
+        .api-key-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-family: inherit;
+        }
+
+        .chat-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .chat-send {
+            padding: 0.75rem 1.25rem;
+            background: var(--primary-blue);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chat-send:hover {
+            background: var(--primary-blue-hover);
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            cursor: pointer;
+            z-index: 101;
+            color: var(--text-primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                max-width: 100vw;
+            }
+
+            .mobile-menu-toggle {
+                display: block;
+            }
+
+            .stats-grid,
+            .agent-grid,
+            .monitor-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-steps {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .workflow-step::after {
+                content: '↓';
+                position: static;
+                margin-top: 0.5rem;
+            }
+
+            .chat-window {
+                width: calc(100vw - 2rem);
+                right: 1rem;
+                left: 1rem;
+            }
+
+            .chat-button {
+                right: 1rem;
+                bottom: 1rem;
+            }
+
+            .page-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+        <span style="font-size: 1.5rem;">☰</span>
+    </div>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">🤖</div>
+                    <span>AgencyAI</span>
+                </div>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a class="nav-link active" data-section="dashboard">
+                        <span class="nav-icon">📊</span>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="agents">
+                        <span class="nav-icon">🤖</span>
+                        <span>AI Agents</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="workflows">
+                        <span class="nav-icon">⚡</span>
+                        <span>Workflows</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="server">
+                        <span class="nav-icon">🖥️</span>
+                        <span>Server Monitor</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-section="docs">
+                        <span class="nav-icon">📚</span>
+                        <span>Documentation</span>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section class="content-section active" id="dashboard">
+                <div class="page-header">
+                    <h1 class="page-title">Welcome back, Team 👋</h1>
+                    <p class="page-subtitle">Your AI operations center is running smoothly</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Active Agents</div>
+                        <div class="stat-value" data-count="6">0</div>
+                        <div class="stat-change">↗ All systems operational</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tasks Today</div>
+                        <div class="stat-value" data-count="847">0</div>
+                        <div class="stat-change">↗ +12% from yesterday</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Campaigns Running</div>
+                        <div class="stat-value" data-count="23">0</div>
+                        <div class="stat-change">↗ 3 new this week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">System Uptime</div>
+                        <div class="stat-value">99.2%</div>
+                        <div class="stat-change">↗ 30 days strong</div>
+                    </div>
+                </div>
+
+                <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 600;">Agent Status</h2>
+                <div class="agent-grid">
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">✍️</div>
+                            <div class="agent-info">
+                                <h3>Content Creator</h3>
+                                <span class="agent-status running">
+                                    <span class="status-dot"></span>
+                                    Running
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Last task: Generated 5 blog post drafts for client campaigns</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">142</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Success Rate</div>
+                                <div class="agent-stat-value">98%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">🎯</div>
+                            <div class="agent-info">
+                                <h3>Lead Hunter</h3>
+                                <span class="agent-status running">
+                                    <span class="status-dot"></span>
+                                    Running
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Last task: Scraped and qualified 347 leads from LinkedIn</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">89</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Leads Found</div>
+                                <div class="agent-stat-value">1.2K</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">🔍</div>
+                            <div class="agent-info">
+                                <h3>SEO Analyzer</h3>
+                                <span class="agent-status running">
+                                    <span class="status-dot"></span>
+                                    Running
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Last task: Completed competitor analysis for 12 keywords</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">67</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Keywords</div>
+                                <div class="agent-stat-value">450</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">📧</div>
+                            <div class="agent-info">
+                                <h3>Email Architect</h3>
+                                <span class="agent-status running">
+                                    <span class="status-dot"></span>
+                                    Running
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Last task: Sent personalized sequence to 234 prospects</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">203</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Open Rate</div>
+                                <div class="agent-stat-value">42%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">📱</div>
+                            <div class="agent-info">
+                                <h3>Social Media Manager</h3>
+                                <span class="agent-status idle">
+                                    <span class="status-dot"></span>
+                                    Idle
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Last task: Scheduled 18 posts across platforms</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">156</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Engagement</div>
+                                <div class="agent-stat-value">+18%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">📊</div>
+                            <div class="agent-info">
+                                <h3>Data Reporter</h3>
+                                <span class="agent-status running">
+                                    <span class="status-dot"></span>
+                                    Running
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Last task: Generated weekly performance reports for 8 clients</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">190</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Reports</div>
+                                <div class="agent-stat-value">45</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 style="margin-bottom: 1.5rem; font-size: 1.5rem; font-weight: 600;">Recent Activity</h2>
+                <div class="activity-feed">
+                    <div class="activity-item">
+                        <div class="activity-icon">✍️</div>
+                        <div class="activity-content">
+                            <h4>Content Creator generated blog post</h4>
+                            <p>"10 SEO Strategies for E-commerce Success" - 2,450 words, ready for review</p>
+                            <div class="activity-time">2 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🎯</div>
+                        <div class="activity-content">
+                            <h4>Lead Hunter qualified 47 new leads</h4>
+                            <p>Technology sector, $100K+ revenue, decision-makers identified</p>
+                            <div class="activity-time">8 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📧</div>
+                        <div class="activity-content">
+                            <h4>Email Architect completed A/B test</h4>
+                            <p>Subject line variant B achieved 38% open rate (+12% improvement)</p>
+                            <div class="activity-time">15 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🔍</div>
+                        <div class="activity-content">
+                            <h4>SEO Analyzer completed website audit</h4>
+                            <p>Found 23 optimization opportunities, priority items flagged</p>
+                            <div class="activity-time">22 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📱</div>
+                        <div class="activity-content">
+                            <h4>Social Media Manager scheduled posts</h4>
+                            <p>18 posts queued across LinkedIn, Twitter, and Instagram</p>
+                            <div class="activity-time">35 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📊</div>
+                        <div class="activity-content">
+                            <h4>Data Reporter generated client dashboard</h4>
+                            <p>Weekly performance metrics for TechCorp campaign delivered</p>
+                            <div class="activity-time">1 hour ago</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AI Agents Section -->
+            <section class="content-section" id="agents">
+                <div class="page-header">
+                    <h1 class="page-title">AI Agents</h1>
+                    <p class="page-subtitle">Manage and monitor your autonomous marketing team</p>
+                </div>
+
+                <div class="agent-grid">
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">✍️</div>
+                            <div class="agent-info">
+                                <h3>Content Creator</h3>
+                                <span class="agent-status running">
+                                    <span class="status-dot"></span>
+                                    Running
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Generates blog posts, social media content, and ad copy using Claude API. Trained on your brand voice and optimized for engagement.</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">142</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Content Created</div>
+                                <div class="agent-stat-value">89K words</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Success Rate</div>
+                                <div class="agent-stat-value">98%</div>
+                            </div>
+                        </div>
+                        <div class="agent-actions">
+                            <button class="btn btn-secondary btn-sm">View Logs</button>
+                            <button class="btn btn-primary btn-sm">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">🎯</div>
+                            <div class="agent-info">
+                                <h3>Lead Hunter</h3>
+                                <span class="agent-status running">
+                                    <span class="status-dot"></span>
+                                    Running
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Scrapes leads from LinkedIn, Google Maps, and business directories. Uses AI to qualify prospects based on your ICP criteria.</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">89</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Leads Found</div>
+                                <div class="agent-stat-value">1,247</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Qualified</div>
+                                <div class="agent-stat-value">68%</div>
+                            </div>
+                        </div>
+                        <div class="agent-actions">
+                            <button class="btn btn-secondary btn-sm">View Logs</button>
+                            <button class="btn btn-primary btn-sm">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">🔍</div>
+                            <div class="agent-info">
+                                <h3>SEO Analyzer</h3>
+                                <span class="agent-status running">
+                                    <span class="status-dot"></span>
+                                    Running
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Performs automated website audits, keyword research, and competitor analysis. Generates actionable SEO recommendations.</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">67</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Keywords Tracked</div>
+                                <div class="agent-stat-value">450</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Audits Run</div>
+                                <div class="agent-stat-value">23</div>
+                            </div>
+                        </div>
+                        <div class="agent-actions">
+                            <button class="btn btn-secondary btn-sm">View Logs</button>
+                            <button class="btn btn-primary btn-sm">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">📧</div>
+                            <div class="agent-info">
+                                <h3>Email Architect</h3>
+                                <span class="agent-status running">
+                                    <span class="status-dot"></span>
+                                    Running
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Creates personalized email sequences, manages follow-ups, and runs A/B tests. Integrates with your CRM for seamless outreach.</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">203</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Emails Sent</div>
+                                <div class="agent-stat-value">3,456</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Open Rate</div>
+                                <div class="agent-stat-value">42%</div>
+                            </div>
+                        </div>
+                        <div class="agent-actions">
+                            <button class="btn btn-secondary btn-sm">View Logs</button>
+                            <button class="btn btn-primary btn-sm">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">📱</div>
+                            <div class="agent-info">
+                                <h3>Social Media Manager</h3>
+                                <span class="agent-status idle">
+                                    <span class="status-dot"></span>
+                                    Idle
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Schedules posts, monitors engagement, and detects trending topics. Optimizes posting times based on audience analytics.</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">156</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Posts Scheduled</div>
+                                <div class="agent-stat-value">234</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Engagement</div>
+                                <div class="agent-stat-value">+18%</div>
+                            </div>
+                        </div>
+                        <div class="agent-actions">
+                            <button class="btn btn-secondary btn-sm">View Logs</button>
+                            <button class="btn btn-primary btn-sm">Configure</button>
+                        </div>
+                    </div>
+
+                    <div class="agent-card">
+                        <div class="agent-header">
+                            <div class="agent-icon">📊</div>
+                            <div class="agent-info">
+                                <h3>Data Reporter</h3>
+                                <span class="agent-status running">
+                                    <span class="status-dot"></span>
+                                    Running
+                                </span>
+                            </div>
+                        </div>
+                        <p class="agent-description">Generates automated reporting dashboards, tracks KPIs, and creates client-ready performance reports with actionable insights.</p>
+                        <div class="agent-stats">
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Tasks Today</div>
+                                <div class="agent-stat-value">190</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Reports Created</div>
+                                <div class="agent-stat-value">45</div>
+                            </div>
+                            <div class="agent-stat">
+                                <div class="agent-stat-label">Data Points</div>
+                                <div class="agent-stat-value">12.5K</div>
+                            </div>
+                        </div>
+                        <div class="agent-actions">
+                            <button class="btn btn-secondary btn-sm">View Logs</button>
+                            <button class="btn btn-primary btn-sm">Configure</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Workflows Section -->
+            <section class="content-section" id="workflows">
+                <div class="page-header">
+                    <h1 class="page-title">Automation Workflows</h1>
+                    <p class="page-subtitle">End-to-end pipelines that run on autopilot</p>
+                </div>
+
+                <div class="workflow-grid">
+                    <div class="workflow-card">
+                        <div class="workflow-header">
+                            <h3 class="workflow-title">🎯 Lead Generation Pipeline</h3>
+                            <span class="agent-status running">
+                                <span class="status-dot"></span>
+                                Active
+                            </span>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Automated lead discovery, qualification, and outreach system that runs 24/7.</p>
+                        <div class="workflow-steps">
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                Scrape Leads
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                AI Qualification
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                Data Enrichment
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                Email Sequence
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                CRM Sync
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: var(--text-muted); font-size: 0.875rem;">Today's Performance</span>
+                            </div>
+                            <div style="display: flex; gap: 2rem;">
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--green-accent);">347</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">Leads Found</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--primary-blue);">236</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">Qualified</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--yellow-accent);">189</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">Contacted</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-card">
+                        <div class="workflow-header">
+                            <h3 class="workflow-title">✍️ Content Production Pipeline</h3>
+                            <span class="agent-status running">
+                                <span class="status-dot"></span>
+                                Active
+                            </span>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">From research to publication, fully automated content creation workflow.</p>
+                        <div class="workflow-steps">
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                Topic Research
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                AI Writing
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                SEO Review
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                Schedule Post
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                Publish
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                Performance Analysis
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: var(--text-muted); font-size: 0.875rem;">This Week</span>
+                            </div>
+                            <div style="display: flex; gap: 2rem;">
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--green-accent);">34</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">Articles Written</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--primary-blue);">28</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">Published</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--yellow-accent);">89K</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">Total Words</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="workflow-card">
+                        <div class="workflow-header">
+                            <h3 class="workflow-title">📊 Reporting & Analytics Pipeline</h3>
+                            <span class="agent-status running">
+                                <span class="status-dot"></span>
+                                Active
+                            </span>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">Automatic data collection, analysis, and client report generation.</p>
+                        <div class="workflow-steps">
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                Data Collection
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                AI Analysis
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                Report Generation
+                            </div>
+                            <div class="workflow-step">
+                                <span class="step-status"></span>
+                                Client Delivery
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding: 1rem; background: var(--bg-tertiary); border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: var(--text-muted); font-size: 0.875rem;">This Month</span>
+                            </div>
+                            <div style="display: flex; gap: 2rem;">
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--green-accent);">156</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">Reports Created</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--primary-blue);">45</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">Clients Served</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5rem; font-weight: 600; color: var(--yellow-accent);">100%</div>
+                                    <div style="font-size: 0.75rem; color: var(--text-muted);">On-Time Delivery</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Server Monitor Section -->
+            <section class="content-section" id="server">
+                <div class="page-header">
+                    <h1 class="page-title">Server Monitor</h1>
+                    <p class="page-subtitle">System health and infrastructure status</p>
+                </div>
+
+                <div class="monitor-grid">
+                    <div class="monitor-card">
+                        <h3>🖥️ Server Specifications</h3>
+                        <ul class="spec-list">
+                            <li class="spec-item">
+                                <span class="spec-label">Operating System</span>
+                                <span class="spec-value">Ubuntu 22.04 LTS</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">CPU</span>
+                                <span class="spec-value">8-Core AMD EPYC</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">RAM</span>
+                                <span class="spec-value">32 GB DDR4</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Storage</span>
+                                <span class="spec-value">500 GB NVMe SSD</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Network</span>
+                                <span class="spec-value">1 Gbps Uplink</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="monitor-card">
+                        <h3>⚡ System Performance</h3>
+                        <ul class="spec-list">
+                            <li class="spec-item">
+                                <span class="spec-label">Uptime</span>
+                                <span class="spec-value" style="color: var(--green-accent);">99.2% (30 days)</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">CPU Usage</span>
+                                <span class="spec-value">34%</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Memory Usage</span>
+                                <span class="spec-value">18.4 GB / 32 GB</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Disk Usage</span>
+                                <span class="spec-value">187 GB / 500 GB</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Load Average</span>
+                                <span class="spec-value">2.14, 1.98, 1.85</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="monitor-card">
+                        <h3>🐳 Docker Containers</h3>
+                        <div class="container-item">
+                            <span class="container-name">openclaw</span>
+                            <span class="container-status">
+                                <span class="checkmark">✓</span>
+                                Running
+                            </span>
+                        </div>
+                        <div class="container-item">
+                            <span class="container-name">redis</span>
+                            <span class="container-status">
+                                <span class="checkmark">✓</span>
+                                Running
+                            </span>
+                        </div>
+                        <div class="container-item">
+                            <span class="container-name">postgres</span>
+                            <span class="container-status">
+                                <span class="checkmark">✓</span>
+                                Running
+                            </span>
+                        </div>
+                        <div class="container-item">
+                            <span class="container-name">nginx</span>
+                            <span class="container-status">
+                                <span class="checkmark">✓</span>
+                                Running
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="monitor-card">
+                        <h3>🔑 API Usage</h3>
+                        <ul class="spec-list">
+                            <li class="spec-item">
+                                <span class="spec-label">OpenAI (Today)</span>
+                                <span class="spec-value">12,450 / 50,000 tokens</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Claude (Today)</span>
+                                <span class="spec-value">8,230 / 30,000 tokens</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Total API Calls</span>
+                                <span class="spec-value">1,247 today</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Error Rate</span>
+                                <span class="spec-value" style="color: var(--green-accent);">0.02%</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Avg Response Time</span>
+                                <span class="spec-value">340ms</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="monitor-card">
+                        <h3>🔒 Security Status</h3>
+                        <ul class="spec-list">
+                            <li class="spec-item">
+                                <span class="spec-label">SSH Key Auth</span>
+                                <span class="spec-value" style="color: var(--green-accent);">✅ Enabled</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Firewall</span>
+                                <span class="spec-value" style="color: var(--green-accent);">✅ Active</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">SSL/TLS</span>
+                                <span class="spec-value" style="color: var(--green-accent);">✅ Valid</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Auto-Backups</span>
+                                <span class="spec-value" style="color: var(--green-accent);">✅ Daily</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Last Backup</span>
+                                <span class="spec-value">2 hours ago</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="monitor-card">
+                        <h3>📊 System Metrics</h3>
+                        <ul class="spec-list">
+                            <li class="spec-item">
+                                <span class="spec-label">Active Connections</span>
+                                <span class="spec-value">234</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Requests/min</span>
+                                <span class="spec-value">1,847</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Bandwidth (24h)</span>
+                                <span class="spec-value">84.3 GB</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Cache Hit Rate</span>
+                                <span class="spec-value" style="color: var(--green-accent);">94.7%</span>
+                            </li>
+                            <li class="spec-item">
+                                <span class="spec-label">Database Size</span>
+                                <span class="spec-value">12.4 GB</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Documentation Section -->
+            <section class="content-section" id="docs">
+                <div class="page-header">
+                    <h1 class="page-title">Documentation</h1>
+                    <p class="page-subtitle">Your team can operate this system independently with these guides</p>
+                </div>
+
+                <div class="doc-section">
+                    <button class="doc-toggle" onclick="toggleDoc(this)">
+                        <span>Quick Start Guide</span>
+                        <span class="doc-toggle-icon">▼</span>
+                    </button>
+                    <div class="doc-content">
+                        <div class="doc-content-inner">
+                            <h4>Getting Started with AgencyAI</h4>
+                            <p>This guide will help you understand the core concepts and get up to speed quickly.</p>
+                            
+                            <h4>1. Understanding the Dashboard</h4>
+                            <p>The dashboard provides an overview of all your AI agents, their current status, and recent activity. Key metrics include:</p>
+                            <ul>
+                                <li>Active Agents - Number of agents currently running</li>
+                                <li>Tasks Today - Total automated tasks completed</li>
+                                <li>Campaigns Running - Active marketing campaigns</li>
+                                <li>System Uptime - Server reliability metric</li>
+                            </ul>
+
+                            <h4>2. Managing AI Agents</h4>
+                            <p>Each agent has specific responsibilities and can be configured independently:</p>
+                            <ul>
+                                <li>Use the <code>Configure</code> button to adjust agent settings</li>
+                                <li>View real-time logs to monitor agent activity</li>
+                                <li>Start/stop agents as needed for maintenance</li>
+                            </ul>
+
+                            <h4>3. Monitoring Workflows</h4>
+                            <p>Workflows show how agents work together to complete complex tasks. Green status dots indicate active pipeline stages.</p>
+
+                            <h4>4. Accessing the AI Assistant</h4>
+                            <p>Click the blue chat button in the bottom-right corner to ask questions about the system. The assistant can help with troubleshooting and configuration.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-section">
+                    <button class="doc-toggle" onclick="toggleDoc(this)">
+                        <span>Agent Configuration Guide</span>
+                        <span class="doc-toggle-icon">▼</span>
+                    </button>
+                    <div class="doc-content">
+                        <div class="doc-content-inner">
+                            <h4>Configuring Your AI Agents</h4>
+                            <p>Each agent can be customized to match your specific needs and workflows.</p>
+
+                            <h4>Content Creator Configuration</h4>
+                            <ul>
+                                <li><strong>Brand Voice:</strong> Upload brand guidelines and sample content</li>
+                                <li><strong>Content Types:</strong> Configure which types to generate (blog, social, ads)</li>
+                                <li><strong>Review Process:</strong> Set approval workflows before publication</li>
+                                <li><strong>API Settings:</strong> Adjust Claude API parameters for quality/speed balance</li>
+                            </ul>
+
+                            <h4>Lead Hunter Configuration</h4>
+                            <ul>
+                                <li><strong>Target Criteria:</strong> Define your ideal customer profile</li>
+                                <li><strong>Data Sources:</strong> Select platforms to scrape (LinkedIn, Google Maps, etc.)</li>
+                                <li><strong>Qualification Rules:</strong> Set AI-powered scoring criteria</li>
+                                <li><strong>Rate Limits:</strong> Configure scraping speed to avoid blocks</li>
+                            </ul>
+
+                            <h4>SEO Analyzer Configuration</h4>
+                            <ul>
+                                <li><strong>Tracked Keywords:</strong> Add keywords to monitor rankings</li>
+                                <li><strong>Competitors:</strong> Define competitor URLs for analysis</li>
+                                <li><strong>Audit Frequency:</strong> Schedule automatic website audits</li>
+                                <li><strong>Reporting:</strong> Configure which metrics to track</li>
+                            </ul>
+
+                            <h4>Email Architect Configuration</h4>
+                            <ul>
+                                <li><strong>Email Templates:</strong> Create reusable sequence templates</li>
+                                <li><strong>Personalization:</strong> Set merge tags and dynamic content rules</li>
+                                <li><strong>A/B Testing:</strong> Configure test variants and success metrics</li>
+                                <li><strong>CRM Integration:</strong> Connect your CRM for lead sync</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-section">
+                    <button class="doc-toggle" onclick="toggleDoc(this)">
+                        <span>API Integration</span>
+                        <span class="doc-toggle-icon">▼</span>
+                    </button>
+                    <div class="doc-content">
+                        <div class="doc-content-inner">
+                            <h4>Integrating External APIs</h4>
+                            <p>AgencyAI supports integration with multiple AI providers and marketing tools.</p>
+
+                            <h4>Supported AI APIs</h4>
+                            <ul>
+                                <li><strong>OpenAI:</strong> GPT-4 for content generation and analysis</li>
+                                <li><strong>Anthropic Claude:</strong> Advanced reasoning and long-form content</li>
+                                <li><strong>Custom Models:</strong> Add your own fine-tuned models</li>
+                            </ul>
+
+                            <h4>Adding API Keys</h4>
+                            <p>Navigate to Settings → API Configuration to add your keys. All keys are encrypted at rest and never logged.</p>
+                            <ul>
+                                <li>OpenAI: Paste your <code>sk-...</code> key</li>
+                                <li>Claude: Add your Anthropic API key</li>
+                                <li>Rate limits are automatically detected and respected</li>
+                            </ul>
+
+                            <h4>Marketing Tool Integrations</h4>
+                            <ul>
+                                <li><strong>CRM:</strong> HubSpot, Salesforce, Pipedrive</li>
+                                <li><strong>Email:</strong> SendGrid, Mailgun, AWS SES</li>
+                                <li><strong>Social:</strong> Buffer, Hootsuite, native APIs</li>
+                                <li><strong>Analytics:</strong> Google Analytics, Mixpanel</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-section">
+                    <button class="doc-toggle" onclick="toggleDoc(this)">
+                        <span>Troubleshooting FAQ</span>
+                        <span class="doc-toggle-icon">▼</span>
+                    </button>
+                    <div class="doc-content">
+                        <div class="doc-content-inner">
+                            <h4>Common Issues and Solutions</h4>
+
+                            <h4>Agent Won't Start</h4>
+                            <ul>
+                                <li>Check server status in the Server Monitor tab</li>
+                                <li>Verify API keys are valid (Settings → API Configuration)</li>
+                                <li>Review agent logs for error messages</li>
+                                <li>Restart the Docker container if needed</li>
+                            </ul>
+
+                            <h4>Low API Token Limits</h4>
+                            <ul>
+                                <li>Monitor usage in the Server Monitor tab</li>
+                                <li>Adjust agent frequency to reduce API calls</li>
+                                <li>Upgrade your API plan if consistently hitting limits</li>
+                                <li>Use caching where possible to reduce redundant calls</li>
+                            </ul>
+
+                            <h4>Workflow Not Completing</h4>
+                            <ul>
+                                <li>Check if all required agents are running</li>
+                                <li>Verify integration credentials (CRM, email, etc.)</li>
+                                <li>Review workflow logs for failed steps</li>
+                                <li>Ensure data format matches expected schema</li>
+                            </ul>
+
+                            <h4>Performance Issues</h4>
+                            <ul>
+                                <li>Check CPU and memory usage in Server Monitor</li>
+                                <li>Reduce concurrent agent tasks if overloaded</li>
+                                <li>Clear old logs and data to free disk space</li>
+                                <li>Consider upgrading server resources if consistently maxed out</li>
+                            </ul>
+
+                            <h4>Getting Help</h4>
+                            <p>For issues not covered here:</p>
+                            <ul>
+                                <li>Use the AI Assistant chat for instant help</li>
+                                <li>Check server logs: <code>/var/log/openclaw/</code></li>
+                                <li>Contact support with log excerpts and error details</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="doc-section">
+                    <button class="doc-toggle" onclick="toggleDoc(this)">
+                        <span>Security Best Practices</span>
+                        <span class="doc-toggle-icon">▼</span>
+                    </button>
+                    <div class="doc-content">
+                        <div class="doc-content-inner">
+                            <h4>Keeping Your System Secure</h4>
+
+                            <h4>Access Control</h4>
+                            <ul>
+                                <li>Use strong passwords for all accounts</li>
+                                <li>Enable two-factor authentication where available</li>
+                                <li>Limit SSH access to specific IP addresses</li>
+                                <li>Regularly review user permissions and revoke unused access</li>
+                            </ul>
+
+                            <h4>API Key Management</h4>
+                            <ul>
+                                <li>Never commit API keys to version control</li>
+                                <li>Rotate keys regularly (every 90 days recommended)</li>
+                                <li>Use separate keys for dev/staging/production</li>
+                                <li>Monitor API usage for anomalies</li>
+                            </ul>
+
+                            <h4>Server Security</h4>
+                            <ul>
+                                <li>Keep Ubuntu and all packages up to date</li>
+                                <li>Enable automatic security updates</li>
+                                <li>Use firewall rules to restrict ports</li>
+                                <li>Regular backups (automated daily backups enabled)</li>
+                            </ul>
+
+                            <h4>Data Protection</h4>
+                            <ul>
+                                <li>All data encrypted at rest and in transit</li>
+                                <li>Regular database backups (retained for 30 days)</li>
+                                <li>GDPR-compliant data handling</li>
+                                <li>Client data isolated per workspace</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Chat Button -->
+    <div class="chat-button" onclick="toggleChat()">
+        <span class="chat-button-icon">💬</span>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <h3 class="chat-title">AgencyAI Assistant</h3>
+            <button class="chat-close" onclick="toggleChat()">×</button>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message">
+                <div class="message-assistant">
+                    <div class="message-label">Assistant</div>
+                    <div class="message-text">Hi! I'm your AgencyAI assistant. I can help you with questions about the system, troubleshooting, or configuration. What would you like to know?</div>
+                </div>
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" class="api-key-input" id="apiKeyInput" placeholder="Optional: Enter OpenAI API key for live responses">
+            <div class="chat-input-wrapper">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Ask me anything...">
+                <button class="chat-send" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update active nav
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update active section
+                const section = this.dataset.section;
+                document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(section).classList.add('active');
+                
+                // Close mobile menu
+                document.getElementById('sidebar').classList.remove('active');
+            });
+        });
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        // Counter animation
+        function animateCounter(element) {
+            const target = parseInt(element.dataset.count);
+            const duration = 1500;
+            const increment = target / (duration / 16);
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, 16);
+        }
+
+        // Animate counters on load
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.stat-value[data-count]').forEach(animateCounter);
+        });
+
+        // Documentation toggle
+        function toggleDoc(button) {
+            button.classList.toggle('active');
+            const content = button.nextElementSibling;
+            content.classList.toggle('active');
+        }
+
+        // Chat functionality
+        function toggleChat() {
+            document.getElementById('chatWindow').classList.toggle('active');
+        }
+
+        // Mock responses for chat
+        const mockResponses = {
+            "add agent": "To add a new agent, go to the AI Agents tab and click 'Add New Agent' in the top right. You'll be prompted to select an agent type and configure its settings. Need help with a specific agent type?",
+            "leads": "Today, the Lead Hunter agent has found 347 leads, with 236 qualified based on your criteria. You can view the full list in the Workflows tab under Lead Generation Pipeline.",
+            "server": "Server status is healthy! 99.2% uptime over 30 days, CPU at 34%, and all Docker containers running smoothly. API usage is well within limits.",
+            "configure": "Each agent has a Configure button in the AI Agents tab. Click it to adjust settings like API parameters, task frequency, data sources, and integration credentials.",
+            "workflow": "All three workflows are currently active. Lead Gen Pipeline has processed 347 leads today, Content Pipeline created 34 articles this week, and Reporting Pipeline delivered 45 client reports this month.",
+            "api": "You have two APIs configured: OpenAI (12,450/50,000 tokens today) and Claude (8,230/30,000 tokens today). Both are operating normally with a 0.02% error rate.",
+            "error": "If you're seeing errors, check the agent logs first (View Logs button). Common issues: invalid API keys, rate limits, or integration credential problems. Need help with a specific error?",
+            "default": "I can help with questions about agents, workflows, server status, configuration, or troubleshooting. Try asking about specific topics like 'How do I add a new agent?' or 'Show me today's leads'."
+        };
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const apiKey = document.getElementById('apiKeyInput').value;
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            // Simulate typing delay
+            setTimeout(() => {
+                if (apiKey) {
+                    addMessage("Live API integration would be active here with your OpenAI key. For this demo, I'm using pre-configured responses.", 'assistant');
+                }
+                
+                // Find matching response
+                const lowerMessage = message.toLowerCase();
+                let response = mockResponses.default;
+                
+                for (const [key, value] of Object.entries(mockResponses)) {
+                    if (lowerMessage.includes(key)) {
+                        response = value;
+                        break;
+                    }
+                }
+                
+                addMessage(response, 'assistant');
+            }, 800);
+        }
+
+        function addMessage(text, type) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'chat-message';
+            
+            const content = `
+                <div class="message-${type}">
+                    <div class="message-label">${type === 'user' ? 'You' : 'Assistant'}</div>
+                    <div class="message-text">${text}</div>
+                </div>
+            `;
+            
+            messageDiv.innerHTML = content;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        // Allow Enter key to send message
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
