@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Sniper - LinkedIn AI Assistant</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        /* LinkedIn Feed */
+        .feed {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #0f0f14;
+        }
+        
+        .post {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .post:hover {
+            border-color: #6366f1;
+            transform: translateY(-2px);
+        }
+        
+        .post.active {
+            border-color: #22c55e;
+        }
+        
+        .post-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .post-author {
+            flex: 1;
+        }
+        
+        .post-author h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+        
+        .post-author p {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+        
+        .post-content {
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        
+        .highlight {
+            background: rgba(99, 102, 241, 0.3);
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: 500;
+        }
+        
+        .post-stats {
+            display: flex;
+            gap: 20px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 420px;
+            background: #1a1a2e;
+            border-left: 1px solid #2a2a3e;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #2a2a3e;
+        }
+        
+        .sidebar-header h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .badge {
+            background: #22c55e;
+            color: #000;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+        
+        .credits {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 12px;
+            background: #0f0f14;
+            border-radius: 8px;
+        }
+        
+        .credits-bar {
+            flex: 1;
+            height: 6px;
+            background: #2a2a3e;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .credits-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22c55e 0%, #10b981 100%);
+            width: 73%;
+            transition: width 0.3s;
+        }
+        
+        .tabs {
+            display: flex;
+            padding: 0 20px;
+            border-bottom: 1px solid #2a2a3e;
+        }
+        
+        .tab {
+            padding: 12px 20px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .tab:hover {
+            color: #fff;
+        }
+        
+        .tab.active {
+            color: #6366f1;
+            border-bottom-color: #6366f1;
+        }
+        
+        .sidebar-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .ai-suggestion {
+            background: #0f0f14;
+            border: 1px solid #2a2a3e;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        
+        .ai-suggestion:hover {
+            border-color: #6366f1;
+        }
+        
+        .suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .suggestion-type {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6366f1;
+            text-transform: uppercase;
+        }
+        
+        .suggestion-score {
+            font-size: 12px;
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        
+        .suggestion-text {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 12px;
+        }
+        
+        .suggestion-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #6366f1;
+            color: #fff;
+        }
+        
+        .btn-primary:hover {
+            background: #4f46e5;
+        }
+        
+        .btn-secondary {
+            background: #2a2a3e;
+            color: #e0e0e0;
+        }
+        
+        .btn-secondary:hover {
+            background: #3a3a4e;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+        
+        .empty-state h3 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .kb-item {
+            background: #0f0f14;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #2a2a3e;
+        }
+        
+        .kb-item h4 {
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+        
+        .kb-item p {
+            font-size: 12px;
+            color: #9ca3af;
+            line-height: 1.4;
+        }
+        
+        .settings-group {
+            margin-bottom: 24px;
+        }
+        
+        .settings-group h3 {
+            font-size: 14px;
+            margin-bottom: 12px;
+            color: #6366f1;
+        }
+        
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #0f0f14;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .toggle {
+            width: 44px;
+            height: 24px;
+            background: #2a2a3e;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .toggle.active {
+            background: #22c55e;
+        }
+        
+        .toggle::after {
+            content: '';
+            width: 18px;
+            height: 18px;
+            background: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: left 0.2s;
+        }
+        
+        .toggle.active::after {
+            left: 23px;
+        }
+        
+        /* AI Chat Button */
+        .ai-chat-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            font-size: 24px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .ai-chat-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+        
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 12px;
+            text-align: center;
+            background: #0a0a0f;
+            border-top: 1px solid #2a2a3e;
+            font-size: 12px;
+            color: #6b7280;
+        }
+        
+        .footer a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: 50vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="feed">
+            <div class="post" data-post="1">
+                <div class="post-header">
+                    <div class="avatar"></div>
+                    <div class="post-author">
+                        <h3>Sarah Mitchell</h3>
+                        <p>VP of Sales @ TechCorp • 2nd</p>
+                    </div>
+                </div>
+                <div class="post-content">
+                    Looking for a <span class="highlight">sales automation</span> tool that actually works. We've tried 5 different solutions and our team is still <span class="highlight">manually</span> entering data. Any recommendations for B2B SaaS? 🤔
+                </div>
+                <div class="post-stats">
+                    <span>42 likes</span>
+                    <span>18 comments</span>
+                    <span>3 shares</span>
+                </div>
+            </div>
+            
+            <div class="post" data-post="2">
+                <div class="post-header">
+                    <div class="avatar"></div>
+                    <div class="post-author">
+                        <h3>Marcus Johnson</h3>
+                        <p>Founder @ GrowthHub • 1st</p>
+                    </div>
+                </div>
+                <div class="post-content">
+                    Just closed our biggest deal of the year! 🎉 The key? <span class="highlight">Personalized outreach</span> at scale. If you're still sending generic messages, you're leaving money on the table. <span class="highlight">AI-powered personalization</span> is the game changer.
+                </div>
+                <div class="post-stats">
+                    <span>156 likes</span>
+                    <span>34 comments</span>
+                    <span>12 shares</span>
+                </div>
+            </div>
+            
+            <div class="post" data-post="3">
+                <div class="post-header">
+                    <div class="avatar"></div>
+                    <div class="post-author">
+                        <h3>Emma Rodriguez</h3>
+                        <p>Director of Customer Success @ CloudBase</p>
+                    </div>
+                </div>
+                <div class="post-content">
+                    Our <span class="highlight">response rate</span> went from 8% to 32% in just 3 months. What changed? We stopped treating LinkedIn like email. Started conversations, not pitches. Built relationships, not lists. That's the real secret to <span class="highlight">LinkedIn success</span>.
+                </div>
+                <div class="post-stats">
+                    <span>89 likes</span>
+                    <span>27 comments</span>
+                    <span>8 shares</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>
+                    Sales Sniper 
+                    <span class="badge">AI</span>
+                </h2>
+                <div class="credits">
+                    <span style="font-size: 13px;">Credits:</span>
+                    <div class="credits-bar">
+                        <div class="credits-fill"></div>
+                    </div>
+                    <span style="font-size: 13px; font-weight: 600;">730/1000</span>
+                </div>
+            </div>
+            
+            <div class="tabs">
+                <div class="tab active" data-tab="suggestions">Suggestions</div>
+                <div class="tab" data-tab="knowledge">Knowledge</div>
+                <div class="tab" data-tab="settings">Settings</div>
+            </div>
+            
+            <div class="sidebar-content">
+                <div id="suggestions-tab">
+                    <div class="empty-state">
+                        <h3>👆 Select a post</h3>
+                        <p>Click on a LinkedIn post to see AI-powered response suggestions</p>
+                    </div>
+                </div>
+                
+                <div id="knowledge-tab" style="display: none;">
+                    <div class="kb-item">
+                        <h4>🎯 Target Audience</h4>
+                        <p>B2B SaaS companies, 50-500 employees, sales teams 10-50 people</p>
+                    </div>
+                    <div class="kb-item">
+                        <h4>💼 Product Positioning</h4>
+                        <p>AI-powered sales automation that increases outreach efficiency by 300%</p>
+                    </div>
+                    <div class="kb-item">
+                        <h4>🏆 Key Benefits</h4>
+                        <p>Automated personalization, CRM integration, analytics dashboard, team collaboration</p>
+                    </div>
+                    <div class="kb-item">
+                        <h4>📊 Success Metrics</h4>
+                        <p>32% avg. response rate, 4.5x pipeline growth, 89% customer retention</p>
+                    </div>
+                </div>
+                
+                <div id="settings-tab" style="display: none;">
+                    <div class="settings-group">
+                        <h3>AI Behavior</h3>
+                        <div class="setting-item">
+                            <span>Auto-highlight keywords</span>
+                            <div class="toggle active"></div>
+                        </div>
+                        <div class="setting-item">
+                            <span>Generate suggestions</span>
+                            <div class="toggle active"></div>
+                        </div>
+                        <div class="setting-item">
+                            <span>Show confidence scores</span>
+                            <div class="toggle active"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="settings-group">
+                        <h3>Notifications</h3>
+                        <div class="setting-item">
+                            <span>High-value leads</span>
+                            <div class="toggle active"></div>
+                        </div>
+                        <div class="setting-item">
+                            <span>Daily summary</span>
+                            <div class="toggle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="ai-chat-btn">💬</button>
+    
+    <div class="footer">
+        Built by <a href="https://github.com/janisag07" target="_blank">Janis Agic</a>
+    </div>
+    
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const tabName = tab.dataset.tab;
+                document.getElementById('suggestions-tab').style.display = tabName === 'suggestions' ? 'block' : 'none';
+                document.getElementById('knowledge-tab').style.display = tabName === 'knowledge' ? 'block' : 'none';
+                document.getElementById('settings-tab').style.display = tabName === 'settings' ? 'block' : 'none';
+            });
+        });
+        
+        // Post selection
+        const suggestions = {
+            '1': [
+                {
+                    type: 'Helpful Solution',
+                    score: '92%',
+                    text: 'Sarah, I completely understand the frustration. We had the exact same issue at my last company. What finally worked for us was finding a tool with native CRM integration and AI-powered data entry. Happy to share what we learned - would you be open to a quick call?'
+                },
+                {
+                    type: 'Social Proof',
+                    score: '87%',
+                    text: 'Been there! We went through 7 tools before finding one that stuck. The difference maker? Our sales team actually wanted to use it. I wrote a detailed comparison of what we tested - DM me if you want the breakdown.'
+                },
+                {
+                    type: 'Direct Value',
+                    score: '84%',
+                    text: 'Hi Sarah! I work with B2B SaaS sales teams on this exact problem. The #1 mistake we see is choosing tools based on features instead of adoption. Would love to share our framework for evaluating automation tools - no pitch, just lessons learned.'
+                }
+            ],
+            '2': [
+                {
+                    type: 'Engagement',
+                    score: '89%',
+                    text: 'Congrats Marcus! 🎉 "AI-powered personalization" is the future. What surprised me most was how much time it actually saved our team. Curious - what tools are you using for this?'
+                },
+                {
+                    type: 'Value-Add',
+                    score: '86%',
+                    text: 'Love seeing this! Personalization at scale used to be impossible. Now it\'s the competitive advantage. I\'ve been researching AI personalization tools - found some wild stats on response rate improvements. Would you be interested in comparing notes?'
+                },
+                {
+                    type: 'Authority',
+                    score: '81%',
+                    text: 'Spot on, Marcus. We help companies implement AI personalization and the results are consistently mind-blowing. The teams that crack this early will dominate their markets. Congrats on the big close!'
+                }
+            ],
+            '3': [
+                {
+                    type: 'Agreement + Value',
+                    score: '91%',
+                    text: '32% response rate is incredible, Emma! You\'re absolutely right - LinkedIn isn\'t email. It\'s a conversation platform. We\'ve seen similar results with our clients. The shift from "selling" to "helping" is everything. Would love to hear more about your approach!'
+                },
+                {
+                    type: 'Expertise',
+                    score: '88%',
+                    text: 'This is the playbook right here. 8% to 32% in 3 months proves that human-first outreach wins. I help teams make this exact transition - the key is balancing personalization with volume. Emma, would be great to connect and swap strategies!'
+                },
+                {
+                    type: 'Amplification',
+                    score: '85%',
+                    text: 'Everyone needs to read this 👆 Emma just dropped the blueprint. Relationships > Lists. Conversations > Pitches. This is how you win on LinkedIn in 2024. Bookmarking this for my team!'
+                }
+            ]
+        };
+        
+        document.querySelectorAll('.post').forEach(post => {
+            post.addEventListener('click', () => {
+                document.querySelectorAll('.post').forEach(p => p.classList.remove('active'));
+                post.classList.add('active');
+                
+                const postId = post.dataset.post;
+                const postSuggestions = suggestions[postId];
+                
+                const suggestionsTab = document.getElementById('suggestions-tab');
+                suggestionsTab.innerHTML = '';
+                
+                postSuggestions.forEach(sug => {
+                    const div = document.createElement('div');
+                    div.className = 'ai-suggestion';
+                    div.innerHTML = `
+                        <div class="suggestion-header">
+                            <span class="suggestion-type">${sug.type}</span>
+                            <span class="suggestion-score">Match: ${sug.score}</span>
+                        </div>
+                        <div class="suggestion-text">${sug.text}</div>
+                        <div class="suggestion-actions">
+                            <button class="btn btn-primary">Copy</button>
+                            <button class="btn btn-secondary">Edit</button>
+                        </div>
+                    `;
+                    suggestionsTab.appendChild(div);
+                });
+                
+                // Switch to suggestions tab
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelector('[data-tab="suggestions"]').classList.add('active');
+                document.getElementById('suggestions-tab').style.display = 'block';
+                document.getElementById('knowledge-tab').style.display = 'none';
+                document.getElementById('settings-tab').style.display = 'none';
+            });
+        });
+        
+        // Toggle switches
+        document.querySelectorAll('.toggle').forEach(toggle => {
+            toggle.addEventListener('click', () => {
+                toggle.classList.toggle('active');
+            });
+        });
+        
+        // Copy button functionality
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-primary')) {
+                const text = e.target.closest('.ai-suggestion').querySelector('.suggestion-text').textContent;
+                navigator.clipboard.writeText(text);
+                e.target.textContent = 'Copied!';
+                setTimeout(() => {
+                    e.target.textContent = 'Copy';
+                }, 2000);
+            }
+        });
+        
+        // AI Chat button
+        document.querySelector('.ai-chat-btn').addEventListener('click', () => {
+            alert('AI Chat feature coming soon! 🚀');
+        });
+    </script>
+</body>
+</html>

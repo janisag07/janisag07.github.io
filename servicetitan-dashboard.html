@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ServiceTitan TV Dashboard - Plumber Brag Board</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #e0e0e0;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+            height: 100vh;
+        }
+        
+        /* Header */
+        .header {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2a2a3e 100%);
+            border-radius: 16px;
+            padding: 24px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 2px solid #3a3a4e;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+        
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(34, 197, 94, 0.1);
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: 1px solid #22c55e;
+        }
+        
+        .pulse {
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+        
+        .clock {
+            font-size: 28px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        /* Panels */
+        .panel {
+            background: #1a1a2e;
+            border-radius: 16px;
+            padding: 24px;
+            border: 2px solid #2a2a3e;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .panel-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+        }
+        
+        .panel-icon {
+            font-size: 24px;
+        }
+        
+        /* Leaderboard */
+        .leaderboard-item {
+            display: grid;
+            grid-template-columns: 40px 1fr 80px 80px 100px;
+            gap: 16px;
+            padding: 16px;
+            background: #0f0f14;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            align-items: center;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .leaderboard-item:hover {
+            border-color: #6366f1;
+            transform: translateX(4px);
+        }
+        
+        .rank {
+            font-size: 24px;
+            font-weight: 900;
+            text-align: center;
+        }
+        
+        .rank-1 { color: #fbbf24; }
+        .rank-2 { color: #d1d5db; }
+        .rank-3 { color: #fb923c; }
+        
+        .tech-name {
+            font-weight: 600;
+        }
+        
+        .stat {
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .stat-value {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .stat-label {
+            font-size: 11px;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+        
+        .revenue {
+            text-align: right;
+            font-size: 18px;
+            font-weight: 700;
+            color: #22c55e;
+        }
+        
+        .ontime-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .ontime-high { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+        .ontime-med { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        
+        /* Reviews Feed */
+        .reviews-feed {
+            flex: 1;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #3a3a4e #1a1a2e;
+        }
+        
+        .review-item {
+            background: #0f0f14;
+            border-radius: 10px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid #fbbf24;
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .stars {
+            color: #fbbf24;
+            font-size: 16px;
+        }
+        
+        .review-date {
+            color: #6b7280;
+            font-size: 12px;
+        }
+        
+        .review-text {
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+        
+        .review-author {
+            font-weight: 600;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+        
+        /* Slack Ticker */
+        .ticker-container {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            background: #0f0f14;
+            border-radius: 10px;
+            margin-top: 12px;
+        }
+        
+        .ticker {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 16px;
+            animation: scroll 30s linear infinite;
+        }
+        
+        @keyframes scroll {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-50%); }
+        }
+        
+        .ticker-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: #1a1a2e;
+            border-radius: 8px;
+            border-left: 3px solid #6366f1;
+        }
+        
+        .ticker-time {
+            color: #6b7280;
+            font-size: 12px;
+            min-width: 50px;
+        }
+        
+        .ticker-text {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .ticker-highlight {
+            color: #22c55e;
+            font-weight: 600;
+        }
+        
+        /* Notes Panel */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            flex: 1;
+        }
+        
+        .note-card {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .note-card.green {
+            background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+        }
+        
+        .note-card.orange {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+        
+        .note-card.purple {
+            background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+        }
+        
+        .note-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+        
+        .note-value {
+            font-size: 32px;
+            font-weight: 900;
+        }
+        
+        /* AI Chat Button */
+        .ai-chat-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            font-size: 24px;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+        
+        .ai-chat-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+        
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 16px;
+            background: rgba(26, 26, 46, 0.9);
+            border-radius: 20px;
+            font-size: 11px;
+            color: #6b7280;
+            border: 1px solid #2a2a3e;
+        }
+        
+        .footer a {
+            color: #6366f1;
+            text-decoration: none;
+        }
+        
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>🔧 ServiceTitan Brag Board</h1>
+            <div class="header-right">
+                <div class="live-indicator">
+                    <div class="pulse"></div>
+                    <span style="font-weight: 600;">LIVE</span>
+                </div>
+                <div class="clock" id="clock">12:34:56</div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <div class="panel-header">
+                <h2>🏆 Tech Leaderboard</h2>
+                <span class="panel-icon">⚡</span>
+            </div>
+            <div class="leaderboard-item">
+                <div class="rank rank-1">1</div>
+                <div class="tech-name">Mike Rodriguez</div>
+                <div class="stat">
+                    <div class="stat-value" data-target="34">0</div>
+                    <div class="stat-label">Jobs</div>
+                </div>
+                <div class="stat">
+                    <span class="ontime-badge ontime-high">97%</span>
+                </div>
+                <div class="revenue" data-target="18750">$0</div>
+            </div>
+            <div class="leaderboard-item">
+                <div class="rank rank-2">2</div>
+                <div class="tech-name">Sarah Chen</div>
+                <div class="stat">
+                    <div class="stat-value" data-target="31">0</div>
+                    <div class="stat-label">Jobs</div>
+                </div>
+                <div class="stat">
+                    <span class="ontime-badge ontime-high">94%</span>
+                </div>
+                <div class="revenue" data-target="16280">$0</div>
+            </div>
+            <div class="leaderboard-item">
+                <div class="rank rank-3">3</div>
+                <div class="tech-name">Tom Wilson</div>
+                <div class="stat">
+                    <div class="stat-value" data-target="29">0</div>
+                    <div class="stat-label">Jobs</div>
+                </div>
+                <div class="stat">
+                    <span class="ontime-badge ontime-med">89%</span>
+                </div>
+                <div class="revenue" data-target="14920">$0</div>
+            </div>
+            <div class="leaderboard-item">
+                <div class="rank">4</div>
+                <div class="tech-name">James Park</div>
+                <div class="stat">
+                    <div class="stat-value" data-target="27">0</div>
+                    <div class="stat-label">Jobs</div>
+                </div>
+                <div class="stat">
+                    <span class="ontime-badge ontime-med">86%</span>
+                </div>
+                <div class="revenue" data-target="13440">$0</div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <div class="panel-header">
+                <h2>⭐ Google Reviews</h2>
+                <span class="panel-icon">💬</span>
+            </div>
+            <div class="reviews-feed">
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <div class="review-date">2 hours ago</div>
+                    </div>
+                    <div class="review-text">"Mike was absolutely phenomenal! Fixed our burst pipe in under an hour and explained everything clearly. Best plumber we've ever had!"</div>
+                    <div class="review-author">— Jennifer M.</div>
+                </div>
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <div class="review-date">5 hours ago</div>
+                    </div>
+                    <div class="review-text">"Sarah arrived exactly on time and had all the parts needed. Professional, efficient, and friendly. Highly recommend!"</div>
+                    <div class="review-author">— Robert K.</div>
+                </div>
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <div class="review-date">8 hours ago</div>
+                    </div>
+                    <div class="review-text">"Emergency water heater replacement done same day. Tom worked late to make sure we had hot water before bed. Above and beyond!"</div>
+                    <div class="review-author">— Lisa T.</div>
+                </div>
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <div class="review-date">Yesterday</div>
+                    </div>
+                    <div class="review-text">"James was fantastic! Clean, professional, and solved our drain problem quickly. Will definitely use again."</div>
+                    <div class="review-author">— David P.</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <div class="panel-header">
+                <h2>📡 Slack Dispatch</h2>
+                <span class="panel-icon">🚀</span>
+            </div>
+            <div class="ticker-container">
+                <div class="ticker" id="ticker">
+                    <div class="ticker-item">
+                        <div class="ticker-time">09:23</div>
+                        <div class="ticker-text"><span class="ticker-highlight">Mike</span> completed water heater install at 423 Oak St → Customer signed off</div>
+                    </div>
+                    <div class="ticker-item">
+                        <div class="ticker-time">09:45</div>
+                        <div class="ticker-text"><span class="ticker-highlight">Sarah</span> en route to emergency call → ETA 15 min</div>
+                    </div>
+                    <div class="ticker-item">
+                        <div class="ticker-time">10:12</div>
+                        <div class="ticker-text">New job assigned: <span class="ticker-highlight">Tom</span> → Drain cleaning @ 789 Maple Ave</div>
+                    </div>
+                    <div class="ticker-item">
+                        <div class="ticker-time">10:34</div>
+                        <div class="ticker-text"><span class="ticker-highlight">James</span> upsold water filtration system → +$2,400 revenue!</div>
+                    </div>
+                    <div class="ticker-item">
+                        <div class="ticker-time">11:07</div>
+                        <div class="ticker-text"><span class="ticker-highlight">Sarah</span> completed emergency repair → 5-star review already posted!</div>
+                    </div>
+                    <div class="ticker-item">
+                        <div class="ticker-time">11:28</div>
+                        <div class="ticker-text"><span class="ticker-highlight">Mike</span> starting bathroom remodel quote at 156 Pine Rd</div>
+                    </div>
+                    <div class="ticker-item">
+                        <div class="ticker-time">12:15</div>
+                        <div class="ticker-text">Lunch break: All techs on schedule ✅</div>
+                    </div>
+                    <div class="ticker-item">
+                        <div class="ticker-time">12:42</div>
+                        <div class="ticker-text"><span class="ticker-highlight">Tom</span> picked up parts from supplier → Back on route</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="panel">
+            <div class="panel-header">
+                <h2>📊 Today's Wins</h2>
+                <span class="panel-icon">🎯</span>
+            </div>
+            <div class="notes-grid">
+                <div class="note-card">
+                    <div class="note-title">Total Revenue</div>
+                    <div class="note-value" data-target="63390">$0</div>
+                </div>
+                <div class="note-card green">
+                    <div class="note-title">Jobs Completed</div>
+                    <div class="note-value" data-target="121">0</div>
+                </div>
+                <div class="note-card orange">
+                    <div class="note-title">Avg. Ticket</div>
+                    <div class="note-value" data-target="524">$0</div>
+                </div>
+                <div class="note-card purple">
+                    <div class="note-title">Customer NPS</div>
+                    <div class="note-value" data-target="94">0</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <button class="ai-chat-btn">💬</button>
+    
+    <div class="footer">
+        Built by <a href="https://github.com/janisag07" target="_blank">Janis Agic</a>
+    </div>
+    
+    <script>
+        // Live clock
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+        
+        // Number counter animation
+        function animateValue(element, start, end, duration) {
+            const range = end - start;
+            const increment = range / (duration / 16);
+            let current = start;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+                    element.textContent = element.classList.contains('revenue') ? '$' + end.toLocaleString() : end;
+                    clearInterval(timer);
+                } else {
+                    const value = Math.floor(current);
+                    element.textContent = element.classList.contains('revenue') ? '$' + value.toLocaleString() : value;
+                }
+            }, 16);
+        }
+        
+        // Animate all counters on load
+        window.addEventListener('load', () => {
+            document.querySelectorAll('[data-target]').forEach(element => {
+                const target = parseInt(element.dataset.target);
+                animateValue(element, 0, target, 2000);
+            });
+        });
+        
+        // Duplicate ticker for seamless loop
+        const ticker = document.getElementById('ticker');
+        ticker.innerHTML += ticker.innerHTML;
+        
+        // AI Chat button
+        document.querySelector('.ai-chat-btn').addEventListener('click', () => {
+            alert('AI Chat feature coming soon! 🚀');
+        });
+        
+        // Simulate real-time updates every 30 seconds
+        setInterval(() => {
+            const indicators = document.querySelectorAll('.pulse');
+            indicators.forEach(ind => {
+                ind.style.animation = 'none';
+                setTimeout(() => ind.style.animation = 'pulse 2s infinite', 10);
+            });
+        }, 30000);
+    </script>
+</body>
+</html>
