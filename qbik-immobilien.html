@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QbikAI — Intelligente Immobilien-Automation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+/* ============================================
+   QbikAI — Personalisierte Demo für Qbik Immobilien GmbH
+   AI-Automation für Lead-Generierung, Makler-Follow-up & Content-Marketing
+   ============================================ */
+:root {
+    --bg: #F8FAFC; --bg-card: #FFFFFF; --bg-sidebar: #0F172A; --bg-hover: #F1F5F9;
+    --text: #1E293B; --text-light: #64748B; --text-muted: #94A3B8;
+    --primary: #F59E0B; --primary-hover: #D97706; --primary-light: #FEF3C7;
+    --green: #10B981; --green-light: #D1FAE5; --yellow: #F59E0B; --yellow-light: #FEF3C7;
+    --red: #EF4444; --red-light: #FEE2E2; --purple: #8B5CF6; --purple-light: #EDE9FE;
+    --orange: #F97316; --orange-light: #FFEDD5; --emerald: #059669; --blue: #3B82F6; --blue-light: #DBEAFE;
+    --border: #E2E8F0; --shadow: 0 1px 3px rgba(0,0,0,0.08); --shadow-lg: 0 4px 16px rgba(0,0,0,0.1);
+    --radius: 12px; --radius-sm: 8px;
+    --font: 'Inter', -apple-system, sans-serif;
+    --sidebar-w: 260px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); font-size: 14px; color: var(--text); background: var(--bg); display: flex; min-height: 100vh; }
+h1 { font-size: 1.6rem; font-weight: 700; } h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; } h3 { font-size: 1rem; font-weight: 600; }
+a { text-decoration: none; color: inherit; }
+::selection { background: var(--primary-light); }
+
+/* Sidebar */
+.sidebar { width: var(--sidebar-w); background: var(--bg-sidebar); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transition: transform 0.3s; }
+.sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { font-size: 1.5rem; }
+.logo-text { font-size: 1.2rem; font-weight: 700; }
+.logo-ai { color: var(--primary); }
+.logo-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+.sidebar-nav { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--text-muted); font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.nav-item.active { background: rgba(245,158,11,0.15); color: var(--primary); }
+.nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+.user-badge { display: flex; align-items: center; gap: 12px; }
+.user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; }
+.user-name { font-size: 0.8rem; font-weight: 600; }
+.user-role { font-size: 0.7rem; color: var(--text-muted); }
+
+/* Mobile */
+.mobile-header { display: none; }
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); } .sidebar.open { transform: none; }
+    .mobile-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg-sidebar); color: #fff; position: fixed; top: 0; left: 0; right: 0; z-index: 40; }
+    .menu-toggle { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+    .main { margin-left: 0 !important; padding-top: 56px; }
+    .page { padding: 20px 16px; }
+    .page-header { flex-direction: column; }
+    .page-header h1 { font-size: 1.3rem; }
+    .header-actions { width: 100%; }
+    .header-actions .btn { width: 100%; justify-content: center; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stat-card { padding: 14px; gap: 10px; }
+    .stat-icon { width: 40px; height: 40px; font-size: 1.1rem; }
+    .stat-value { font-size: 1.2rem; }
+    .stat-trend { font-size: 0.6rem; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .lead-grid { grid-template-columns: 1fr; }
+    .content-grid { grid-template-columns: 1fr; }
+    .data-table { font-size: 0.8rem; }
+    .data-table th, .data-table td { padding: 8px 10px; }
+}
+
+/* Main */
+.main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; }
+.page { display: none; padding: 32px; max-width: 1400px; }
+.page.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+
+/* Page Header */
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+.page-subtitle { color: var(--text-light); margin-top: 4px; }
+.header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+/* Buttons */
+.btn { padding: 8px 20px; border: none; border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+.btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-hover); }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); } .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+.btn-sm { padding: 5px 12px; font-size: 0.75rem; }
+.btn-full { width: 100%; justify-content: center; }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+@media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 16px; position: relative; }
+.stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+.stat-icon.blue { background: var(--blue-light); } .stat-icon.green { background: var(--green-light); }
+.stat-icon.purple { background: var(--purple-light); } .stat-icon.orange { background: var(--orange-light); }
+.stat-value { font-size: 1.5rem; font-weight: 700; } .stat-label { font-size: 0.75rem; color: var(--text-light); }
+.stat-trend { position: absolute; top: 12px; right: 16px; font-size: 0.7rem; font-weight: 500; }
+.stat-trend.up { color: var(--green); } .stat-trend.down { color: var(--red); } .stat-trend.neutral { color: var(--text-muted); }
+
+/* Cards */
+.section-card { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Pipeline */
+.pipeline { display: flex; flex-direction: column; gap: 12px; }
+.stage-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8rem; }
+.stage-dot { width: 8px; height: 8px; border-radius: 50%; }
+.stage-dot.blue { background: var(--blue); } .stage-dot.yellow { background: var(--yellow); }
+.stage-dot.purple { background: var(--purple); } .stage-dot.green { background: var(--green); } .stage-dot.emerald { background: var(--emerald); }
+.stage-count { margin-left: auto; font-weight: 600; }
+.stage-bar { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.stage-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+.stage-fill.blue { background: var(--blue); } .stage-fill.yellow { background: var(--yellow); }
+.stage-fill.purple { background: var(--purple); } .stage-fill.green { background: var(--green); } .stage-fill.emerald { background: var(--emerald); }
+
+/* Alerts */
+.alert-list { display: flex; flex-direction: column; gap: 12px; }
+.alert-item { padding: 12px 16px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.alert-item.urgent { background: var(--red-light); } .alert-item.warning { background: var(--yellow-light); } .alert-item.info { background: var(--blue-light); }
+.alert-badge { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: var(--red); color: #fff; }
+.alert-badge.warn { background: var(--yellow); } .alert-badge.info { background: var(--blue); }
+.alert-item p { flex: 1; font-size: 0.85rem; }
+
+/* Activity */
+.activity-list { display: flex; flex-direction: column; gap: 12px; }
+.activity-item { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.activity-item:last-child { border: none; }
+.activity-time { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; min-width: 60px; padding-top: 2px; }
+.activity-item p { font-size: 0.85rem; }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.data-table th { text-align: left; padding: 12px 16px; font-size: 0.75rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; background: var(--bg); border-bottom: 1px solid var(--border); }
+.data-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+.data-table tr:hover { background: var(--bg-hover); }
+
+/* Badges */
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+.badge.green { background: var(--green-light); color: #065F46; }
+.badge.blue { background: var(--blue-light); color: #1E40AF; }
+.badge.yellow { background: var(--yellow-light); color: #92400E; }
+.badge.red { background: var(--red-light); color: #991B1B; }
+.badge.purple { background: var(--purple-light); color: #5B21B6; }
+.badge.orange { background: var(--orange-light); color: #9A3412; }
+
+/* Lead Cards */
+.lead-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) { .lead-grid { grid-template-columns: 1fr; } }
+.lead-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); border-left: 4px solid var(--primary); transition: all 0.2s; }
+.lead-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.lead-card.hot { border-left-color: var(--red); }
+.lead-card.warm { border-left-color: var(--orange); }
+.lead-card.cold { border-left-color: var(--blue); }
+.lead-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.lead-header h3 { font-size: 0.95rem; }
+.lead-score { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+.lead-info { font-size: 0.8rem; color: var(--text-light); margin-bottom: 12px; }
+.lead-info p { margin-bottom: 4px; }
+.lead-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.lead-tag { padding: 2px 8px; background: var(--purple-light); color: #5B21B6; border-radius: 12px; font-size: 0.7rem; }
+.lead-actions { display: flex; gap: 8px; }
+
+/* Content Cards */
+.content-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) { .content-grid { grid-template-columns: 1fr; } }
+.content-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); }
+.content-preview { background: var(--bg); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 12px; font-size: 0.85rem; line-height: 1.6; min-height: 120px; }
+.content-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem; color: var(--text-light); margin-bottom: 12px; }
+
+/* AI Loading */
+.ai-loading { text-align: center; padding: 48px; }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Empty State */
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); }
+.empty-state p:first-child { font-size: 2rem; margin-bottom: 8px; }
+
+/* Toast */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg-sidebar); color: #fff; padding: 12px 24px; border-radius: var(--radius-sm); font-size: 0.85rem; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 200; }
+.toast.show { transform: none; opacity: 1; }
+
+.mt-1 { margin-top: 8px; }
+.score-ring { width: 56px; height: 56px; border-radius: 50%; background: conic-gradient(var(--primary) calc(var(--score) * 1%), var(--border) 0); display: flex; align-items: center; justify-content: center; position: relative; }
+.score-ring::before { content: ''; position: absolute; width: 44px; height: 44px; border-radius: 50%; background: #fff; }
+.score-ring span { position: relative; z-index: 1; font-size: 0.8rem; font-weight: 700; color: var(--primary); }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">🏗️</span>
+                <span class="logo-text">Qbik<span class="logo-ai">AI</span></span>
+            </div>
+            <p class="logo-sub">Demo für Qbik Immobilien GmbH</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+                <span class="nav-icon">📊</span> Dashboard
+            </div>
+            <div class="nav-item" data-page="lead-gen" onclick="showPage('lead-gen')">
+                <span class="nav-icon">🎯</span> Lead-Generierung
+            </div>
+            <div class="nav-item" data-page="makler" onclick="showPage('makler')">
+                <span class="nav-icon">🤝</span> Makler-Partner
+            </div>
+            <div class="nav-item" data-page="follow-up" onclick="showPage('follow-up')">
+                <span class="nav-icon">📧</span> Automatisches Follow-up
+            </div>
+            <div class="nav-item" data-page="content" onclick="showPage('content')">
+                <span class="nav-icon">✍️</span> Content-Marketing
+            </div>
+            <div class="nav-item" data-page="projects" onclick="showPage('projects')">
+                <span class="nav-icon">🏘️</span> Projekte
+            </div>
+            <div class="nav-item" data-page="analytics" onclick="showPage('analytics')">
+                <span class="nav-icon">📈</span> Analytics
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-badge">
+                <div class="user-avatar" style="background:#F59E0B">ID</div>
+                <div>
+                    <p class="user-name">Irina Dockal</p>
+                    <p class="user-role">Geschäftsführerin</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <header class="mobile-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <span class="logo-text">Qbik<span class="logo-ai">AI</span></span>
+    </header>
+
+    <main class="main">
+        <!-- DASHBOARD -->
+        <div class="page active" id="page-dashboard">
+            <div class="page-header">
+                <div>
+                    <h1>Guten Tag, Irina 👋</h1>
+                    <p class="page-subtitle">Ihr AI-gestütztes Immobilien-Cockpit</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showPage('lead-gen')">🎯 Neue Leads finden</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">🎯</div>
+                    <div class="stat-info">
+                        <p class="stat-value">247</p>
+                        <p class="stat-label">Qualifizierte Leads (Monat)</p>
+                    </div>
+                    <span class="stat-trend up">+89 neu</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">🤝</div>
+                    <div class="stat-info">
+                        <p class="stat-value">38</p>
+                        <p class="stat-label">Aktive Makler-Partner</p>
+                    </div>
+                    <span class="stat-trend up">+6 neue</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">📧</div>
+                    <div class="stat-info">
+                        <p class="stat-value">1.842</p>
+                        <p class="stat-label">Automatische E-Mails</p>
+                    </div>
+                    <span class="stat-trend neutral">diese Woche</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">⏱️</div>
+                    <div class="stat-info">
+                        <p class="stat-value">22h</p>
+                        <p class="stat-label">Zeitersparnis (Woche)</p>
+                    </div>
+                    <span class="stat-trend up">durch AI</span>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>Lead-Generierungs-Pipeline</h2>
+                <div class="pipeline">
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot blue"></span>
+                            <span>Grundstücke identifiziert</span>
+                            <span class="stage-count">342</span>
+                        </div>
+                        <div class="stage-bar"><div class="stage-fill blue" style="width:100%"></div></div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot yellow"></span>
+                            <span>Eigentümer ermittelt</span>
+                            <span class="stage-count">298</span>
+                        </div>
+                        <div class="stage-bar"><div class="stage-fill yellow" style="width:87%"></div></div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot purple"></span>
+                            <span>Kontaktdaten validiert</span>
+                            <span class="stage-count">247</span>
+                        </div>
+                        <div class="stage-bar"><div class="stage-fill purple" style="width:72%"></div></div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot green"></span>
+                            <span>Erstansprache versendet</span>
+                            <span class="stage-count">189</span>
+                        </div>
+                        <div class="stage-bar"><div class="stage-fill green" style="width:55%"></div></div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot emerald"></span>
+                            <span>Interesse bekundet ✓</span>
+                            <span class="stage-count">42</span>
+                        </div>
+                        <div class="stage-bar"><div class="stage-fill emerald" style="width:12%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="section-card">
+                    <h2>⚠️ Handlungsbedarf</h2>
+                    <div class="alert-list">
+                        <div class="alert-item urgent">
+                            <span class="alert-badge">Dringend</span>
+                            <p><strong>14 neue heiße Leads</strong> aus München-Nord — sofort an Makler verteilen</p>
+                            <button class="btn btn-sm" onclick="showPage('lead-gen')">Ansehen →</button>
+                        </div>
+                        <div class="alert-item warning">
+                            <span class="alert-badge warn">Heute</span>
+                            <p><strong>5 Makler</strong> warten auf Follow-up zu Projekt "Garchinger Höfe"</p>
+                            <button class="btn btn-sm" onclick="showPage('follow-up')">Follow-up →</button>
+                        </div>
+                        <div class="alert-item info">
+                            <span class="alert-badge info">AI</span>
+                            <p>🤖 AI hat <strong>3 neue Content-Ideen</strong> für Social Media generiert</p>
+                            <button class="btn btn-sm" onclick="showPage('content')">Content →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2>📋 Letzte Aktivitäten</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-time">vor 15min</span>
+                            <p>🤖 AI hat <strong>89 neue Grundstücke</strong> in der Metropolregion München gefunden</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">vor 1h</span>
+                            <p>📧 Automatisches Follow-up an <strong>23 Makler-Partner</strong> verschickt</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">vor 3h</span>
+                            <p>✍️ Blog-Artikel "<strong>3D-Visualisierung im Jahr 2026</strong>" veröffentlicht</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">gestern</span>
+                            <p>🎯 <strong>14 qualifizierte Leads</strong> an Makler-Netzwerk verteilt</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">gestern</span>
+                            <p>🏗️ Neues Projekt "<strong>Dachauer Residenzen</strong>" gestartet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LEAD GENERATION -->
+        <div class="page" id="page-lead-gen">
+            <div class="page-header">
+                <div>
+                    <h1>🎯 Lead-Generierung</h1>
+                    <p class="page-subtitle">Automatische Identifikation von Grundstücken & Eigentümern</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="runLeadGen()">🤖 Neue Leads scannen</button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>🤖 AI-Lead-Scanner</h2>
+                <p style="color: var(--text-light); margin-bottom: 16px;">
+                    Unser AI-System durchsucht kontinuierlich öffentliche Datenbanken, Katasterämter und Online-Quellen, 
+                    um entwicklungsfähige Grundstücke in der Metropolregion München zu identifizieren.
+                </p>
+                <div id="leadGenStatus">
+                    <div class="empty-state">
+                        <p>🎯</p>
+                        <p>Klicken Sie auf "Neue Leads scannen", um den AI-Scanner zu starten</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>💎 Qualifizierte Leads (diese Woche)</h2>
+                <div class="lead-grid" id="leadGrid">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- MAKLER-PARTNER -->
+        <div class="page" id="page-makler">
+            <div class="page-header">
+                <div>
+                    <h1>🤝 Makler-Partner</h1>
+                    <p class="page-subtitle">38 aktive Partner in Ihrem Netzwerk</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary">+ Neuer Partner</button>
+                </div>
+            </div>
+
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Makler</th>
+                            <th>Standort</th>
+                            <th>Aktive Projekte</th>
+                            <th>Leads erhalten</th>
+                            <th>Erfolgsquote</th>
+                            <th>Letzte Aktivität</th>
+                            <th>Aktion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="maklerBody">
+                        <!-- Generated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FOLLOW-UP -->
+        <div class="page" id="page-follow-up">
+            <div class="page-header">
+                <div>
+                    <h1>📧 Automatisches Follow-up</h1>
+                    <p class="page-subtitle">Intelligente Kommunikation mit Makler-Partnern</p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="section-card">
+                    <h2>📨 Follow-up-Kampagnen</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-time">Aktiv</span>
+                            <p><strong>Projekt "Garchinger Höfe"</strong> — 23 Makler im Follow-up</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">Aktiv</span>
+                            <p><strong>Neue Leads München-Nord</strong> — 14 Erstansprachen</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">Geplant</span>
+                            <p><strong>Dachauer Residenzen</strong> — Start in 2 Tagen</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">Abgeschlossen</span>
+                            <p><strong>Obermenzing Projekt</strong> — 89% Rücklaufquote</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2>⚙️ Automatisierungsregeln</h2>
+                    <div class="template-list" style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="font-size: 0.85rem; margin-bottom: 2px;">Sofortige Benachrichtigung</h3>
+                                <p style="font-size: 0.75rem; color: var(--text-light);">Bei neuen heißen Leads (Score >85)</p>
+                            </div>
+                            <span class="badge green">Aktiv</span>
+                        </div>
+                        <div style="padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="font-size: 0.85rem; margin-bottom: 2px;">Wöchentliches Update</h3>
+                                <p style="font-size: 0.75rem; color: var(--text-light);">Projektfortschritt an alle Partner</p>
+                            </div>
+                            <span class="badge green">Aktiv</span>
+                        </div>
+                        <div style="padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="font-size: 0.85rem; margin-bottom: 2px;">Follow-up nach 3 Tagen</h3>
+                                <p style="font-size: 0.75rem; color: var(--text-light);">Wenn keine Rückmeldung erfolgt</p>
+                            </div>
+                            <span class="badge green">Aktiv</span>
+                        </div>
+                        <div style="padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="font-size: 0.85rem; margin-bottom: 2px;">Monatlicher Performance-Report</h3>
+                                <p style="font-size: 0.75rem; color: var(--text-light);">An Top-Makler mit Statistiken</p>
+                            </div>
+                            <span class="badge green">Aktiv</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>📊 Follow-up Performance</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📧</div>
+                        <div class="stat-info">
+                            <p class="stat-value">1.842</p>
+                            <p class="stat-label">E-Mails versendet</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-info">
+                            <p class="stat-value">74%</p>
+                            <p class="stat-label">Öffnungsrate</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">💬</div>
+                        <div class="stat-info">
+                            <p class="stat-value">58%</p>
+                            <p class="stat-label">Antwortrate</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">⏱️</div>
+                        <div class="stat-info">
+                            <p class="stat-value">12h</p>
+                            <p class="stat-label">Ø Antwortzeit</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT MARKETING -->
+        <div class="page" id="page-content">
+            <div class="page-header">
+                <div>
+                    <h1>✍️ Content-Marketing</h1>
+                    <p class="page-subtitle">AI-generierte Inhalte für Social Media, Blog & Newsletter</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="generateContent()">🤖 Content generieren</button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>🤖 AI-Content-Generator</h2>
+                <div id="contentGenStatus">
+                    <div class="empty-state">
+                        <p>✍️</p>
+                        <p>Klicken Sie auf "Content generieren", um neue Marketing-Inhalte zu erstellen</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>📝 Generierte Inhalte (diese Woche)</h2>
+                <div class="content-grid" id="contentGrid">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- PROJECTS -->
+        <div class="page" id="page-projects">
+            <div class="page-header">
+                <div>
+                    <h1>🏘️ Projekte</h1>
+                    <p class="page-subtitle">Aktuelle Immobilienprojekte</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary">+ Neues Projekt</button>
+                </div>
+            </div>
+
+            <div class="lead-grid">
+                <div class="lead-card">
+                    <div class="lead-header">
+                        <h3>Garchinger Höfe</h3>
+                        <span class="badge green">Aktiv</span>
+                    </div>
+                    <div class="lead-info">
+                        <p>📍 Garching bei München</p>
+                        <p>🏗️ 24 Wohneinheiten</p>
+                        <p>🤝 12 Makler-Partner</p>
+                    </div>
+                    <div class="lead-actions">
+                        <button class="btn btn-sm btn-primary">Details</button>
+                    </div>
+                </div>
+                <div class="lead-card">
+                    <div class="lead-header">
+                        <h3>Dachauer Residenzen</h3>
+                        <span class="badge blue">Planung</span>
+                    </div>
+                    <div class="lead-info">
+                        <p>📍 Dachau</p>
+                        <p>🏗️ 18 Wohneinheiten</p>
+                        <p>🤝 8 Makler-Partner</p>
+                    </div>
+                    <div class="lead-actions">
+                        <button class="btn btn-sm btn-primary">Details</button>
+                    </div>
+                </div>
+                <div class="lead-card">
+                    <div class="lead-header">
+                        <h3>Obermenzing Wohnpark</h3>
+                        <span class="badge green">Aktiv</span>
+                    </div>
+                    <div class="lead-info">
+                        <p>📍 München-Obermenzing</p>
+                        <p>🏗️ 32 Wohneinheiten</p>
+                        <p>🤝 15 Makler-Partner</p>
+                    </div>
+                    <div class="lead-actions">
+                        <button class="btn btn-sm btn-primary">Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div class="page" id="page-analytics">
+            <div class="page-header">
+                <div>
+                    <h1>📈 Analytics</h1>
+                    <p class="page-subtitle">Performance-Kennzahlen</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon green">✅</div>
+                    <div class="stat-info">
+                        <p class="stat-value">17%</p>
+                        <p class="stat-label">Lead-zu-Interessent</p>
+                    </div>
+                    <span class="stat-trend up">+5% vs. Vormonat</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">⏱️</div>
+                    <div class="stat-info">
+                        <p class="stat-value">22h</p>
+                        <p class="stat-label">Zeitersparnis/Woche</p>
+                    </div>
+                    <span class="stat-trend up">durch AI</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">💰</div>
+                    <div class="stat-info">
+                        <p class="stat-value">€8.400</p>
+                        <p class="stat-label">Kostenersparnis (Monat)</p>
+                    </div>
+                    <span class="stat-trend up">vs. manuell</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">🎯</div>
+                    <div class="stat-info">
+                        <p class="stat-value">91%</p>
+                        <p class="stat-label">Makler-Zufriedenheit</p>
+                    </div>
+                    <span class="stat-trend up">+8%</span>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>📊 Lead-Generierung (letzten 6 Monate)</h2>
+                <p style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 20px;">
+                    Kontinuierliche Steigerung der Lead-Qualität und -Quantität durch AI-Optimierung
+                </p>
+                <div style="background: var(--bg); padding: 20px; border-radius: var(--radius-sm); text-align: center; color: var(--text-muted);">
+                    📈 Grafik: Stetige Steigerung von 142 Leads/Monat → 247 Leads/Monat
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Navigation
+        function showPage(p) {
+            document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+            document.getElementById('page-' + p).classList.add('active');
+            document.querySelector('[data-page="' + p + '"]')?.classList.add('active');
+            document.getElementById('sidebar').classList.remove('open');
+            
+            // Load page-specific data
+            if (p === 'lead-gen') renderLeads();
+            if (p === 'makler') renderMakler();
+            if (p === 'content') renderContent();
+            
+            window.scrollTo(0, 0);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function toast(m) {
+            const t = document.getElementById('toast');
+            t.textContent = m;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // Lead Generation
+        const LEADS = [
+            { name: "Grundstück Dachauer Str. 142", location: "München-Moosach", size: "1.240 m²", score: 94, temp: "hot", tags: ["Wohnbebauung", "Top-Lage"] },
+            { name: "Baugrundstück Garching", location: "Garching b. München", size: "2.100 m²", score: 91, temp: "hot", tags: ["Gewerbe möglich", "S-Bahn-Nähe"] },
+            { name: "Entwicklungsfläche Dachau", location: "Dachau-Ost", size: "3.500 m²", score: 88, temp: "warm", tags: ["Mehrfamilienhaus", "B-Plan vorhanden"] },
+            { name: "Grundstück Oberschleißheim", location: "Oberschleißheim", size: "980 m²", score: 85, temp: "warm", tags: ["Wohnbebauung", "Ruhige Lage"] },
+            { name: "Bauland Unterföhring", location: "Unterföhring", size: "1.560 m²", score: 82, temp: "warm", tags: ["Top-Standort", "Nähe Allianz Arena"] },
+            { name: "Grundstück Karlsfeld", location: "Karlsfeld", size: "1.120 m²", score: 78, temp: "cold", tags: ["Wohnbebauung", "Familienfreundlich"] },
+        ];
+
+        function renderLeads() {
+            const grid = document.getElementById('leadGrid');
+            grid.innerHTML = LEADS.map(l => `
+                <div class="lead-card ${l.temp}">
+                    <div class="lead-header">
+                        <h3>${l.name}</h3>
+                        <span class="lead-score">${l.score}%</span>
+                    </div>
+                    <div class="lead-info">
+                        <p>📍 ${l.location}</p>
+                        <p>📐 ${l.size}</p>
+                    </div>
+                    <div class="lead-tags">
+                        ${l.tags.map(t => `<span class="lead-tag">${t}</span>`).join('')}
+                    </div>
+                    <div class="lead-actions">
+                        <button class="btn btn-sm btn-primary" onclick="toast('✅ Lead an Makler verteilt!')">An Makler</button>
+                        <button class="btn btn-sm btn-ghost" onclick="toast('📋 Details geöffnet')">Details</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function runLeadGen() {
+            const status = document.getElementById('leadGenStatus');
+            status.innerHTML = '<div class="ai-loading"><div class="spinner"></div><p>🤖 AI scannt Grundstücksdatenbanken & Katasterämter...</p></div>';
+            
+            setTimeout(() => {
+                status.innerHTML = `
+                    <div style="padding: 20px; background: var(--green-light); border-radius: var(--radius-sm); text-align: center;">
+                        <p style="font-size: 1.2rem; font-weight: 600; color: #065F46; margin-bottom: 8px;">✅ Scan erfolgreich abgeschlossen!</p>
+                        <p style="color: #065F46; font-size: 0.9rem;">89 neue entwicklungsfähige Grundstücke gefunden</p>
+                        <p style="color: #065F46; font-size: 0.9rem;">247 Eigentümer-Kontaktdaten validiert</p>
+                        <button class="btn btn-primary" style="margin-top: 16px;" onclick="toast('📧 Erstansprache wird versendet...')">Erstansprache starten</button>
+                    </div>
+                `;
+                toast('✅ 89 neue Leads gefunden!');
+            }, 2500);
+        }
+
+        // Makler-Partner
+        const MAKLER = [
+            { name: "Immobilien Schmidt GmbH", location: "München", projects: 5, leads: 23, success: "89%", activity: "vor 2h" },
+            { name: "Maklerbüro Wagner", location: "Dachau", projects: 3, leads: 14, success: "85%", activity: "vor 5h" },
+            { name: "Immocenter München", location: "München-Nord", projects: 7, leads: 31, success: "92%", activity: "vor 1h" },
+            { name: "Grundstück & Bau Meier", location: "Garching", projects: 4, leads: 18, success: "78%", activity: "gestern" },
+            { name: "Wohnen in München GmbH", location: "München", projects: 6, leads: 28, success: "91%", activity: "vor 3h" },
+        ];
+
+        function renderMakler() {
+            const body = document.getElementById('maklerBody');
+            body.innerHTML = MAKLER.map(m => `
+                <tr>
+                    <td><strong>${m.name}</strong></td>
+                    <td>${m.location}</td>
+                    <td>${m.projects}</td>
+                    <td>${m.leads}</td>
+                    <td><span class="badge green">${m.success}</span></td>
+                    <td style="color: var(--text-light); font-size: 0.8rem;">${m.activity}</td>
+                    <td><button class="btn btn-sm" onclick="toast('📧 Follow-up gesendet!')">Kontakt</button></td>
+                </tr>
+            `).join('');
+        }
+
+        // Content Marketing
+        const CONTENT = [
+            { type: "LinkedIn-Post", title: "3D-Visualisierung revolutioniert Immobilienvermarktung", status: "Entwurf" },
+            { type: "Blog-Artikel", title: "Wie finde ich entwicklungsfähige Grundstücke in München?", status: "Veröffentlicht" },
+            { type: "Instagram-Post", title: "Unsere neuesten Projekte in Dachau", status: "Geplant" },
+            { type: "Newsletter", title: "Projekt-Update: Garchinger Höfe", status: "Versendet" },
+        ];
+
+        function renderContent() {
+            const grid = document.getElementById('contentGrid');
+            grid.innerHTML = CONTENT.map(c => `
+                <div class="content-card">
+                    <div class="content-preview">
+                        <strong>${c.title}</strong>
+                        <p style="margin-top: 8px; color: var(--text-light); font-size: 0.8rem;">
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...
+                        </p>
+                    </div>
+                    <div class="content-meta">
+                        <span>${c.type}</span>
+                        <span class="badge ${c.status === 'Veröffentlicht' ? 'green' : c.status === 'Versendet' ? 'blue' : 'yellow'}">${c.status}</span>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-sm btn-primary" onclick="toast('✏️ Editor geöffnet')">Bearbeiten</button>
+                        <button class="btn btn-sm btn-ghost" onclick="toast('📋 In Zwischenablage kopiert')">Kopieren</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generateContent() {
+            const status = document.getElementById('contentGenStatus');
+            status.innerHTML = '<div class="ai-loading"><div class="spinner"></div><p>🤖 AI generiert Marketing-Content...</p></div>';
+            
+            setTimeout(() => {
+                status.innerHTML = `
+                    <div style="padding: 20px; background: var(--primary-light); border-radius: var(--radius-sm);">
+                        <p style="font-size: 1.1rem; font-weight: 600; color: #92400E; margin-bottom: 12px;">✨ 3 neue Content-Ideen generiert!</p>
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
+                            <div style="padding: 12px; background: white; border-radius: 8px;">
+                                <strong style="font-size: 0.9rem;">LinkedIn:</strong>
+                                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">
+                                    "5 Gründe, warum 3D-Visualisierung die Vermarktung von Neubauprojekten beschleunigt"
+                                </p>
+                            </div>
+                            <div style="padding: 12px; background: white; border-radius: 8px;">
+                                <strong style="font-size: 0.9rem;">Blog:</strong>
+                                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">
+                                    "Immobilien-Entwicklung in München: So finden Sie die perfekte Fläche"
+                                </p>
+                            </div>
+                            <div style="padding: 12px; background: white; border-radius: 8px;">
+                                <strong style="font-size: 0.9rem;">Newsletter:</strong>
+                                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">
+                                    "Projekt-Spotlight: Dachauer Residenzen — 18 exklusive Wohneinheiten"
+                                </p>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 16px; width: 100%; justify-content: center;" onclick="toast('📝 Content in Entwürfe übernommen')">Alle übernehmen</button>
+                    </div>
+                `;
+                toast('✨ 3 neue Content-Ideen generiert!');
+            }, 2200);
+        }
+
+        // Initial load
+        renderLeads();
+        renderMakler();
+        renderContent();
+    </script>
+</body>
+</html>
