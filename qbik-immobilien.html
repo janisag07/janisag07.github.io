@@ -28,6 +28,235 @@ h1 { font-size: 1.6rem; font-weight: 700; } h2 { font-size: 1.1rem; font-weight:
 a { text-decoration: none; color: inherit; }
 ::selection { background: var(--primary-light); }
 
+/* Demo Banner */
+.demo-banner { 
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); 
+    color: white; 
+    padding: 12px 20px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    position: fixed; 
+    top: 0; 
+    left: var(--sidebar-w); 
+    right: 0; 
+    z-index: 100; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-size: 0.9rem;
+    transition: transform 0.3s;
+}
+.demo-banner.hidden { transform: translateY(-100%); }
+.demo-banner-content { display: flex; align-items: center; gap: 8px; }
+.demo-banner-icon { font-size: 1.2rem; }
+.demo-banner-close { 
+    background: rgba(255,255,255,0.2); 
+    border: none; 
+    color: white; 
+    width: 28px; 
+    height: 28px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    font-size: 1.1rem;
+    transition: background 0.2s;
+}
+.demo-banner-close:hover { background: rgba(255,255,255,0.3); }
+@media (max-width: 768px) {
+    .demo-banner { left: 0; top: 56px; font-size: 0.8rem; padding: 10px 16px; }
+    .demo-banner-content { flex-wrap: wrap; }
+}
+
+/* Info Icons & Tooltips */
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    cursor: help;
+    position: relative;
+    margin-left: 6px;
+}
+.info-icon:hover .tooltip { opacity: 1; visibility: visible; }
+.tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-sidebar);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+    pointer-events: none;
+}
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--bg-sidebar);
+}
+
+/* AI Chat Bubble */
+.ai-chat-bubble {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
+    transition: all 0.3s;
+    z-index: 150;
+}
+.ai-chat-bubble:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5); }
+.ai-chat-window {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 360px;
+    max-width: calc(100vw - 48px);
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 150;
+    max-height: 500px;
+}
+.ai-chat-window.open { display: flex; animation: slideUp 0.3s; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.ai-chat-header {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: white;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ai-chat-header h3 { font-size: 1rem; }
+.ai-chat-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+}
+.ai-chat-body {
+    padding: 16px;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.ai-chat-message {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    max-width: 85%;
+}
+.ai-chat-message.user {
+    background: var(--primary-light);
+    color: #92400E;
+    align-self: flex-end;
+}
+.ai-chat-message.ai {
+    background: var(--bg);
+    color: var(--text);
+    align-self: flex-start;
+}
+.ai-chat-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 16px 16px;
+}
+.ai-chat-option {
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+.ai-chat-option:hover { border-color: var(--primary); background: var(--primary-light); }
+
+/* AI Progress Bar */
+.ai-progress {
+    margin-top: 12px;
+}
+.ai-progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+.ai-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--orange) 100%);
+    width: 0%;
+    transition: width 0.5s;
+}
+.ai-progress-text {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.ai-progress-text .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    margin: 0;
+}
+
+/* Typing Animation */
+.typing-text {
+    display: inline;
+}
+.cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--primary);
+    margin-left: 2px;
+    animation: blink 1s infinite;
+}
+@keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
 /* Sidebar */
 .sidebar { width: var(--sidebar-w); background: var(--bg-sidebar); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transition: transform 0.3s; }
 .sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
@@ -69,10 +298,11 @@ a { text-decoration: none; color: inherit; }
     .content-grid { grid-template-columns: 1fr; }
     .data-table { font-size: 0.8rem; }
     .data-table th, .data-table td { padding: 8px 10px; }
+    .ai-chat-bubble { width: 50px; height: 50px; font-size: 1.5rem; }
 }
 
 /* Main */
-.main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; }
+.main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; padding-top: 48px; }
 .page { display: none; padding: 32px; max-width: 1400px; }
 .page.active { display: block; animation: fadeIn 0.3s; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
@@ -192,6 +422,15 @@ a { text-decoration: none; color: inherit; }
     </style>
 </head>
 <body>
+    <!-- Demo Banner -->
+    <div class="demo-banner" id="demoBanner">
+        <div class="demo-banner-content">
+            <span class="demo-banner-icon">🔬</span>
+            <strong>Interaktive Demo</strong>&nbsp;—&nbsp;Die gezeigten Daten sind simuliert. Im Live-System arbeitet echte KI mit Ihren realen Daten.
+        </div>
+        <button class="demo-banner-close" onclick="closeDemoBanner()">×</button>
+    </div>
+
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">
@@ -257,7 +496,12 @@ a { text-decoration: none; color: inherit; }
                     <div class="stat-icon blue">🎯</div>
                     <div class="stat-info">
                         <p class="stat-value">247</p>
-                        <p class="stat-label">Qualifizierte Leads (Monat)</p>
+                        <p class="stat-label">
+                            Qualifizierte Leads (Monat)
+                            <span class="info-icon">i
+                                <span class="tooltip">Im Live-System: Echtzeit-Daten aus Ihrem CRM</span>
+                            </span>
+                        </p>
                     </div>
                     <span class="stat-trend up">+89 neu</span>
                 </div>
@@ -265,7 +509,12 @@ a { text-decoration: none; color: inherit; }
                     <div class="stat-icon green">🤝</div>
                     <div class="stat-info">
                         <p class="stat-value">38</p>
-                        <p class="stat-label">Aktive Makler-Partner</p>
+                        <p class="stat-label">
+                            Aktive Makler-Partner
+                            <span class="info-icon">i
+                                <span class="tooltip">Im Live-System: Echtzeit-Daten aus Ihrem CRM</span>
+                            </span>
+                        </p>
                     </div>
                     <span class="stat-trend up">+6 neue</span>
                 </div>
@@ -273,7 +522,12 @@ a { text-decoration: none; color: inherit; }
                     <div class="stat-icon purple">📧</div>
                     <div class="stat-info">
                         <p class="stat-value">1.842</p>
-                        <p class="stat-label">Automatische E-Mails</p>
+                        <p class="stat-label">
+                            Automatische E-Mails
+                            <span class="info-icon">i
+                                <span class="tooltip">Im Live-System: Echtzeit-Daten aus Ihrem CRM</span>
+                            </span>
+                        </p>
                     </div>
                     <span class="stat-trend neutral">diese Woche</span>
                 </div>
@@ -364,7 +618,11 @@ a { text-decoration: none; color: inherit; }
                         </div>
                         <div class="activity-item">
                             <span class="activity-time">vor 1h</span>
-                            <p>📧 Automatisches Follow-up an <strong>23 Makler-Partner</strong> verschickt</p>
+                            <p>📧 Automatisches Follow-up an <strong>23 Makler-Partner</strong> verschickt
+                                <span class="info-icon">i
+                                    <span class="tooltip">Im Live-System: Automatische Aktualisierung alle 24h</span>
+                                </span>
+                            </p>
                         </div>
                         <div class="activity-item">
                             <span class="activity-time">vor 3h</span>
@@ -410,7 +668,12 @@ a { text-decoration: none; color: inherit; }
             </div>
 
             <div class="section-card">
-                <h2>💎 Qualifizierte Leads (diese Woche)</h2>
+                <h2>
+                    💎 Qualifizierte Leads (diese Woche)
+                    <span class="info-icon">i
+                        <span class="tooltip">Im Live-System: Automatische Aktualisierung alle 24h</span>
+                    </span>
+                </h2>
                 <div class="lead-grid" id="leadGrid">
                     <!-- Generated by JS -->
                 </div>
@@ -564,7 +827,12 @@ a { text-decoration: none; color: inherit; }
             </div>
 
             <div class="section-card">
-                <h2>🤖 AI-Content-Generator</h2>
+                <h2>
+                    🤖 AI-Content-Generator
+                    <span class="info-icon">i
+                        <span class="tooltip">Im Live-System: Verbunden mit OpenAI GPT-4 für echte Content-Generierung</span>
+                    </span>
+                </h2>
                 <div id="contentGenStatus">
                     <div class="empty-state">
                         <p>✍️</p>
@@ -695,9 +963,33 @@ a { text-decoration: none; color: inherit; }
         </div>
     </main>
 
+    <!-- AI Chat Bubble & Window -->
+    <div class="ai-chat-bubble" id="aiChatBubble" onclick="toggleAiChat()">🤖</div>
+    <div class="ai-chat-window" id="aiChatWindow">
+        <div class="ai-chat-header">
+            <h3>💬 AI-Assistent</h3>
+            <button class="ai-chat-close" onclick="toggleAiChat()">×</button>
+        </div>
+        <div class="ai-chat-body" id="aiChatBody">
+            <div class="ai-chat-message ai">
+                Hallo! Ich bin Ihr AI-Assistent. Wie kann ich Ihnen helfen?
+            </div>
+        </div>
+        <div class="ai-chat-options" id="aiChatOptions">
+            <button class="ai-chat-option" onclick="askAiQuestion('leads')">Wie viele Grundstücke gibt es aktuell in Dachau?</button>
+            <button class="ai-chat-option" onclick="askAiQuestion('makler')">Welcher Makler hat die höchste Erfolgsquote?</button>
+            <button class="ai-chat-option" onclick="askAiQuestion('projects')">Was sind die nächsten Schritte beim Projekt Garchinger Höfe?</button>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
     <script>
+        // Demo Banner
+        function closeDemoBanner() {
+            document.getElementById('demoBanner').classList.add('hidden');
+        }
+
         // Navigation
         function showPage(p) {
             document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
@@ -723,6 +1015,67 @@ a { text-decoration: none; color: inherit; }
             t.textContent = m;
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // AI Chat
+        function toggleAiChat() {
+            document.getElementById('aiChatWindow').classList.toggle('open');
+        }
+
+        function askAiQuestion(type) {
+            const chatBody = document.getElementById('aiChatBody');
+            const chatOptions = document.getElementById('aiChatOptions');
+            
+            const questions = {
+                leads: 'Wie viele Grundstücke gibt es aktuell in Dachau?',
+                makler: 'Welcher Makler hat die höchste Erfolgsquote?',
+                projects: 'Was sind die nächsten Schritte beim Projekt Garchinger Höfe?'
+            };
+            
+            const answers = {
+                leads: 'Basierend auf unserer aktuellen Datenbank haben wir 47 entwicklungsfähige Grundstücke in Dachau identifiziert. Davon sind 23 als "heiße Leads" klassifiziert mit einem durchschnittlichen Score von 86%. Die meisten befinden sich in Dachau-Ost mit guter Anbindung an die S-Bahn.',
+                makler: 'Immocenter München führt mit einer Erfolgsquote von 92%. Das Maklerbüro hat in den letzten 6 Monaten 31 Leads erhalten und davon 28 erfolgreich konvertiert. An zweiter Stelle steht Wohnen in München GmbH mit 91% Erfolgsquote.',
+                projects: 'Das Projekt Garchinger Höfe befindet sich in der Verkaufsphase. Nächste Schritte: (1) Follow-up mit 5 Maklern die noch nicht geantwortet haben, (2) Zweite Besichtigungsrunde für 8 interessierte Käufer, (3) Finalisierung der Kaufverträge für 4 bereits gebundene Einheiten.'
+            };
+            
+            // Add user message
+            chatBody.innerHTML += `<div class="ai-chat-message user">${questions[type]}</div>`;
+            
+            // Hide options while typing
+            chatOptions.style.display = 'none';
+            
+            // Add AI thinking indicator
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.className = 'ai-chat-message ai';
+            thinkingDiv.innerHTML = '<span class="typing-text"></span><span class="cursor"></span>';
+            chatBody.appendChild(thinkingDiv);
+            
+            // Scroll to bottom
+            chatBody.scrollTop = chatBody.scrollHeight;
+            
+            // Simulate typing animation
+            const answer = answers[type];
+            const typingElement = thinkingDiv.querySelector('.typing-text');
+            let charIndex = 0;
+            
+            function typeChar() {
+                if (charIndex < answer.length) {
+                    typingElement.textContent += answer[charIndex];
+                    charIndex++;
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                    setTimeout(typeChar, 20 + Math.random() * 30); // Random typing speed for realism
+                } else {
+                    // Remove cursor when done
+                    thinkingDiv.querySelector('.cursor')?.remove();
+                    // Show options again
+                    setTimeout(() => {
+                        chatOptions.style.display = 'flex';
+                    }, 500);
+                }
+            }
+            
+            // Start typing after a brief delay
+            setTimeout(typeChar, 800);
         }
 
         // Lead Generation
@@ -760,19 +1113,63 @@ a { text-decoration: none; color: inherit; }
 
         function runLeadGen() {
             const status = document.getElementById('leadGenStatus');
-            status.innerHTML = '<div class="ai-loading"><div class="spinner"></div><p>🤖 AI scannt Grundstücksdatenbanken & Katasterämter...</p></div>';
             
-            setTimeout(() => {
-                status.innerHTML = `
-                    <div style="padding: 20px; background: var(--green-light); border-radius: var(--radius-sm); text-align: center;">
-                        <p style="font-size: 1.2rem; font-weight: 600; color: #065F46; margin-bottom: 8px;">✅ Scan erfolgreich abgeschlossen!</p>
-                        <p style="color: #065F46; font-size: 0.9rem;">89 neue entwicklungsfähige Grundstücke gefunden</p>
-                        <p style="color: #065F46; font-size: 0.9rem;">247 Eigentümer-Kontaktdaten validiert</p>
-                        <button class="btn btn-primary" style="margin-top: 16px;" onclick="toast('📧 Erstansprache wird versendet...')">Erstansprache starten</button>
+            // Phase 1: Initial loading
+            status.innerHTML = `
+                <div class="ai-loading">
+                    <div class="spinner"></div>
+                    <p>🤖 AI-Scanner wird initialisiert...</p>
+                    <div class="ai-progress">
+                        <div class="ai-progress-bar">
+                            <div class="ai-progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="ai-progress-text">
+                            <div class="spinner"></div>
+                            <span id="progressText">Verbindung zu Datenbanken wird hergestellt...</span>
+                        </div>
                     </div>
-                `;
-                toast('✅ 89 neue Leads gefunden!');
-            }, 2500);
+                </div>
+            `;
+            
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            const steps = [
+                { progress: 15, text: 'Verbindung zu Katasterämtern hergestellt...', delay: 800 },
+                { progress: 30, text: 'Analysiere 1.247 Grundbucheinträge...', delay: 1200 },
+                { progress: 50, text: 'Prüfe Bebauungspläne und Flächennutzung...', delay: 1000 },
+                { progress: 70, text: 'Bewerte Entwicklungspotenzial...', delay: 900 },
+                { progress: 85, text: 'Ermittle Eigentümer-Kontaktdaten...', delay: 800 },
+                { progress: 100, text: 'Validiere und qualifiziere Leads...', delay: 700 }
+            ];
+            
+            let currentStep = 0;
+            
+            function executeStep() {
+                if (currentStep < steps.length) {
+                    const step = steps[currentStep];
+                    progressFill.style.width = step.progress + '%';
+                    progressText.textContent = step.text;
+                    currentStep++;
+                    setTimeout(executeStep, step.delay);
+                } else {
+                    // Show success
+                    setTimeout(() => {
+                        status.innerHTML = `
+                            <div style="padding: 20px; background: var(--green-light); border-radius: var(--radius-sm); text-align: center;">
+                                <p style="font-size: 1.2rem; font-weight: 600; color: #065F46; margin-bottom: 8px;">✅ Scan erfolgreich abgeschlossen!</p>
+                                <p style="color: #065F46; font-size: 0.9rem; margin-bottom: 4px;">🎯 <strong>89 neue entwicklungsfähige Grundstücke</strong> gefunden</p>
+                                <p style="color: #065F46; font-size: 0.9rem; margin-bottom: 4px;">👥 <strong>247 Eigentümer-Kontaktdaten</strong> validiert</p>
+                                <p style="color: #065F46; font-size: 0.9rem; margin-bottom: 16px;">⭐ Durchschnittlicher Lead-Score: <strong>84%</strong></p>
+                                <button class="btn btn-primary" style="margin-top: 8px;" onclick="toast('📧 Erstansprache wird versendet...')">Erstansprache starten</button>
+                            </div>
+                        `;
+                        toast('✅ 89 neue Leads gefunden!');
+                    }, 500);
+                }
+            }
+            
+            executeStep();
         }
 
         // Makler-Partner
@@ -834,34 +1231,63 @@ a { text-decoration: none; color: inherit; }
             status.innerHTML = '<div class="ai-loading"><div class="spinner"></div><p>🤖 AI generiert Marketing-Content...</p></div>';
             
             setTimeout(() => {
-                status.innerHTML = `
+                const contentTexts = [
+                    '"5 Gründe, warum 3D-Visualisierung die Vermarktung von Neubauprojekten beschleunigt"',
+                    '"Immobilien-Entwicklung in München: So finden Sie die perfekte Fläche"',
+                    '"Projekt-Spotlight: Dachauer Residenzen — 18 exklusive Wohneinheiten"'
+                ];
+                
+                const contentTypes = ['LinkedIn:', 'Blog:', 'Newsletter:'];
+                
+                let html = `
                     <div style="padding: 20px; background: var(--primary-light); border-radius: var(--radius-sm);">
-                        <p style="font-size: 1.1rem; font-weight: 600; color: #92400E; margin-bottom: 12px;">✨ 3 neue Content-Ideen generiert!</p>
-                        <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;">
-                            <div style="padding: 12px; background: white; border-radius: 8px;">
-                                <strong style="font-size: 0.9rem;">LinkedIn:</strong>
-                                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">
-                                    "5 Gründe, warum 3D-Visualisierung die Vermarktung von Neubauprojekten beschleunigt"
-                                </p>
-                            </div>
-                            <div style="padding: 12px; background: white; border-radius: 8px;">
-                                <strong style="font-size: 0.9rem;">Blog:</strong>
-                                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">
-                                    "Immobilien-Entwicklung in München: So finden Sie die perfekte Fläche"
-                                </p>
-                            </div>
-                            <div style="padding: 12px; background: white; border-radius: 8px;">
-                                <strong style="font-size: 0.9rem;">Newsletter:</strong>
-                                <p style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">
-                                    "Projekt-Spotlight: Dachauer Residenzen — 18 exklusive Wohneinheiten"
-                                </p>
-                            </div>
+                        <p style="font-size: 1.1rem; font-weight: 600; color: #92400E; margin-bottom: 16px;">✨ 3 neue Content-Ideen generiert!</p>
+                        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+                `;
+                
+                contentTypes.forEach((type, i) => {
+                    html += `
+                        <div style="padding: 12px; background: white; border-radius: 8px;">
+                            <strong style="font-size: 0.9rem;">${type}</strong>
+                            <p id="generatedContent${i}" style="font-size: 0.85rem; color: var(--text-light); margin-top: 4px;">
+                                <span class="typing-text"></span><span class="cursor"></span>
+                            </p>
+                        </div>
+                    `;
+                });
+                
+                html += `
                         </div>
                         <button class="btn btn-primary" style="margin-top: 16px; width: 100%; justify-content: center;" onclick="toast('📝 Content in Entwürfe übernommen')">Alle übernehmen</button>
                     </div>
                 `;
+                
+                status.innerHTML = html;
+                
+                // Animate typing for each content piece
+                contentTypes.forEach((type, i) => {
+                    setTimeout(() => {
+                        const container = document.getElementById(`generatedContent${i}`);
+                        const typingElement = container.querySelector('.typing-text');
+                        const text = contentTexts[i];
+                        let charIndex = 0;
+                        
+                        function typeChar() {
+                            if (charIndex < text.length) {
+                                typingElement.textContent += text[charIndex];
+                                charIndex++;
+                                setTimeout(typeChar, 15 + Math.random() * 25);
+                            } else {
+                                container.querySelector('.cursor')?.remove();
+                            }
+                        }
+                        
+                        typeChar();
+                    }, i * 400);
+                });
+                
                 toast('✨ 3 neue Content-Ideen generiert!');
-            }, 2200);
+            }, 1800);
         }
 
         // Initial load
