@@ -1,0 +1,1725 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyImmobilienAI — Intelligente Investor-Automation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+/* ============================================
+   EasyImmobilienAI — Personalisierte Demo für Wladimir Mohr
+   AI-Automation für Investor-Leads, Portfolio-Analyse & Rendite-Optimierung
+   ============================================ */
+:root {
+    --bg: #F8FAFC; --bg-card: #FFFFFF; --bg-sidebar: #0F172A; --bg-hover: #F1F5F9;
+    --text: #1E293B; --text-light: #64748B; --text-muted: #94A3B8;
+    --primary: #10B981; --primary-hover: #059669; --primary-light: #D1FAE5;
+    --green: #10B981; --green-light: #D1FAE5; --yellow: #F59E0B; --yellow-light: #FEF3C7;
+    --red: #EF4444; --red-light: #FEE2E2; --purple: #8B5CF6; --purple-light: #EDE9FE;
+    --orange: #F97316; --orange-light: #FFEDD5; --emerald: #059669; --blue: #3B82F6; --blue-light: #DBEAFE;
+    --border: #E2E8F0; --shadow: 0 1px 3px rgba(0,0,0,0.08); --shadow-lg: 0 4px 16px rgba(0,0,0,0.1);
+    --radius: 12px; --radius-sm: 8px;
+    --font: 'Inter', -apple-system, sans-serif;
+    --sidebar-w: 260px;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); font-size: 14px; color: var(--text); background: var(--bg); display: flex; min-height: 100vh; }
+h1 { font-size: 1.6rem; font-weight: 700; } h2 { font-size: 1.1rem; font-weight: 600; margin-bottom: 16px; } h3 { font-size: 1rem; font-weight: 600; }
+a { text-decoration: none; color: inherit; }
+::selection { background: var(--primary-light); }
+
+/* Demo Banner */
+.demo-banner { 
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%); 
+    color: white; 
+    padding: 12px 20px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    position: fixed; 
+    top: 0; 
+    left: var(--sidebar-w); 
+    right: 0; 
+    z-index: 100; 
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    font-size: 0.9rem;
+    transition: transform 0.3s;
+}
+.demo-banner.hidden { transform: translateY(-100%); }
+.demo-banner-content { display: flex; align-items: center; gap: 8px; }
+.demo-banner-icon { font-size: 1.2rem; }
+.demo-banner-close { 
+    background: rgba(255,255,255,0.2); 
+    border: none; 
+    color: white; 
+    width: 28px; 
+    height: 28px; 
+    border-radius: 50%; 
+    cursor: pointer; 
+    font-size: 1.1rem;
+    transition: background 0.2s;
+}
+.demo-banner-close:hover { background: rgba(255,255,255,0.3); }
+@media (max-width: 768px) {
+    .demo-banner { left: 0; top: 56px; font-size: 0.8rem; padding: 10px 16px; }
+    .demo-banner-content { flex-wrap: wrap; }
+}
+
+/* Info Icons & Tooltips */
+.info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    cursor: help;
+    position: relative;
+    margin-left: 6px;
+}
+.info-icon:hover .tooltip { opacity: 1; visibility: visible; }
+.tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-sidebar);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s;
+    z-index: 1000;
+    box-shadow: var(--shadow-lg);
+    pointer-events: none;
+}
+.tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: var(--bg-sidebar);
+}
+
+/* AI Chat Bubble */
+.ai-chat-bubble {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+    transition: all 0.3s;
+    z-index: 150;
+}
+.ai-chat-bubble:hover { transform: scale(1.1); box-shadow: 0 6px 20px rgba(16, 185, 129, 0.5); }
+.ai-chat-window {
+    position: fixed;
+    bottom: 90px;
+    right: 24px;
+    width: 380px;
+    max-width: calc(100vw - 48px);
+    background: var(--bg-card);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    display: none;
+    flex-direction: column;
+    z-index: 150;
+    max-height: 520px;
+}
+.ai-chat-window.open { display: flex; animation: slideUp 0.3s; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.ai-chat-header {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: white;
+    border-radius: 16px 16px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.ai-chat-header h3 { font-size: 1rem; }
+.ai-chat-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.3rem;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+}
+.ai-chat-body {
+    padding: 16px;
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.ai-chat-message {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    max-width: 85%;
+}
+.ai-chat-message.user {
+    background: var(--primary-light);
+    color: #065F46;
+    align-self: flex-end;
+}
+.ai-chat-message.ai {
+    background: var(--bg);
+    color: var(--text);
+    align-self: flex-start;
+}
+.ai-chat-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0 16px 16px;
+}
+.ai-chat-option {
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+}
+.ai-chat-option:hover { border-color: var(--primary); background: var(--primary-light); }
+
+/* AI Progress Bar */
+.ai-progress {
+    margin-top: 12px;
+}
+.ai-progress-bar {
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+.ai-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary) 0%, var(--emerald) 100%);
+    width: 0%;
+    transition: width 0.5s;
+}
+.ai-progress-text {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.ai-progress-text .spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border);
+    border-top-color: var(--primary);
+    margin: 0;
+}
+
+/* Typing Animation */
+.typing-text {
+    display: inline;
+}
+.cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--primary);
+    margin-left: 2px;
+    animation: blink 1s infinite;
+}
+@keyframes blink {
+    0%, 49% { opacity: 1; }
+    50%, 100% { opacity: 0; }
+}
+
+/* Sidebar */
+.sidebar { width: var(--sidebar-w); background: var(--bg-sidebar); color: #fff; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; transition: transform 0.3s; }
+.sidebar-header { padding: 24px 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-icon { font-size: 1.5rem; }
+.logo-text { font-size: 1.2rem; font-weight: 700; }
+.logo-ai { color: var(--primary); }
+.logo-sub { font-size: 0.7rem; color: var(--text-muted); margin-top: 4px; }
+.sidebar-nav { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 2px; }
+.nav-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: var(--radius-sm); color: var(--text-muted); font-size: 0.875rem; font-weight: 500; transition: all 0.2s; cursor: pointer; }
+.nav-item:hover { background: rgba(255,255,255,0.06); color: #fff; }
+.nav-item.active { background: rgba(16,185,129,0.15); color: var(--primary); }
+.nav-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+.sidebar-footer { padding: 16px 20px; border-top: 1px solid rgba(255,255,255,0.08); }
+.user-badge { display: flex; align-items: center; gap: 12px; }
+.user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.8rem; }
+.user-name { font-size: 0.8rem; font-weight: 600; }
+.user-role { font-size: 0.7rem; color: var(--text-muted); }
+
+/* Mobile */
+.mobile-header { display: none; }
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); } .sidebar.open { transform: none; }
+    .mobile-header { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--bg-sidebar); color: #fff; position: fixed; top: 0; left: 0; right: 0; z-index: 40; }
+    .menu-toggle { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+    .main { margin-left: 0 !important; padding-top: 56px; }
+    .page { padding: 20px 16px; }
+    .page-header { flex-direction: column; }
+    .page-header h1 { font-size: 1.3rem; }
+    .header-actions { width: 100%; }
+    .header-actions .btn { width: 100%; justify-content: center; }
+    .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .stat-card { padding: 14px; gap: 10px; }
+    .stat-icon { width: 40px; height: 40px; font-size: 1.1rem; }
+    .stat-value { font-size: 1.2rem; }
+    .stat-trend { font-size: 0.6rem; }
+    .grid-2 { grid-template-columns: 1fr; }
+    .investor-grid { grid-template-columns: 1fr; }
+    .objekt-grid { grid-template-columns: 1fr; }
+    .data-table { font-size: 0.8rem; }
+    .data-table th, .data-table td { padding: 8px 10px; }
+    .ai-chat-bubble { width: 50px; height: 50px; font-size: 1.5rem; }
+}
+
+/* Main */
+.main { margin-left: var(--sidebar-w); flex: 1; min-height: 100vh; padding-top: 48px; }
+.page { display: none; padding: 32px; max-width: 1400px; }
+.page.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+
+/* Page Header */
+.page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px; flex-wrap: wrap; gap: 16px; }
+.page-subtitle { color: var(--text-light); margin-top: 4px; }
+.header-actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+
+/* Buttons */
+.btn { padding: 8px 20px; border: none; border-radius: var(--radius-sm); font-family: var(--font); font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px; }
+.btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-hover); }
+.btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); } .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+.btn-sm { padding: 5px 12px; font-size: 0.75rem; }
+.btn-full { width: 100%; justify-content: center; }
+
+/* Stats */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+@media (max-width: 900px) { .stats-grid { grid-template-columns: repeat(2, 1fr); } }
+.stat-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); display: flex; align-items: center; gap: 16px; position: relative; }
+.stat-icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
+.stat-icon.blue { background: var(--blue-light); } .stat-icon.green { background: var(--green-light); }
+.stat-icon.purple { background: var(--purple-light); } .stat-icon.orange { background: var(--orange-light); }
+.stat-value { font-size: 1.5rem; font-weight: 700; } .stat-label { font-size: 0.75rem; color: var(--text-light); }
+.stat-trend { position: absolute; top: 12px; right: 16px; font-size: 0.7rem; font-weight: 500; }
+.stat-trend.up { color: var(--green); } .stat-trend.down { color: var(--red); } .stat-trend.neutral { color: var(--text-muted); }
+
+/* Cards */
+.section-card { background: var(--bg-card); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 20px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 900px) { .grid-2 { grid-template-columns: 1fr; } }
+
+/* Pipeline */
+.pipeline { display: flex; flex-direction: column; gap: 12px; }
+.stage-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.8rem; }
+.stage-dot { width: 8px; height: 8px; border-radius: 50%; }
+.stage-dot.blue { background: var(--blue); } .stage-dot.yellow { background: var(--yellow); }
+.stage-dot.purple { background: var(--purple); } .stage-dot.green { background: var(--green); } .stage-dot.emerald { background: var(--emerald); }
+.stage-count { margin-left: auto; font-weight: 600; }
+.stage-bar { height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.stage-fill { height: 100%; border-radius: 4px; transition: width 0.5s; }
+.stage-fill.blue { background: var(--blue); } .stage-fill.yellow { background: var(--yellow); }
+.stage-fill.purple { background: var(--purple); } .stage-fill.green { background: var(--green); } .stage-fill.emerald { background: var(--emerald); }
+
+/* Alerts */
+.alert-list { display: flex; flex-direction: column; gap: 12px; }
+.alert-item { padding: 12px 16px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.alert-item.urgent { background: var(--red-light); } .alert-item.warning { background: var(--yellow-light); } .alert-item.info { background: var(--blue-light); }
+.alert-badge { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; background: var(--red); color: #fff; }
+.alert-badge.warn { background: var(--yellow); } .alert-badge.info { background: var(--blue); }
+.alert-item p { flex: 1; font-size: 0.85rem; }
+
+/* Activity */
+.activity-list { display: flex; flex-direction: column; gap: 12px; }
+.activity-item { display: flex; gap: 12px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.activity-item:last-child { border: none; }
+.activity-time { font-size: 0.7rem; color: var(--text-muted); white-space: nowrap; min-width: 60px; padding-top: 2px; }
+.activity-item p { font-size: 0.85rem; }
+
+/* Table */
+.table-wrap { overflow-x: auto; }
+.data-table { width: 100%; border-collapse: collapse; background: var(--bg-card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }
+.data-table th { text-align: left; padding: 12px 16px; font-size: 0.75rem; font-weight: 600; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.05em; background: var(--bg); border-bottom: 1px solid var(--border); }
+.data-table td { padding: 12px 16px; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+.data-table tr:hover { background: var(--bg-hover); }
+
+/* Badges */
+.badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+.badge.green { background: var(--green-light); color: #065F46; }
+.badge.blue { background: var(--blue-light); color: #1E40AF; }
+.badge.yellow { background: var(--yellow-light); color: #92400E; }
+.badge.red { background: var(--red-light); color: #991B1B; }
+.badge.purple { background: var(--purple-light); color: #5B21B6; }
+.badge.orange { background: var(--orange-light); color: #9A3412; }
+
+/* Investor Cards */
+.investor-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) { .investor-grid { grid-template-columns: 1fr; } }
+.investor-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); border-left: 4px solid var(--primary); transition: all 0.2s; }
+.investor-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+.investor-card.hot { border-left-color: var(--red); }
+.investor-card.warm { border-left-color: var(--orange); }
+.investor-card.cold { border-left-color: var(--blue); }
+.investor-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.investor-header h3 { font-size: 0.95rem; }
+.investor-score { font-size: 1.3rem; font-weight: 700; color: var(--primary); }
+.investor-info { font-size: 0.8rem; color: var(--text-light); margin-bottom: 12px; }
+.investor-info p { margin-bottom: 4px; }
+.investor-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.investor-tag { padding: 2px 8px; background: var(--purple-light); color: #5B21B6; border-radius: 12px; font-size: 0.7rem; }
+.investor-actions { display: flex; gap: 8px; }
+
+/* Objekt Cards */
+.objekt-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 24px; }
+@media (max-width: 900px) { .objekt-grid { grid-template-columns: 1fr; } }
+.objekt-card { background: var(--bg-card); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow); border-top: 3px solid var(--green); }
+.objekt-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); transition: all 0.2s; }
+.objekt-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.objekt-header h3 { font-size: 0.95rem; }
+.objekt-rendite { font-size: 1.4rem; font-weight: 700; color: var(--green); }
+.objekt-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; font-size: 0.8rem; }
+.objekt-meta-item { display: flex; flex-direction: column; }
+.objekt-meta-label { color: var(--text-muted); font-size: 0.7rem; }
+.objekt-meta-value { font-weight: 600; margin-top: 2px; }
+.objekt-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+/* Portfolio Chart Placeholder */
+.chart-placeholder {
+    background: var(--bg);
+    border-radius: var(--radius-sm);
+    padding: 60px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Calculator */
+.calculator {
+    background: var(--bg);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+}
+.calc-input-group {
+    margin-bottom: 20px;
+}
+.calc-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+.calc-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
+}
+.calc-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+.calc-result {
+    background: var(--primary-light);
+    border-radius: var(--radius-sm);
+    padding: 20px;
+    margin-top: 20px;
+}
+.calc-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+.calc-result-item:last-child {
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--green);
+    margin-top: 8px;
+}
+.calc-result-label {
+    font-size: 0.85rem;
+    color: #065F46;
+}
+.calc-result-value {
+    font-weight: 600;
+    color: #065F46;
+}
+
+/* AI Loading */
+.ai-loading { text-align: center; padding: 48px; }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Empty State */
+.empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); }
+.empty-state p:first-child { font-size: 2rem; margin-bottom: 8px; }
+
+/* Toast */
+.toast { position: fixed; bottom: 24px; right: 24px; background: var(--bg-sidebar); color: #fff; padding: 12px 24px; border-radius: var(--radius-sm); font-size: 0.85rem; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 200; }
+.toast.show { transform: none; opacity: 1; }
+    </style>
+</head>
+<body>
+    <!-- Demo Banner -->
+    <div class="demo-banner" id="demoBanner">
+        <div class="demo-banner-content">
+            <span class="demo-banner-icon">🔬</span>
+            <strong>Interaktive Demo</strong>&nbsp;—&nbsp;Die gezeigten Daten sind simuliert. Im Live-System arbeitet echte KI mit Ihren realen Daten.
+        </div>
+        <button class="demo-banner-close" onclick="closeDemoBanner()">×</button>
+    </div>
+
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">🏡</span>
+                <span class="logo-text">EasyImmobilien<span class="logo-ai">AI</span></span>
+            </div>
+            <p class="logo-sub">Demo für Wladimir Mohr</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-item active" data-page="dashboard" onclick="showPage('dashboard')">
+                <span class="nav-icon">📊</span> Dashboard
+            </div>
+            <div class="nav-item" data-page="lead-gen" onclick="showPage('lead-gen')">
+                <span class="nav-icon">🎯</span> Investor-Leads
+            </div>
+            <div class="nav-item" data-page="portfolio" onclick="showPage('portfolio')">
+                <span class="nav-icon">📊</span> Portfolio-Analyse
+            </div>
+            <div class="nav-item" data-page="objektsuche" onclick="showPage('objektsuche')">
+                <span class="nav-icon">🏠</span> Objektsuche
+            </div>
+            <div class="nav-item" data-page="follow-up" onclick="showPage('follow-up')">
+                <span class="nav-icon">📧</span> Follow-up Automation
+            </div>
+            <div class="nav-item" data-page="finanzierung" onclick="showPage('finanzierung')">
+                <span class="nav-icon">💰</span> Finanzierungs-Rechner
+            </div>
+            <div class="nav-item" data-page="analytics" onclick="showPage('analytics')">
+                <span class="nav-icon">📈</span> Analytics
+            </div>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-badge">
+                <div class="user-avatar" style="background:#10B981">WM</div>
+                <div>
+                    <p class="user-name">Wladimir Mohr</p>
+                    <p class="user-role">M.Sc. Finance</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <header class="mobile-header">
+        <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+        <span class="logo-text">EasyImmobilien<span class="logo-ai">AI</span></span>
+    </header>
+
+    <main class="main">
+        <!-- DASHBOARD -->
+        <div class="page active" id="page-dashboard">
+            <div class="page-header">
+                <div>
+                    <h1>Guten Tag, Wladimir 👋</h1>
+                    <p class="page-subtitle">Ihr AI-gestütztes Investor-Cockpit — Augsburg & bundesweit</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="showPage('lead-gen')">🎯 Neue Investoren finden</button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon blue">🎯</div>
+                    <div class="stat-info">
+                        <p class="stat-value">142</p>
+                        <p class="stat-label">
+                            Qualifizierte Investoren
+                            <span class="info-icon">i
+                                <span class="tooltip">Im Live-System: Echtzeit-Daten aus Social Media & Finance-Communities</span>
+                            </span>
+                        </p>
+                    </div>
+                    <span class="stat-trend up">+38 neu</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon green">💰</div>
+                    <div class="stat-info">
+                        <p class="stat-value">8,2%</p>
+                        <p class="stat-label">
+                            Ø Rendite Portfolio
+                            <span class="info-icon">i
+                                <span class="tooltip">Im Live-System: Echtzeit-Berechnung basierend auf Ihren Objekten</span>
+                            </span>
+                        </p>
+                    </div>
+                    <span class="stat-trend up">+0,4%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">🏠</div>
+                    <div class="stat-info">
+                        <p class="stat-value">67</p>
+                        <p class="stat-label">
+                            Renditestarke Objekte
+                            <span class="info-icon">i
+                                <span class="tooltip">Im Live-System: Tägliches Scanning von 12+ Immobilienportalen</span>
+                            </span>
+                        </p>
+                    </div>
+                    <span class="stat-trend neutral">B-Standorte</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">📧</div>
+                    <div class="stat-info">
+                        <p class="stat-value">1.247</p>
+                        <p class="stat-label">Automatische E-Mails</p>
+                    </div>
+                    <span class="stat-trend neutral">diese Woche</span>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>Investor-Akquise-Pipeline</h2>
+                <div class="pipeline">
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot blue"></span>
+                            <span>Potenzielle Investoren identifiziert</span>
+                            <span class="stage-count">428</span>
+                        </div>
+                        <div class="stage-bar"><div class="stage-fill blue" style="width:100%"></div></div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot yellow"></span>
+                            <span>Kontaktdaten validiert</span>
+                            <span class="stage-count">312</span>
+                        </div>
+                        <div class="stage-bar"><div class="stage-fill yellow" style="width:73%"></div></div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot purple"></span>
+                            <span>Erstansprache versendet</span>
+                            <span class="stage-count">218</span>
+                        </div>
+                        <div class="stage-bar"><div class="stage-fill purple" style="width:51%"></div></div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot green"></span>
+                            <span>Interesse bekundet</span>
+                            <span class="stage-count">89</span>
+                        </div>
+                        <div class="stage-bar"><div class="stage-fill green" style="width:21%"></div></div>
+                    </div>
+                    <div class="pipeline-stage">
+                        <div class="stage-header">
+                            <span class="stage-dot emerald"></span>
+                            <span>Beratungsgespräch vereinbart ✓</span>
+                            <span class="stage-count">34</span>
+                        </div>
+                        <div class="stage-bar"><div class="stage-fill emerald" style="width:8%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="section-card">
+                    <h2>⚠️ Handlungsbedarf</h2>
+                    <div class="alert-list">
+                        <div class="alert-item urgent">
+                            <span class="alert-badge">Dringend</span>
+                            <p><strong>12 heiße Investoren-Leads</strong> aus LinkedIn Finance-Gruppen — sofort ansprechen</p>
+                            <button class="btn btn-sm" onclick="showPage('lead-gen')">Ansehen →</button>
+                        </div>
+                        <div class="alert-item warning">
+                            <span class="alert-badge warn">Heute</span>
+                            <p><strong>8 renditestarke Objekte</strong> in Chemnitz & Leipzig gefunden (>8,5% Rendite)</p>
+                            <button class="btn btn-sm" onclick="showPage('objektsuche')">Objekte →</button>
+                        </div>
+                        <div class="alert-item info">
+                            <span class="alert-badge info">AI</span>
+                            <p>🤖 <strong>23 Follow-up E-Mails</strong> für Investoren-Leads automatisch verschickt</p>
+                            <button class="btn btn-sm" onclick="showPage('follow-up')">Details →</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2>📋 Letzte Aktivitäten</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-time">vor 25min</span>
+                            <p>🤖 AI hat <strong>38 neue Investoren-Leads</strong> auf LinkedIn & X identifiziert</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">vor 2h</span>
+                            <p>🏠 <strong>8 renditestarke Objekte</strong> in B-Standorten gefunden (Ø 8,7% Rendite)
+                                <span class="info-icon">i
+                                    <span class="tooltip">Im Live-System: Automatisches Scanning alle 6h</span>
+                                </span>
+                            </p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">vor 4h</span>
+                            <p>📧 Automatisches Follow-up an <strong>23 Interessenten</strong> verschickt</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">gestern</span>
+                            <p>💰 Portfolio-Rendite auf <strong>8,2%</strong> gestiegen (+0,4%)</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">gestern</span>
+                            <p>🎯 <strong>12 qualifizierte Investoren</strong> in Beratungspipeline übernommen</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- INVESTOR LEAD GENERATION -->
+        <div class="page" id="page-lead-gen">
+            <div class="page-header">
+                <div>
+                    <h1>🎯 Investor-Lead-Generierung</h1>
+                    <p class="page-subtitle">Automatische Identifikation potenzieller Investoren aus Social Media & Finance-Communities</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="runInvestorScan()">🤖 Neue Investoren scannen</button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>🤖 AI-Investor-Scanner</h2>
+                <p style="color: var(--text-light); margin-bottom: 16px;">
+                    Unser AI-System durchsucht kontinuierlich LinkedIn, X (Twitter), Reddit Finance-Communities und 
+                    Immobilien-Foren nach potenziellen Investoren, die nach renditestarken Immobilien suchen.
+                </p>
+                <div id="investorScanStatus">
+                    <div class="empty-state">
+                        <p>🎯</p>
+                        <p>Klicken Sie auf "Neue Investoren scannen", um den AI-Scanner zu starten</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>
+                    💎 Qualifizierte Investoren (diese Woche)
+                    <span class="info-icon">i
+                        <span class="tooltip">Im Live-System: Automatische Aktualisierung alle 12h</span>
+                    </span>
+                </h2>
+                <div class="investor-grid" id="investorGrid">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- PORTFOLIO ANALYSE -->
+        <div class="page" id="page-portfolio">
+            <div class="page-header">
+                <div>
+                    <h1>📊 Portfolio-Analyse</h1>
+                    <p class="page-subtitle">Renditeberechnung, Cashflow-Prognosen & Standort-Scoring</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon green">💰</div>
+                    <div class="stat-info">
+                        <p class="stat-value">8,2%</p>
+                        <p class="stat-label">Durchschnittliche Rendite</p>
+                    </div>
+                    <span class="stat-trend up">+0,4% vs. Vormonat</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">📈</div>
+                    <div class="stat-info">
+                        <p class="stat-value">€4.280</p>
+                        <p class="stat-label">Ø Monatlicher Cashflow</p>
+                    </div>
+                    <span class="stat-trend up">+€320</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">🏠</div>
+                    <div class="stat-info">
+                        <p class="stat-value">23</p>
+                        <p class="stat-label">Objekte im Portfolio</p>
+                    </div>
+                    <span class="stat-trend neutral">bundesweit</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">⏱️</div>
+                    <div class="stat-info">
+                        <p class="stat-value">12,4 J.</p>
+                        <p class="stat-label">Ø Amortisationszeit</p>
+                    </div>
+                    <span class="stat-trend up">exzellent</span>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>📊 Portfolio-Übersicht nach Standorten</h2>
+                <div class="chart-placeholder">
+                    📊 Visualisierung: 23 Objekte verteilt auf B-Standorte<br>
+                    Chemnitz (6), Leipzig (5), Erfurt (4), Magdeburg (3), Halle (3), Görlitz (2)
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="section-card">
+                    <h2>💵 Cashflow-Entwicklung</h2>
+                    <div class="chart-placeholder">
+                        📈 Monatlicher Cashflow steigt kontinuierlich<br>
+                        Jan: €3.420 → Jun: €4.280 (+25%)
+                    </div>
+                </div>
+                <div class="section-card">
+                    <h2>🎯 Top-5 Objekte nach Rendite</h2>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Standort</th>
+                                    <th>Rendite</th>
+                                    <th>Cashflow/M</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Chemnitz-Zentrum</strong></td>
+                                    <td><span class="badge green">9,8%</span></td>
+                                    <td>€520</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Leipzig-Plagwitz</strong></td>
+                                    <td><span class="badge green">9,2%</span></td>
+                                    <td>€480</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Erfurt-Altstadt</strong></td>
+                                    <td><span class="badge green">8,9%</span></td>
+                                    <td>€450</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Magdeburg-Stadtfeld</strong></td>
+                                    <td><span class="badge green">8,7%</span></td>
+                                    <td>€410</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Halle-Neustadt</strong></td>
+                                    <td><span class="badge green">8,5%</span></td>
+                                    <td>€390</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>🗺️ B-Standort-Scoring
+                    <span class="info-icon">i
+                        <span class="tooltip">Im Live-System: AI bewertet Standorte basierend auf 15+ Faktoren</span>
+                    </span>
+                </h2>
+                <p style="color: var(--text-light); margin-bottom: 16px;">
+                    AI-Bewertung von B-Standorten basierend auf: Bevölkerungsentwicklung, Wirtschaftswachstum, 
+                    Infrastruktur, Kaufpreise, Mietrenditen, Leerstandsquoten und Zukunftsprognosen.
+                </p>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Stadt</th>
+                                <th>AI-Score</th>
+                                <th>Kaufpreis Ø</th>
+                                <th>Rendite Ø</th>
+                                <th>Trend</th>
+                                <th>Empfehlung</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Chemnitz</strong></td>
+                                <td><span class="badge green">92/100</span></td>
+                                <td>€1.450/m²</td>
+                                <td>8,8%</td>
+                                <td>↗️ steigend</td>
+                                <td><span class="badge green">Top-Standort</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Leipzig</strong></td>
+                                <td><span class="badge green">89/100</span></td>
+                                <td>€2.100/m²</td>
+                                <td>7,9%</td>
+                                <td>↗️ steigend</td>
+                                <td><span class="badge green">Empfohlen</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Erfurt</strong></td>
+                                <td><span class="badge green">86/100</span></td>
+                                <td>€1.780/m²</td>
+                                <td>8,3%</td>
+                                <td>→ stabil</td>
+                                <td><span class="badge green">Empfohlen</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Magdeburg</strong></td>
+                                <td><span class="badge blue">84/100</span></td>
+                                <td>€1.620/m²</td>
+                                <td>8,5%</td>
+                                <td>↗️ steigend</td>
+                                <td><span class="badge blue">Interessant</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Görlitz</strong></td>
+                                <td><span class="badge blue">81/100</span></td>
+                                <td>€1.280/m²</td>
+                                <td>9,1%</td>
+                                <td>→ stabil</td>
+                                <td><span class="badge yellow">Risiko/Chance</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- OBJEKTSUCHE -->
+        <div class="page" id="page-objektsuche">
+            <div class="page-header">
+                <div>
+                    <h1>🏠 Automatische Objektsuche</h1>
+                    <p class="page-subtitle">AI scannt Immobilienportale nach renditestarken Objekten in B-Standorten</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-primary" onclick="runObjektScan()">🤖 Neue Objekte scannen</button>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>🤖 AI-Objekt-Scanner</h2>
+                <p style="color: var(--text-light); margin-bottom: 16px;">
+                    Unser AI-System durchsucht täglich ImmoScout24, Immowelt, eBay Kleinanzeigen und weitere Portale 
+                    nach renditestarken Objekten in B-Standorten. Filter: Rendite >7%, Kaufpreis &lt;€150.000.
+                </p>
+                <div id="objektScanStatus">
+                    <div class="empty-state">
+                        <p>🏠</p>
+                        <p>Klicken Sie auf "Neue Objekte scannen", um den AI-Scanner zu starten</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>
+                    💎 Renditestarke Objekte (letzte 7 Tage)
+                    <span class="info-icon">i
+                        <span class="tooltip">Im Live-System: Automatisches Scanning alle 6h</span>
+                    </span>
+                </h2>
+                <div class="objekt-grid" id="objektGrid">
+                    <!-- Generated by JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- FOLLOW-UP -->
+        <div class="page" id="page-follow-up">
+            <div class="page-header">
+                <div>
+                    <h1>📧 Investor Follow-up Automation</h1>
+                    <p class="page-subtitle">Personalisierte E-Mail-Sequenzen an Interessenten</p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="section-card">
+                    <h2>📨 Aktive Follow-up-Kampagnen</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <span class="activity-time">Aktiv</span>
+                            <p><strong>LinkedIn-Investoren (Mai)</strong> — 38 Leads im Follow-up</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">Aktiv</span>
+                            <p><strong>Reddit Finance-Community</strong> — 23 Erstansprachen</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">Geplant</span>
+                            <p><strong>X (Twitter) Finance-Accounts</strong> — Start in 2 Tagen</p>
+                        </div>
+                        <div class="activity-item">
+                            <span class="activity-time">Abgeschlossen</span>
+                            <p><strong>Immobilien-Forum-Leads</strong> — 68% Rücklaufquote</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2>⚙️ Automatisierungsregeln</h2>
+                    <div class="template-list" style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="font-size: 0.85rem; margin-bottom: 2px;">Sofortige Ansprache</h3>
+                                <p style="font-size: 0.75rem; color: var(--text-light);">Bei heißen Investor-Leads (Score >85)</p>
+                            </div>
+                            <span class="badge green">Aktiv</span>
+                        </div>
+                        <div style="padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="font-size: 0.85rem; margin-bottom: 2px;">Follow-up nach 3 Tagen</h3>
+                                <p style="font-size: 0.75rem; color: var(--text-light);">Wenn keine Rückmeldung erfolgt</p>
+                            </div>
+                            <span class="badge green">Aktiv</span>
+                        </div>
+                        <div style="padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="font-size: 0.85rem; margin-bottom: 2px;">Rendite-Update</h3>
+                                <p style="font-size: 0.75rem; color: var(--text-light);">Neue Objekte an Interessenten senden</p>
+                            </div>
+                            <span class="badge green">Aktiv</span>
+                        </div>
+                        <div style="padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="font-size: 0.85rem; margin-bottom: 2px;">Beratungs-Reminder</h3>
+                                <p style="font-size: 0.75rem; color: var(--text-light);">24h vor Gespräch automatische Erinnerung</p>
+                            </div>
+                            <span class="badge green">Aktiv</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>📊 Follow-up Performance</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">📧</div>
+                        <div class="stat-info">
+                            <p class="stat-value">1.247</p>
+                            <p class="stat-label">E-Mails versendet</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">✅</div>
+                        <div class="stat-info">
+                            <p class="stat-value">68%</p>
+                            <p class="stat-label">Öffnungsrate</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">💬</div>
+                        <div class="stat-info">
+                            <p class="stat-value">42%</p>
+                            <p class="stat-label">Antwortrate</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">⏱️</div>
+                        <div class="stat-info">
+                            <p class="stat-value">18h</p>
+                            <p class="stat-label">Ø Antwortzeit</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>✉️ E-Mail-Vorlagen (personalisiert)</h2>
+                <div style="background: var(--bg); border-radius: var(--radius-sm); padding: 16px; margin-bottom: 12px;">
+                    <h3 style="font-size: 0.9rem; margin-bottom: 8px;">Template: Erstansprache LinkedIn</h3>
+                    <p style="font-size: 0.85rem; color: var(--text-light); line-height: 1.6; white-space: pre-line;">
+Hallo {{Vorname}},
+
+ich habe gesehen, dass Sie sich für renditestarke Immobilieninvestments interessieren.
+
+Bei EasyImmobilien begleiten wir Investoren beim Aufbau skalierbarer Immobilienportfolios — ohne/mit wenig Eigenkapital. Unsere Strategie: B-Standorte mit hoher Rendite (7-10%).
+
+Track Record: 200+ vermittelte Objekte, 100+ zufriedene Investoren.
+
+Hätten Sie Interesse an einem unverbindlichen Austausch?
+
+Beste Grüße,
+Wladimir Mohr
+M.Sc. Finance | EasyImmobilien
+                    </p>
+                    <button class="btn btn-sm btn-primary" onclick="toast('✏️ Template-Editor geöffnet')">Bearbeiten</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FINANZIERUNGS-RECHNER -->
+        <div class="page" id="page-finanzierung">
+            <div class="page-header">
+                <div>
+                    <h1>💰 Finanzierungs-Rechner</h1>
+                    <p class="page-subtitle">Eigenkapital-Analyse & Rendite-Simulation</p>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>🧮 Rendite-Rechner</h2>
+                <div class="calculator">
+                    <div class="calc-input-group">
+                        <label class="calc-label">Kaufpreis (€)</label>
+                        <input type="number" class="calc-input" id="calcKaufpreis" value="120000" oninput="calculateRendite()">
+                    </div>
+                    <div class="calc-input-group">
+                        <label class="calc-label">Eigenkapital (€)</label>
+                        <input type="number" class="calc-input" id="calcEigenkapital" value="15000" oninput="calculateRendite()">
+                    </div>
+                    <div class="calc-input-group">
+                        <label class="calc-label">Kaltmiete monatlich (€)</label>
+                        <input type="number" class="calc-input" id="calcMiete" value="720" oninput="calculateRendite()">
+                    </div>
+                    <div class="calc-input-group">
+                        <label class="calc-label">Zinssatz (%)</label>
+                        <input type="number" class="calc-input" id="calcZins" value="3.8" step="0.1" oninput="calculateRendite()">
+                    </div>
+                    <div class="calc-input-group">
+                        <label class="calc-label">Nebenkosten Kauf (%, ca. 10-12%)</label>
+                        <input type="number" class="calc-input" id="calcNebenkosten" value="11" step="0.5" oninput="calculateRendite()">
+                    </div>
+
+                    <div class="calc-result" id="calcResult">
+                        <!-- Generated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="section-card">
+                    <h2>💡 Finanzierungs-Strategien</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="padding: 14px; background: var(--green-light); border-radius: var(--radius-sm);">
+                            <h3 style="font-size: 0.9rem; margin-bottom: 6px; color: #065F46;">✅ Vollfinanzierung (100%)</h3>
+                            <p style="font-size: 0.8rem; color: #065F46;">Möglich bei guter Bonität. Eigenkapital nur für Nebenkosten (~10-12%).</p>
+                        </div>
+                        <div style="padding: 14px; background: var(--blue-light); border-radius: var(--radius-sm);">
+                            <h3 style="font-size: 0.9rem; margin-bottom: 6px; color: #1E40AF;">💰 Klassische Finanzierung (80%)</h3>
+                            <p style="font-size: 0.8rem; color: #1E40AF;">20% Eigenkapital + Nebenkosten. Beste Konditionen.</p>
+                        </div>
+                        <div style="padding: 14px; background: var(--yellow-light); border-radius: var(--radius-sm);">
+                            <h3 style="font-size: 0.9rem; margin-bottom: 6px; color: #92400E;">🚀 Hebel-Strategie</h3>
+                            <p style="font-size: 0.8rem; color: #92400E;">Cashflow-positive Objekte skalieren Portfolio ohne Eigenkapital-Nachschuss.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="section-card">
+                    <h2>📊 Beispiel-Szenarien</h2>
+                    <div class="table-wrap">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Szenario</th>
+                                    <th>Eigenkapital</th>
+                                    <th>Cashflow/M</th>
+                                    <th>Rendite</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Chemnitz, €120k</strong></td>
+                                    <td>€15.000</td>
+                                    <td>€180</td>
+                                    <td><span class="badge green">8,7%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Leipzig, €180k</strong></td>
+                                    <td>€25.000</td>
+                                    <td>€240</td>
+                                    <td><span class="badge green">7,9%</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Erfurt, €150k</strong></td>
+                                    <td>€20.000</td>
+                                    <td>€210</td>
+                                    <td><span class="badge green">8,3%</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>🎯 Ihre aktuelle Finanzierungs-Situation</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon blue">💰</div>
+                        <div class="stat-info">
+                            <p class="stat-value">€420k</p>
+                            <p class="stat-label">Verfügbares Kapital
+                                <span class="info-icon">i
+                                    <span class="tooltip">Im Live-System: Basierend auf Ihrem tatsächlichen Eigenkapital</span>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green">🏠</div>
+                        <div class="stat-info">
+                            <p class="stat-value">5-7</p>
+                            <p class="stat-label">Mögliche Objekte</p>
+                        </div>
+                        <span class="stat-trend neutral">nächste 12 Monate</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">📈</div>
+                        <div class="stat-info">
+                            <p class="stat-value">€2.100</p>
+                            <p class="stat-label">Zusätzlicher Cashflow/M</p>
+                        </div>
+                        <span class="stat-trend up">nach Skalierung</span>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">⏱️</div>
+                        <div class="stat-info">
+                            <p class="stat-value">8,2 J.</p>
+                            <p class="stat-label">Finanzielle Freiheit</p>
+                        </div>
+                        <span class="stat-trend up">bei Fortsetzung</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div class="page" id="page-analytics">
+            <div class="page-header">
+                <div>
+                    <h1>📈 Analytics</h1>
+                    <p class="page-subtitle">Performance-Kennzahlen & ROI</p>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon green">✅</div>
+                    <div class="stat-info">
+                        <p class="stat-value">24%</p>
+                        <p class="stat-label">Lead-zu-Interessent</p>
+                    </div>
+                    <span class="stat-trend up">+8% vs. Vormonat</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue">⏱️</div>
+                    <div class="stat-info">
+                        <p class="stat-value">18h</p>
+                        <p class="stat-label">Zeitersparnis/Woche</p>
+                    </div>
+                    <span class="stat-trend up">durch AI</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon purple">💰</div>
+                    <div class="stat-info">
+                        <p class="stat-value">€6.200</p>
+                        <p class="stat-label">Kostenersparnis (Monat)</p>
+                    </div>
+                    <span class="stat-trend up">vs. manuell</span>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon orange">🎯</div>
+                    <div class="stat-info">
+                        <p class="stat-value">94%</p>
+                        <p class="stat-label">Investoren-Zufriedenheit</p>
+                    </div>
+                    <span class="stat-trend up">+12%</span>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>📊 Investor-Akquise (letzte 6 Monate)</h2>
+                <p style="color: var(--text-light); font-size: 0.85rem; margin-bottom: 20px;">
+                    Kontinuierliche Steigerung der Lead-Qualität durch AI-Optimierung der Scanner-Algorithmen
+                </p>
+                <div class="chart-placeholder">
+                    📈 Entwicklung: 78 Investoren/Monat → 142 Investoren/Monat (+82%)
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="section-card">
+                    <h2>🎯 Conversion-Funnel</h2>
+                    <div class="chart-placeholder">
+                        428 Potenzielle Investoren<br>
+                        ↓ 73%<br>
+                        312 Kontaktdaten validiert<br>
+                        ↓ 70%<br>
+                        218 Erstansprache<br>
+                        ↓ 41%<br>
+                        89 Interesse bekundet<br>
+                        ↓ 38%<br>
+                        34 Beratungsgespräch
+                    </div>
+                </div>
+                <div class="section-card">
+                    <h2>💵 ROI-Analyse</h2>
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="padding: 12px; background: var(--green-light); border-radius: var(--radius-sm);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="font-size: 0.8rem; color: #065F46;">AI-System Kosten/Monat</span>
+                                <strong style="color: #065F46;">€1.200</strong>
+                            </div>
+                        </div>
+                        <div style="padding: 12px; background: var(--blue-light); border-radius: var(--radius-sm);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="font-size: 0.8rem; color: #1E40AF;">Zeitersparnis (18h × €80/h)</span>
+                                <strong style="color: #1E40AF;">€1.440</strong>
+                            </div>
+                        </div>
+                        <div style="padding: 12px; background: var(--purple-light); border-radius: var(--radius-sm);">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <span style="font-size: 0.8rem; color: #5B21B6;">Zusätzliche Deals (Ø 2/M)</span>
+                                <strong style="color: #5B21B6;">€6.000</strong>
+                            </div>
+                        </div>
+                        <div style="padding: 14px; background: var(--green); border-radius: var(--radius-sm); margin-top: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-size: 0.9rem; font-weight: 600; color: white;">Netto-Gewinn/Monat</span>
+                                <strong style="font-size: 1.3rem; color: white;">€6.240</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <h2>🏆 Track Record — 5 Jahre EasyImmobilien</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon green">🏠</div>
+                        <div class="stat-info">
+                            <p class="stat-value">200+</p>
+                            <p class="stat-label">Vermittelte Objekte</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue">👥</div>
+                        <div class="stat-info">
+                            <p class="stat-value">100+</p>
+                            <p class="stat-label">Zufriedene Investoren</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon purple">💰</div>
+                        <div class="stat-info">
+                            <p class="stat-value">8,4%</p>
+                            <p class="stat-label">Ø Rendite (5 Jahre)</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange">⭐</div>
+                        <div class="stat-info">
+                            <p class="stat-value">4,9/5</p>
+                            <p class="stat-label">Kundenbewertung</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- AI Chat Bubble & Window -->
+    <div class="ai-chat-bubble" id="aiChatBubble" onclick="toggleAiChat()">🤖</div>
+    <div class="ai-chat-window" id="aiChatWindow">
+        <div class="ai-chat-header">
+            <h3>💬 AI-Assistent</h3>
+            <button class="ai-chat-close" onclick="toggleAiChat()">×</button>
+        </div>
+        <div class="ai-chat-body" id="aiChatBody">
+            <div class="ai-chat-message ai">
+                Hallo Wladimir! Ich bin Ihr AI-Assistent. Wie kann ich Ihnen helfen?
+            </div>
+        </div>
+        <div class="ai-chat-options" id="aiChatOptions">
+            <button class="ai-chat-option" onclick="askAiQuestion('standorte')">Welche B-Standorte haben die beste Rendite?</button>
+            <button class="ai-chat-option" onclick="askAiQuestion('investoren')">Wie viele Investoren sind im Pipeline?</button>
+            <button class="ai-chat-option" onclick="askAiQuestion('objekte')">Zeig mir die neuesten renditestarken Objekte</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Demo Banner
+        function closeDemoBanner() {
+            document.getElementById('demoBanner').classList.add('hidden');
+        }
+
+        // Navigation
+        function showPage(p) {
+            document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+            document.getElementById('page-' + p).classList.add('active');
+            document.querySelector('[data-page="' + p + '"]')?.classList.add('active');
+            document.getElementById('sidebar').classList.remove('open');
+            
+            // Load page-specific data
+            if (p === 'lead-gen') renderInvestoren();
+            if (p === 'objektsuche') renderObjekte();
+            if (p === 'finanzierung') calculateRendite();
+            
+            window.scrollTo(0, 0);
+        }
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function toast(m) {
+            const t = document.getElementById('toast');
+            t.textContent = m;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+
+        // AI Chat
+        function toggleAiChat() {
+            document.getElementById('aiChatWindow').classList.toggle('open');
+        }
+
+        function askAiQuestion(type) {
+            const chatBody = document.getElementById('aiChatBody');
+            const chatOptions = document.getElementById('aiChatOptions');
+            
+            const questions = {
+                standorte: 'Welche B-Standorte haben die beste Rendite?',
+                investoren: 'Wie viele Investoren sind im Pipeline?',
+                objekte: 'Zeig mir die neuesten renditestarken Objekte'
+            };
+            
+            const answers = {
+                standorte: 'Basierend auf unserem AI-Standort-Scoring sind die Top-3 B-Standorte aktuell: (1) Chemnitz mit 9,8% Durchschnittsrendite und einem AI-Score von 92/100, (2) Görlitz mit 9,1% Rendite (allerdings höheres Risiko), (3) Erfurt mit 8,9% Rendite und sehr stabiler Marktentwicklung. Chemnitz bietet derzeit das beste Verhältnis von Rendite zu Risiko.',
+                investoren: 'Aktuell haben wir 89 Investoren die Interesse bekundet haben, davon 34 mit vereinbartem Beratungsgespräch. 142 qualifizierte Leads sind insgesamt in der Pipeline. Die Conversion-Rate liegt bei 24% (Lead zu Interessent), was deutlich über dem Branchen-Durchschnitt liegt.',
+                objekte: 'In den letzten 7 Tagen haben wir 67 renditestarke Objekte in B-Standorten gefunden. Top-Deals: (1) 3-Familienhaus Chemnitz für €118.000 mit 9,8% Rendite, (2) Mehrfamilienhaus Leipzig-Plagwitz für €185.000 mit 9,2% Rendite, (3) Wohn- und Geschäftshaus Erfurt für €142.000 mit 8,9% Rendite. Alle Details finden Sie unter "Objektsuche".'
+            };
+            
+            // Add user message
+            chatBody.innerHTML += `<div class="ai-chat-message user">${questions[type]}</div>`;
+            
+            // Hide options while typing
+            chatOptions.style.display = 'none';
+            
+            // Add AI thinking indicator
+            const thinkingDiv = document.createElement('div');
+            thinkingDiv.className = 'ai-chat-message ai';
+            thinkingDiv.innerHTML = '<span class="typing-text"></span><span class="cursor"></span>';
+            chatBody.appendChild(thinkingDiv);
+            
+            // Scroll to bottom
+            chatBody.scrollTop = chatBody.scrollHeight;
+            
+            // Simulate typing animation
+            const answer = answers[type];
+            const typingElement = thinkingDiv.querySelector('.typing-text');
+            let charIndex = 0;
+            
+            function typeChar() {
+                if (charIndex < answer.length) {
+                    typingElement.textContent += answer[charIndex];
+                    charIndex++;
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                    setTimeout(typeChar, 15 + Math.random() * 25);
+                } else {
+                    thinkingDiv.querySelector('.cursor')?.remove();
+                    setTimeout(() => {
+                        chatOptions.style.display = 'flex';
+                    }, 500);
+                }
+            }
+            
+            setTimeout(typeChar, 800);
+        }
+
+        // Investor Generation
+        const INVESTOREN = [
+            { name: "Michael K.", plattform: "LinkedIn", interesse: "Skalierung", budget: "€50-100k", score: 92, temp: "hot", tags: ["Bestandshalter", "Cashflow-Fokus"] },
+            { name: "Sarah M.", plattform: "X (Twitter)", interesse: "Erstkauf", budget: "€30-50k", score: 89, temp: "hot", tags: ["Vollfinanzierung", "B-Standorte"] },
+            { name: "Thomas B.", plattform: "Reddit Finance", interesse: "Portfolio-Aufbau", budget: "€100k+", score: 88, temp: "warm", tags: ["Rendite >8%", "Langfristig"] },
+            { name: "Julia F.", plattform: "LinkedIn", interesse: "Passives Einkommen", budget: "€40-80k", score: 86, temp: "warm", tags: ["Nebeneinkommen", "Steuern optimieren"] },
+            { name: "Patrick L.", plattform: "Immobilien-Forum", interesse: "Diversifikation", budget: "€60-120k", score: 82, temp: "warm", tags: ["Ex-Aktien-Trader", "B-Standorte"] },
+            { name: "Anna W.", plattform: "LinkedIn", interesse: "Altersvorsorge", budget: "€50-70k", score: 79, temp: "cold", tags: ["Sicherheit", "Langfristig"] },
+        ];
+
+        function renderInvestoren() {
+            const grid = document.getElementById('investorGrid');
+            grid.innerHTML = INVESTOREN.map(inv => `
+                <div class="investor-card ${inv.temp}">
+                    <div class="investor-header">
+                        <h3>${inv.name}</h3>
+                        <span class="investor-score">${inv.score}%</span>
+                    </div>
+                    <div class="investor-info">
+                        <p>📱 Quelle: ${inv.plattform}</p>
+                        <p>🎯 Interesse: ${inv.interesse}</p>
+                        <p>💰 Budget: ${inv.budget}</p>
+                    </div>
+                    <div class="investor-tags">
+                        ${inv.tags.map(t => `<span class="investor-tag">${t}</span>`).join('')}
+                    </div>
+                    <div class="investor-actions">
+                        <button class="btn btn-sm btn-primary" onclick="toast('📧 Erstansprache versendet!')">Kontaktieren</button>
+                        <button class="btn btn-sm btn-ghost" onclick="toast('📋 Details geöffnet')">Details</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function runInvestorScan() {
+            const status = document.getElementById('investorScanStatus');
+            
+            status.innerHTML = `
+                <div class="ai-loading">
+                    <div class="spinner"></div>
+                    <p>🤖 AI-Scanner wird initialisiert...</p>
+                    <div class="ai-progress">
+                        <div class="ai-progress-bar">
+                            <div class="ai-progress-fill" id="investorProgressFill"></div>
+                        </div>
+                        <div class="ai-progress-text">
+                            <div class="spinner"></div>
+                            <span id="investorProgressText">Verbindung zu LinkedIn, X, Reddit wird hergestellt...</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const progressFill = document.getElementById('investorProgressFill');
+            const progressText = document.getElementById('investorProgressText');
+            
+            const steps = [
+                { progress: 18, text: 'LinkedIn Finance-Gruppen durchsuchen...', delay: 900 },
+                { progress: 35, text: 'X (Twitter) Finance-Accounts analysieren...', delay: 1100 },
+                { progress: 52, text: 'Reddit r/Finanzen & r/Immobilien scannen...', delay: 1000 },
+                { progress: 68, text: 'Immobilien-Foren durchsuchen...', delay: 850 },
+                { progress: 85, text: 'Kontaktdaten validieren...', delay: 800 },
+                { progress: 100, text: 'Lead-Scoring durchführen...', delay: 700 }
+            ];
+            
+            let currentStep = 0;
+            
+            function executeStep() {
+                if (currentStep < steps.length) {
+                    const step = steps[currentStep];
+                    progressFill.style.width = step.progress + '%';
+                    progressText.textContent = step.text;
+                    currentStep++;
+                    setTimeout(executeStep, step.delay);
+                } else {
+                    setTimeout(() => {
+                        status.innerHTML = `
+                            <div style="padding: 20px; background: var(--green-light); border-radius: var(--radius-sm); text-align: center;">
+                                <p style="font-size: 1.2rem; font-weight: 600; color: #065F46; margin-bottom: 8px;">✅ Scan erfolgreich abgeschlossen!</p>
+                                <p style="color: #065F46; font-size: 0.9rem; margin-bottom: 4px;">🎯 <strong>38 neue potenzielle Investoren</strong> gefunden</p>
+                                <p style="color: #065F46; font-size: 0.9rem; margin-bottom: 4px;">📧 <strong>312 Kontaktdaten</strong> validiert</p>
+                                <p style="color: #065F46; font-size: 0.9rem; margin-bottom: 16px;">⭐ Durchschnittlicher Lead-Score: <strong>86%</strong></p>
+                                <button class="btn btn-primary" style="margin-top: 8px;" onclick="toast('📧 Erstansprache-Kampagne gestartet!')">Erstansprache starten</button>
+                            </div>
+                        `;
+                        toast('✅ 38 neue Investoren-Leads gefunden!');
+                    }, 500);
+                }
+            }
+            
+            executeStep();
+        }
+
+        // Objektsuche
+        const OBJEKTE = [
+            { titel: "3-Familienhaus Chemnitz-Zentrum", standort: "Chemnitz, Sachsen", preis: 118000, miete: 960, rendite: 9.8, wohnflaeche: 280, baujahr: 1995 },
+            { titel: "Mehrfamilienhaus Leipzig-Plagwitz", standort: "Leipzig, Sachsen", preis: 185000, miete: 1420, rendite: 9.2, wohnflaeche: 420, baujahr: 2002 },
+            { titel: "Wohn- und Geschäftshaus Erfurt", standort: "Erfurt, Thüringen", preis: 142000, miete: 1050, rendite: 8.9, wohnflaeche: 340, baujahr: 1998 },
+            { titel: "4-Familienhaus Magdeburg-Stadtfeld", standort: "Magdeburg, Sachsen-Anhalt", preis: 135000, miete: 980, rendite: 8.7, wohnflaeche: 320, baujahr: 1996 },
+            { titel: "Mehrfamilienhaus Halle-Neustadt", standort: "Halle, Sachsen-Anhalt", preis: 126000, miete: 890, rendite: 8.5, wohnflaeche: 290, baujahr: 1994 },
+            { titel: "Renditeobjekt Görlitz-Altstadt", standort: "Görlitz, Sachsen", preis: 89000, miete: 680, rendite: 9.1, wohnflaeche: 220, baujahr: 1990 },
+        ];
+
+        function renderObjekte() {
+            const grid = document.getElementById('objektGrid');
+            grid.innerHTML = OBJEKTE.map(obj => `
+                <div class="objekt-card">
+                    <div class="objekt-header">
+                        <h3>${obj.titel}</h3>
+                        <span class="objekt-rendite">${obj.rendite}%</span>
+                    </div>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">📍 ${obj.standort}</p>
+                    <div class="objekt-meta">
+                        <div class="objekt-meta-item">
+                            <span class="objekt-meta-label">Kaufpreis</span>
+                            <span class="objekt-meta-value">€${obj.preis.toLocaleString('de-DE')}</span>
+                        </div>
+                        <div class="objekt-meta-item">
+                            <span class="objekt-meta-label">Miete/Monat</span>
+                            <span class="objekt-meta-value">€${obj.miete}</span>
+                        </div>
+                        <div class="objekt-meta-item">
+                            <span class="objekt-meta-label">Wohnfläche</span>
+                            <span class="objekt-meta-value">${obj.wohnflaeche} m²</span>
+                        </div>
+                        <div class="objekt-meta-item">
+                            <span class="objekt-meta-label">Baujahr</span>
+                            <span class="objekt-meta-value">${obj.baujahr}</span>
+                        </div>
+                    </div>
+                    <div class="objekt-actions">
+                        <button class="btn btn-sm btn-primary" onclick="toast('💰 Finanzierung wird berechnet...')">Finanzierung</button>
+                        <button class="btn btn-sm btn-ghost" onclick="toast('📋 Exposé öffnen...')">Details</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function runObjektScan() {
+            const status = document.getElementById('objektScanStatus');
+            
+            status.innerHTML = `
+                <div class="ai-loading">
+                    <div class="spinner"></div>
+                    <p>🤖 AI-Scanner wird initialisiert...</p>
+                    <div class="ai-progress">
+                        <div class="ai-progress-bar">
+                            <div class="ai-progress-fill" id="objektProgressFill"></div>
+                        </div>
+                        <div class="ai-progress-text">
+                            <div class="spinner"></div>
+                            <span id="objektProgressText">Verbindung zu Immobilienportalen wird hergestellt...</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const progressFill = document.getElementById('objektProgressFill');
+            const progressText = document.getElementById('objektProgressText');
+            
+            const steps = [
+                { progress: 20, text: 'ImmoScout24 durchsuchen...', delay: 850 },
+                { progress: 40, text: 'Immowelt analysieren...', delay: 900 },
+                { progress: 60, text: 'eBay Kleinanzeigen scannen...', delay: 800 },
+                { progress: 80, text: 'Rendite berechnen & filtern...', delay: 750 },
+                { progress: 100, text: 'Objekte sortieren nach Rendite...', delay: 650 }
+            ];
+            
+            let currentStep = 0;
+            
+            function executeStep() {
+                if (currentStep < steps.length) {
+                    const step = steps[currentStep];
+                    progressFill.style.width = step.progress + '%';
+                    progressText.textContent = step.text;
+                    currentStep++;
+                    setTimeout(executeStep, step.delay);
+                } else {
+                    setTimeout(() => {
+                        status.innerHTML = `
+                            <div style="padding: 20px; background: var(--green-light); border-radius: var(--radius-sm); text-align: center;">
+                                <p style="font-size: 1.2rem; font-weight: 600; color: #065F46; margin-bottom: 8px;">✅ Scan erfolgreich abgeschlossen!</p>
+                                <p style="color: #065F46; font-size: 0.9rem; margin-bottom: 4px;">🏠 <strong>67 renditestarke Objekte</strong> gefunden</p>
+                                <p style="color: #065F46; font-size: 0.9rem; margin-bottom: 4px;">💰 Durchschnittliche Rendite: <strong>8,7%</strong></p>
+                                <p style="color: #065F46; font-size: 0.9rem; margin-bottom: 16px;">📍 Alle in B-Standorten (Kaufpreis &lt;€150k)</p>
+                                <button class="btn btn-primary" style="margin-top: 8px;" onclick="toast('📧 Objektliste an Investoren versendet!')">An Investoren senden</button>
+                            </div>
+                        `;
+                        toast('✅ 67 renditestarke Objekte gefunden!');
+                    }, 500);
+                }
+            }
+            
+            executeStep();
+        }
+
+        // Finanzierungs-Rechner
+        function calculateRendite() {
+            const kaufpreis = parseFloat(document.getElementById('calcKaufpreis').value) || 0;
+            const eigenkapital = parseFloat(document.getElementById('calcEigenkapital').value) || 0;
+            const miete = parseFloat(document.getElementById('calcMiete').value) || 0;
+            const zins = parseFloat(document.getElementById('calcZins').value) || 0;
+            const nebenkosten = parseFloat(document.getElementById('calcNebenkosten').value) || 0;
+            
+            // Berechnungen
+            const nebenkostenEuro = kaufpreis * (nebenkosten / 100);
+            const gesamtinvest = kaufpreis + nebenkostenEuro;
+            const darlehen = kaufpreis - eigenkapital;
+            const zinsenMonat = (darlehen * (zins / 100)) / 12;
+            const tilgung = 100; // Beispiel: €100 Tilgung/Monat
+            const rate = zinsenMonat + tilgung;
+            const cashflow = miete - rate - 100; // -€100 Rücklagen
+            const bruttorendite = ((miete * 12) / gesamtinvest) * 100;
+            const nettorendite = ((cashflow * 12) / (eigenkapital + nebenkostenEuro)) * 100;
+            
+            const result = document.getElementById('calcResult');
+            result.innerHTML = `
+                <div class="calc-result-item">
+                    <span class="calc-result-label">Gesamtinvestition</span>
+                    <span class="calc-result-value">€${gesamtinvest.toLocaleString('de-DE', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</span>
+                </div>
+                <div class="calc-result-item">
+                    <span class="calc-result-label">Darlehenssumme</span>
+                    <span class="calc-result-value">€${darlehen.toLocaleString('de-DE', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</span>
+                </div>
+                <div class="calc-result-item">
+                    <span class="calc-result-label">Monatliche Rate (Zins + Tilgung)</span>
+                    <span class="calc-result-value">€${rate.toLocaleString('de-DE', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</span>
+                </div>
+                <div class="calc-result-item">
+                    <span class="calc-result-label">Bruttorendite (vor Kosten)</span>
+                    <span class="calc-result-value">${bruttorendite.toFixed(2)}%</span>
+                </div>
+                <div class="calc-result-item">
+                    <span class="calc-result-label">💰 Monatlicher Cashflow</span>
+                    <span class="calc-result-value" style="font-size: 1.4rem;">€${cashflow.toLocaleString('de-DE', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</span>
+                </div>
+                <div class="calc-result-item">
+                    <span class="calc-result-label">🎯 Eigenkapitalrendite (netto)</span>
+                    <span class="calc-result-value" style="font-size: 1.4rem;">${nettorendite.toFixed(1)}%</span>
+                </div>
+            `;
+        }
+
+        // Initial load
+        renderInvestoren();
+        renderObjekte();
+        calculateRendite();
+    </script>
+</body>
+</html>
