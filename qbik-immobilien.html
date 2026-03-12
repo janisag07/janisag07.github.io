@@ -801,10 +801,10 @@ a { text-decoration: none; color: inherit; }
 
         // Content Marketing
         const CONTENT = [
-            { type: "LinkedIn-Post", title: "3D-Visualisierung revolutioniert Immobilienvermarktung", status: "Entwurf" },
-            { type: "Blog-Artikel", title: "Wie finde ich entwicklungsfähige Grundstücke in München?", status: "Veröffentlicht" },
-            { type: "Instagram-Post", title: "Unsere neuesten Projekte in Dachau", status: "Geplant" },
-            { type: "Newsletter", title: "Projekt-Update: Garchinger Höfe", status: "Versendet" },
+            { type: "LinkedIn-Post", title: "3D-Visualisierung revolutioniert Immobilienvermarktung", status: "Entwurf", preview: "Hochwertige 3D-Visualisierungen machen Grundstücke verkaufsfähig, bevor der erste Spatenstich gesetzt wird. Qbik Immobilien nutzt modernste Rendering-Technologie, um potenziellen Käufern bereits in der Planungsphase ein realistisches Bild ihrer künftigen Immobilie zu vermitteln." },
+            { type: "Blog-Artikel", title: "Wie finde ich entwicklungsfähige Grundstücke in München?", status: "Veröffentlicht", preview: "Die Metropolregion München bietet enormes Potenzial für Nachverdichtung und Neubebauung. Entscheidend sind Bebauungspläne, Flächennutzungspläne und die strategische Lage zwischen München und Dachau. Unsere Experten analysieren täglich neue Entwicklungsflächen mit hoher Wertsteigerung." },
+            { type: "Instagram-Post", title: "Unsere neuesten Projekte in Dachau", status: "Geplant", preview: "Die Dachauer Residenzen vereinen nachhaltiges Wohnen mit urbaner Lebensqualität. 18 exklusive Wohneinheiten mit energieeffizienter Bauweise, großzügigen Grundrissen und perfekter Anbindung an München entstehen in ruhiger Wohnlage." },
+            { type: "Newsletter", title: "Projekt-Update: Garchinger Höfe", status: "Versendet", preview: "Die Bauarbeiten an den Garchinger Höfen liegen voll im Zeitplan. Alle 24 Wohneinheiten sind bereits vorverkauft, was die hohe Nachfrage nach qualitativ hochwertigen Neubauprojekten im Münchner Umland eindrucksvoll bestätigt." },
         ];
 
         function renderContent() {
@@ -814,7 +814,7 @@ a { text-decoration: none; color: inherit; }
                     <div class="content-preview">
                         <strong>${c.title}</strong>
                         <p style="margin-top: 8px; color: var(--text-light); font-size: 0.8rem;">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...
+                            ${c.preview}
                         </p>
                     </div>
                     <div class="content-meta">
