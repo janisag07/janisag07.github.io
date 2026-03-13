@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PaintScout ↔ CompanyCam Integration — Phase 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0e27;
+            --bg-card: #151b3d;
+            --accent-primary: #4f46e5;
+            --accent-secondary: #06b6d4;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #1e293b;
+            --success: #22c55e;
+            --warning: #f59e0b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-card) 100%);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero .phase-badge {
+            display: inline-block;
+            background: var(--accent-primary);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            animation: fadeInUp 1.2s ease;
+        }
+
+        /* Architecture Diagram */
+        .architecture {
+            padding: 4rem 0;
+            background: var(--bg-card);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+
+        .arch-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            margin: 3rem 0;
+            flex-wrap: wrap;
+        }
+
+        .arch-node {
+            flex: 1;
+            min-width: 150px;
+            background: var(--bg-dark);
+            border: 2px solid var(--accent-primary);
+            border-radius: 1rem;
+            padding: 2rem 1rem;
+            text-align: center;
+            position: relative;
+            animation: slideIn 1s ease;
+        }
+
+        .arch-node h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-secondary);
+        }
+
+        .arch-node p {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .arch-arrow {
+            flex-shrink: 0;
+            width: 60px;
+            height: 2px;
+            background: var(--accent-secondary);
+            position: relative;
+            animation: pulseArrow 2s infinite;
+        }
+
+        .arch-arrow::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid var(--accent-secondary);
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+
+        .arch-arrow.bidirectional::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: -4px;
+            width: 0;
+            height: 0;
+            border-right: 10px solid var(--accent-secondary);
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+        }
+
+        /* Task Cards */
+        .tasks {
+            padding: 4rem 0;
+        }
+
+        .task-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .task-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
+        }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .task-number {
+            background: var(--accent-primary);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .task-title {
+            flex: 1;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .task-effort {
+            background: var(--bg-dark);
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            color: var(--accent-secondary);
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        /* Flow Diagram */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--bg-dark);
+            border-radius: 0.5rem;
+            overflow-x: auto;
+        }
+
+        .flow-step {
+            min-width: 120px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+            animation: fadeInScale 0.5s ease;
+        }
+
+        .flow-connector {
+            width: 30px;
+            height: 2px;
+            background: var(--text-secondary);
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .flow-connector::after {
+            content: '→';
+            position: absolute;
+            right: -10px;
+            top: -10px;
+            color: var(--text-secondary);
+            font-size: 1.25rem;
+        }
+
+        /* Loop Prevention */
+        .loop-prevention {
+            background: rgba(79, 70, 229, 0.1);
+            border-left: 4px solid var(--accent-primary);
+            padding: 1rem 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+        }
+
+        .loop-prevention h4 {
+            color: var(--accent-primary);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .loop-prevention p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Testing Strategy */
+        .testing {
+            padding: 4rem 0;
+            background: var(--bg-card);
+        }
+
+        .testing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .testing-phase {
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .testing-phase:hover {
+            border-color: var(--accent-primary);
+        }
+
+        .testing-phase h3 {
+            color: var(--accent-secondary);
+            margin-bottom: 1rem;
+            font-size: 1.125rem;
+        }
+
+        .testing-phase ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .testing-phase li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .testing-phase li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            padding: 4rem 0;
+        }
+
+        .badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .badge {
+            background: var(--bg-card);
+            border: 2px solid var(--accent-primary);
+            color: var(--text-primary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            animation: fadeInScale 0.8s ease;
+        }
+
+        .badge:hover {
+            background: var(--accent-primary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+        }
+
+        /* Timeline */
+        .timeline {
+            padding: 4rem 0;
+            background: var(--bg-card);
+        }
+
+        .timeline-list {
+            max-width: 800px;
+            margin: 2rem auto;
+            position: relative;
+        }
+
+        .timeline-list::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--accent-primary);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-left: 60px;
+            margin-bottom: 2rem;
+            animation: slideInLeft 0.8s ease;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 10px;
+            top: 0;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-primary);
+            border: 3px solid var(--bg-card);
+            border-radius: 50%;
+        }
+
+        .timeline-content {
+            background: var(--bg-dark);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .timeline-content h3 {
+            color: var(--accent-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+        }
+
+        .timeline-content .duration {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content p {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulseArrow {
+            0%, 100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .arch-diagram {
+                flex-direction: column;
+            }
+
+            .arch-arrow {
+                width: 2px;
+                height: 40px;
+                transform: rotate(90deg);
+            }
+
+            .task-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .flow-diagram {
+                flex-direction: column;
+            }
+
+            .flow-connector {
+                transform: rotate(90deg);
+                margin: 0.5rem 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="phase-badge">Phase 2 Expansion</div>
+            <h1>PaintScout ↔ CompanyCam Integration</h1>
+            <p class="subtitle">Building on your existing automation foundation with 4 advanced sync workflows</p>
+        </div>
+    </section>
+
+    <!-- Architecture Overview -->
+    <section class="architecture">
+        <div class="container">
+            <h2 class="section-title">System Architecture</h2>
+            <div class="arch-diagram">
+                <div class="arch-node">
+                    <h3>PaintScout</h3>
+                    <p>CRM & Estimating</p>
+                </div>
+                <div class="arch-arrow bidirectional"></div>
+                <div class="arch-node">
+                    <h3>Zapier</h3>
+                    <p>Trigger Layer</p>
+                </div>
+                <div class="arch-arrow"></div>
+                <div class="arch-node">
+                    <h3>Make.com</h3>
+                    <p>Logic & Routing</p>
+                </div>
+                <div class="arch-arrow"></div>
+                <div class="arch-node">
+                    <h3>CompanyCam</h3>
+                    <p>Photo Management</p>
+                </div>
+            </div>
+            <div class="arch-diagram">
+                <div class="arch-node">
+                    <h3>Google Sheets</h3>
+                    <p>Mapping Tables & Lookups</p>
+                </div>
+                <div class="arch-arrow"></div>
+                <div class="arch-node">
+                    <h3>Webhooks</h3>
+                    <p>Real-time Events</p>
+                </div>
+                <div class="arch-arrow bidirectional"></div>
+                <div class="arch-node">
+                    <h3>CompanyCam API</h3>
+                    <p>Direct HTTP Calls</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Task 1: Two-way Deal Name Sync -->
+    <section class="tasks">
+        <div class="container">
+            <h2 class="section-title">Automation Tasks</h2>
+
+            <div class="task-card">
+                <div class="task-header">
+                    <div class="task-number">1</div>
+                    <div class="task-title">Two-Way Deal Name Sync</div>
+                    <div class="task-effort">~6-8 hours</div>
+                </div>
+                
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Keep deal names synchronized bidirectionally between PaintScout and CompanyCam. When a project name changes in either system, it automatically updates in the other.
+                </p>
+
+                <div class="flow-diagram">
+                    <div class="flow-step">PaintScout Deal Update</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Zapier Trigger</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Make.com Webhook</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">CompanyCam API Update</div>
+                </div>
+
+                <div class="flow-diagram">
+                    <div class="flow-step">CompanyCam Project Update</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Webhook Catch</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Make.com Router</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Zapier → PaintScout</div>
+                </div>
+
+                <div class="loop-prevention">
+                    <h4>🛡️ Loop Prevention Strategy</h4>
+                    <p>
+                        Implement timestamp-based deduplication in Google Sheets. Each sync writes a unique transaction ID with timestamp. 
+                        Before syncing, check if the same update happened within the last 60 seconds from the opposite direction. 
+                        If yes, skip. This breaks infinite ping-pong updates.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Task 2: Invoice Work Order Link Sync -->
+            <div class="task-card">
+                <div class="task-header">
+                    <div class="task-number">2</div>
+                    <div class="task-title">Invoice Work Order Link Sync</div>
+                    <div class="task-effort">~4-5 hours</div>
+                </div>
+                
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    When an invoice is created in PaintScout, automatically link it to the corresponding CompanyCam work order. One-time sync per invoice, permanent reference.
+                </p>
+
+                <div class="flow-diagram">
+                    <div class="flow-step">Invoice Created (PaintScout)</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Zapier: New Invoice Trigger</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Make.com: Lookup Work Order ID</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">CompanyCam: Add Invoice Link</div>
+                </div>
+
+                <div class="loop-prevention">
+                    <h4>🛡️ Loop Prevention Strategy</h4>
+                    <p>
+                        One-directional flow only (PaintScout → CompanyCam). Use Google Sheets to track which invoices have already been synced. 
+                        Check invoice ID before processing. If already synced, skip entirely. No reverse trigger needed.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Task 3: Pipeline Stage Label Sync -->
+            <div class="task-card">
+                <div class="task-header">
+                    <div class="task-number">3</div>
+                    <div class="task-title">Pipeline Stage Two-Way Label Sync</div>
+                    <div class="task-effort">~7-9 hours</div>
+                </div>
+                
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    Sync custom pipeline stages bidirectionally. When a deal moves to a new stage in PaintScout, update the corresponding label in CompanyCam, and vice versa.
+                </p>
+
+                <div class="flow-diagram">
+                    <div class="flow-step">PaintScout Stage Change</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Zapier: Updated Deal</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Google Sheets: Stage Mapping</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Make.com: Update Label</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">CompanyCam API</div>
+                </div>
+
+                <div class="loop-prevention">
+                    <h4>🛡️ Loop Prevention Strategy</h4>
+                    <p>
+                        Maintain a stage mapping table in Google Sheets with sync metadata (last_sync_time, source_system, transaction_id). 
+                        Before syncing, check if the current stage value matches what we last wrote. If yes, it's a reflection of our own sync—skip. 
+                        Include a 90-second cooldown window per project to absorb delayed webhooks.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Task 4: Salesperson Reassignment Sync -->
+            <div class="task-card">
+                <div class="task-header">
+                    <div class="task-number">4</div>
+                    <div class="task-title">Salesperson Reassignment Sync</div>
+                    <div class="task-effort">~5-6 hours</div>
+                </div>
+                
+                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                    When a salesperson is reassigned to a deal in PaintScout, automatically update the assigned user in CompanyCam. Keeps your team aligned across platforms.
+                </p>
+
+                <div class="flow-diagram">
+                    <div class="flow-step">PaintScout Owner Change</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Zapier: Deal Updated</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Google Sheets: User Mapping</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">Make.com: HTTP Call</div>
+                    <div class="flow-connector"></div>
+                    <div class="flow-step">CompanyCam: Update User</div>
+                </div>
+
+                <div class="loop-prevention">
+                    <h4>🛡️ Loop Prevention Strategy</h4>
+                    <p>
+                        One-directional sync (PaintScout → CompanyCam). Track reassignments in Google Sheets with project ID + new owner ID. 
+                        Before syncing, verify the new owner differs from the current CompanyCam owner. If already matching, skip the API call.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testing Strategy -->
+    <section class="testing">
+        <div class="container">
+            <h2 class="section-title">End-to-End Testing Strategy</h2>
+            
+            <div class="testing-grid">
+                <div class="testing-phase">
+                    <h3>Unit Testing</h3>
+                    <ul>
+                        <li>Test each trigger in isolation</li>
+                        <li>Verify webhook catches</li>
+                        <li>Validate Google Sheets lookups</li>
+                        <li>Check API response handling</li>
+                        <li>Test error scenarios</li>
+                    </ul>
+                </div>
+
+                <div class="testing-phase">
+                    <h3>Integration Testing</h3>
+                    <ul>
+                        <li>Full flow A→B direction</li>
+                        <li>Full flow B→A direction</li>
+                        <li>Verify loop prevention triggers</li>
+                        <li>Test concurrent updates</li>
+                        <li>Validate data transformation</li>
+                    </ul>
+                </div>
+
+                <div class="testing-phase">
+                    <h3>Edge Case Testing</h3>
+                    <ul>
+                        <li>Simultaneous updates from both sides</li>
+                        <li>Network timeout scenarios</li>
+                        <li>Invalid/missing data handling</li>
+                        <li>Duplicate webhook delivery</li>
+                        <li>Rate limit handling</li>
+                    </ul>
+                </div>
+
+                <div class="testing-phase">
+                    <h3>User Acceptance</h3>
+                    <ul>
+                        <li>Real-world test projects</li>
+                        <li>Monitor sync latency</li>
+                        <li>Verify data consistency</li>
+                        <li>Team workflow validation</li>
+                        <li>Performance under load</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="tech-stack">
+        <div class="container">
+            <h2 class="section-title">Tech Stack & Tools</h2>
+            <div class="badges">
+                <div class="badge">⚡ Zapier</div>
+                <div class="badge">🔧 Make.com</div>
+                <div class="badge">📸 CompanyCam REST API</div>
+                <div class="badge">🎨 PaintScout</div>
+                <div class="badge">📊 Google Sheets</div>
+                <div class="badge">🔗 Webhooks</div>
+                <div class="badge">🔄 HTTP Modules</div>
+                <div class="badge">🎯 Filters & Paths</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="timeline">
+        <div class="container">
+            <h2 class="section-title">Delivery Timeline</h2>
+            
+            <div class="timeline-list">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Phase 1: Setup & Planning</h3>
+                        <p class="duration">Day 1-2</p>
+                        <p>Access verification, mapping table creation, webhook configuration, initial testing environment setup</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Phase 2: Core Syncs (Task 1 & 2)</h3>
+                        <p class="duration">Day 3-5</p>
+                        <p>Build two-way deal name sync and invoice work order link sync. Implement loop prevention. Unit testing.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Phase 3: Advanced Syncs (Task 3 & 4)</h3>
+                        <p class="duration">Day 6-8</p>
+                        <p>Pipeline stage label sync and salesperson reassignment. Build mapping tables. Integration testing.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Phase 4: Testing & Refinement</h3>
+                        <p class="duration">Day 9-10</p>
+                        <p>End-to-end testing across all flows. Edge case validation. Performance optimization. Team UAT.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>Phase 5: Go-Live & Handoff</h3>
+                        <p class="duration">Day 11-12</p>
+                        <p>Production deployment, monitoring setup, documentation delivery, team training, support handoff.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div style="text-align: center; padding: 3rem 0; color: var(--text-secondary); font-size: 0.875rem;">
+        <p>Built specifically for your painting contractor automation needs</p>
+    </div>
+</body>
+</html>
