@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflow Automation Specialist | Zapier • Make.com • API Integration</title>
+    <meta name="description" content="Expert workflow automation specialist. Zapier, Make.com, REST APIs, webhooks. Connecting your tools, automating your processes.">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0f0f23;
+            --bg-card: #1a1a2e;
+            --accent: #00d4ff;
+            --accent-secondary: #ff6b6b;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 107, 107, 0.1) 0%, transparent 50%);
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: var(--gradient);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .tech-badge {
+            padding: 0.6rem 1.2rem;
+            background: var(--bg-card);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--accent);
+            transition: all 0.3s ease;
+        }
+
+        .tech-badge:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--text-primary);
+        }
+
+        /* Case Studies */
+        .case-studies {
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        }
+
+        .case-card {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient);
+        }
+
+        .case-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .case-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .case-card .problem {
+            margin-bottom: 1rem;
+        }
+
+        .case-card .problem strong {
+            color: var(--accent-secondary);
+        }
+
+        .case-card .solution strong {
+            color: #4ade80;
+        }
+
+        .case-card .result {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+            font-weight: 500;
+        }
+
+        /* Process Section */
+        .process {
+            background: var(--bg-card);
+            padding: 5rem 2rem;
+            margin-top: 3rem;
+        }
+
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .step {
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0 auto 1rem;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .step h4 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .step p {
+            color: var(--text-secondary);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-secondary);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #00b8e6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 3rem 1rem;
+            }
+
+            .hero {
+                min-height: 90vh;
+            }
+
+            .tech-stack {
+                margin-top: 2rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-content, .case-card, .step {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .case-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .case-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Workflow Automation Specialist</h1>
+            <p class="subtitle">
+                Connecting your tools. Automating your processes. <br>
+                Saving you hours every single day.
+            </p>
+            <a href="#case-studies" class="cta-button">See What I Build</a>
+            
+            <div class="tech-stack">
+                <span class="tech-badge">Zapier</span>
+                <span class="tech-badge">Make.com</span>
+                <span class="tech-badge">REST APIs</span>
+                <span class="tech-badge">Webhooks</span>
+                <span class="tech-badge">Google Sheets</span>
+                <span class="tech-badge">Airtable</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Case Studies -->
+    <section class="container" id="case-studies">
+        <h2 class="section-title">Recent Projects</h2>
+        
+        <div class="case-studies">
+            <!-- Case Study 1 -->
+            <div class="case-card">
+                <h3>💼 CRM ↔ Project Management Sync</h3>
+                <div class="problem">
+                    <strong>Problem:</strong> Sales team used HubSpot, dev team used ClickUp. New deals weren't automatically creating project tasks. Manual copying = errors + delays.
+                </div>
+                <div class="solution">
+                    <strong>Solution:</strong> Built two-way Zapier integration. New HubSpot deals → auto-create ClickUp tasks with client info. Task completion → update deal stage in HubSpot.
+                </div>
+                <div class="result">
+                    ✨ Result: Zero manual data entry. 100% accuracy. 8 hours/week saved.
+                </div>
+            </div>
+
+            <!-- Case Study 2 -->
+            <div class="case-card">
+                <h3>📋 Lead Intake Automation</h3>
+                <div class="problem">
+                    <strong>Problem:</strong> Marketing agency received leads via website form, email, and social DMs. Each required different manual processing. Response time: 4-6 hours.
+                </div>
+                <div class="solution">
+                    <strong>Solution:</strong> Make.com scenario with multiple triggers. All lead sources → standardized format → Airtable database → instant Slack notification with lead scoring → auto-send personalized email within 2 minutes.
+                </div>
+                <div class="result">
+                    ✨ Result: Response time down to 2 minutes. 37% increase in qualified leads.
+                </div>
+            </div>
+
+            <!-- Case Study 3 -->
+            <div class="case-card">
+                <h3>🔄 Two-Way Pipeline Sync</h3>
+                <div class="problem">
+                    <strong>Problem:</strong> Client tracked inventory in Google Sheets, customers ordered via WooCommerce. Stock updates were manual and frequently out of sync. Overselling = angry customers.
+                </div>
+                <div class="solution">
+                    <strong>Solution:</strong> Custom REST API integration using Make.com webhooks. WooCommerce order → update Google Sheet stock → if stock < threshold, trigger email alert + pause product listing. Sheet updates → sync to WooCommerce.
+                </div>
+                <div class="result">
+                    ✨ Result: Real-time inventory sync. Zero overselling incidents. Customer satisfaction ↑ 42%.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How I Work -->
+    <section class="process">
+        <h2 class="section-title">How I Work</h2>
+        
+        <div class="process-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h4>Scope</h4>
+                <p>We map your workflow, identify bottlenecks, and define success metrics. No guessing.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">2</div>
+                <h4>Build</h4>
+                <p>I create the automation with error handling, logging, and notifications. Clean, documented, maintainable.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">3</div>
+                <h4>Test</h4>
+                <p>Rigorous testing with real data. Edge cases, error scenarios, load testing. It has to work perfectly.</p>
+            </div>
+            
+            <div class="step">
+                <div class="step-number">4</div>
+                <h4>Handoff</h4>
+                <p>Full documentation, video walkthrough, ongoing support. You'll know exactly how everything works.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>
+            Ready to automate your workflow? <br>
+            <a href="mailto:hello@automation.dev">Get in touch →</a>
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            Built with automation in mind. Obviously.
+        </p>
+    </footer>
+
+</body>
+</html>
