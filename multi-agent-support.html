@@ -372,10 +372,18 @@
             justify-content: center;
             z-index: 1000;
             animation: fadeIn 0.3s ease;
+            -webkit-overflow-scrolling: touch;
         }
 
         .chat-overlay.active {
             display: flex;
+        }
+
+        body.chat-active {
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100%;
         }
 
         @keyframes fadeIn {
@@ -399,6 +407,7 @@
             flex-direction: column;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             animation: slideUp 0.3s ease;
+            overflow: hidden;
         }
 
         @keyframes slideUp {
@@ -472,6 +481,9 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            min-height: 0;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: contain;
         }
 
         .chat-message {
@@ -639,6 +651,7 @@
             padding: 1rem 1.5rem;
             border-top: 1px solid var(--border-color);
             background: var(--bg-secondary);
+            flex-shrink: 0;
         }
 
         .chat-input-wrapper {
@@ -745,13 +758,23 @@
 
             .chat-window {
                 width: 100%;
-                height: 100vh;
+                height: 100%;
+                height: 100dvh;
                 max-height: none;
                 border-radius: 0;
             }
 
             .chat-window-header {
                 border-radius: 0;
+                flex-shrink: 0;
+            }
+
+            .chat-overlay {
+                align-items: stretch;
+            }
+
+            .chat-input-container {
+                padding-bottom: max(1rem, env(safe-area-inset-bottom));
             }
         }
     </style>
@@ -1169,11 +1192,39 @@
             if (e.target === chatOverlay) closeChat();
         });
 
+        // iOS keyboard fix: resize chat window when virtual keyboard opens
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', function() {
+                var chatWindow = document.querySelector('.chat-window');
+                if (chatWindow && chatOverlay.classList.contains('active')) {
+                    chatWindow.style.height = window.visualViewport.height + 'px';
+                    scrollToBottom();
+                }
+            });
+            window.visualViewport.addEventListener('scroll', function() {
+                if (chatOverlay.classList.contains('active')) {
+                    chatOverlay.style.top = window.visualViewport.offsetTop + 'px';
+                }
+            });
+        }
+
+        // Prevent background scroll on touch
+        chatOverlay.addEventListener('touchmove', function(e) {
+            if (e.target === chatOverlay) e.preventDefault();
+        }, { passive: false });
+
+        var savedScrollY = 0;
         window.openChat = function() {
+            savedScrollY = window.scrollY;
+            document.body.classList.add('chat-active');
             chatOverlay.classList.add('active');
-            setTimeout(function() { chatInput.focus(); }, 100);
+            setTimeout(function() { chatInput.focus(); }, 150);
         };
-        window.closeChat = function() { chatOverlay.classList.remove('active'); };
+        window.closeChat = function() {
+            chatOverlay.classList.remove('active');
+            document.body.classList.remove('chat-active');
+            window.scrollTo(0, savedScrollY);
+        };
         window.sendQuickMessage = function(msg) {
             chatInput.value = msg;
             sendMessage();
