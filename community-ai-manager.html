@@ -35,6 +35,20 @@
             overflow-x: hidden;
         }
 
+        .main-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .content-area {
+            flex: 1;
+            transition: margin-right 0.3s ease;
+        }
+
+        .content-area.chat-open {
+            margin-right: 420px;
+        }
+
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -256,6 +270,258 @@
             grid-column: 1 / -1;
         }
 
+        /* Chat Panel Styles */
+        .chat-panel {
+            position: fixed;
+            right: 0;
+            top: 0;
+            width: 420px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .chat-panel.open {
+            transform: translateX(0);
+        }
+
+        .chat-header {
+            padding: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .chat-header h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            max-width: 75%;
+        }
+
+        .message-bubble {
+            background: var(--bg-tertiary);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-message.user .message-bubble {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        .message-time {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            padding: 0 0.5rem;
+        }
+
+        .typing-indicator {
+            display: none;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dots {
+            background: var(--bg-tertiary);
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            display: flex;
+            gap: 0.35rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+                opacity: 0.5;
+            }
+            30% {
+                transform: translateY(-8px);
+                opacity: 1;
+            }
+        }
+
+        .chat-quick-buttons {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .quick-btn {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .quick-btn:hover {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        .chat-input-area {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem 1rem;
+            border-radius: 24px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--accent-primary);
+        }
+
+        .send-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-toggle {
+            position: fixed;
+            right: 2rem;
+            bottom: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+            z-index: 999;
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .chat-toggle.open {
+            background: var(--bg-tertiary);
+        }
+
+        @media (max-width: 1200px) {
+            .chat-panel {
+                width: 100%;
+            }
+
+            .content-area.chat-open {
+                margin-right: 0;
+            }
+        }
+
         @media (max-width: 768px) {
             h1 {
                 font-size: 2rem;
@@ -272,174 +538,375 @@
             .section-large {
                 grid-column: 1;
             }
+
+            .chat-toggle {
+                right: 1rem;
+                bottom: 1rem;
+                width: 56px;
+                height: 56px;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>AI Community Manager</h1>
-        <p class="subtitle">Telegram & Discord • Arts & Tech Community</p>
-    </header>
+    <div class="main-wrapper">
+        <div class="content-area" id="contentArea">
+            <header>
+                <h1>AI Community Manager</h1>
+                <p class="subtitle">Telegram & Discord • Arts & Tech Community</p>
+            </header>
 
-    <div class="container">
-        <div class="dashboard">
-            <!-- Community Stats -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Community Stats</h2>
-                    <span class="badge success">Live</span>
-                </div>
-                <div class="stat-grid">
-                    <div class="stat">
-                        <div class="stat-value">2,847</div>
-                        <div class="stat-label">Total Members</div>
+            <div class="container">
+                <div class="dashboard">
+                    <!-- Community Stats -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Community Stats</h2>
+                            <span class="badge success">Live</span>
+                        </div>
+                        <div class="stat-grid">
+                            <div class="stat">
+                                <div class="stat-value">2,847</div>
+                                <div class="stat-label">Total Members</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">1,234</div>
+                                <div class="stat-label">Active Users</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">+18%</div>
+                                <div class="stat-label">Monthly Growth</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-value">92%</div>
+                                <div class="stat-label">Engagement Rate</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="stat">
-                        <div class="stat-value">1,234</div>
-                        <div class="stat-label">Active Users</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">+18%</div>
-                        <div class="stat-label">Monthly Growth</div>
-                    </div>
-                    <div class="stat">
-                        <div class="stat-value">92%</div>
-                        <div class="stat-label">Engagement Rate</div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Content Calendar -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Content Calendar</h2>
-                    <span class="badge">Automated</span>
-                </div>
-                <div class="calendar-event">
-                    <div class="event-time">Today, 10:00 AM</div>
-                    <div class="event-title">AI Art Challenge Launch</div>
-                </div>
-                <div class="calendar-event">
-                    <div class="event-time">Today, 3:00 PM</div>
-                    <div class="event-title">Weekly Tech News Digest</div>
-                </div>
-                <div class="calendar-event">
-                    <div class="event-time">Tomorrow, 9:00 AM</div>
-                    <div class="event-title">Community Showcase Event</div>
-                </div>
-                <div class="calendar-event">
-                    <div class="event-time">Monday, 2:00 PM</div>
-                    <div class="event-title">Member Spotlight Feature</div>
-                </div>
-            </div>
-
-            <!-- Member Engagement -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Member Engagement</h2>
-                    <span class="badge success">High</span>
-                </div>
-                <div class="engagement-metric">
-                    <span class="metric-name">Messages Today</span>
-                    <span class="metric-value">1,847</span>
-                </div>
-                <div class="engagement-metric">
-                    <span class="metric-name">New Threads</span>
-                    <span class="metric-value">23</span>
-                </div>
-                <div class="engagement-metric">
-                    <span class="metric-name">Reactions</span>
-                    <span class="metric-value">4,392</span>
-                </div>
-                <div class="engagement-metric">
-                    <span class="metric-name">Voice Participants</span>
-                    <span class="metric-value">47</span>
-                </div>
-                <div class="engagement-metric">
-                    <span class="metric-name">Avg. Response Time</span>
-                    <span class="metric-value">2.3 min</span>
-                </div>
-            </div>
-
-            <!-- AI-Generated Posts -->
-            <div class="card section-large">
-                <div class="card-header">
-                    <h2 class="card-title">AI-Generated Posts</h2>
-                    <span class="badge">Auto-Posted</span>
-                </div>
-                <div class="post-example">
-                    <span class="post-platform">Telegram</span>
-                    <p class="post-content">🎨 Good morning creators! Today's AI art tip: Experiment with prompt engineering by combining artistic movements. Try "cyberpunk meets art nouveau" for unique fusion styles. Share your results in #ai-art-showcase!</p>
-                </div>
-                <div class="post-example">
-                    <span class="post-platform">Discord</span>
-                    <p class="post-content">🚀 New in tech: OpenAI just released updated models with enhanced creative capabilities. Perfect timing for our upcoming hackathon! Details in #announcements. Who's excited to test them out?</p>
-                </div>
-                <div class="post-example">
-                    <span class="post-platform">Both Platforms</span>
-                    <p class="post-content">🌟 Weekly Spotlight: Amazing generative art piece by @ArtistMember using Stable Diffusion + custom LoRA training. This is what our community is all about! Check out the full process in #tutorials 💜</p>
-                </div>
-            </div>
-
-            <!-- Automated Actions -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Automated Actions</h2>
-                    <span class="badge success">Active</span>
-                </div>
-                <ul class="automation-list">
-                    <li class="automation-item">
-                        <span class="automation-icon"></span>
-                        <span class="automation-text">Welcome messages sent to 23 new members</span>
-                    </li>
-                    <li class="automation-item">
-                        <span class="automation-icon"></span>
-                        <span class="automation-text">3 events scheduled and announced</span>
-                    </li>
-                    <li class="automation-item">
-                        <span class="automation-icon"></span>
-                        <span class="automation-text">47 questions answered automatically</span>
-                    </li>
-                    <li class="automation-item">
-                        <span class="automation-icon"></span>
-                        <span class="automation-text">Daily digest compiled and posted</span>
-                    </li>
-                    <li class="automation-item">
-                        <span class="automation-icon"></span>
-                        <span class="automation-text">Content moderation: 12 spam messages removed</span>
-                    </li>
-                    <li class="automation-item">
-                        <span class="automation-icon"></span>
-                        <span class="automation-text">Role assignments: 8 members promoted</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Platform Distribution -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Platform Distribution</h2>
-                </div>
-                <div style="margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Telegram</span>
-                        <span style="color: var(--accent-primary); font-weight: 600;">1,654 members</span>
+                    <!-- Content Calendar -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Content Calendar</h2>
+                            <span class="badge">Automated</span>
+                        </div>
+                        <div class="calendar-event">
+                            <div class="event-time">Today, 10:00 AM</div>
+                            <div class="event-title">AI Art Challenge Launch</div>
+                        </div>
+                        <div class="calendar-event">
+                            <div class="event-time">Today, 3:00 PM</div>
+                            <div class="event-title">Weekly Tech News Digest</div>
+                        </div>
+                        <div class="calendar-event">
+                            <div class="event-time">Tomorrow, 9:00 AM</div>
+                            <div class="event-title">Community Showcase Event</div>
+                        </div>
+                        <div class="calendar-event">
+                            <div class="event-time">Monday, 2:00 PM</div>
+                            <div class="event-title">Member Spotlight Feature</div>
+                        </div>
                     </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 58%;"></div>
+
+                    <!-- Member Engagement -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Member Engagement</h2>
+                            <span class="badge success">High</span>
+                        </div>
+                        <div class="engagement-metric">
+                            <span class="metric-name">Messages Today</span>
+                            <span class="metric-value">1,847</span>
+                        </div>
+                        <div class="engagement-metric">
+                            <span class="metric-name">New Threads</span>
+                            <span class="metric-value">23</span>
+                        </div>
+                        <div class="engagement-metric">
+                            <span class="metric-name">Reactions</span>
+                            <span class="metric-value">4,392</span>
+                        </div>
+                        <div class="engagement-metric">
+                            <span class="metric-name">Voice Participants</span>
+                            <span class="metric-value">47</span>
+                        </div>
+                        <div class="engagement-metric">
+                            <span class="metric-name">Avg. Response Time</span>
+                            <span class="metric-value">2.3 min</span>
+                        </div>
                     </div>
-                </div>
-                <div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
-                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Discord</span>
-                        <span style="color: var(--accent-secondary); font-weight: 600;">1,193 members</span>
+
+                    <!-- AI-Generated Posts -->
+                    <div class="card section-large">
+                        <div class="card-header">
+                            <h2 class="card-title">AI-Generated Posts</h2>
+                            <span class="badge">Auto-Posted</span>
+                        </div>
+                        <div class="post-example">
+                            <span class="post-platform">Telegram</span>
+                            <p class="post-content">🎨 Good morning creators! Today's AI art tip: Experiment with prompt engineering by combining artistic movements. Try "cyberpunk meets art nouveau" for unique fusion styles. Share your results in #ai-art-showcase!</p>
+                        </div>
+                        <div class="post-example">
+                            <span class="post-platform">Discord</span>
+                            <p class="post-content">🚀 New in tech: OpenAI just released updated models with enhanced creative capabilities. Perfect timing for our upcoming hackathon! Details in #announcements. Who's excited to test them out?</p>
+                        </div>
+                        <div class="post-example">
+                            <span class="post-platform">Both Platforms</span>
+                            <p class="post-content">🌟 Weekly Spotlight: Amazing generative art piece by @ArtistMember using Stable Diffusion + custom LoRA training. This is what our community is all about! Check out the full process in #tutorials 💜</p>
+                        </div>
                     </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 42%; background: linear-gradient(90deg, var(--accent-secondary), var(--accent-primary));"></div>
+
+                    <!-- Automated Actions -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Automated Actions</h2>
+                            <span class="badge success">Active</span>
+                        </div>
+                        <ul class="automation-list">
+                            <li class="automation-item">
+                                <span class="automation-icon"></span>
+                                <span class="automation-text">Welcome messages sent to 23 new members</span>
+                            </li>
+                            <li class="automation-item">
+                                <span class="automation-icon"></span>
+                                <span class="automation-text">3 events scheduled and announced</span>
+                            </li>
+                            <li class="automation-item">
+                                <span class="automation-icon"></span>
+                                <span class="automation-text">47 questions answered automatically</span>
+                            </li>
+                            <li class="automation-item">
+                                <span class="automation-icon"></span>
+                                <span class="automation-text">Daily digest compiled and posted</span>
+                            </li>
+                            <li class="automation-item">
+                                <span class="automation-icon"></span>
+                                <span class="automation-text">Content moderation: 12 spam messages removed</span>
+                            </li>
+                            <li class="automation-item">
+                                <span class="automation-icon"></span>
+                                <span class="automation-text">Role assignments: 8 members promoted</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Platform Distribution -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Platform Distribution</h2>
+                        </div>
+                        <div style="margin-bottom: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: var(--text-secondary); font-size: 0.9rem;">Telegram</span>
+                                <span style="color: var(--accent-primary); font-weight: 600;">1,654 members</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 58%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                                <span style="color: var(--text-secondary); font-size: 0.9rem;">Discord</span>
+                                <span style="color: var(--accent-secondary); font-weight: 600;">1,193 members</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 42%; background: linear-gradient(90deg, var(--accent-secondary), var(--accent-primary));"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Chat Panel -->
+        <div class="chat-panel" id="chatPanel">
+            <div class="chat-header">
+                <h3>🤖 AI Community Manager</h3>
+                <p>Ask me anything about the community!</p>
+            </div>
+
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message">
+                    <div class="message-avatar">🤖</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            Hey! I'm your AI Community Manager. I can help with events, member questions, content creation, and Discord/Telegram management. What would you like to know?
+                        </div>
+                        <div class="message-time">Just now</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-quick-buttons" id="quickButtons">
+                <button class="quick-btn" onclick="sendQuickMessage('What events are coming up?')">🎯 Upcoming Events</button>
+                <button class="quick-btn" onclick="sendQuickMessage('How do I join the Discord?')">💬 Join Discord</button>
+                <button class="quick-btn" onclick="sendQuickMessage('Create a post about our next meetup')">📝 Create Post</button>
+                <button class="quick-btn" onclick="sendQuickMessage('Show community stats')">📊 Community Stats</button>
+                <button class="quick-btn" onclick="sendQuickMessage('How can I become a moderator?')">👑 Become Moderator</button>
+            </div>
+
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="message-avatar">🤖</div>
+                <div class="typing-dots">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            </div>
+
+            <div class="chat-input-area">
+                <div class="chat-input-wrapper">
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="chat-toggle" id="chatToggle" onclick="toggleChat()">💬</button>
     </div>
+
+    <script>
+        const chatPanel = document.getElementById('chatPanel');
+        const chatToggle = document.getElementById('chatToggle');
+        const contentArea = document.getElementById('contentArea');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const typingIndicator = document.getElementById('typingIndicator');
+
+        // Knowledge base with pattern matching
+        const knowledgeBase = [
+            {
+                patterns: ['event', 'events', 'coming up', 'upcoming', 'schedule', 'calendar'],
+                response: "🎯 We have several exciting events coming up:\n\n• **AI Art Challenge Launch** - Today at 10:00 AM\n• **Weekly Tech News Digest** - Today at 3:00 PM\n• **Community Showcase Event** - Tomorrow at 9:00 AM\n• **Member Spotlight Feature** - Monday at 2:00 PM\n\nAll events are announced on both Telegram and Discord!"
+            },
+            {
+                patterns: ['discord', 'join discord', 'discord link', 'server'],
+                response: "💬 Join our Discord community here: **discord.gg/arts-tech-community**\n\nOnce you join:\n1. Check #welcome for community guidelines\n2. Introduce yourself in #introductions\n3. Get roles in #roles to access specific channels\n4. Join #general to start chatting!\n\nWe have 1,193 active members waiting to meet you! 🚀"
+            },
+            {
+                patterns: ['create post', 'write post', 'generate post', 'content', 'meetup post'],
+                response: "📝 I'll create an engaging post for your next meetup:\n\n---\n**🌟 Community Meetup Alert!**\n\nHey creative minds! 🎨 Our next meetup is happening this Saturday at 3 PM!\n\n**What to expect:**\n• AI art showcase & live demos\n• Networking with fellow creators\n• Tech talks on latest AI models\n• Pizza & drinks on us! 🍕\n\n📍 Location: Tech Hub Downtown\n💬 RSVP in #events or DM me\n\nSee you there! 💜\n---\n\nWant me to post this to Telegram and Discord?"
+            },
+            {
+                patterns: ['stats', 'statistics', 'community stats', 'numbers', 'members'],
+                response: "📊 Here are our latest community stats:\n\n**Total Members:** 2,847 (+18% this month!)\n**Active Users:** 1,234 daily\n**Engagement Rate:** 92% (amazing!)\n\n**Platform Distribution:**\n• Telegram: 1,654 members (58%)\n• Discord: 1,193 members (42%)\n\n**Today's Activity:**\n• Messages: 1,847\n• New Threads: 23\n• Reactions: 4,392\n• Voice Participants: 47\n\nWe're growing fast! 🚀"
+            },
+            {
+                patterns: ['moderator', 'mod', 'become mod', 'volunteer', 'help manage'],
+                response: "👑 Awesome that you want to become a moderator!\n\n**Requirements:**\n✅ Active member for 3+ months\n✅ Positive community contribution\n✅ Available 10+ hours/week\n✅ Discord & Telegram experience\n\n**Application Process:**\n1. Fill out form in #mod-applications\n2. Current mods review your activity\n3. Interview with community lead\n4. Trial period (2 weeks)\n\n**Perks:**\n• Exclusive mod channels\n• Early event access\n• Custom role & badge\n• Direct impact on community growth\n\nInterested? Head to #mod-applications! 💜"
+            },
+            {
+                patterns: ['telegram', 'telegram link', 'join telegram'],
+                response: "📱 Join our Telegram community: **t.me/ArtsAndTechCommunity**\n\nWe have 1,654 members sharing:\n• Daily AI art challenges\n• Tech news & updates\n• Quick Q&A sessions\n• Behind-the-scenes content\n\nTelegram is perfect for quick updates and casual chats. See you there! 🚀"
+            },
+            {
+                patterns: ['help', 'what can you do', 'capabilities', 'features'],
+                response: "🤖 I'm your AI Community Manager! Here's what I can do:\n\n**Content Creation:**\n• Generate engaging posts\n• Write event announcements\n• Create member spotlights\n\n**Event Management:**\n• Schedule & announce events\n• Send reminders\n• Compile attendee lists\n\n**Member Support:**\n• Answer community questions\n• Provide onboarding help\n• Share resources & links\n\n**Automation:**\n• Welcome new members\n• Moderate content\n• Track engagement metrics\n\nJust ask me anything! 💜"
+            },
+            {
+                patterns: ['rules', 'guidelines', 'community rules', 'code of conduct'],
+                response: "📜 Our Community Guidelines:\n\n**Be Respectful:**\n• Treat everyone with kindness\n• No harassment or hate speech\n• Constructive criticism only\n\n**Stay On Topic:**\n• AI, art, and tech discussions\n• Use appropriate channels\n• No spam or self-promotion without permission\n\n**Quality Content:**\n• Share your work & knowledge\n• Credit original creators\n• Help others learn & grow\n\n**Consequences:**\n⚠️ Warning → 24h mute → Permanent ban\n\nLet's keep this community amazing! 🌟"
+            }
+        ];
+
+        function toggleChat() {
+            chatPanel.classList.toggle('open');
+            chatToggle.classList.toggle('open');
+            contentArea.classList.toggle('chat-open');
+            
+            if (chatPanel.classList.contains('open')) {
+                chatToggle.innerHTML = '✕';
+                chatInput.focus();
+            } else {
+                chatToggle.innerHTML = '💬';
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendQuickMessage(message) {
+            chatInput.value = message;
+            sendMessage();
+        }
+
+        function sendMessage() {
+            const message = chatInput.value.trim();
+            if (!message) return;
+
+            // Add user message
+            addMessage(message, 'user');
+            chatInput.value = '';
+
+            // Show typing indicator
+            typingIndicator.classList.add('active');
+            scrollToBottom();
+
+            // Get AI response after delay
+            setTimeout(() => {
+                const response = getAIResponse(message);
+                typingIndicator.classList.remove('active');
+                addMessage(response, 'ai');
+            }, 1500 + Math.random() * 1000);
+        }
+
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = sender === 'user' ? '👤' : '🤖';
+
+            const content = document.createElement('div');
+            content.className = 'message-content';
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.innerHTML = text.replace(/\n/g, '<br>');
+
+            const time = document.createElement('div');
+            time.className = 'message-time';
+            time.textContent = 'Just now';
+
+            content.appendChild(bubble);
+            content.appendChild(time);
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
+
+            chatMessages.appendChild(messageDiv);
+            scrollToBottom();
+        }
+
+        function getAIResponse(message) {
+            const messageLower = message.toLowerCase();
+
+            // Check knowledge base for matching patterns
+            for (const item of knowledgeBase) {
+                if (item.patterns.some(pattern => messageLower.includes(pattern))) {
+                    return item.response;
+                }
+            }
+
+            // Fallback responses
+            const fallbacks = [
+                "🤔 That's an interesting question! While I don't have a specific answer for that, you can:\n• Ask in #general-chat on Discord\n• Check our FAQ in #resources\n• Tag @moderators for human help\n\nWhat else can I help you with?",
+                "I'm still learning about that topic! 📚 Try asking:\n• About upcoming events\n• How to join Discord/Telegram\n• Community stats & info\n• Content creation help\n\nOr message our moderator team for more specific questions!",
+                "Great question! 💡 I don't have detailed info on that yet, but I can help with:\n• Event schedules\n• Community guidelines\n• Platform links & joining\n• General community questions\n\nFeel free to ask the community directly in #ask-anything!"
+            ];
+
+            return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        }
+
+        function scrollToBottom() {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // Auto-open chat on first visit (optional)
+        // setTimeout(() => toggleChat(), 1000);
+    </script>
 </body>
 </html>
