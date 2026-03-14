@@ -730,33 +730,24 @@
                     <div class="message-avatar">🤖</div>
                     <div class="message-content">
                         <div class="message-bubble">
-                            Hey! I'm your AI Community Manager. I can help with events, member questions, content creation, and Discord/Telegram management. What would you like to know?
+                            Hey! 👋 I manage this community across Discord & Telegram. Ask me anything or pick an option below!
                         </div>
                         <div class="message-time">Just now</div>
                     </div>
                 </div>
-                <div class="typing-indicator" id="typingIndicator">
-                    <div class="message-avatar">🤖</div>
-                    <div class="typing-dots">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
+                <div class="chat-quick-buttons" id="quickButtons">
+                    <button class="quick-btn" onclick="sendQuickMessage('What events are coming up?')">🎯 Events</button>
+                    <button class="quick-btn" onclick="sendQuickMessage('How do I join the Discord?')">💬 Join</button>
+                    <button class="quick-btn" onclick="sendQuickMessage('Write a post about our next meetup')">📝 Post</button>
+                    <button class="quick-btn" onclick="sendQuickMessage('Show me the community stats')">📊 Stats</button>
+                    <button class="quick-btn" onclick="sendQuickMessage('How do I become a moderator?')">👑 Mod</button>
                 </div>
-            </div>
-
-            <div class="chat-quick-buttons" id="quickButtons">
-                <button class="quick-btn" onclick="sendQuickMessage('What events are coming up?')">🎯 Upcoming Events</button>
-                <button class="quick-btn" onclick="sendQuickMessage('How do I join the Discord?')">💬 Join Discord</button>
-                <button class="quick-btn" onclick="sendQuickMessage('Create a post about our next meetup')">📝 Create Post</button>
-                <button class="quick-btn" onclick="sendQuickMessage('Show community stats')">📊 Community Stats</button>
-                <button class="quick-btn" onclick="sendQuickMessage('How can I become a moderator?')">👑 Become Moderator</button>
             </div>
 
             <div class="chat-input-area">
                 <div class="chat-input-wrapper">
-                    <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
-                    <button class="send-btn" onclick="sendMessage()">➤</button>
+                    <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+                    <button class="send-btn" id="sendBtn">➤</button>
                 </div>
             </div>
         </div>
@@ -765,150 +756,184 @@
     </div>
 
     <script>
-        const chatPanel = document.getElementById('chatPanel');
-        const chatToggle = document.getElementById('chatToggle');
-        const contentArea = document.getElementById('contentArea');
-        const chatMessages = document.getElementById('chatMessages');
-        const chatInput = document.getElementById('chatInput');
-        const typingIndicator = document.getElementById('typingIndicator');
+    (function() {
+        var chatPanel = document.getElementById('chatPanel');
+        var chatToggle = document.getElementById('chatToggle');
+        var contentArea = document.getElementById('contentArea');
+        var chatMessages = document.getElementById('chatMessages');
+        var chatInput = document.getElementById('chatInput');
+        var sendBtn = document.getElementById('sendBtn');
+        var quickButtons = document.getElementById('quickButtons');
+        var isBusy = false;
 
-        // Knowledge base with pattern matching
-        const knowledgeBase = [
-            {
-                patterns: ['hey', 'hi', 'hello', 'hallo', 'sup', 'yo', 'good morning', 'good evening', 'whats up', "what's up", 'howdy', 'greetings'],
-                response: "Hey there! 👋 Welcome! I'm your AI Community Manager.\n\nI can help you with:\n🎯 Upcoming events & schedules\n💬 Joining Discord or Telegram\n📝 Creating community posts\n📊 Community stats & insights\n👑 Becoming a moderator\n\nWhat would you like to know?"
-            },
-            {
-                patterns: ['event', 'events', 'coming up', 'upcoming', 'schedule', 'calendar'],
-                response: "🎯 We have several exciting events coming up:\n\n• **AI Art Challenge Launch** - Today at 10:00 AM\n• **Weekly Tech News Digest** - Today at 3:00 PM\n• **Community Showcase Event** - Tomorrow at 9:00 AM\n• **Member Spotlight Feature** - Monday at 2:00 PM\n\nAll events are announced on both Telegram and Discord!"
-            },
-            {
-                patterns: ['discord', 'join discord', 'discord link', 'server'],
-                response: "💬 Join our Discord community here: **discord.gg/arts-tech-community**\n\nOnce you join:\n1. Check #welcome for community guidelines\n2. Introduce yourself in #introductions\n3. Get roles in #roles to access specific channels\n4. Join #general to start chatting!\n\nWe have 1,193 active members waiting to meet you! 🚀"
-            },
-            {
-                patterns: ['create post', 'write post', 'generate post', 'content', 'meetup post'],
-                response: "📝 I'll create an engaging post for your next meetup:\n\n---\n**🌟 Community Meetup Alert!**\n\nHey creative minds! 🎨 Our next meetup is happening this Saturday at 3 PM!\n\n**What to expect:**\n• AI art showcase & live demos\n• Networking with fellow creators\n• Tech talks on latest AI models\n• Pizza & drinks on us! 🍕\n\n📍 Location: Tech Hub Downtown\n💬 RSVP in #events or DM me\n\nSee you there! 💜\n---\n\nWant me to post this to Telegram and Discord?"
-            },
-            {
-                patterns: ['stats', 'statistics', 'community stats', 'numbers', 'members'],
-                response: "📊 Here are our latest community stats:\n\n**Total Members:** 2,847 (+18% this month!)\n**Active Users:** 1,234 daily\n**Engagement Rate:** 92% (amazing!)\n\n**Platform Distribution:**\n• Telegram: 1,654 members (58%)\n• Discord: 1,193 members (42%)\n\n**Today's Activity:**\n• Messages: 1,847\n• New Threads: 23\n• Reactions: 4,392\n• Voice Participants: 47\n\nWe're growing fast! 🚀"
-            },
-            {
-                patterns: ['moderator', 'mod', 'become mod', 'volunteer', 'help manage'],
-                response: "👑 Awesome that you want to become a moderator!\n\n**Requirements:**\n✅ Active member for 3+ months\n✅ Positive community contribution\n✅ Available 10+ hours/week\n✅ Discord & Telegram experience\n\n**Application Process:**\n1. Fill out form in #mod-applications\n2. Current mods review your activity\n3. Interview with community lead\n4. Trial period (2 weeks)\n\n**Perks:**\n• Exclusive mod channels\n• Early event access\n• Custom role & badge\n• Direct impact on community growth\n\nInterested? Head to #mod-applications! 💜"
-            },
-            {
-                patterns: ['telegram', 'telegram link', 'join telegram'],
-                response: "📱 Join our Telegram community: **t.me/ArtsAndTechCommunity**\n\nWe have 1,654 members sharing:\n• Daily AI art challenges\n• Tech news & updates\n• Quick Q&A sessions\n• Behind-the-scenes content\n\nTelegram is perfect for quick updates and casual chats. See you there! 🚀"
-            },
-            {
-                patterns: ['help', 'what can you do', 'capabilities', 'features'],
-                response: "🤖 I'm your AI Community Manager! Here's what I can do:\n\n**Content Creation:**\n• Generate engaging posts\n• Write event announcements\n• Create member spotlights\n\n**Event Management:**\n• Schedule & announce events\n• Send reminders\n• Compile attendee lists\n\n**Member Support:**\n• Answer community questions\n• Provide onboarding help\n• Share resources & links\n\n**Automation:**\n• Welcome new members\n• Moderate content\n• Track engagement metrics\n\nJust ask me anything! 💜"
-            },
-            {
-                patterns: ['rules', 'guidelines', 'community rules', 'code of conduct'],
-                response: "📜 Our Community Guidelines:\n\n**Be Respectful:**\n• Treat everyone with kindness\n• No harassment or hate speech\n• Constructive criticism only\n\n**Stay On Topic:**\n• AI, art, and tech discussions\n• Use appropriate channels\n• No spam or self-promotion without permission\n\n**Quality Content:**\n• Share your work & knowledge\n• Credit original creators\n• Help others learn & grow\n\n**Consequences:**\n⚠️ Warning → 24h mute → Permanent ban\n\nLet's keep this community amazing! 🌟"
-            }
-        ];
+        // Event listeners
+        chatInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+        sendBtn.addEventListener('click', sendMessage);
 
-        function toggleChat() {
+        window.toggleChat = function() {
             chatPanel.classList.toggle('open');
             chatToggle.classList.toggle('open');
             contentArea.classList.toggle('chat-open');
-            
             if (chatPanel.classList.contains('open')) {
                 chatToggle.innerHTML = '✕';
-                chatInput.focus();
+                setTimeout(function() { chatInput.focus(); }, 100);
             } else {
                 chatToggle.innerHTML = '💬';
             }
-        }
+        };
 
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-
-        function sendQuickMessage(message) {
-            chatInput.value = message;
+        window.sendQuickMessage = function(msg) {
+            chatInput.value = msg;
             sendMessage();
-        }
+        };
 
         function sendMessage() {
-            const message = chatInput.value.trim();
-            if (!message) return;
-
-            // Add user message
-            addMessage(message, 'user');
+            var msg = chatInput.value.trim();
+            if (!msg || isBusy) return;
+            isBusy = true;
             chatInput.value = '';
 
-            // Show typing indicator
-            typingIndicator.classList.add('active');
-            scrollToBottom();
+            if (quickButtons) quickButtons.style.display = 'none';
+            addMessage(msg, 'user');
+            showTyping();
 
-            // Get AI response after delay
-            setTimeout(() => {
-                const response = getAIResponse(message);
-                typingIndicator.classList.remove('active');
+            setTimeout(function() {
+                hideTyping();
+                var response = getResponse(msg);
                 addMessage(response, 'ai');
-            }, 1500 + Math.random() * 1000);
+                isBusy = false;
+            }, 800 + Math.random() * 700);
         }
 
-        function addMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${sender}`;
+        function getResponse(msg) {
+            var lower = msg.toLowerCase();
 
-            const avatar = document.createElement('div');
+            // Greetings
+            if (/\b(hey|hi|hello|hallo|yo|sup|morning|evening|moin|servus)\b/.test(lower)) {
+                return pick([
+                    "Hey! 👋 What's up? Ask me about events, how to join, community stats — or just chat!",
+                    "Hi there! 😊 What can I help you with today?",
+                    "Hey! Nice to see you. What do you want to know about the community?"
+                ]);
+            }
+
+            // Events
+            if (/\b(event|events|coming up|upcoming|schedule|calendar|when|meetup)\b/.test(lower)) {
+                return "Here's what's coming up:\n\n🎨 <strong>AI Art Challenge</strong> — Today, 10 AM\n📰 <strong>Weekly Tech Digest</strong> — Today, 3 PM\n🌟 <strong>Community Showcase</strong> — Tomorrow, 9 AM\n🏆 <strong>Member Spotlight</strong> — Monday, 2 PM\n\nAll announced on both Discord & Telegram! Want me to set a reminder?";
+            }
+
+            // Discord
+            if (/\b(discord|join discord|server|invite)\b/.test(lower)) {
+                return "Here's the invite: <strong>discord.gg/arts-tech-community</strong>\n\nQuick start:\n1️⃣ Read #welcome\n2️⃣ Introduce yourself in #intros\n3️⃣ Grab your roles in #roles\n4️⃣ Jump into #general\n\n1,193 members are already chatting. See you in there! 🚀";
+            }
+
+            // Telegram
+            if (/\b(telegram|tg|telegram link)\b/.test(lower)) {
+                return "Join us on Telegram: <strong>t.me/ArtsAndTechCommunity</strong>\n\n1,654 members sharing daily AI art challenges, tech news, and quick Q&As. Perfect for quick updates on the go! 📱";
+            }
+
+            // Post creation
+            if (/\b(post|write|create|generate|content|announce|announcement)\b/.test(lower)) {
+                return "Here's a ready-to-post announcement:\n\n<strong>🌟 Community Meetup Alert!</strong>\n\nHey creative minds! 🎨 Our next meetup is this Saturday at 3 PM!\n\n• AI art showcase & live demos\n• Networking with fellow creators\n• Tech talks on latest AI models\n• Pizza & drinks on us 🍕\n\n📍 Tech Hub Downtown\n💬 RSVP in #events\n\nWant me to post this to both platforms?";
+            }
+
+            // Stats
+            if (/\b(stats|statistic|numbers|members|growth|how many|analytics|data)\b/.test(lower)) {
+                return "📊 <strong>Community Snapshot</strong>\n\n👥 2,847 total members (+18% this month)\n🔥 1,234 active daily\n💬 1,847 messages today\n🧵 23 new threads\n❤️ 4,392 reactions\n🎙️ 47 in voice channels\n\nTelegram: 1,654 (58%) • Discord: 1,193 (42%)\n\nEngagement rate is at 92% — that's exceptional! 🚀";
+            }
+
+            // Moderator
+            if (/\b(mod|moderator|volunteer|admin|manage|become mod)\b/.test(lower)) {
+                return "Want to become a mod? Here's how:\n\n<strong>Requirements:</strong>\n✅ 3+ months active membership\n✅ Positive contributions\n✅ 10+ hrs/week available\n\n<strong>Process:</strong>\n1️⃣ Apply in #mod-applications\n2️⃣ Activity review by current mods\n3️⃣ Quick interview\n4️⃣ 2-week trial period\n\nPerks include exclusive channels, early event access, and a custom badge. Go for it! 💜";
+            }
+
+            // Rules
+            if (/\b(rules|guidelines|code|conduct|policy|ban|mute)\b/.test(lower)) {
+                return "Quick version of our rules:\n\n🤝 <strong>Be respectful</strong> — no hate, no harassment\n🎯 <strong>Stay on topic</strong> — AI, art, tech\n🚫 <strong>No spam</strong> — no unsolicited self-promo\n✨ <strong>Credit creators</strong> — always\n\nViolations: Warning → 24h mute → Ban\n\nFull guidelines in #rules on Discord.";
+            }
+
+            // Help
+            if (/\b(help|what can you|what do you|features|capabilities)\b/.test(lower)) {
+                return "I can do quite a lot! Here's the rundown:\n\n📝 <strong>Content</strong> — generate posts, announcements, spotlights\n🎯 <strong>Events</strong> — schedule, announce, send reminders\n👥 <strong>Members</strong> — answer questions, onboarding, resources\n🛡️ <strong>Moderation</strong> — auto-filter spam, enforce rules\n📊 <strong>Analytics</strong> — engagement tracking, growth reports\n\nJust ask naturally — I'll figure it out! 😊";
+            }
+
+            // Thanks
+            if (/\b(thanks|thank you|thx|cheers|danke|awesome|great|perfect|nice)\b/.test(lower)) {
+                return pick([
+                    "Glad I could help! 😊 Anything else?",
+                    "Anytime! Let me know if you need anything else 👋",
+                    "You're welcome! That's what I'm here for 💜"
+                ]);
+            }
+
+            // Bye
+            if (/\b(bye|goodbye|cya|later|see you|tschüss)\b/.test(lower)) {
+                return pick([
+                    "See you around! 👋 Come back anytime.",
+                    "Bye! Have a great day 😊",
+                    "Later! Don't be a stranger 💜"
+                ]);
+            }
+
+            // Smart fallback — conversational, not a menu dump
+            return pick([
+                "Hmm, I'm not sure about that one. Try asking about events, how to join, community stats, or anything community-related!",
+                "I didn't quite catch that — but I'm pretty smart about community stuff! Try asking about events, the Discord, or our stats 😊",
+                "Not sure I understood that. I'm best at community management — events, members, content, moderation. What do you need?"
+            ]);
+        }
+
+        function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        function addMessage(text, sender) {
+            var div = document.createElement('div');
+            div.className = 'chat-message ' + sender;
+
+            var avatar = document.createElement('div');
             avatar.className = 'message-avatar';
             avatar.textContent = sender === 'user' ? '👤' : '🤖';
 
-            const content = document.createElement('div');
+            var content = document.createElement('div');
             content.className = 'message-content';
 
-            const bubble = document.createElement('div');
+            var bubble = document.createElement('div');
             bubble.className = 'message-bubble';
             bubble.innerHTML = text.replace(/\n/g, '<br>');
 
-            const time = document.createElement('div');
+            var time = document.createElement('div');
             time.className = 'message-time';
             time.textContent = 'Just now';
 
             content.appendChild(bubble);
             content.appendChild(time);
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(content);
-
-            chatMessages.appendChild(messageDiv);
+            div.appendChild(avatar);
+            div.appendChild(content);
+            chatMessages.appendChild(div);
             scrollToBottom();
         }
 
-        function getAIResponse(message) {
-            const messageLower = message.toLowerCase();
+        function showTyping() {
+            var existing = document.getElementById('liveTyping');
+            if (existing) existing.remove();
+            var div = document.createElement('div');
+            div.id = 'liveTyping';
+            div.className = 'chat-message';
+            div.innerHTML = '<div class="message-avatar">🤖</div><div class="typing-dots" style="background:var(--bg-tertiary,#252540);padding:0.75rem 1rem;border-radius:12px;display:flex;gap:0.35rem"><div class="typing-dot" style="width:8px;height:8px;border-radius:50%;background:var(--accent-primary,#6366f1);animation:typing 1.4s infinite"></div><div class="typing-dot" style="width:8px;height:8px;border-radius:50%;background:var(--accent-primary,#6366f1);animation:typing 1.4s infinite 0.2s"></div><div class="typing-dot" style="width:8px;height:8px;border-radius:50%;background:var(--accent-primary,#6366f1);animation:typing 1.4s infinite 0.4s"></div></div>';
+            chatMessages.appendChild(div);
+            scrollToBottom();
+        }
 
-            // Check knowledge base for matching patterns
-            for (const item of knowledgeBase) {
-                if (item.patterns.some(pattern => messageLower.includes(pattern))) {
-                    return item.response;
-                }
-            }
-
-            // Fallback responses
-            const fallbacks = [
-                "Good question! 🙂 I can help you best with these topics:\n\n🎯 **\"events\"** — upcoming schedule\n💬 **\"discord\"** or **\"telegram\"** — how to join\n📊 **\"stats\"** — community numbers\n📝 **\"create post\"** — content generation\n👑 **\"moderator\"** — how to become one\n\nTry one of those, or use the quick buttons below!",
-                "I'm here to help! 💬 Try asking me about:\n\n• Upcoming events & meetups\n• How to join our Discord or Telegram\n• Community stats & growth\n• Content creation for posts\n• Becoming a moderator\n\nOr click one of the quick action buttons!"
-            ];
-
-            return fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        function hideTyping() {
+            var el = document.getElementById('liveTyping');
+            if (el) el.remove();
         }
 
         function scrollToBottom() {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            requestAnimationFrame(function() { chatMessages.scrollTop = chatMessages.scrollHeight; });
         }
-
-        // Auto-open chat on first visit (optional)
-        // setTimeout(() => toggleChat(), 1000);
+    })();
     </script>
 </body>
 </html>

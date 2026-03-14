@@ -1109,7 +1109,7 @@
                         <div class="message-avatar">🤖</div>
                         <div class="message-content">
                             <div class="message-bubble">
-                                Hello! I'm your AI Support Agent. I'm here to help you with refunds, account issues, password resets, and technical questions. How can I assist you today?
+                                Hi! 👋 I'm your AI support agent. Tell me what's going on and I'll take care of it — or pick one of the options below to get started quickly.
                             </div>
                             <div class="message-meta">
                                 <span class="agent-label">Support Agent (L1)</span>
@@ -1118,27 +1118,18 @@
                             </div>
                         </div>
                     </div>
-                    <div class="typing-indicator" id="typingIndicator">
-                        <div class="message-avatar">🤖</div>
-                        <div class="typing-dots">
-                            <div class="typing-dot"></div>
-                            <div class="typing-dot"></div>
-                            <div class="typing-dot"></div>
-                        </div>
+                    <div class="chat-quick-actions" id="quickActions">
+                        <button class="quick-action-btn" onclick="sendQuickMessage('I need a refund for my last order')">💰 Refund</button>
+                        <button class="quick-action-btn" onclick="sendQuickMessage('My account is locked and I can\'t log in')">🔒 Account Locked</button>
+                        <button class="quick-action-btn" onclick="sendQuickMessage('I forgot my password')">🔑 Password</button>
+                        <button class="quick-action-btn" onclick="sendQuickMessage('Something is broken on your website')">⚙️ Bug Report</button>
                     </div>
-                </div>
-
-                <div class="chat-quick-actions" id="quickActions">
-                    <button class="quick-action-btn" onclick="sendQuickMessage('I need a refund')">💰 Refund Request</button>
-                    <button class="quick-action-btn" onclick="sendQuickMessage('Account locked')">🔒 Account Issue</button>
-                    <button class="quick-action-btn" onclick="sendQuickMessage('Reset password')">🔑 Password Reset</button>
-                    <button class="quick-action-btn" onclick="sendQuickMessage('Technical problem')">⚙️ Technical Question</button>
                 </div>
 
                 <div class="chat-input-container">
                     <div class="chat-input-wrapper">
-                        <input type="text" class="chat-input" id="chatInput" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
-                        <button class="send-btn" onclick="sendMessage()">➤</button>
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Type your message...">
+                        <button class="send-btn" id="sendBtn">➤</button>
                     </div>
                 </div>
             </div>
@@ -1148,312 +1139,538 @@
     </div>
 
     <script>
+    (function() {
         const chatOverlay = document.getElementById('chatOverlay');
         const chatMessages = document.getElementById('chatMessages');
         const chatInput = document.getElementById('chatInput');
-        const typingIndicator = document.getElementById('typingIndicator');
+        const sendBtn = document.getElementById('sendBtn');
         const agentAvatar = document.getElementById('agentAvatar');
         const agentName = document.getElementById('agentName');
         const agentTitle = document.getElementById('agentTitle');
+        const quickActions = document.getElementById('quickActions');
 
-        let currentAgent = {
-            name: 'Support Agent',
-            title: 'Layer 1 • Customer Support',
-            avatar: '🤖',
-            level: 1
-        };
+        let currentAgent = { name: 'Support Agent', title: 'Layer 1 • Customer Support', avatar: '🤖', level: 1 };
+        let conversationStep = 0;
+        let currentScenario = null;
+        let isBusy = false;
 
         const agents = {
             1: { name: 'Support Agent', title: 'Layer 1 • Customer Support', avatar: '🤖' },
-            2: { name: 'Quality Supervisor', title: 'Layer 2 • Quality Assurance', avatar: '👔' },
-            3: { name: 'Operations Manager', title: 'Layer 3 • Process Optimization', avatar: '📊' },
-            4: { name: 'Strategic Director', title: 'Layer 4 • Strategic Decision Making', avatar: '🎯' }
+            2: { name: 'Quality Supervisor', title: 'Layer 2 • Escalation Review', avatar: '👔' },
+            3: { name: 'Operations Manager', title: 'Layer 3 • Process Resolution', avatar: '📊' }
         };
 
-        // Multi-language support scenarios
-        const scenarios = {
-            refund: {
-                en: {
-                    trigger: ['refund', 'money back', 'return', 'reimburse'],
-                    responses: [
-                        "I understand you'd like to request a refund. Let me process that for you.",
-                        "I've reviewed your order #8374. You're eligible for a full refund.",
-                        "✅ **Refund Processed Successfully**\n\nAmount: $29.99\nMethod: Original payment method\nExpected arrival: 3-5 business days\n\nIs there anything else I can help you with?"
-                    ]
-                },
-                de: {
-                    trigger: ['rückerstattung', 'geld zurück', 'zurückgeben'],
-                    responses: [
-                        "Ich verstehe, Sie möchten eine Rückerstattung beantragen. Ich kümmere mich darum.",
-                        "Ich habe Ihre Bestellung #8374 überprüft. Sie haben Anspruch auf eine vollständige Rückerstattung.",
-                        "✅ **Rückerstattung erfolgreich bearbeitet**\n\nBetrag: 29,99 €\nMethode: Ursprüngliche Zahlungsmethode\nVoraussichtliche Ankunft: 3-5 Werktage\n\nKann ich Ihnen sonst noch helfen?"
-                    ]
-                }
-            },
-            account: {
-                en: {
-                    trigger: ['account', 'locked', 'suspended', 'banned', 'access'],
-                    responses: [
-                        "I see your account issue requires escalation to our Quality Supervisor.",
-                        "Our supervisor has reviewed your case. This requires immediate attention.",
-                        "✅ **Account Restored Successfully**\n\nYour account has been unlocked and is now fully accessible. We've also added 30 days of premium membership as an apology for the inconvenience.\n\nPlease verify your email to complete the restoration."
-                    ]
-                },
-                de: {
-                    trigger: ['konto', 'gesperrt', 'gesperrt', 'zugang'],
-                    responses: [
-                        "Ich sehe, dass Ihr Kontoproblem an unseren Quality Supervisor weitergeleitet werden muss.",
-                        "Unser Supervisor hat Ihren Fall überprüft. Dies erfordert sofortige Aufmerksamkeit.",
-                        "✅ **Konto erfolgreich wiederhergestellt**\n\nIhr Konto wurde entsperrt und ist jetzt vollständig zugänglich. Wir haben außerdem 30 Tage Premium-Mitgliedschaft als Entschuldigung für die Unannehmlichkeiten hinzugefügt.\n\nBitte bestätigen Sie Ihre E-Mail, um die Wiederherstellung abzuschließen."
-                    ]
-                }
-            },
-            password: {
-                en: {
-                    trigger: ['password', 'reset', 'forgot', 'change password'],
-                    responses: [
-                        "I can help you reset your password right away.",
-                        "✅ **Password Reset Link Sent**\n\nCheck your email: **user@example.com**\n\nThe link expires in 1 hour. If you don't see it, check your spam folder.\n\nNeed anything else?"
-                    ]
-                },
-                de: {
-                    trigger: ['passwort', 'zurücksetzen', 'vergessen', 'ändern'],
-                    responses: [
-                        "Ich kann Ihnen sofort helfen, Ihr Passwort zurückzusetzen.",
-                        "✅ **Passwort-Reset-Link gesendet**\n\nÜberprüfen Sie Ihre E-Mail: **benutzer@beispiel.de**\n\nDer Link läuft in 1 Stunde ab. Falls Sie ihn nicht sehen, prüfen Sie Ihren Spam-Ordner.\n\nBrauchen Sie noch etwas?"
-                    ]
-                }
-            },
-            technical: {
-                en: {
-                    trigger: ['technical', 'bug', 'error', 'not working', 'broken', 'problem'],
-                    responses: [
-                        "I'll help you troubleshoot this technical issue.",
-                        "This appears to be a more complex technical problem. Let me escalate this to our Quality Supervisor who has deeper system access.",
-                        "Our technical team has identified and resolved the issue. The system is now functioning normally. Thank you for your patience!"
-                    ]
-                },
-                de: {
-                    trigger: ['technisch', 'fehler', 'problem', 'funktioniert nicht', 'kaputt'],
-                    responses: [
-                        "Ich helfe Ihnen, dieses technische Problem zu beheben.",
-                        "Dies scheint ein komplexeres technisches Problem zu sein. Lassen Sie mich dies an unseren Quality Supervisor eskalieren, der tieferen Systemzugriff hat.",
-                        "Unser technisches Team hat das Problem identifiziert und behoben. Das System funktioniert jetzt normal. Danke für Ihre Geduld!"
-                    ]
-                }
-            }
-        };
+        // --- Event listeners ---
+        chatInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+        });
+        sendBtn.addEventListener('click', sendMessage);
+        chatOverlay.addEventListener('click', function(e) {
+            if (e.target === chatOverlay) closeChat();
+        });
 
-        function openChat() {
+        window.openChat = function() {
             chatOverlay.classList.add('active');
-            chatInput.focus();
-        }
-
-        function closeChat() {
-            chatOverlay.classList.remove('active');
-        }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                sendMessage();
-            }
-        }
-
-        function sendQuickMessage(message) {
-            chatInput.value = message;
+            setTimeout(function() { chatInput.focus(); }, 100);
+        };
+        window.closeChat = function() { chatOverlay.classList.remove('active'); };
+        window.sendQuickMessage = function(msg) {
+            chatInput.value = msg;
             sendMessage();
-        }
-
-        function detectLanguage(text) {
-            const germanWords = ['ich', 'möchte', 'hilfe', 'problem', 'konto', 'passwort', 'rückerstattung', 'wie', 'was', 'können'];
-            const textLower = text.toLowerCase();
-            
-            const germanMatches = germanWords.filter(word => textLower.includes(word)).length;
-            return germanMatches >= 2 ? 'de' : 'en';
-        }
+        };
 
         function sendMessage() {
-            const message = chatInput.value.trim();
-            if (!message) return;
-
-            addMessage(message, 'customer');
+            var msg = chatInput.value.trim();
+            if (!msg || isBusy) return;
+            isBusy = true;
             chatInput.value = '';
 
-            typingIndicator.classList.add('active');
-            scrollToBottom();
+            // Hide quick actions after first message
+            if (quickActions) quickActions.style.display = 'none';
 
-            setTimeout(() => {
-                const response = getAIResponse(message);
-                typingIndicator.classList.remove('active');
-                handleResponse(response);
-            }, 1200 + Math.random() * 800);
+            addMessage(msg, 'customer');
+            showTyping();
+
+            var delay = 800 + Math.random() * 700;
+            setTimeout(function() { processInput(msg); }, delay);
         }
 
-        function addMessage(text, sender) {
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${sender}`;
+        function processInput(msg) {
+            var lower = msg.toLowerCase().replace(/[^a-zäöüß\s]/g, '');
+            var lang = detectLang(lower);
 
-            const avatar = document.createElement('div');
+            // Continue existing multi-step scenario
+            if (currentScenario && conversationStep > 0) {
+                continueScenario(lower, lang);
+                return;
+            }
+
+            // Detect scenario
+            if (/\b(refund|money back|charged|overcharged|return|reimburse|rückerstattung|geld zurück)\b/.test(lower)) {
+                startScenario('refund', lang);
+            } else if (/\b(account|locked|suspended|banned|cant log|can.t log|login|konto|gesperrt|zugang|einloggen)\b/.test(lower)) {
+                startScenario('account', lang);
+            } else if (/\b(password|forgot|reset|passwort|vergessen|zurücksetzen)\b/.test(lower)) {
+                startScenario('password', lang);
+            } else if (/\b(bug|broken|error|crash|not working|glitch|issue|fehler|kaputt|funktioniert nicht|problem)\b/.test(lower)) {
+                startScenario('technical', lang);
+            } else if (/\b(order|shipping|track|delivery|package|bestell|lieferung|paket|versand|sendung)\b/.test(lower)) {
+                startScenario('shipping', lang);
+            } else if (/\b(cancel|subscription|unsubscribe|kündigen|abo|abonnement)\b/.test(lower)) {
+                startScenario('cancel', lang);
+            } else if (/\b(hey|hi|hello|hallo|yo|sup|morning|evening|guten|moin|servus|grüß)\b/.test(lower)) {
+                respondGreeting(lang);
+            } else if (/\b(thanks|thank you|danke|thx|cheers)\b/.test(lower)) {
+                respondThanks(lang);
+            } else if (/\b(bye|goodbye|cya|tschüss|auf wiedersehen)\b/.test(lower)) {
+                respondBye(lang);
+            } else if (/\b(human|real person|agent|speak.*someone|talk.*person|mensch|mitarbeiter|echter)\b/.test(lower)) {
+                respondHumanRequest(lang);
+            } else {
+                respondSmart(msg, lang);
+            }
+        }
+
+        // --- Scenario flows ---
+        var flows = {
+            refund: {
+                en: [
+                    "Got it — let me pull up your recent orders real quick.",
+                    function() {
+                        addSystemNotice('🔍 <strong>Searching order history...</strong> Found 3 recent orders.', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addMessage("I found your most recent order — <strong>Order #7829</strong> from 2 days ago ($49.99). Is that the one you'd like refunded?", 'agent');
+                            isBusy = false;
+                        }, 1200);
+                    },
+                    "Perfect. Processing your refund now...",
+                    function() {
+                        addSystemNotice('✅ <strong>Refund Approved — $49.99</strong><br>→ Back to your Visa ending in 4821<br>→ Arrives in 3-5 business days<br>→ Confirmation email sent', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addMessage("All done! You should see the refund in 3-5 business days. Anything else I can help with?", 'agent');
+                            currentScenario = null;
+                            conversationStep = 0;
+                            isBusy = false;
+                        }, 1000);
+                    }
+                ],
+                de: [
+                    "Alles klar — ich schau mir kurz Ihre letzten Bestellungen an.",
+                    function() {
+                        addSystemNotice('🔍 <strong>Bestellhistorie durchsucht...</strong> 3 aktuelle Bestellungen gefunden.', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addMessage("Ich habe Ihre letzte Bestellung gefunden — <strong>Bestellung #7829</strong> von vor 2 Tagen (49,99 €). Soll ich die erstatten?", 'agent');
+                            isBusy = false;
+                        }, 1200);
+                    },
+                    "Wird sofort bearbeitet...",
+                    function() {
+                        addSystemNotice('✅ <strong>Erstattung genehmigt — 49,99 €</strong><br>→ Zurück auf Ihre Visa endet auf 4821<br>→ Ankunft in 3-5 Werktagen<br>→ Bestätigungsmail gesendet', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addMessage("Fertig! Die Erstattung kommt in 3-5 Werktagen an. Kann ich sonst noch helfen?", 'agent');
+                            currentScenario = null;
+                            conversationStep = 0;
+                            isBusy = false;
+                        }, 1000);
+                    }
+                ]
+            },
+            account: {
+                en: [
+                    "I see — let me check your account status right away.",
+                    function() {
+                        addSystemNotice('🔍 <strong>Checking account security logs...</strong>', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addMessage("Your account was flagged due to unusual login activity from a new device. This needs a quick review — let me bring in our security supervisor.", 'agent');
+                            setTimeout(function() {
+                                addSystemNotice('⬆️ <strong>Escalating to Quality Supervisor</strong> — Security review required');
+                                setTimeout(function() {
+                                    switchAgent(2);
+                                    showTyping();
+                                    setTimeout(function() {
+                                        hideTyping();
+                                        addMessage("Hi there, I'm the Quality Supervisor. I've reviewed the security flag on your account — it was a false positive triggered by a VPN connection. I'm unlocking your account now.", 'agent');
+                                        setTimeout(function() {
+                                            addSystemNotice('✅ <strong>Account Unlocked</strong><br>→ Security flag cleared<br>→ 2FA verification sent to your email<br>→ 7 days premium credit added as apology', 'action');
+                                            setTimeout(function() {
+                                                addMessage("You're all set! Please check your email for a 2FA verification link, then you can log in normally. We also added 7 days of premium as an apology for the hassle.", 'agent');
+                                                currentScenario = null;
+                                                conversationStep = 0;
+                                                isBusy = false;
+                                            }, 1200);
+                                        }, 1000);
+                                    }, 1500);
+                                }, 800);
+                            }, 1200);
+                        }, 1500);
+                    }
+                ],
+                de: [
+                    "Verstehe — ich prüfe sofort Ihren Kontostatus.",
+                    function() {
+                        addSystemNotice('🔍 <strong>Sicherheitslogs werden geprüft...</strong>', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addMessage("Ihr Konto wurde wegen ungewöhnlicher Login-Aktivität von einem neuen Gerät gesperrt. Das braucht eine kurze Überprüfung — ich hole unseren Sicherheits-Supervisor.", 'agent');
+                            setTimeout(function() {
+                                addSystemNotice('⬆️ <strong>Eskalation an Quality Supervisor</strong> — Sicherheitsprüfung nötig');
+                                setTimeout(function() {
+                                    switchAgent(2);
+                                    showTyping();
+                                    setTimeout(function() {
+                                        hideTyping();
+                                        addMessage("Hallo, ich bin der Quality Supervisor. Ich habe die Sicherheitsmeldung geprüft — es war ein Fehlalarm durch eine VPN-Verbindung. Ich entsperre Ihr Konto jetzt.", 'agent');
+                                        setTimeout(function() {
+                                            addSystemNotice('✅ <strong>Konto entsperrt</strong><br>→ Sicherheitsflag entfernt<br>→ 2FA-Verifizierung per E-Mail gesendet<br>→ 7 Tage Premium als Entschuldigung', 'action');
+                                            setTimeout(function() {
+                                                addMessage("Alles erledigt! Prüfen Sie Ihre E-Mail für den 2FA-Link, dann können Sie sich normal einloggen. Als Entschuldigung gibt's 7 Tage Premium gratis.", 'agent');
+                                                currentScenario = null;
+                                                conversationStep = 0;
+                                                isBusy = false;
+                                            }, 1200);
+                                        }, 1000);
+                                    }, 1500);
+                                }, 800);
+                            }, 1200);
+                        }, 1500);
+                    }
+                ]
+            },
+            password: {
+                en: [
+                    "No problem! Let me send you a password reset link.",
+                    function() {
+                        addSystemNotice('📧 <strong>Password reset initiated...</strong>', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addSystemNotice('✅ <strong>Reset Link Sent</strong><br>→ Email: j***@example.com<br>→ Link expires in 60 minutes<br>→ Check spam folder if not in inbox', 'action');
+                            setTimeout(function() {
+                                addMessage("Done! Check your inbox — the reset link is valid for 1 hour. If you don't see it, check your spam folder. Need anything else?", 'agent');
+                                currentScenario = null;
+                                conversationStep = 0;
+                                isBusy = false;
+                            }, 800);
+                        }, 1500);
+                    }
+                ],
+                de: [
+                    "Kein Problem! Ich schicke Ihnen direkt einen Reset-Link.",
+                    function() {
+                        addSystemNotice('📧 <strong>Passwort-Reset wird gesendet...</strong>', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addSystemNotice('✅ <strong>Reset-Link gesendet</strong><br>→ E-Mail: j***@example.com<br>→ Link gültig für 60 Minuten<br>→ Spam-Ordner prüfen falls nicht im Posteingang', 'action');
+                            setTimeout(function() {
+                                addMessage("Fertig! Prüfen Sie Ihren Posteingang — der Link ist 1 Stunde gültig. Falls Sie ihn nicht finden, schauen Sie im Spam-Ordner. Brauchen Sie noch was?", 'agent');
+                                currentScenario = null;
+                                conversationStep = 0;
+                                isBusy = false;
+                            }, 800);
+                        }, 1500);
+                    }
+                ]
+            },
+            technical: {
+                en: [
+                    "Got it — can you tell me a bit more? What page or feature is affected?",
+                    function() {
+                        hideTyping();
+                        addMessage("Thanks for the details. Let me run a quick diagnostic...", 'agent');
+                        setTimeout(function() {
+                            addSystemNotice('🔧 <strong>Running system diagnostic...</strong><br>→ API: ✅ Online<br>→ Database: ✅ Connected<br>→ CDN: ⚠️ Degraded performance detected', 'action');
+                            setTimeout(function() {
+                                addMessage("Found it — our CDN is having some performance issues right now. This is affecting page loads and some features. Let me escalate this to our technical team.", 'agent');
+                                setTimeout(function() {
+                                    addSystemNotice('⬆️ <strong>Escalating to Operations Manager</strong> — Infrastructure issue detected');
+                                    setTimeout(function() {
+                                        switchAgent(3);
+                                        showTyping();
+                                        setTimeout(function() {
+                                            hideTyping();
+                                            addMessage("Hi, Operations Manager here. I've identified the CDN issue and our infrastructure team is already working on it. ETA for full resolution: ~30 minutes.", 'agent');
+                                            setTimeout(function() {
+                                                addSystemNotice('✅ <strong>Issue Logged & Assigned</strong><br>→ Ticket #INC-4821 created<br>→ Priority: High<br>→ Team notified<br>→ ETA: 30 min', 'action');
+                                                setTimeout(function() {
+                                                    addMessage("You'll get an email notification once it's resolved. Sorry for the inconvenience — anything else I can help with?", 'agent');
+                                                    currentScenario = null;
+                                                    conversationStep = 0;
+                                                    isBusy = false;
+                                                }, 1000);
+                                            }, 800);
+                                        }, 1500);
+                                    }, 800);
+                                }, 1200);
+                            }, 1500);
+                        }, 1200);
+                    }
+                ],
+                de: [
+                    "Verstanden — können Sie mir etwas mehr sagen? Welche Seite oder Funktion ist betroffen?",
+                    function() {
+                        hideTyping();
+                        addMessage("Danke für die Details. Ich starte eine schnelle Diagnose...", 'agent');
+                        setTimeout(function() {
+                            addSystemNotice('🔧 <strong>System-Diagnose läuft...</strong><br>→ API: ✅ Online<br>→ Datenbank: ✅ Verbunden<br>→ CDN: ⚠️ Performance-Probleme erkannt', 'action');
+                            setTimeout(function() {
+                                addMessage("Gefunden — unser CDN hat gerade Performance-Probleme. Das beeinflusst Seitenladezeiten und einige Funktionen. Ich eskaliere das an unser Tech-Team.", 'agent');
+                                setTimeout(function() {
+                                    addSystemNotice('⬆️ <strong>Eskalation an Operations Manager</strong> — Infrastruktur-Problem erkannt');
+                                    setTimeout(function() {
+                                        switchAgent(3);
+                                        showTyping();
+                                        setTimeout(function() {
+                                            hideTyping();
+                                            addMessage("Hallo, Operations Manager hier. Das CDN-Problem ist identifiziert, unser Infrastruktur-Team arbeitet bereits daran. Voraussichtliche Lösung: ~30 Minuten.", 'agent');
+                                            setTimeout(function() {
+                                                addSystemNotice('✅ <strong>Ticket erstellt & zugewiesen</strong><br>→ Ticket #INC-4821<br>→ Priorität: Hoch<br>→ Team benachrichtigt<br>→ ETA: 30 Min', 'action');
+                                                setTimeout(function() {
+                                                    addMessage("Sie bekommen eine E-Mail sobald es behoben ist. Sorry für die Unannehmlichkeiten — kann ich sonst noch helfen?", 'agent');
+                                                    currentScenario = null;
+                                                    conversationStep = 0;
+                                                    isBusy = false;
+                                                }, 1000);
+                                            }, 800);
+                                        }, 1500);
+                                    }, 800);
+                                }, 1200);
+                            }, 1500);
+                        }, 1200);
+                    }
+                ]
+            },
+            shipping: {
+                en: [
+                    "Let me look up your shipment right away.",
+                    function() {
+                        addSystemNotice('📦 <strong>Tracking lookup...</strong><br>→ Order #7829<br>→ Carrier: FedEx<br>→ Tracking: FX-9284710348', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addMessage("Found it! Your package shipped yesterday via FedEx. It's currently in transit — estimated delivery is <strong>Thursday, March 18</strong>. Want me to send you the tracking link?", 'agent');
+                            currentScenario = null;
+                            conversationStep = 0;
+                            isBusy = false;
+                        }, 1200);
+                    }
+                ],
+                de: [
+                    "Ich schaue sofort nach Ihrer Sendung.",
+                    function() {
+                        addSystemNotice('📦 <strong>Sendungsverfolgung...</strong><br>→ Bestellung #7829<br>→ Versand: DHL<br>→ Tracking: DE-9284710348', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addMessage("Gefunden! Ihr Paket wurde gestern per DHL verschickt. Es ist unterwegs — voraussichtliche Zustellung: <strong>Donnerstag, 18. März</strong>. Soll ich Ihnen den Tracking-Link schicken?", 'agent');
+                            currentScenario = null;
+                            conversationStep = 0;
+                            isBusy = false;
+                        }, 1200);
+                    }
+                ]
+            },
+            cancel: {
+                en: [
+                    "I can help with that. Let me pull up your subscription details.",
+                    function() {
+                        addSystemNotice('📋 <strong>Subscription found</strong><br>→ Plan: Pro ($14.99/mo)<br>→ Next billing: March 22<br>→ Member since: Jan 2025', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addMessage("You're on the Pro plan at $14.99/month. If you cancel now, you'll keep access until March 22. Would you like to proceed, or would you prefer to downgrade to the free plan instead?", 'agent');
+                            currentScenario = null;
+                            conversationStep = 0;
+                            isBusy = false;
+                        }, 1200);
+                    }
+                ],
+                de: [
+                    "Dabei kann ich helfen. Ich schaue mir Ihre Abo-Details an.",
+                    function() {
+                        addSystemNotice('📋 <strong>Abonnement gefunden</strong><br>→ Plan: Pro (14,99 €/Monat)<br>→ Nächste Abrechnung: 22. März<br>→ Mitglied seit: Jan 2025', 'action');
+                        setTimeout(function() {
+                            hideTyping();
+                            addMessage("Sie sind im Pro-Plan für 14,99 €/Monat. Bei Kündigung behalten Sie Zugriff bis 22. März. Soll ich kündigen oder lieber auf den kostenlosen Plan umstellen?", 'agent');
+                            currentScenario = null;
+                            conversationStep = 0;
+                            isBusy = false;
+                        }, 1200);
+                    }
+                ]
+            }
+        };
+
+        function startScenario(name, lang) {
+            currentScenario = name;
+            conversationStep = 0;
+            var flow = flows[name][lang] || flows[name].en;
+            runFlowStep(flow, 0, lang);
+        }
+
+        function continueScenario(lower, lang) {
+            var flow = flows[currentScenario][lang] || flows[currentScenario].en;
+            runFlowStep(flow, conversationStep, lang);
+        }
+
+        function runFlowStep(flow, step, lang) {
+            if (step >= flow.length) {
+                currentScenario = null;
+                conversationStep = 0;
+                hideTyping();
+                isBusy = false;
+                return;
+            }
+            var item = flow[step];
+            conversationStep = step + 1;
+
+            if (typeof item === 'function') {
+                item();
+            } else {
+                hideTyping();
+                addMessage(item, 'agent');
+                // Auto-continue to next step if it's a function
+                if (conversationStep < flow.length && typeof flow[conversationStep] === 'function') {
+                    showTyping();
+                    setTimeout(function() {
+                        runFlowStep(flow, conversationStep, lang);
+                    }, 1200 + Math.random() * 600);
+                } else {
+                    isBusy = false;
+                }
+            }
+        }
+
+        function respondGreeting(lang) {
+            hideTyping();
+            var responses = lang === 'de'
+                ? ["Hey! 👋 Was kann ich für Sie tun?", "Hallo! Wie kann ich Ihnen helfen?", "Hi! 😊 Was liegt an?"]
+                : ["Hey! 👋 What can I do for you?", "Hi there! How can I help?", "Hello! 😊 What's going on?"];
+            addMessage(pick(responses), 'agent');
+            isBusy = false;
+        }
+
+        function respondThanks(lang) {
+            hideTyping();
+            var responses = lang === 'de'
+                ? ["Gerne! 😊 Melden Sie sich jederzeit wieder.", "Kein Ding! Schönen Tag noch! 👋"]
+                : ["You're welcome! 😊 Feel free to reach out anytime.", "Happy to help! Have a great day 👋"];
+            addMessage(pick(responses), 'agent');
+            isBusy = false;
+        }
+
+        function respondBye(lang) {
+            hideTyping();
+            var responses = lang === 'de'
+                ? ["Tschüss! 👋 Schönen Tag noch!", "Auf Wiedersehen! Melden Sie sich gerne wieder."]
+                : ["Bye! 👋 Have a great one!", "Take care! Don't hesitate to come back if you need anything."];
+            addMessage(pick(responses), 'agent');
+            isBusy = false;
+        }
+
+        function respondHumanRequest(lang) {
+            hideTyping();
+            addMessage(lang === 'de'
+                ? "Klar! Ich verbinde Sie mit einem Mitarbeiter. Bitte kurz warten..."
+                : "Of course! Let me connect you with a human agent. One moment please...", 'agent');
+            setTimeout(function() {
+                addSystemNotice('👤 <strong>' + (lang === 'de' ? 'Weiterleitung an Mitarbeiter...' : 'Connecting to human agent...') + '</strong><br>→ ' + (lang === 'de' ? 'Geschätzte Wartezeit: 2-3 Minuten' : 'Estimated wait: 2-3 minutes') + '<br>→ ' + (lang === 'de' ? 'Position in Warteschlange: #2' : 'Queue position: #2'), 'action');
+                isBusy = false;
+            }, 1500);
+        }
+
+        function respondSmart(msg, lang) {
+            hideTyping();
+            // Analyze the message and give a conversational response
+            var responses = lang === 'de' ? [
+                "Hmm, da bin ich mir nicht ganz sicher. Können Sie mir mehr Details geben? Zum Beispiel, geht es um eine Bestellung, Ihr Konto, oder ein technisches Problem?",
+                "Das habe ich nicht ganz verstanden — aber kein Stress! Sagen Sie mir einfach in eigenen Worten, wobei ich helfen kann. Bestellung? Konto? Technik?",
+                "Ich bin noch nicht sicher, was genau Sie brauchen. Beschreiben Sie's mir einfach — ich finde die richtige Lösung für Sie!"
+            ] : [
+                "Hmm, I'm not quite sure what you need. Could you give me a bit more detail? For example — is this about an order, your account, or something technical?",
+                "I didn't quite catch that — no worries though! Just tell me in your own words what's going on and I'll figure it out.",
+                "Not sure I understood that one. Try describing what you need help with — I'm pretty good at figuring things out! 🙂"
+            ];
+            addMessage(pick(responses), 'agent');
+            isBusy = false;
+        }
+
+        // --- Helpers ---
+        function detectLang(text) {
+            var de = ['ich', 'mein', 'hilfe', 'konto', 'passwort', 'möchte', 'habe', 'kann', 'nicht', 'bitte', 'hallo', 'guten', 'wie', 'was', 'mich', 'mir', 'und', 'ist', 'das', 'ein'];
+            var matches = 0;
+            for (var i = 0; i < de.length; i++) {
+                if (text.indexOf(de[i]) !== -1) matches++;
+            }
+            return matches >= 2 ? 'de' : 'en';
+        }
+
+        function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        function addMessage(text, sender) {
+            var div = document.createElement('div');
+            div.className = 'chat-message ' + sender;
+
+            var avatar = document.createElement('div');
             avatar.className = 'message-avatar';
             avatar.textContent = sender === 'customer' ? '👤' : currentAgent.avatar;
 
-            const content = document.createElement('div');
+            var content = document.createElement('div');
             content.className = 'message-content';
 
-            const bubble = document.createElement('div');
+            var bubble = document.createElement('div');
             bubble.className = 'message-bubble';
             bubble.innerHTML = text.replace(/\n/g, '<br>');
 
-            const meta = document.createElement('div');
+            var meta = document.createElement('div');
             meta.className = 'message-meta';
-            
-            if (sender !== 'customer') {
-                meta.innerHTML = `<span class="agent-label">${currentAgent.name} (L${currentAgent.level})</span><span>•</span><span>Just now</span>`;
-            } else {
-                meta.innerHTML = `<span>Just now</span>`;
-            }
+            meta.innerHTML = sender !== 'customer'
+                ? '<span class="agent-label">' + currentAgent.name + ' (L' + currentAgent.level + ')</span><span>•</span><span>Just now</span>'
+                : '<span>Just now</span>';
 
             content.appendChild(bubble);
             content.appendChild(meta);
-            messageDiv.appendChild(avatar);
-            messageDiv.appendChild(content);
-
-            chatMessages.appendChild(messageDiv);
+            div.appendChild(avatar);
+            div.appendChild(content);
+            chatMessages.appendChild(div);
             scrollToBottom();
         }
 
-        function addSystemNotice(text, type = 'escalation') {
-            const notice = document.createElement('div');
-            notice.className = type === 'action' ? 'action-notice' : 'escalation-notice';
-            if (type === 'action') notice.classList.add('success');
-            notice.innerHTML = text.replace(/\n/g, '<br>');
-            chatMessages.appendChild(notice);
+        function addSystemNotice(html, type) {
+            var div = document.createElement('div');
+            div.className = (type === 'action') ? 'action-notice' : 'escalation-notice';
+            div.innerHTML = html;
+            chatMessages.appendChild(div);
             scrollToBottom();
+        }
+
+        function showTyping() {
+            var existing = document.getElementById('liveTyping');
+            if (existing) existing.remove();
+            var div = document.createElement('div');
+            div.id = 'liveTyping';
+            div.className = 'chat-message';
+            div.innerHTML = '<div class="message-avatar">' + currentAgent.avatar + '</div><div class="typing-dots"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+            chatMessages.appendChild(div);
+            scrollToBottom();
+        }
+
+        function hideTyping() {
+            var el = document.getElementById('liveTyping');
+            if (el) el.remove();
         }
 
         function switchAgent(level) {
-            currentAgent = { ...agents[level], level };
+            currentAgent = { name: agents[level].name, title: agents[level].title, avatar: agents[level].avatar, level: level };
             agentAvatar.textContent = currentAgent.avatar;
             agentName.textContent = currentAgent.name;
             agentTitle.textContent = currentAgent.title;
         }
 
-        function handleResponse(response) {
-            if (response.escalate) {
-                addSystemNotice(`⚠️ **Escalating to ${agents[response.escalate].name}**\n\nThis case requires specialized attention. Please hold...`);
-                
-                setTimeout(() => {
-                    switchAgent(response.escalate);
-                    typingIndicator.classList.add('active');
-                    scrollToBottom();
-                    
-                    setTimeout(() => {
-                        typingIndicator.classList.remove('active');
-                        response.messages.forEach((msg, index) => {
-                            setTimeout(() => {
-                                if (msg.type === 'action') {
-                                    addSystemNotice(msg.text, 'action');
-                                } else {
-                                    addMessage(msg.text, 'agent');
-                                }
-                            }, index * 1500);
-                        });
-                    }, 1000);
-                }, 1500);
-            } else {
-                response.messages.forEach((msg, index) => {
-                    setTimeout(() => {
-                        if (msg.type === 'action') {
-                            addSystemNotice(msg.text, 'action');
-                        } else {
-                            addMessage(msg.text, 'agent');
-                        }
-                    }, index * 1500);
-                });
-            }
-        }
-
-        function getAIResponse(message) {
-            const lang = detectLanguage(message);
-            const messageLower = message.toLowerCase();
-
-            // Greeting
-            const greetings = ['hey', 'hi', 'hello', 'hallo', 'sup', 'yo', 'good morning', 'good evening', "what's up", 'whats up', 'howdy'];
-            if (greetings.some(g => messageLower.includes(g))) {
-                const greetingResponse = lang === 'de'
-                    ? "Hallo! 👋 Willkommen beim Support!\n\nIch kann Ihnen helfen mit:\n💰 Rückerstattungen\n🔒 Konto-Problemen\n🔑 Passwort zurücksetzen\n⚙️ Technischen Fragen\n\nWie kann ich Ihnen helfen?"
-                    : "Hey there! 👋 Welcome to support!\n\nI can help you with:\n💰 Refund requests\n🔒 Account issues\n🔑 Password resets\n⚙️ Technical questions\n\nWhat can I help you with today?";
-                return {
-                    messages: [{ text: greetingResponse, type: 'message' }]
-                };
-            }
-
-            // Refund scenario
-            if (scenarios.refund[lang].trigger.some(t => messageLower.includes(t))) {
-                return {
-                    messages: scenarios.refund[lang].responses.map((text, i) => ({
-                        text,
-                        type: i === 2 ? 'action' : 'message'
-                    }))
-                };
-            }
-
-            // Account issue - requires escalation
-            if (scenarios.account[lang].trigger.some(t => messageLower.includes(t))) {
-                return {
-                    escalate: 2,
-                    messages: [
-                        { text: scenarios.account[lang].responses[1], type: 'message' },
-                        { text: scenarios.account[lang].responses[2], type: 'action' }
-                    ]
-                };
-            }
-
-            // Password reset
-            if (scenarios.password[lang].trigger.some(t => messageLower.includes(t))) {
-                return {
-                    messages: scenarios.password[lang].responses.map((text, i) => ({
-                        text,
-                        type: i === 1 ? 'action' : 'message'
-                    }))
-                };
-            }
-
-            // Technical issue - escalation
-            if (scenarios.technical[lang].trigger.some(t => messageLower.includes(t))) {
-                return {
-                    escalate: 2,
-                    messages: [
-                        { text: scenarios.technical[lang].responses[1], type: 'message' },
-                        { text: scenarios.technical[lang].responses[2], type: 'message' }
-                    ]
-                };
-            }
-
-            // Fallback
-            const fallbacks = lang === 'de' ? [
-                "Ich bin für Sie da! 🙂 Probieren Sie eine der folgenden Optionen:\n\n💰 Sagen Sie **\"Rückerstattung\"** für Erstattungen\n🔒 Sagen Sie **\"Konto gesperrt\"** bei Kontoproblemen\n🔑 Sagen Sie **\"Passwort\"** zum Zurücksetzen\n⚙️ Sagen Sie **\"Problem\"** bei technischen Fragen\n\nOder nutzen Sie die Quick-Buttons oben!",
-                "Kein Problem! Beschreiben Sie mir genauer, was Sie brauchen:\n\n• Bestellung & Rückerstattung\n• Konto & Zugangsprobleme\n• Passwort ändern\n• Technischer Support\n\nIch helfe Ihnen gerne weiter! 💬"
-            ] : [
-                "I'm here to help! 🙂 Try one of these:\n\n💰 Say **\"refund\"** for refund requests\n🔒 Say **\"account locked\"** for access issues\n🔑 Say **\"reset password\"** to reset credentials\n⚙️ Say **\"technical problem\"** for tech support\n\nOr use the Quick Action buttons above!",
-                "No worries! Tell me more about what you need:\n\n• Orders & refunds\n• Account & access issues\n• Password changes\n• Technical support\n\nI'm happy to help! 💬"
-            ];
-
-            return {
-                messages: [{ text: fallbacks[Math.floor(Math.random() * fallbacks.length)], type: 'message' }]
-            };
-        }
-
         function scrollToBottom() {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            requestAnimationFrame(function() { chatMessages.scrollTop = chatMessages.scrollHeight; });
         }
-
-        // Close overlay when clicking outside
-        chatOverlay.addEventListener('click', (e) => {
-            if (e.target === chatOverlay) {
-                closeChat();
-            }
-        });
+    })();
     </script>
 </body>
 </html>
