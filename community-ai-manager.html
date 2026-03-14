@@ -735,6 +735,14 @@
                         <div class="message-time">Just now</div>
                     </div>
                 </div>
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="message-avatar">🤖</div>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
             </div>
 
             <div class="chat-quick-buttons" id="quickButtons">
@@ -743,15 +751,6 @@
                 <button class="quick-btn" onclick="sendQuickMessage('Create a post about our next meetup')">📝 Create Post</button>
                 <button class="quick-btn" onclick="sendQuickMessage('Show community stats')">📊 Community Stats</button>
                 <button class="quick-btn" onclick="sendQuickMessage('How can I become a moderator?')">👑 Become Moderator</button>
-            </div>
-
-            <div class="typing-indicator" id="typingIndicator">
-                <div class="message-avatar">🤖</div>
-                <div class="typing-dots">
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                    <div class="typing-dot"></div>
-                </div>
             </div>
 
             <div class="chat-input-area">
@@ -775,6 +774,10 @@
 
         // Knowledge base with pattern matching
         const knowledgeBase = [
+            {
+                patterns: ['hey', 'hi', 'hello', 'hallo', 'sup', 'yo', 'good morning', 'good evening', 'whats up', "what's up", 'howdy', 'greetings'],
+                response: "Hey there! 👋 Welcome! I'm your AI Community Manager.\n\nI can help you with:\n🎯 Upcoming events & schedules\n💬 Joining Discord or Telegram\n📝 Creating community posts\n📊 Community stats & insights\n👑 Becoming a moderator\n\nWhat would you like to know?"
+            },
             {
                 patterns: ['event', 'events', 'coming up', 'upcoming', 'schedule', 'calendar'],
                 response: "🎯 We have several exciting events coming up:\n\n• **AI Art Challenge Launch** - Today at 10:00 AM\n• **Weekly Tech News Digest** - Today at 3:00 PM\n• **Community Showcase Event** - Tomorrow at 9:00 AM\n• **Member Spotlight Feature** - Monday at 2:00 PM\n\nAll events are announced on both Telegram and Discord!"
@@ -893,9 +896,8 @@
 
             // Fallback responses
             const fallbacks = [
-                "🤔 That's an interesting question! While I don't have a specific answer for that, you can:\n• Ask in #general-chat on Discord\n• Check our FAQ in #resources\n• Tag @moderators for human help\n\nWhat else can I help you with?",
-                "I'm still learning about that topic! 📚 Try asking:\n• About upcoming events\n• How to join Discord/Telegram\n• Community stats & info\n• Content creation help\n\nOr message our moderator team for more specific questions!",
-                "Great question! 💡 I don't have detailed info on that yet, but I can help with:\n• Event schedules\n• Community guidelines\n• Platform links & joining\n• General community questions\n\nFeel free to ask the community directly in #ask-anything!"
+                "Good question! 🙂 I can help you best with these topics:\n\n🎯 **\"events\"** — upcoming schedule\n💬 **\"discord\"** or **\"telegram\"** — how to join\n📊 **\"stats\"** — community numbers\n📝 **\"create post\"** — content generation\n👑 **\"moderator\"** — how to become one\n\nTry one of those, or use the quick buttons below!",
+                "I'm here to help! 💬 Try asking me about:\n\n• Upcoming events & meetups\n• How to join our Discord or Telegram\n• Community stats & growth\n• Content creation for posts\n• Becoming a moderator\n\nOr click one of the quick action buttons!"
             ];
 
             return fallbacks[Math.floor(Math.random() * fallbacks.length)];

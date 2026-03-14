@@ -1118,6 +1118,14 @@
                             </div>
                         </div>
                     </div>
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="message-avatar">🤖</div>
+                        <div class="typing-dots">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="chat-quick-actions" id="quickActions">
@@ -1125,15 +1133,6 @@
                     <button class="quick-action-btn" onclick="sendQuickMessage('Account locked')">🔒 Account Issue</button>
                     <button class="quick-action-btn" onclick="sendQuickMessage('Reset password')">🔑 Password Reset</button>
                     <button class="quick-action-btn" onclick="sendQuickMessage('Technical problem')">⚙️ Technical Question</button>
-                </div>
-
-                <div class="typing-indicator" id="typingIndicator">
-                    <div class="message-avatar">🤖</div>
-                    <div class="typing-dots">
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                        <div class="typing-dot"></div>
-                    </div>
                 </div>
 
                 <div class="chat-input-container">
@@ -1378,6 +1377,17 @@
             const lang = detectLanguage(message);
             const messageLower = message.toLowerCase();
 
+            // Greeting
+            const greetings = ['hey', 'hi', 'hello', 'hallo', 'sup', 'yo', 'good morning', 'good evening', "what's up", 'whats up', 'howdy'];
+            if (greetings.some(g => messageLower.includes(g))) {
+                const greetingResponse = lang === 'de'
+                    ? "Hallo! 👋 Willkommen beim Support!\n\nIch kann Ihnen helfen mit:\n💰 Rückerstattungen\n🔒 Konto-Problemen\n🔑 Passwort zurücksetzen\n⚙️ Technischen Fragen\n\nWie kann ich Ihnen helfen?"
+                    : "Hey there! 👋 Welcome to support!\n\nI can help you with:\n💰 Refund requests\n🔒 Account issues\n🔑 Password resets\n⚙️ Technical questions\n\nWhat can I help you with today?";
+                return {
+                    messages: [{ text: greetingResponse, type: 'message' }]
+                };
+            }
+
             // Refund scenario
             if (scenarios.refund[lang].trigger.some(t => messageLower.includes(t))) {
                 return {
@@ -1422,11 +1432,11 @@
 
             // Fallback
             const fallbacks = lang === 'de' ? [
-                "Das ist eine interessante Frage! Ich kann Ihnen helfen mit:\n• Rückerstattungen\n• Kontoproblemen\n• Passwort-Zurücksetzung\n• Technischen Fragen\n\nWomit kann ich Ihnen heute helfen?",
-                "Ich verstehe Ihre Anfrage. Lassen Sie mich das für Sie überprüfen...\n\nFür schnellere Hilfe, nutzen Sie die Quick-Action-Buttons oben oder beschreiben Sie Ihr Problem genauer."
+                "Ich bin für Sie da! 🙂 Probieren Sie eine der folgenden Optionen:\n\n💰 Sagen Sie **\"Rückerstattung\"** für Erstattungen\n🔒 Sagen Sie **\"Konto gesperrt\"** bei Kontoproblemen\n🔑 Sagen Sie **\"Passwort\"** zum Zurücksetzen\n⚙️ Sagen Sie **\"Problem\"** bei technischen Fragen\n\nOder nutzen Sie die Quick-Buttons oben!",
+                "Kein Problem! Beschreiben Sie mir genauer, was Sie brauchen:\n\n• Bestellung & Rückerstattung\n• Konto & Zugangsprobleme\n• Passwort ändern\n• Technischer Support\n\nIch helfe Ihnen gerne weiter! 💬"
             ] : [
-                "That's an interesting question! I can help you with:\n• Refund requests\n• Account issues\n• Password resets\n• Technical problems\n\nHow can I assist you today?",
-                "I understand your query. Let me check that for you...\n\nFor faster assistance, use the Quick Action buttons above or describe your issue in more detail."
+                "I'm here to help! 🙂 Try one of these:\n\n💰 Say **\"refund\"** for refund requests\n🔒 Say **\"account locked\"** for access issues\n🔑 Say **\"reset password\"** to reset credentials\n⚙️ Say **\"technical problem\"** for tech support\n\nOr use the Quick Action buttons above!",
+                "No worries! Tell me more about what you need:\n\n• Orders & refunds\n• Account & access issues\n• Password changes\n• Technical support\n\nI'm happy to help! 💬"
             ];
 
             return {
