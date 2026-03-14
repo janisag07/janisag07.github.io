@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Community Manager — Telegram & Discord</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0f0f1a;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #252540;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border-color: #2d2d44;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(99, 102, 241, 0.15);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .badge {
+            background: var(--accent-primary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .badge.success {
+            background: var(--accent-success);
+        }
+
+        .badge.warning {
+            background: var(--accent-warning);
+        }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .stat {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-bar {
+            background: var(--bg-tertiary);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 4px;
+        }
+
+        .calendar-event {
+            background: var(--bg-tertiary);
+            border-left: 3px solid var(--accent-primary);
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-radius: 4px;
+        }
+
+        .calendar-event:nth-child(2) {
+            border-left-color: var(--accent-secondary);
+        }
+
+        .calendar-event:nth-child(3) {
+            border-left-color: var(--accent-success);
+        }
+
+        .event-time {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+
+        .event-title {
+            font-weight: 500;
+        }
+
+        .post-example {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .post-platform {
+            display: inline-block;
+            background: var(--accent-primary);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .post-content {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .automation-list {
+            list-style: none;
+        }
+
+        .automation-item {
+            background: var(--bg-tertiary);
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .automation-icon {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-success);
+            flex-shrink: 0;
+        }
+
+        .automation-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .engagement-metric {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .engagement-metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-name {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        .section-large {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .section-large {
+                grid-column: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AI Community Manager</h1>
+        <p class="subtitle">Telegram & Discord • Arts & Tech Community</p>
+    </header>
+
+    <div class="container">
+        <div class="dashboard">
+            <!-- Community Stats -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Community Stats</h2>
+                    <span class="badge success">Live</span>
+                </div>
+                <div class="stat-grid">
+                    <div class="stat">
+                        <div class="stat-value">2,847</div>
+                        <div class="stat-label">Total Members</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">1,234</div>
+                        <div class="stat-label">Active Users</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">+18%</div>
+                        <div class="stat-label">Monthly Growth</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value">92%</div>
+                        <div class="stat-label">Engagement Rate</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content Calendar -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Content Calendar</h2>
+                    <span class="badge">Automated</span>
+                </div>
+                <div class="calendar-event">
+                    <div class="event-time">Today, 10:00 AM</div>
+                    <div class="event-title">AI Art Challenge Launch</div>
+                </div>
+                <div class="calendar-event">
+                    <div class="event-time">Today, 3:00 PM</div>
+                    <div class="event-title">Weekly Tech News Digest</div>
+                </div>
+                <div class="calendar-event">
+                    <div class="event-time">Tomorrow, 9:00 AM</div>
+                    <div class="event-title">Community Showcase Event</div>
+                </div>
+                <div class="calendar-event">
+                    <div class="event-time">Monday, 2:00 PM</div>
+                    <div class="event-title">Member Spotlight Feature</div>
+                </div>
+            </div>
+
+            <!-- Member Engagement -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Member Engagement</h2>
+                    <span class="badge success">High</span>
+                </div>
+                <div class="engagement-metric">
+                    <span class="metric-name">Messages Today</span>
+                    <span class="metric-value">1,847</span>
+                </div>
+                <div class="engagement-metric">
+                    <span class="metric-name">New Threads</span>
+                    <span class="metric-value">23</span>
+                </div>
+                <div class="engagement-metric">
+                    <span class="metric-name">Reactions</span>
+                    <span class="metric-value">4,392</span>
+                </div>
+                <div class="engagement-metric">
+                    <span class="metric-name">Voice Participants</span>
+                    <span class="metric-value">47</span>
+                </div>
+                <div class="engagement-metric">
+                    <span class="metric-name">Avg. Response Time</span>
+                    <span class="metric-value">2.3 min</span>
+                </div>
+            </div>
+
+            <!-- AI-Generated Posts -->
+            <div class="card section-large">
+                <div class="card-header">
+                    <h2 class="card-title">AI-Generated Posts</h2>
+                    <span class="badge">Auto-Posted</span>
+                </div>
+                <div class="post-example">
+                    <span class="post-platform">Telegram</span>
+                    <p class="post-content">🎨 Good morning creators! Today's AI art tip: Experiment with prompt engineering by combining artistic movements. Try "cyberpunk meets art nouveau" for unique fusion styles. Share your results in #ai-art-showcase!</p>
+                </div>
+                <div class="post-example">
+                    <span class="post-platform">Discord</span>
+                    <p class="post-content">🚀 New in tech: OpenAI just released updated models with enhanced creative capabilities. Perfect timing for our upcoming hackathon! Details in #announcements. Who's excited to test them out?</p>
+                </div>
+                <div class="post-example">
+                    <span class="post-platform">Both Platforms</span>
+                    <p class="post-content">🌟 Weekly Spotlight: Amazing generative art piece by @ArtistMember using Stable Diffusion + custom LoRA training. This is what our community is all about! Check out the full process in #tutorials 💜</p>
+                </div>
+            </div>
+
+            <!-- Automated Actions -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Automated Actions</h2>
+                    <span class="badge success">Active</span>
+                </div>
+                <ul class="automation-list">
+                    <li class="automation-item">
+                        <span class="automation-icon"></span>
+                        <span class="automation-text">Welcome messages sent to 23 new members</span>
+                    </li>
+                    <li class="automation-item">
+                        <span class="automation-icon"></span>
+                        <span class="automation-text">3 events scheduled and announced</span>
+                    </li>
+                    <li class="automation-item">
+                        <span class="automation-icon"></span>
+                        <span class="automation-text">47 questions answered automatically</span>
+                    </li>
+                    <li class="automation-item">
+                        <span class="automation-icon"></span>
+                        <span class="automation-text">Daily digest compiled and posted</span>
+                    </li>
+                    <li class="automation-item">
+                        <span class="automation-icon"></span>
+                        <span class="automation-text">Content moderation: 12 spam messages removed</span>
+                    </li>
+                    <li class="automation-item">
+                        <span class="automation-icon"></span>
+                        <span class="automation-text">Role assignments: 8 members promoted</span>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Platform Distribution -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Platform Distribution</h2>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Telegram</span>
+                        <span style="color: var(--accent-primary); font-weight: 600;">1,654 members</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 58%;"></div>
+                    </div>
+                </div>
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span style="color: var(--text-secondary); font-size: 0.9rem;">Discord</span>
+                        <span style="color: var(--accent-secondary); font-weight: 600;">1,193 members</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 42%; background: linear-gradient(90deg, var(--accent-secondary), var(--accent-primary));"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
