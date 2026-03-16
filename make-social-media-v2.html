@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Media Automation V2 — Proposal Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0e27;
+            --bg-card: #151b3d;
+            --accent-blue: #00d4ff;
+            --accent-orange: #ff6b35;
+            --accent-purple: #8b5cf6;
+            --text-primary: #ffffff;
+            --text-secondary: #a0aec0;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animated {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f4d 50%, #0a0e27 100%);
+            animation: bgShift 20s ease infinite;
+        }
+
+        @keyframes bgShift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(20deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 80px 20px;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--accent-blue);
+            border-radius: 50px;
+            font-size: 14px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .hero p {
+            font-size: clamp(1.1rem, 2vw, 1.4rem);
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            gap: 20px;
+            animation: fadeInUp 1s ease 0.6s both;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 100px 20px;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Problem/Solution Grid */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .comparison-card {
+            background: var(--bg-card);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .comparison-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .comparison-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .comparison-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-blue);
+        }
+
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .card-list {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .card-list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .card-list li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: var(--error);
+            font-weight: bold;
+        }
+
+        .card-list.success li::before {
+            content: '✓';
+            color: var(--success);
+        }
+
+        /* Pipeline Flowchart */
+        .pipeline {
+            background: var(--bg-card);
+            padding: 60px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 60px 0;
+        }
+
+        .pipeline-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pipeline-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .pipeline-node {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(139, 92, 246, 0.1));
+            border: 2px solid var(--accent-blue);
+            padding: 25px 30px;
+            border-radius: 16px;
+            text-align: center;
+            min-width: 180px;
+            transition: all 0.3s ease;
+            animation: pulse 2s ease infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); }
+        }
+
+        .pipeline-node:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-orange);
+        }
+
+        .pipeline-node-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .pipeline-node-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .pipeline-arrow {
+            font-size: 2rem;
+            color: var(--accent-blue);
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .tool-card {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-purple);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+        }
+
+        .tool-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .tool-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .tool-purpose {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Interactive Prompt Builder */
+        .prompt-builder {
+            background: var(--bg-card);
+            padding: 50px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 60px 0;
+        }
+
+        .prompt-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .prompt-control {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .prompt-control label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--accent-blue);
+        }
+
+        .prompt-control select,
+        .prompt-control input {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .prompt-control select:focus,
+        .prompt-control input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .prompt-output {
+            background: rgba(0, 212, 255, 0.05);
+            border: 2px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 25px;
+            min-height: 150px;
+            font-family: 'Courier New', monospace;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 60px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent-blue), var(--accent-purple), var(--accent-orange));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 50px;
+            padding-left: 40px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -46px;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            border: 3px solid var(--bg-dark);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.3);
+        }
+
+        .timeline-week {
+            color: var(--accent-orange);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .timeline-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 30px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        footer p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .pipeline {
+                padding: 30px 20px;
+            }
+
+            .pipeline-row {
+                flex-direction: column;
+            }
+
+            .pipeline-arrow {
+                transform: rotate(90deg);
+            }
+
+            .prompt-builder {
+                padding: 30px 20px;
+            }
+
+            .timeline {
+                padding-left: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animated"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-badge">✨ Built for Travel Content Creators</div>
+            <h1>Social Media Automation V2</h1>
+            <p>Transform your travel content pipeline from generic slideshows to authentic, engaging AI-powered videos that capture the soul of your adventures.</p>
+            <div class="hero-cta">
+                <a href="#solution" class="btn btn-primary">See the Solution</a>
+                <a href="#demo" class="btn btn-secondary">Try Interactive Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem/Solution Section -->
+    <section id="solution">
+        <div class="container">
+            <div class="section-header scroll-animate">
+                <h2>The Challenge</h2>
+                <p>Your current V1 pipeline creates content, but it doesn't capture the essence of travel. Let's fix that.</p>
+            </div>
+
+            <div class="comparison-grid">
+                <div class="comparison-card scroll-animate">
+                    <span class="card-icon">⚠️</span>
+                    <h3 class="card-title">V1 Problems</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 15px;">Current limitations holding back your content:</p>
+                    <ul class="card-list">
+                        <li>Random photo quality & sizing issues</li>
+                        <li>Generic stock people (not authentic)</li>
+                        <li>Too short (10 seconds — no story)</li>
+                        <li>Repetitive background music</li>
+                        <li>Dated slideshow aesthetic</li>
+                        <li>Scripts feel templated & repetitive</li>
+                    </ul>
+                </div>
+
+                <div class="comparison-card scroll-animate">
+                    <span class="card-icon">🚀</span>
+                    <h3 class="card-title">V2 Solutions</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 15px;">What we'll deliver:</p>
+                    <ul class="card-list success">
+                        <li>Cinematic AI video (Runway/Pika)</li>
+                        <li>Authentic travel-inspired visuals</li>
+                        <li>30-second storytelling format</li>
+                        <li>Trendy, dynamic music (Suno/Udio)</li>
+                        <li>Modern, polished video production</li>
+                        <li>Context-aware, varied scripts</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-grid scroll-animate">
+                <div class="stat-card">
+                    <div class="stat-number">3x</div>
+                    <div class="stat-label">Longer Videos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100%</div>
+                    <div class="stat-label">Authentic Content</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">Manual Editing</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Creative Variations</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pipeline Architecture -->
+    <section>
+        <div class="container">
+            <div class="section-header scroll-animate">
+                <h2>V2 Pipeline Architecture</h2>
+                <p>A complete redesign of your automation flow, built on Make.com with premium AI tools.</p>
+            </div>
+
+            <div class="pipeline scroll-animate">
+                <div class="pipeline-flow">
+                    <div class="pipeline-row">
+                        <div class="pipeline-node">
+                            <div class="pipeline-node-title">🧠 ChatGPT 4</div>
+                            <div class="pipeline-node-desc">Advanced script generation with context memory</div>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-node">
+                            <div class="pipeline-node-title">📝 Notion</div>
+                            <div class="pipeline-node-desc">Content database & workflow management</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; font-size: 2rem; color: var(--accent-blue);">↓</div>
+
+                    <div class="pipeline-row">
+                        <div class="pipeline-node">
+                            <div class="pipeline-node-title">🎬 Runway/Pika</div>
+                            <div class="pipeline-node-desc">AI-generated cinematic travel footage</div>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-node">
+                            <div class="pipeline-node-title">🎵 Suno/Udio</div>
+                            <div class="pipeline-node-desc">Dynamic, trendy music generation</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; font-size: 2rem; color: var(--accent-blue);">↓</div>
+
+                    <div class="pipeline-row">
+                        <div class="pipeline-node">
+                            <div class="pipeline-node-title">🎙️ ElevenLabs</div>
+                            <div class="pipeline-node-desc">Natural voiceover with emotion</div>
+                        </div>
+                        <span class="pipeline-arrow">→</span>
+                        <div class="pipeline-node">
+                            <div class="pipeline-node-title">✂️ FFmpeg</div>
+                            <div class="pipeline-node-desc">Professional video composition</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; font-size: 2rem; color: var(--accent-blue);">↓</div>
+
+                    <div class="pipeline-row">
+                        <div class="pipeline-node">
+                            <div class="pipeline-node-title">📱 Metricool</div>
+                            <div class="pipeline-node-desc">Multi-platform auto-posting</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools & Technologies -->
+    <section>
+        <div class="container">
+            <div class="section-header scroll-animate">
+                <h2>Premium Tools & APIs</h2>
+                <p>Industry-leading AI services for maximum content quality.</p>
+            </div>
+
+            <div class="tools-grid">
+                <div class="tool-card scroll-animate">
+                    <span class="tool-icon">🎬</span>
+                    <div class="tool-name">Runway AI</div>
+                    <div class="tool-purpose">Gen-2 video generation for ultra-realistic travel scenes</div>
+                </div>
+
+                <div class="tool-card scroll-animate">
+                    <span class="tool-icon">🌊</span>
+                    <div class="tool-name">Pika Labs</div>
+                    <div class="tool-purpose">Alternative video AI for stylized, dynamic shots</div>
+                </div>
+
+                <div class="tool-card scroll-animate">
+                    <span class="tool-icon">🎵</span>
+                    <div class="tool-name">Suno AI</div>
+                    <div class="tool-purpose">Custom music generation matching your video vibe</div>
+                </div>
+
+                <div class="tool-card scroll-animate">
+                    <span class="tool-icon">🎶</span>
+                    <div class="tool-name">Udio</div>
+                    <div class="tool-purpose">Trendy music tracks with precise style control</div>
+                </div>
+
+                <div class="tool-card scroll-animate">
+                    <span class="tool-icon">🧠</span>
+                    <div class="tool-name">GPT-4 Turbo</div>
+                    <div class="tool-purpose">Context-aware scripts with anti-repetition logic</div>
+                </div>
+
+                <div class="tool-card scroll-animate">
+                    <span class="tool-icon">🎙️</span>
+                    <div class="tool-name">ElevenLabs</div>
+                    <div class="tool-purpose">Premium voice synthesis with natural emotion</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Prompt Builder -->
+    <section id="demo">
+        <div class="container">
+            <div class="section-header scroll-animate">
+                <h2>Interactive Script Builder</h2>
+                <p>See how our advanced prompting creates unique, engaging scripts every time.</p>
+            </div>
+
+            <div class="prompt-builder scroll-animate">
+                <div class="prompt-controls">
+                    <div class="prompt-control">
+                        <label for="location">📍 Location</label>
+                        <select id="location">
+                            <option value="Al Wajh Beach">Al Wajh Beach</option>
+                            <option value="Red Sea Coast">Red Sea Coast</option>
+                            <option value="Desert Oasis">Desert Oasis</option>
+                            <option value="Mountain Trail">Mountain Trail</option>
+                            <option value="Ancient Ruins">Ancient Ruins</option>
+                        </select>
+                    </div>
+
+                    <div class="prompt-control">
+                        <label for="mood">🎭 Mood</label>
+                        <select id="mood">
+                            <option value="adventurous">Adventurous</option>
+                            <option value="peaceful">Peaceful</option>
+                            <option value="mysterious">Mysterious</option>
+                            <option value="inspiring">Inspiring</option>
+                            <option value="exciting">Exciting</option>
+                        </select>
+                    </div>
+
+                    <div class="prompt-control">
+                        <label for="duration">⏱️ Duration</label>
+                        <select id="duration">
+                            <option value="30">30 seconds</option>
+                            <option value="45">45 seconds</option>
+                            <option value="60">60 seconds</option>
+                        </select>
+                    </div>
+
+                    <div class="prompt-control">
+                        <label for="style">🎨 Visual Style</label>
+                        <select id="style">
+                            <option value="cinematic">Cinematic</option>
+                            <option value="documentary">Documentary</option>
+                            <option value="dreamy">Dreamy</option>
+                            <option value="energetic">Energetic</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="prompt-output" id="promptOutput">
+                    Select your parameters above to generate a custom script...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section>
+        <div class="container">
+            <div class="section-header scroll-animate">
+                <h2>Project Timeline</h2>
+                <p>Clear milestones from setup to full automation in 2-3 weeks.</p>
+            </div>
+
+            <div class="timeline scroll-animate">
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 1</div>
+                    <div class="timeline-title">Foundation & Integration</div>
+                    <div class="timeline-desc">
+                        • API setup (Runway, Pika, Suno, Udio)<br>
+                        • Make.com scenario architecture<br>
+                        • Connect existing Notion database<br>
+                        • GPT-4 prompt engineering & testing
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 2</div>
+                    <div class="timeline-title">Video Pipeline Development</div>
+                    <div class="timeline-desc">
+                        • AI video generation workflow<br>
+                        • Music generation & sync logic<br>
+                        • FFmpeg composition & rendering<br>
+                        • Quality control & fallback systems
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-week">Week 3</div>
+                    <div class="timeline-title">Testing & Optimization</div>
+                    <div class="timeline-desc">
+                        • End-to-end testing with real content<br>
+                        • Performance optimization<br>
+                        • Metricool auto-posting setup<br>
+                        • Documentation & handoff
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-week">Ongoing</div>
+                    <div class="timeline-title">Support & Iteration</div>
+                    <div class="timeline-desc">
+                        • 30 days of post-launch support<br>
+                        • Script refinement based on engagement<br>
+                        • Performance monitoring & tweaks
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p class="footer-logo">ARCEUS ORGANIZATION</p>
+            <p style="margin-top: 15px;">Professional Make.com Automation • AI Integration Specialists • Travel Content Excellence</p>
+            <p style="font-size: 0.9rem; opacity: 0.6; margin-top: 30px;">Budget: $300 Fixed | Timeline: 2-3 Weeks | Unlimited Revisions Included</p>
+        </div>
+    </footer>
+
+    <script>
+        // Scroll Animation Observer
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-animate').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Interactive Prompt Builder
+        const promptTemplates = {
+            adventurous: {
+                cinematic: "Open with a sweeping drone shot revealing {location}. The golden hour light dances across the landscape as we follow a lone traveler's journey. Camera moves through breathtaking vistas, each frame telling a story of discovery. Close with a powerful wide shot emphasizing the vastness and beauty.",
+                documentary: "Documentary-style approach: Begin with intimate details of {location}, slowly pulling back to reveal context. Natural sound design blends with voice narration. Authentic moments capture the raw beauty and cultural significance. End with a thought-provoking reflection.",
+                dreamy: "Soft-focus opening on {location} bathed in ethereal light. Dreamy slow-motion sequences flow like water, each transition seamless and mesmerizing. Colors are slightly desaturated with lifted shadows for that cinematic glow. The mood is contemplative and serene.",
+                energetic: "Fast-paced energy from frame one! Quick cuts showcase {location}'s most dynamic angles. Handheld camera movements add immediacy and excitement. Every shot bursts with color and motion. The edit rhythm matches the heartbeat of adventure."
+            },
+            peaceful: {
+                cinematic: "Tranquil establishing shot of {location} at dawn. Gentle camera movements mirror the calm atmosphere. Long, lingering shots allow viewers to breathe and absorb the serenity. Soft color grading emphasizes warmth and comfort.",
+                documentary: "Observational style capturing the peaceful essence of {location}. Natural light, minimal intervention. We witness the quiet beauty through patient, contemplative framing. The story unfolds organically, unhurried.",
+                dreamy: "Float through {location} like a memory. Soft focus, gentle fades, and subtle color shifts create a meditative experience. Time seems to slow down. Every frame is a painting, inviting contemplation and inner peace.",
+                energetic: "Even in stillness, there's energy—the gentle flow of water, rustling leaves, shifting light. {location} reveals its peaceful power through subtle movements. The edit balances calm with visual interest."
+            },
+            mysterious: {
+                cinematic: "Shroud {location} in intrigue from the first frame. Low-angle shots and dramatic shadows create visual tension. The camera prowls through spaces, revealing details slowly. Color grading leans into deep blues and desaturated tones. What secrets does this place hold?",
+                documentary: "Investigate {location} like uncovering a hidden story. Close-ups on textures and details that hint at history. The narration asks questions rather than answering them. Viewers are drawn into the mystery, compelled to learn more.",
+                dreamy: "Ethereal fog rolls through {location}, obscuring and revealing in equal measure. Soft, muted colors create an otherworldly atmosphere. The camera movements are uncertain, curious, as if exploring a dream—or a distant memory.",
+                energetic: "Pulse-pounding exploration of {location}! Quick reveals, dramatic lighting, urgent camera work. The mystery unfolds at breakneck speed, each shot adding another piece to the puzzle. High contrast and bold compositions."
+            },
+            inspiring: {
+                cinematic: "Begin with {location} emerging from darkness into light—a visual metaphor for transformation. Epic camera movements emphasize scale and possibility. The color palette evolves from cool to warm tones. We're building toward a triumphant emotional peak.",
+                documentary: "Real stories from {location} that demonstrate human resilience and beauty. Intimate interviews blend with sweeping visuals. The narrative arc moves from challenge to hope, grounded in authentic experience. Viewers leave feeling empowered.",
+                dreamy: "Soft, hopeful light bathes {location} in possibility. Gentle upward camera movements symbolize growth and aspiration. The color grading is warm and inviting. Every frame whispers: 'you can do this.' Dreamlike and motivational.",
+                energetic: "High-energy journey through {location} that ignites the spirit! Dynamic movements, vibrant colors, uplifting compositions. The edit drives forward with purpose and passion. This isn't just a place—it's a launchpad for dreams."
+            },
+            exciting: {
+                cinematic: "Explosive opening at {location}! Wide-angle action shots, dynamic camera moves, saturated colors that pop. The pacing is relentless but controlled. Every cut amplifies the excitement. We're building to a spectacular climax.",
+                documentary: "Capture the raw excitement of {location} through authentic reactions and spontaneous moments. Handheld cameras get close to the action. Natural sound design immerses viewers. The story celebrates the joy of discovery and adventure.",
+                dreamy: "Even excitement can feel dreamlike—soft-motion captures of joyful moments at {location}. Vibrant yet ethereal colors. The mood is euphoric rather than frenetic. We're flying through a beautiful, exciting dream.",
+                energetic: "MAXIMUM ENERGY! {location} becomes a playground of possibilities. Fast cuts, bold angles, explosive colors. The camera never stops moving. Music drives the momentum. Every second delivers a rush of visual adrenaline."
+            }
+        };
+
+        function generatePrompt() {
+            const location = document.getElementById('location').value;
+            const mood = document.getElementById('mood').value;
+            const duration = document.getElementById('duration').value;
+            const style = document.getElementById('style').value;
+
+            const template = promptTemplates[mood][style];
+            const prompt = template.replace(/\{location\}/g, location);
+
+            const fullPrompt = `🎬 VIDEO CONCEPT (${duration}s)\n\n${prompt}\n\n📝 SCRIPT STRUCTURE:\n• Hook (0-5s): Immediate visual impact\n• Development (5-${parseInt(duration)-10}s): Story unfolds\n• Climax (${parseInt(duration)-10}-${parseInt(duration)-3}s): Emotional peak\n• CTA (${parseInt(duration)-3}-${duration}s): Clear next step\n\n🎵 MUSIC: ${mood} ${style} track, building in intensity\n🎙️ VOICE: Natural, conversational, emotionally authentic\n📐 FORMAT: 9:16 vertical for mobile-first engagement`;
+
+            document.getElementById('promptOutput').textContent = fullPrompt;
+        }
+
+        // Add event listeners
+        ['location', 'mood', 'duration', 'style'].forEach(id => {
+            document.getElementById(id).addEventListener('change', generatePrompt);
+        });
+
+        // Generate initial prompt
+        generatePrompt();
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
