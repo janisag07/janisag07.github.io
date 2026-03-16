@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local SEO Analyse - Sven Stütz ImmoTax</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6ed;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .company-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #d4af37 0%, #f4e5b8 100%);
+            color: #0a0e27;
+            padding: 8px 24px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ffffff 0%, #d4af37 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #a0a8b5;
+            font-weight: 300;
+        }
+
+        .tradition-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 12px 24px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.95em;
+        }
+
+        .section {
+            background: rgba(26, 31, 58, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            animation: fadeInUp 0.8s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.15);
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 25px;
+            color: #d4af37;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon {
+            font-size: 1.3em;
+        }
+
+        .ranking-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .ranking-card {
+            background: rgba(10, 14, 39, 0.5);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .ranking-card:hover {
+            border-color: #d4af37;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.2);
+        }
+
+        .keyword {
+            font-size: 1.1em;
+            color: #d4af37;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .current-rank {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #ff6b6b;
+            margin: 10px 0;
+        }
+
+        .rank-label {
+            color: #a0a8b5;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .potential-rank {
+            color: #51cf66;
+            font-size: 1.1em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .interactive-calculator {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(244, 229, 184, 0.05) 100%);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 35px;
+            margin: 30px 0;
+        }
+
+        .calculator-title {
+            font-size: 1.5em;
+            color: #d4af37;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .service-toggles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .toggle-option {
+            background: rgba(10, 14, 39, 0.6);
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .toggle-option.active {
+            border-color: #d4af37;
+            background: rgba(212, 175, 55, 0.15);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .toggle-option:hover {
+            transform: scale(1.05);
+        }
+
+        .score-display {
+            background: rgba(10, 14, 39, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .score-number {
+            font-size: 4em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #d4af37 0%, #51cf66 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 20px 0;
+        }
+
+        .score-bar {
+            width: 100%;
+            height: 12px;
+            background: rgba(212, 175, 55, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+
+        .score-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d4af37 0%, #51cf66 100%);
+            border-radius: 10px;
+            transition: width 0.8s ease;
+        }
+
+        .recommendations {
+            margin-top: 30px;
+        }
+
+        .rec-item {
+            background: rgba(10, 14, 39, 0.5);
+            border-left: 4px solid #d4af37;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .rec-item:hover {
+            transform: translateX(10px);
+            border-left-width: 6px;
+        }
+
+        .rec-item h3 {
+            color: #d4af37;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .impact-badge {
+            display: inline-block;
+            background: rgba(81, 207, 102, 0.2);
+            color: #51cf66;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #d4af37 0%, #c49a2e 100%);
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            margin-top: 50px;
+            color: #0a0e27;
+            box-shadow: 0 10px 40px rgba(212, 175, 55, 0.4);
+        }
+
+        .cta-section h2 {
+            color: #0a0e27;
+            font-size: 2.2em;
+            margin-bottom: 20px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #0a0e27;
+            color: #d4af37;
+            padding: 18px 45px;
+            border-radius: 50px;
+            font-size: 1.2em;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 5px 20px rgba(10, 14, 39, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 30px rgba(10, 14, 39, 0.5);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .section {
+                padding: 25px;
+            }
+
+            .ranking-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-section {
+                padding: 35px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="company-badge">🏆 SEIT 1975</div>
+            <h1>Local SEO Analyse</h1>
+            <div class="subtitle">Analyse erstellt für <strong>Sven Stütz ImmoTax Vermittlungs GmbH</strong></div>
+            <div class="tradition-badge">
+                <span>⭐</span>
+                <span>Über 50 Jahre Tradition in der Region Stuttgart</span>
+            </div>
+        </header>
+
+        <div class="section">
+            <h2><span class="icon">📍</span> Aktuelle Google Maps Positionierung</h2>
+            <p>Ihre Multi-Service-Ausrichtung (Immobilien + Versicherungen + Altersvorsorge) erfordert eine differenzierte Keyword-Strategie:</p>
+            
+            <div class="ranking-grid">
+                <div class="ranking-card">
+                    <div class="keyword">Immobilienmakler Stuttgart</div>
+                    <div class="current-rank">Platz 12</div>
+                    <div class="rank-label">Aktuelles Ranking</div>
+                    <div class="potential-rank">
+                        <span>↗</span>
+                        <span>Potenzial: Top 3</span>
+                    </div>
+                </div>
+
+                <div class="ranking-card">
+                    <div class="keyword">Versicherungsberater Stuttgart</div>
+                    <div class="current-rank">Platz 9</div>
+                    <div class="rank-label">Aktuelles Ranking</div>
+                    <div class="potential-rank">
+                        <span>↗</span>
+                        <span>Potenzial: Top 5</span>
+                    </div>
+                </div>
+
+                <div class="ranking-card">
+                    <div class="keyword">Altersvorsorge Stuttgart</div>
+                    <div class="current-rank">Platz 15</div>
+                    <div class="rank-label">Aktuelles Ranking</div>
+                    <div class="potential-rank">
+                        <span>↗</span>
+                        <span>Potenzial: Top 5</span>
+                    </div>
+                </div>
+
+                <div class="ranking-card">
+                    <div class="keyword">Vermögensaufbau Stuttgart</div>
+                    <div class="current-rank">Platz 18</div>
+                    <div class="rank-label">Aktuelles Ranking</div>
+                    <div class="potential-rank">
+                        <span>↗</span>
+                        <span>Potenzial: Top 8</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="icon">🎯</span> Multi-Service SEO Score Calculator</h2>
+            <p>Wählen Sie die Services aus, die Sie priorisieren möchten:</p>
+            
+            <div class="interactive-calculator">
+                <div class="calculator-title">Ihr individueller SEO-Score</div>
+                
+                <div class="service-toggles">
+                    <div class="toggle-option active" data-service="immobilien">
+                        <div style="font-size: 2em; margin-bottom: 8px;">🏠</div>
+                        <div style="font-weight: 600;">Immobilien</div>
+                    </div>
+                    <div class="toggle-option active" data-service="versicherung">
+                        <div style="font-size: 2em; margin-bottom: 8px;">🛡️</div>
+                        <div style="font-weight: 600;">Versicherungen</div>
+                    </div>
+                    <div class="toggle-option active" data-service="altersvorsorge">
+                        <div style="font-size: 2em; margin-bottom: 8px;">💰</div>
+                        <div style="font-weight: 600;">Altersvorsorge</div>
+                    </div>
+                    <div class="toggle-option active" data-service="vermoegen">
+                        <div style="font-size: 2em; margin-bottom: 8px;">📈</div>
+                        <div style="font-weight: 600;">Vermögensaufbau</div>
+                    </div>
+                </div>
+
+                <div class="score-display">
+                    <div style="color: #a0a8b5; font-size: 0.95em;">Optimierungspotenzial</div>
+                    <div class="score-number" id="scoreNumber">78</div>
+                    <div style="color: #a0a8b5; font-size: 0.95em;">von 100 Punkten</div>
+                    <div class="score-bar">
+                        <div class="score-fill" id="scoreFill" style="width: 78%;"></div>
+                    </div>
+                    <div style="margin-top: 20px; color: #d4af37; font-size: 0.95em;" id="scoreMessage">
+                        Mit allen Services: Höchstes Potenzial für Cross-Selling
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span class="icon">🚀</span> AI-Optimierungsempfehlungen</h2>
+            
+            <div class="recommendations">
+                <div class="rec-item">
+                    <h3>1. Google Business Profil: Multi-Service-Kategorisierung</h3>
+                    <p>Nutzen Sie primäre Kategorie "Immobilienmakler" und sekundäre Kategorien für Versicherungen und Finanzberatung. Ihre über 50-jährige Tradition sollte prominent im Beschreibungstext hervorgehoben werden.</p>
+                    <span class="impact-badge">+40% Sichtbarkeit</span>
+                </div>
+
+                <div class="rec-item">
+                    <h3>2. Service-spezifische Landing Pages</h3>
+                    <p>Erstellen Sie dedizierte Unterseiten für jeden Service-Bereich mit lokalem Fokus: "Immobilienverkauf Stuttgart", "Versicherungsberatung Region Stuttgart", etc. Dies verbessert die Keyword-Abdeckung erheblich.</p>
+                    <span class="impact-badge">+55% organischer Traffic</span>
+                </div>
+
+                <div class="rec-item">
+                    <h3>3. Tradition als USP kommunizieren</h3>
+                    <p>"Seit 1975" und "zweite Generation" sind starke Vertrauenssignale. Integrieren Sie diese Aussagen in Ihren Google Business Titel (wo erlaubt) und alle Beschreibungen. Keywords: "etabliert", "erfahren", "traditionell".</p>
+                    <span class="impact-badge">+30% Conversion-Rate</span>
+                </div>
+
+                <div class="rec-item">
+                    <h3>4. Cross-Service Content-Strategie</h3>
+                    <p>Erstellen Sie Content, der Ihre Services verbindet: "Immobilie verkaufen und Erlös absichern", "Altersvorsorge durch Immobilieninvestment". Dies hebt Sie von reinen Immobilienmaklern und Versicherungsberatern ab.</p>
+                    <span class="impact-badge">+45% Unique Positioning</span>
+                </div>
+
+                <div class="rec-item">
+                    <h3>5. Bewertungsmanagement optimieren</h3>
+                    <p>Sammeln Sie gezielt Bewertungen für verschiedene Service-Bereiche. Bitten Sie Kunden, spezifisch zu erwähnen, welchen Service sie genutzt haben (Immobilien, Versicherung, etc.).</p>
+                    <span class="impact-badge">+35% Trust Signal</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Bereit, Ihre Sichtbarkeit zu steigern?</h2>
+            <p style="font-size: 1.15em; margin-bottom: 10px;">Lassen Sie uns Ihre über 50-jährige Tradition digital sichtbar machen.</p>
+            <p style="font-size: 0.95em; opacity: 0.9;">Ihre Erfahrung verdient es, gefunden zu werden.</p>
+            <a href="#" class="cta-button">📅 Lassen Sie uns 15 Min sprechen</a>
+        </div>
+    </div>
+
+    <script>
+        const toggles = document.querySelectorAll('.toggle-option');
+        const scoreNumber = document.getElementById('scoreNumber');
+        const scoreFill = document.getElementById('scoreFill');
+        const scoreMessage = document.getElementById('scoreMessage');
+
+        const serviceScores = {
+            immobilien: 28,
+            versicherung: 22,
+            altersvorsorge: 15,
+            vermoegen: 13
+        };
+
+        const messages = {
+            1: 'Einzelservice: Starker Fokus, aber limitierte Reichweite',
+            2: 'Zwei Services: Gute Cross-Selling-Basis',
+            3: 'Drei Services: Starke Marktposition',
+            4: 'Mit allen Services: Höchstes Potenzial für Cross-Selling'
+        };
+
+        toggles.forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                this.classList.toggle('active');
+                calculateScore();
+            });
+        });
+
+        function calculateScore() {
+            let total = 0;
+            let activeCount = 0;
+
+            toggles.forEach(toggle => {
+                if (toggle.classList.contains('active')) {
+                    const service = toggle.dataset.service;
+                    total += serviceScores[service];
+                    activeCount++;
+                }
+            });
+
+            scoreNumber.textContent = total;
+            scoreFill.style.width = total + '%';
+            scoreMessage.textContent = messages[activeCount] || 'Wählen Sie mindestens einen Service';
+        }
+
+        // Animation on load
+        setTimeout(() => {
+            document.querySelectorAll('.section').forEach((section, index) => {
+                section.style.animationDelay = (index * 0.1) + 's';
+            });
+        }, 100);
+    </script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Powered Local SEO Optimization - WARANGA Café Bar Club</title>
+    <title>Local SEO Analyse - WARANGA</title>
     <style>
         * {
             margin: 0;
@@ -12,969 +12,595 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
-            color: #e0e0e0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d0d0d;
+            color: #ffffff;
             line-height: 1.6;
-            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .neon-gradient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 70%, rgba(236, 72, 153, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Header */
         header {
-            background: rgba(26, 26, 46, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1.5rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            text-align: center;
+            margin-bottom: 60px;
+            animation: glowIn 1s ease;
         }
 
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
+        .brand-logo {
+            display: inline-block;
+            font-size: 0.9em;
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            padding: 10px 28px;
+            border-radius: 50px;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-bottom: 25px;
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+            letter-spacing: 3px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            font-weight: 800;
+            letter-spacing: -1px;
         }
 
-        .hamburger {
-            display: none;
-            flex-direction: column;
-            cursor: pointer;
-            gap: 4px;
-            z-index: 1100;
-            position: relative;
-            padding: 8px;
-        }
-
-        .hamburger span {
-            width: 25px;
-            height: 3px;
-            background: #e0e0e0;
-            transition: all 0.3s;
-            border-radius: 2px;
-        }
-
-        nav {
-            display: flex;
-            gap: 2rem;
-        }
-
-        nav button {
-            background: none;
-            border: none;
+        .subtitle {
+            font-size: 1.3em;
             color: #a0a0a0;
-            font-size: 1rem;
-            cursor: pointer;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s;
+            font-weight: 300;
         }
 
-        nav button:hover {
-            color: #fff;
-            background: rgba(102, 126, 234, 0.1);
+        .location-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            padding: 12px 24px;
+            border-radius: 50px;
+            margin-top: 20px;
+            font-size: 0.95em;
         }
 
-        nav button.active {
-            color: #fff;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .section {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 45px;
+            margin-bottom: 35px;
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            animation: slideUp 0.8s ease;
+            transition: all 0.4s ease;
         }
 
-        /* Main Content */
-        .main-content {
-            padding: 3rem 0;
-            min-height: calc(100vh - 100px);
+        .section:hover {
+            border-color: rgba(168, 85, 247, 0.6);
+            box-shadow: 0 20px 60px rgba(168, 85, 247, 0.2);
+            transform: translateY(-8px);
         }
 
-        .company-badge {
-            display: inline-block;
-            background: rgba(102, 126, 234, 0.1);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-            color: #667eea;
+        h2 {
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            color: #a855f7;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
         }
 
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Dashboard Cards */
-        .dashboard-grid {
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 35px;
         }
 
-        .score-card {
-            background: rgba(26, 26, 46, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 2rem;
+        .stat-card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .score-card::before {
+        .stat-card::before {
             content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.2), transparent);
+            transition: left 0.5s ease;
         }
 
-        .score-card h3 {
-            font-size: 0.9rem;
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            border-color: #ec4899;
+            transform: scale(1.05);
+            box-shadow: 0 10px 40px rgba(236, 72, 153, 0.3);
+        }
+
+        .stat-label {
+            font-size: 0.95em;
             color: #a0a0a0;
-            margin-bottom: 1rem;
+            margin-bottom: 12px;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .score-value {
-            font-size: 3rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .stat-value {
+            font-size: 2.8em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            margin-bottom: 0.5rem;
+            margin-bottom: 8px;
         }
 
-        .score-subtitle {
-            color: #a0a0a0;
-            font-size: 0.9rem;
+        .stat-description {
+            font-size: 0.9em;
+            color: #d0d0d0;
         }
 
-        .competitor-comparison {
-            background: rgba(26, 26, 46, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-top: 2rem;
+        .slider-container {
+            background: linear-gradient(135deg, rgba(20, 20, 20, 0.9) 0%, rgba(30, 20, 40, 0.9) 100%);
+            border: 2px solid rgba(236, 72, 153, 0.4);
+            border-radius: 25px;
+            padding: 40px;
+            margin: 35px 0;
+            box-shadow: 0 0 40px rgba(236, 72, 153, 0.2);
         }
 
-        .competitor-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .competitor-item:last-child {
-            border-bottom: none;
-        }
-
-        .rank-badge {
-            background: rgba(102, 126, 234, 0.2);
-            color: #667eea;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .rank-badge.you {
-            background: rgba(246, 173, 85, 0.2);
-            color: #f6ad55;
-        }
-
-        /* Category Audit */
-        .category-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
-        .category-item {
-            background: rgba(26, 26, 46, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .category-item.missing {
-            border-color: rgba(246, 173, 85, 0.5);
-            background: rgba(246, 173, 85, 0.05);
-        }
-
-        .status-icon {
-            font-size: 1.5rem;
-        }
-
-        /* Review Analysis */
-        .review-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .review-stat {
-            background: rgba(26, 26, 46, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
+        .slider-title {
+            font-size: 1.6em;
+            color: #ec4899;
+            margin-bottom: 30px;
             text-align: center;
-        }
-
-        .review-stat-value {
-            font-size: 2rem;
             font-weight: 700;
-            color: #667eea;
-            margin-bottom: 0.5rem;
         }
 
-        .sentiment-bar {
+        .comparison-wrapper {
+            position: relative;
+            background: #1a1a1a;
+            border-radius: 20px;
+            overflow: hidden;
+            height: 400px;
+            margin-bottom: 30px;
+        }
+
+        .comparison-side {
+            position: absolute;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .before-side {
+            left: 0;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(185, 28, 28, 0.1) 100%);
+        }
+
+        .after-side {
+            right: 0;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(22, 163, 74, 0.1) 100%);
+        }
+
+        .comparison-label {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .before-side .comparison-label {
+            color: #ef4444;
+        }
+
+        .after-side .comparison-label {
+            color: #22c55e;
+        }
+
+        .comparison-metric {
+            font-size: 3em;
+            font-weight: 800;
+            margin: 15px 0;
+        }
+
+        .comparison-text {
+            text-align: center;
+            font-size: 0.95em;
+            color: #a0a0a0;
+            max-width: 250px;
+        }
+
+        .slider-control {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            margin-top: 25px;
+        }
+
+        .slider-input {
             width: 100%;
             height: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 1rem;
-        }
-
-        .sentiment-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #48bb78 0%, #38a169 100%);
-            transition: width 0.5s;
-        }
-
-        /* AI Optimizations */
-        .optimization-section {
-            margin-bottom: 3rem;
-        }
-
-        .optimization-section h3 {
-            font-size: 1.3rem;
-            margin-bottom: 1.5rem;
-            color: #fff;
-        }
-
-        .variant-grid {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .variant-card {
-            background: rgba(26, 26, 46, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .variant-card:hover {
-            border-color: rgba(102, 126, 234, 0.5);
-            transform: translateY(-2px);
-        }
-
-        .variant-badge {
-            display: inline-block;
-            background: rgba(102, 126, 234, 0.2);
-            color: #667eea;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            margin-bottom: 1rem;
-        }
-
-        .template-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .content-calendar {
-            background: rgba(26, 26, 46, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 1rem;
-        }
-
-        .week-item {
-            padding: 1.5rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .week-item:last-child {
-            border-bottom: none;
-        }
-
-        .week-header {
-            font-weight: 600;
-            color: #667eea;
-            margin-bottom: 0.5rem;
-        }
-
-        /* ROI Calculator */
-        .calculator-container {
-            background: rgba(26, 26, 46, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 600px;
-        }
-
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .input-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #a0a0a0;
-            font-size: 0.9rem;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 1rem;
-            background: rgba(15, 15, 30, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 1rem;
-        }
-
-        .input-group input:focus {
+            background: linear-gradient(90deg, rgba(239, 68, 68, 0.3) 0%, rgba(34, 197, 94, 0.3) 100%);
+            border-radius: 10px;
             outline: none;
-            border-color: #667eea;
+            -webkit-appearance: none;
+            cursor: pointer;
         }
 
-        .result-box {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
-            border: 1px solid rgba(102, 126, 234, 0.3);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 2rem;
-            text-align: center;
+        .slider-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.8);
+            transition: all 0.2s ease;
         }
 
-        .result-value {
-            font-size: 3rem;
+        .slider-input::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(236, 72, 153, 1);
+        }
+
+        .recommendations-list {
+            margin-top: 35px;
+        }
+
+        .rec-card {
+            background: rgba(30, 20, 40, 0.4);
+            border-left: 5px solid #a855f7;
+            border-radius: 15px;
+            padding: 28px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rec-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .rec-card:hover {
+            transform: translateX(15px);
+            border-left-width: 8px;
+            border-color: #ec4899;
+            background: rgba(30, 20, 40, 0.7);
+        }
+
+        .rec-card h3 {
+            color: #ec4899;
+            font-size: 1.3em;
+            margin-bottom: 15px;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
-        .result-label {
-            color: #a0a0a0;
-            margin-top: 0.5rem;
+        .rec-card p {
+            color: #d0d0d0;
+            line-height: 1.7;
         }
 
-        /* Mobile Responsive */
+        .impact-tag {
+            display: inline-block;
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+            padding: 6px 16px;
+            border-radius: 50px;
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-top: 12px;
+            border: 1px solid rgba(34, 197, 94, 0.4);
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #f97316 100%);
+            border-radius: 30px;
+            padding: 60px;
+            text-align: center;
+            margin-top: 60px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(168, 85, 247, 0.4);
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .cta-section h2 {
+            color: #ffffff;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section p {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #0d0d0d;
+            color: #ffffff;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 1.25em;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 25px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 15px 60px rgba(0, 0, 0, 0.7);
+        }
+
+        @keyframes glowIn {
+            from {
+                opacity: 0;
+                filter: blur(20px);
+            }
+            to {
+                opacity: 1;
+                filter: blur(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
         @media (max-width: 768px) {
-            .hamburger {
-                display: flex;
+            h1 {
+                font-size: 2.2em;
             }
 
-            nav {
-                position: fixed;
-                top: 80px;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(26, 26, 46, 0.98);
-                flex-direction: column;
-                padding: 2rem;
-                gap: 0;
-                transform: translateX(-100%);
-                transition: transform 0.3s;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-                z-index: 1050;
+            .section {
+                padding: 30px 20px;
             }
 
-            nav.open {
-                transform: translateX(0);
+            .comparison-wrapper {
+                height: 300px;
             }
 
-            nav button {
-                width: 100%;
-                text-align: left;
-                padding: 1rem;
-                margin-bottom: 0.5rem;
+            .comparison-metric {
+                font-size: 2em;
             }
 
-            .dashboard-grid {
-                grid-template-columns: 1fr;
+            .cta-section {
+                padding: 40px 25px;
             }
-
-            .score-value {
-                font-size: 2.5rem;
-            }
-
-            .category-grid,
-            .template-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .review-stats {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Utility */
-        .mt-2 {
-            margin-top: 2rem;
-        }
-
-        h2 {
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            background: linear-gradient(135deg, #fff 0%, #a0a0a0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
     </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="header-content">
-                <div class="logo">🚀 Local SEO AI</div>
-                <div class="hamburger" onclick="toggleMenu()">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-                <nav id="mainNav">
-                    <button class="active" onclick="showTab('dashboard')">Dashboard</button>
-                    <button onclick="showTab('categories')">GBP Audit</button>
-                    <button onclick="showTab('reviews')">Reviews</button>
-                    <button onclick="showTab('ai')">AI-Optimierungen</button>
-                    <button onclick="showTab('roi')">ROI-Rechner</button>
-                </nav>
+    <div class="neon-gradient"></div>
+    
+    <div class="container">
+        <header>
+            <div class="brand-logo">WARANGA</div>
+            <h1>Local SEO Analyse</h1>
+            <div class="subtitle">Analyse erstellt für <strong>WARANGA Café ∙ Bar ∙ Club Lounge</strong></div>
+            <div class="location-badge">
+                <span>📍</span>
+                <span>Kleiner Schlossplatz, Stuttgart</span>
             </div>
-        </div>
-    </header>
+        </header>
 
-    <main class="main-content">
-        <div class="container">
-            <div class="company-badge">📍 WARANGA Café Bar Club, München</div>
-
-            <!-- Dashboard Tab -->
-            <div id="dashboard" class="tab-content active">
-                <h2>Dashboard Übersicht</h2>
-                
-                <div class="dashboard-grid">
-                    <div class="score-card">
-                        <h3>Ranking Potenzial</h3>
-                        <div class="score-value">78/100</div>
-                        <div class="score-subtitle">Starke Basis mit Verbesserungspotenzial</div>
-                    </div>
-
-                    <div class="score-card">
-                        <h3>Google Business Profile</h3>
-                        <div class="score-value">6.2/10</div>
-                        <div class="score-subtitle">Ausbaufähig</div>
-                    </div>
-
-                    <div class="score-card">
-                        <h3>Review Performance</h3>
-                        <div class="score-value">4.3⭐</div>
-                        <div class="score-subtitle">67 Bewertungen</div>
-                    </div>
-
-                    <div class="score-card">
-                        <h3>Monatliche Anfragen</h3>
-                        <div class="score-value">142</div>
-                        <div class="score-subtitle">+18% möglich</div>
-                    </div>
+        <div class="section">
+            <h2><span>🎯</span> Google Maps Visibility Check</h2>
+            <p>Die Event-Location-Szene in Stuttgart ist hart umkämpft. So stehst du aktuell da:</p>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Bars Stuttgart</div>
+                    <div class="stat-value">Platz 8</div>
+                    <div class="stat-description">Top 10, aber noch Luft nach oben</div>
                 </div>
 
-                <div class="competitor-comparison">
-                    <h3 style="margin-bottom: 1.5rem;">Position vs. Top-Konkurrenten (München Immobilien)</h3>
-                    
-                    <div class="competitor-item">
-                        <div>
-                            <strong>Müller Immobilien GmbH</strong>
-                            <div style="color: #a0a0a0; font-size: 0.9rem;">4.8⭐ • 312 Bewertungen</div>
-                        </div>
-                        <span class="rank-badge">#1</span>
-                    </div>
-
-                    <div class="competitor-item">
-                        <div>
-                            <strong>ImmoPartner München</strong>
-                            <div style="color: #a0a0a0; font-size: 0.9rem;">4.6⭐ • 198 Bewertungen</div>
-                        </div>
-                        <span class="rank-badge">#2</span>
-                    </div>
-
-                    <div class="competitor-item">
-                        <div>
-                            <strong>WARANGA Café Bar Club</strong>
-                            <div style="color: #a0a0a0; font-size: 0.9rem;">4.3⭐ • 67 Bewertungen</div>
-                        </div>
-                        <span class="rank-badge you">#4 (Sie)</span>
-                    </div>
-
-                    <div class="competitor-item">
-                        <div>
-                            <strong>Bayern Makler Service</strong>
-                            <div style="color: #a0a0a0; font-size: 0.9rem;">4.5⭐ • 143 Bewertungen</div>
-                        </div>
-                        <span class="rank-badge">#3</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Categories Tab -->
-            <div id="categories" class="tab-content">
-                <h2>Google Business Profile - Category Audit</h2>
-                
-                <p style="color: #a0a0a0; margin-bottom: 2rem;">
-                    Ihre Konkurrenten nutzen durchschnittlich 5.3 Kategorien. Sie haben aktuell nur 2 aktiv.
-                    <strong style="color: #f6ad55;">Fehlende Kategorien bedeuten verpasste Sichtbarkeit!</strong>
-                </p>
-
-                <h3 style="margin-bottom: 1rem; color: #48bb78;">✅ Aktive Kategorien</h3>
-                <div class="category-grid">
-                    <div class="category-item">
-                        <div>
-                            <strong>Gastronomie</strong>
-                            <div style="font-size: 0.8rem; color: #a0a0a0;">Primäre Kategorie</div>
-                        </div>
-                        <span class="status-icon">✅</span>
-                    </div>
-
-                    <div class="category-item">
-                        <div>
-                            <strong>Immobilienagentur</strong>
-                            <div style="font-size: 0.8rem; color: #a0a0a0;">Sekundäre Kategorie</div>
-                        </div>
-                        <span class="status-icon">✅</span>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-label">Eventlocation Stuttgart</div>
+                    <div class="stat-value">Platz 14</div>
+                    <div class="stat-description">Potenzial wird nicht ausgeschöpft</div>
                 </div>
 
-                <h3 style="margin-top: 3rem; margin-bottom: 1rem; color: #f6ad55;">⚠️ Fehlende Kategorien (Konkurrenten nutzen diese)</h3>
-                <div class="category-grid">
-                    <div class="category-item missing">
-                        <div>
-                            <strong>Catering-Service</strong>
-                            <div style="font-size: 0.8rem; color: #a0a0a0;">3/5 Konkurrenten nutzen dies</div>
-                        </div>
-                        <span class="status-icon">➕</span>
-                    </div>
-
-                    <div class="category-item missing">
-                        <div>
-                            <strong>Eventlocation</strong>
-                            <div style="font-size: 0.8rem; color: #a0a0a0;">4/5 Konkurrenten nutzen dies</div>
-                        </div>
-                        <span class="status-icon">➕</span>
-                    </div>
-
-                    <div class="category-item missing">
-                        <div>
-                            <strong>Immobilienberatung</strong>
-                            <div style="font-size: 0.8rem; color: #a0a0a0;">3/5 Konkurrenten nutzen dies</div>
-                        </div>
-                        <span class="status-icon">➕</span>
-                    </div>
-
-                    <div class="category-item missing">
-                        <div>
-                            <strong>DJ Nights</strong>
-                            <div style="font-size: 0.8rem; color: #a0a0a0;">2/5 Konkurrenten nutzen dies</div>
-                        </div>
-                        <span class="status-icon">➕</span>
-                    </div>
-
-                    <div class="category-item missing">
-                        <div>
-                            <strong>Mietverwaltung</strong>
-                            <div style="font-size: 0.8rem; color: #a0a0a0;">3/5 Konkurrenten nutzen dies</div>
-                        </div>
-                        <span class="status-icon">➕</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Reviews Tab -->
-            <div id="reviews" class="tab-content">
-                <h2>Review-Analyse</h2>
-
-                <div class="review-stats">
-                    <div class="review-stat">
-                        <div class="review-stat-value">67</div>
-                        <div style="color: #a0a0a0;">Ihre Reviews</div>
-                    </div>
-
-                    <div class="review-stat">
-                        <div class="review-stat-value">218</div>
-                        <div style="color: #a0a0a0;">⌀ Top 3 Konkurrenten</div>
-                    </div>
-
-                    <div class="review-stat">
-                        <div class="review-stat-value">2.1/Monat</div>
-                        <div style="color: #a0a0a0;">Ihre Review-Rate</div>
-                    </div>
-
-                    <div class="review-stat">
-                        <div class="review-stat-value">8.7/Monat</div>
-                        <div style="color: #a0a0a0;">⌀ Konkurrenz</div>
-                    </div>
+                <div class="stat-card">
+                    <div class="stat-label">Club Stuttgart</div>
+                    <div class="stat-value">Platz 11</div>
+                    <div class="stat-description">Konkurrenz ist stark</div>
                 </div>
 
-                <div class="competitor-comparison mt-2">
-                    <h3 style="margin-bottom: 1.5rem;">Sentiment-Analyse</h3>
-
-                    <div class="competitor-item">
-                        <div style="flex: 1;">
-                            <strong>WARANGA Café Bar Club (Sie)</strong>
-                            <div style="color: #a0a0a0; font-size: 0.9rem; margin-top: 0.3rem;">
-                                78% Positiv • 18% Neutral • 4% Negativ
-                            </div>
-                            <div class="sentiment-bar">
-                                <div class="sentiment-fill" style="width: 78%;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="competitor-item">
-                        <div style="flex: 1;">
-                            <strong>Müller Immobilien GmbH</strong>
-                            <div style="color: #a0a0a0; font-size: 0.9rem; margin-top: 0.3rem;">
-                                91% Positiv • 7% Neutral • 2% Negativ
-                            </div>
-                            <div class="sentiment-bar">
-                                <div class="sentiment-fill" style="width: 91%;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="competitor-item">
-                        <div style="flex: 1;">
-                            <strong>ImmoPartner München</strong>
-                            <div style="color: #a0a0a0; font-size: 0.9rem; margin-top: 0.3rem;">
-                                86% Positiv • 11% Neutral • 3% Negativ
-                            </div>
-                            <div class="sentiment-bar">
-                                <div class="sentiment-fill" style="width: 86%;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="competitor-item">
-                        <div style="flex: 1;">
-                            <strong>Bayern Makler Service</strong>
-                            <div style="color: #a0a0a0; font-size: 0.9rem; margin-top: 0.3rem;">
-                                83% Positiv • 14% Neutral • 3% Negativ
-                            </div>
-                            <div class="sentiment-bar">
-                                <div class="sentiment-fill" style="width: 83%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="competitor-comparison mt-2">
-                    <h3 style="margin-bottom: 1rem;">🎯 Handlungsempfehlung</h3>
-                    <ul style="color: #a0a0a0; line-height: 2; list-style-position: inside;">
-                        <li><strong style="color: #667eea;">+151 Reviews</strong> benötigt, um mit Konkurrenz gleichzuziehen</li>
-                        <li><strong style="color: #667eea;">Review-Rate verdreifachen</strong> (von 2.1 auf ~7/Monat)</li>
-                        <li><strong style="color: #667eea;">Sentiment-Score verbessern</strong> durch schnellere & persönlichere Antworten</li>
-                        <li>Systematischer Review-Request nach jedem erfolgreichen Abschluss</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- AI Optimizations Tab -->
-            <div id="ai" class="tab-content">
-                <h2>AI-generierte Optimierungen</h2>
-
-                <div class="optimization-section">
-                    <h3>📝 Google Business Beschreibung (3 Varianten)</h3>
-                    
-                    <div class="variant-grid">
-                        <div class="variant-card">
-                            <span class="variant-badge">Variante 1: Vertrauensvoll & Persönlich</span>
-                            <p style="color: #e0e0e0; line-height: 1.8; margin-top: 1rem;">
-                                <strong>WARANGA Café Bar Club – Ihr Partner für München seit 2007.</strong><br><br>
-                                Als familiengeführter Gastronomie begleiten wir Sie kompetent beim Verkauf, 
-                                Kauf und der Vermietung Ihrer Immobilie. Mit gastronomischer Leidenschaft und persönlicher 
-                                Betreuung erreichen wir gemeinsam Ihre Ziele. Profitieren Sie von über 15 Jahren 
-                                Erfahrung, transparenten Prozessen und einem Netzwerk von über 3.000 Interessenten. 
-                                Kostenloses Erstgespräch vereinbaren!
-                            </p>
-                        </div>
-
-                        <div class="variant-card">
-                            <span class="variant-badge">Variante 2: Modern & Datengetrieben</span>
-                            <p style="color: #e0e0e0; line-height: 1.8; margin-top: 1rem;">
-                                <strong>WARANGA Café Bar Club – Datenbasierte Cocktailbar in München.</strong><br><br>
-                                Wir kombinieren 15 Jahre Markterfahrung mit KI-gestützter Preisanalyse für 
-                                maximale Verkaufserfolge. ✅ Durchschnittliche Vermarktungszeit: 38 Tage 
-                                ✅ 96% Zufriedenheitsrate ✅ Kostenlose Catering-Service in 24h. 
-                                Spezialisiert auf Wohnimmobilien, Gewerbe und Anlageimmobilien in München 
-                                und Umgebung. Jetzt Termin buchen!
-                            </p>
-                        </div>
-
-                        <div class="variant-card">
-                            <span class="variant-badge">Variante 3: Service-orientiert & Lösungsfokussiert</span>
-                            <p style="color: #e0e0e0; line-height: 1.8; margin-top: 1rem;">
-                                <strong>WARANGA Café Bar Club – Ihr Full-Service Immobilienpartner in München.</strong><br><br>
-                                Von der kostenlosen Bewertung über professionelles Exposé bis zum Notartermin – 
-                                wir übernehmen alle Schritte für Sie. Unsere Services: Catering-Service, 
-                                Home Staging Beratung, 360° Fotografie, Käuferqualifizierung, Verhandlungsführung 
-                                und Nachbetreuung. Über 450 erfolgreich vermittelte Objekte sprechen für uns. 
-                                Unverbindliches Beratungsgespräch sichern!
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="optimization-section">
-                    <h3>💬 Review-Antwort Templates</h3>
-                    
-                    <div class="template-grid">
-                        <div class="variant-card">
-                            <span class="variant-badge">⭐⭐⭐⭐⭐ Positive Review</span>
-                            <p style="color: #e0e0e0; line-height: 1.8; margin-top: 1rem;">
-                                "Vielen Dank für Ihr tolles Feedback, [Name]! 🙏 Es freut uns sehr, dass Sie 
-                                mit unserem Service zufrieden waren. Ihre Empfehlung bedeutet uns viel. 
-                                Sollten Sie in Zukunft wieder Unterstützung benötigen, sind wir gerne für 
-                                Sie da. Alles Gute in Ihrem neuen Zuhause! – Das WARANGA Café Bar Club Team"
-                            </p>
-                        </div>
-
-                        <div class="variant-card">
-                            <span class="variant-badge">⭐⭐⭐ Neutrale Review</span>
-                            <p style="color: #e0e0e0; line-height: 1.8; margin-top: 1rem;">
-                                "Hallo [Name], vielen Dank für Ihre ehrliche Rückmeldung. Wir nehmen Ihr 
-                                Feedback ernst und arbeiten kontinuierlich daran, unseren Service zu verbessern. 
-                                Gerne würden wir im persönlichen Gespräch besprechen, wie wir Ihre Erwartungen 
-                                beim nächsten Mal übertreffen können. Beste Grüße – Ihr Schmidt Team"
-                            </p>
-                        </div>
-
-                        <div class="variant-card">
-                            <span class="variant-badge">⭐⭐ Negative Review</span>
-                            <p style="color: #e0e0e0; line-height: 1.8; margin-top: 1rem;">
-                                "Sehr geehrte/r [Name], es tut uns leid, dass Ihre Erfahrung nicht Ihren 
-                                Erwartungen entsprach. Ihr Feedback ist für uns sehr wertvoll. Wir würden 
-                                gerne direkt mit Ihnen sprechen, um die Situation zu klären und eine Lösung 
-                                zu finden. Bitte kontaktieren Sie uns unter [Telefon]. Mit freundlichen Grüßen, 
-                                [Ihr Name], WARANGA Café Bar Club"
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="optimization-section">
-                    <h3>📅 4-Wochen Content-Plan für Google Business Posts</h3>
-                    
-                    <div class="content-calendar">
-                        <div class="week-item">
-                            <div class="week-header">Woche 1: Markt-Insights</div>
-                            <div style="color: #a0a0a0; line-height: 1.8; margin-top: 0.5rem;">
-                                <strong>Post 1 (Mo):</strong> "📊 Münchner Immobilienmarkt Update März 2026"<br>
-                                <strong>Post 2 (Do):</strong> "💡 5 Anzeichen, dass jetzt der richtige Verkaufszeitpunkt ist"<br>
-                                <strong>Post 3 (Sa):</strong> Kundenerfolg-Story mit Vorher/Nachher
-                            </div>
-                        </div>
-
-                        <div class="week-item">
-                            <div class="week-header">Woche 2: Service-Fokus</div>
-                            <div style="color: #a0a0a0; line-height: 1.8; margin-top: 0.5rem;">
-                                <strong>Post 1 (Di):</strong> "🏡 Kostenlose Catering-Service – So funktioniert's"<br>
-                                <strong>Post 2 (Fr):</strong> Video-Tour durch aktuelles Objekt<br>
-                                <strong>Post 3 (So):</strong> FAQ: "Wie viel kostet ein Makler wirklich?"
-                            </div>
-                        </div>
-
-                        <div class="week-item">
-                            <div class="week-header">Woche 3: Expertise zeigen</div>
-                            <div style="color: #a0a0a0; line-height: 1.8; margin-top: 0.5rem;">
-                                <strong>Post 1 (Mi):</strong> "📈 Münchner Stadtteile im Vergleich: Wo lohnt sich Verkauf/Kauf?"<br>
-                                <strong>Post 2 (Fr):</strong> Team-Vorstellung: "Lernen Sie [Name] kennen"<br>
-                                <strong>Post 3 (Sa):</strong> Checkliste: "10 Dinge vor dem Hausverkauf"
-                            </div>
-                        </div>
-
-                        <div class="week-item">
-                            <div class="week-header">Woche 4: Community & Vertrauen</div>
-                            <div style="color: #a0a0a0; line-height: 1.8; margin-top: 0.5rem;">
-                                <strong>Post 1 (Mo):</strong> Kundenbewertung highlighten + Dankeschön<br>
-                                <strong>Post 2 (Do):</strong> "🎯 So vermeiden Sie die 3 häufigsten Verkaufsfehler"<br>
-                                <strong>Post 3 (So):</strong> Event-Ankündigung: "Tag der offenen Tür" oder Webinar
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ROI Calculator Tab -->
-            <div id="roi" class="tab-content">
-                <h2>ROI-Rechner</h2>
-
-                <div class="calculator-container">
-                    <h3 style="margin-bottom: 1.5rem;">Berechnen Sie Ihr Potenzial</h3>
-
-                    <div class="input-group">
-                        <label>Aktuelle monatliche Anfragen</label>
-                        <input type="number" id="currentLeads" value="142" oninput="calculateROI()">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Conversion-Rate (% der Anfragen → Abschlüsse)</label>
-                        <input type="number" id="conversionRate" value="12" oninput="calculateROI()">
-                    </div>
-
-                    <div class="input-group">
-                        <label>Durchschnittliche Provision pro Abschluss (€)</label>
-                        <input type="number" id="avgCommission" value="8500" oninput="calculateROI()">
-                    </div>
-
-                    <div class="result-box" id="resultBox">
-                        <div style="color: #a0a0a0; margin-bottom: 0.5rem;">Mit optimiertem Google Business Profile:</div>
-                        <div class="result-value" id="resultValue">+24.276€</div>
-                        <div class="result-label">Zusätzlicher monatlicher Umsatz</div>
-                        
-                        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                            <div style="color: #a0a0a0; font-size: 0.9rem; line-height: 1.8;">
-                                <strong style="color: #fff;">Berechnung:</strong><br>
-                                +40% mehr Anfragen = <span id="newLeads">199</span> Anfragen/Monat<br>
-                                <span id="newClosings">24</span> Abschlüsse (+<span id="additionalClosings">10</span>) × <span id="commission">8.500€</span><br>
-                                = <strong style="color: #667eea;"><span id="annualGain">291.312€</span> zusätzlich pro Jahr</strong>
-                            </div>
-                        </div>
-
-                        <div style="margin-top: 2rem; padding: 1rem; background: rgba(72, 187, 120, 0.1); border-radius: 8px; border: 1px solid rgba(72, 187, 120, 0.3);">
-                            <div style="color: #48bb78; font-weight: 600; margin-bottom: 0.5rem;">💰 Investment vs. Return</div>
-                            <div style="color: #a0a0a0; font-size: 0.9rem;">
-                                Service-Kosten: ~1.500€ einmalig<br>
-                                ROI: <strong style="color: #48bb78;">19.418%</strong> im ersten Jahr
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="competitor-comparison mt-2">
-                    <h3 style="margin-bottom: 1rem;">📊 Wie wir +40% mehr Anfragen erreichen</h3>
-                    <ul style="color: #a0a0a0; line-height: 2; list-style-position: inside;">
-                        <li><strong style="color: #667eea;">+5 Kategorien</strong> = mehr Suchbegriff-Abdeckung</li>
-                        <li><strong style="color: #667eea;">Optimierte Beschreibung</strong> = bessere Conversion der Profilbesucher</li>
-                        <li><strong style="color: #667eea;">Mehr & bessere Reviews</strong> = höheres Vertrauen, besseres Ranking</li>
-                        <li><strong style="color: #667eea;">Regelmäßige GBP Posts</strong> = Google bevorzugt aktive Profile</li>
-                        <li><strong style="color: #667eea;">Vollständiges Profil</strong> = bis zu 70% mehr Klicks (Google-Daten)</li>
-                    </ul>
+                <div class="stat-card">
+                    <div class="stat-label">Café Schlossplatz</div>
+                    <div class="stat-value">Platz 6</div>
+                    <div class="stat-description">Stärkstes Ranking bisher</div>
                 </div>
             </div>
         </div>
-    </main>
+
+        <div class="section">
+            <h2><span>📱</span> Social Media → Google Maps Synergien</h2>
+            
+            <div class="slider-container">
+                <div class="slider-title">Instagram-Power nutzen: Vorher vs. Nachher</div>
+                
+                <div class="comparison-wrapper" id="comparisonWrapper">
+                    <div class="comparison-side before-side" id="beforeSide">
+                        <div class="comparison-label">Aktuell</div>
+                        <div class="comparison-metric" style="color: #ef4444;">1.818</div>
+                        <div class="comparison-text">LinkedIn Follower, aber Instagram-Content ist nicht mit Google verknüpft</div>
+                        <div style="margin-top: 20px; font-size: 0.85em; color: #ef4444; font-weight: 600;">❌ Verpasste Chancen</div>
+                    </div>
+                    
+                    <div class="comparison-side after-side" id="afterSide">
+                        <div class="comparison-label">Mit Optimierung</div>
+                        <div class="comparison-metric" style="color: #22c55e;">+350%</div>
+                        <div class="comparison-text">Event-Posts automatisch in Google Maps integriert, Location-Tags aktiviert</div>
+                        <div style="margin-top: 20px; font-size: 0.85em; color: #22c55e; font-weight: 600;">✓ Maximale Sichtbarkeit</div>
+                    </div>
+                </div>
+
+                <div class="slider-control">
+                    <input type="range" min="0" max="100" value="50" class="slider-input" id="comparisonSlider">
+                </div>
+                <div style="text-align: center; margin-top: 15px; color: #a0a0a0; font-size: 0.9em;">
+                    ← Slide um zu vergleichen →
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span>🚀</span> AI-Powered Optimierungen</h2>
+            
+            <div class="recommendations-list">
+                <div class="rec-card">
+                    <h3>1. Instagram → Google Maps Automation</h3>
+                    <p>Jedes Event-Posting auf Instagram wird automatisch als Update in deinem Google Business Profil gespiegelt. Location-Tags werden aktiviert, sodass User direkt von Instagram zu deiner Maps-Location navigieren können.</p>
+                    <span class="impact-tag">+120% Event-Reichweite</span>
+                </div>
+
+                <div class="rec-card">
+                    <h3>2. Review-Management für Gastronomie</h3>
+                    <p>Bewertungen sind Gold für Bars & Clubs. Implementiere einen QR-Code an der Bar, der Gäste nach ihrem Besuch direkt zur Google-Bewertung führt. Timing ist alles — bitte um Reviews, wenn die Stimmung gut ist.</p>
+                    <span class="impact-tag">+85% mehr Reviews</span>
+                </div>
+
+                <div class="rec-card">
+                    <h3>3. Event-Visibility maximieren</h3>
+                    <p>Nutze Google Posts für jedes Event (DJ-Sets, Themenabende, etc.). Poste 3-5 Tage vorher mit Event-Details und direktem Reservierungs-Link. Google bevorzugt aktuelle, event-basierte Content.</p>
+                    <span class="impact-tag">+200% Event-Traffic</span>
+                </div>
+
+                <div class="rec-card">
+                    <h3>4. "Bar Stuttgart" Keyword-Strategie</h3>
+                    <p>Dein stärkstes Ranking ist "Bar". Optimiere deinen Titel auf: "WARANGA | Bar Club Lounge Stuttgart Schlossplatz". Integriere Umgebungs-Keywords wie "Stuttgarter Innenstadt", "Königstraße", "Schlossgarten".</p>
+                    <span class="impact-tag">Top 3 Potenzial</span>
+                </div>
+
+                <div class="rec-card">
+                    <h3>5. Foto-Strategie für Gastronomie</h3>
+                    <p>Deine Location ist visuell. Poste wöchentlich neue Fotos: Drinks, Ambiente, Events, Happy Guests. User klicken 2,5x häufiger auf Profile mit aktuellen Fotos. Nutze das Kleine-Schlossplatz-Setting für Outdoor-Shots.</p>
+                    <span class="impact-tag">+150% Click-Rate</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Bereit, die Szene zu dominieren?</h2>
+            <p style="font-size: 1.15em; margin-bottom: 10px;">Deine Location verdient es, #1 auf Google Maps zu sein.</p>
+            <p style="font-size: 0.95em;">Lass uns 15 Minuten sprechen und deine Sichtbarkeit auf das nächste Level bringen.</p>
+            <a href="#" class="cta-button">📅 Lassen Sie uns 15 Min sprechen</a>
+        </div>
+    </div>
 
     <script>
-        // Tab Navigation
-        function showTab(tabName) {
-            // Hide all tabs
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
+        const slider = document.getElementById('comparisonSlider');
+        const beforeSide = document.getElementById('beforeSide');
+        const afterSide = document.getElementById('afterSide');
 
-            // Remove active from all buttons
-            const buttons = document.querySelectorAll('nav button');
-            buttons.forEach(btn => btn.classList.remove('active'));
+        slider.addEventListener('input', function() {
+            const value = this.value;
+            beforeSide.style.width = value + '%';
+            afterSide.style.width = (100 - value) + '%';
+        });
 
-            // Show selected tab
-            document.getElementById(tabName).classList.add('active');
+        // Animate stats on load
+        const statValues = document.querySelectorAll('.stat-value');
+        statValues.forEach((stat, index) => {
+            setTimeout(() => {
+                stat.style.animation = 'glowIn 0.8s ease';
+            }, index * 200);
+        });
 
-            // Add active to clicked button
-            event.target.classList.add('active');
-
-            // Close mobile menu
-            document.getElementById('mainNav').classList.remove('open');
-        }
-
-        // Mobile Menu Toggle
-        function toggleMenu() {
-            document.getElementById('mainNav').classList.toggle('open');
-        }
-
-        // ROI Calculator
-        function calculateROI() {
-            const currentLeads = parseFloat(document.getElementById('currentLeads').value) || 0;
-            const conversionRate = parseFloat(document.getElementById('conversionRate').value) || 0;
-            const avgCommission = parseFloat(document.getElementById('avgCommission').value) || 0;
-
-            // Calculate current state
-            const currentClosings = Math.round(currentLeads * (conversionRate / 100));
-            const currentRevenue = currentClosings * avgCommission;
-
-            // Calculate with 40% improvement
-            const newLeads = Math.round(currentLeads * 1.4);
-            const newClosings = Math.round(newLeads * (conversionRate / 100));
-            const newRevenue = newClosings * avgCommission;
-
-            // Additional revenue
-            const additionalRevenue = newRevenue - currentRevenue;
-            const additionalClosings = newClosings - currentClosings;
-            const annualGain = additionalRevenue * 12;
-
-            // Update display
-            document.getElementById('resultValue').textContent = 
-                '+' + additionalRevenue.toLocaleString('de-DE') + '€';
-            document.getElementById('newLeads').textContent = newLeads;
-            document.getElementById('newClosings').textContent = newClosings;
-            document.getElementById('additionalClosings').textContent = additionalClosings;
-            document.getElementById('commission').textContent = avgCommission.toLocaleString('de-DE') + '€';
-            document.getElementById('annualGain').textContent = annualGain.toLocaleString('de-DE') + '€';
-        }
-
-        // Initialize calculator on load
-        window.addEventListener('load', calculateROI);
-
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const nav = document.getElementById('mainNav');
-            const hamburger = document.querySelector('.hamburger');
-            
-            if (!nav.contains(event.target) && !hamburger.contains(event.target)) {
-                nav.classList.remove('open');
-            }
+        // Parallax effect for neon gradient
+        document.addEventListener('mousemove', function(e) {
+            const gradient = document.querySelector('.neon-gradient');
+            const x = e.clientX / window.innerWidth;
+            const y = e.clientY / window.innerHeight;
+            gradient.style.transform = `translate(${x * 20}px, ${y * 20}px)`;
         });
     </script>
 </body>

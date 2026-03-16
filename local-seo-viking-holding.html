@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local SEO Analyse - Viking Holding GmbH</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .grid-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeDown 0.8s ease;
+        }
+
+        .company-tag {
+            display: inline-block;
+            background: rgba(6, 182, 212, 0.15);
+            border: 1px solid rgba(6, 182, 212, 0.4);
+            color: #06b6d4;
+            padding: 8px 24px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            color: #06b6d4;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            font-size: 1.25em;
+            color: #94a3b8;
+            font-weight: 300;
+        }
+
+        .location-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            padding: 12px 28px;
+            border-radius: 8px;
+            margin-top: 20px;
+            font-size: 0.95em;
+        }
+
+        .section {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 16px;
+            padding: 45px;
+            margin-bottom: 35px;
+            animation: fadeUp 0.8s ease;
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            border-color: rgba(6, 182, 212, 0.5);
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1);
+        }
+
+        h2 {
+            font-size: 2.2em;
+            margin-bottom: 30px;
+            color: #06b6d4;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 35px;
+        }
+
+        .portfolio-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+            border: 1px solid rgba(6, 182, 212, 0.25);
+            border-radius: 14px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .portfolio-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #06b6d4 0%, #0891b2 100%);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .portfolio-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-8px);
+            border-color: #06b6d4;
+            box-shadow: 0 15px 40px rgba(6, 182, 212, 0.2);
+        }
+
+        .portfolio-type {
+            font-size: 0.85em;
+            color: #06b6d4;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .portfolio-rank {
+            font-size: 2.2em;
+            font-weight: 800;
+            color: #f87171;
+            margin: 10px 0;
+        }
+
+        .portfolio-metric {
+            color: #94a3b8;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .portfolio-potential {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #34d399;
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+
+        .roi-calculator {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(8, 145, 178, 0.05) 100%);
+            border: 2px solid rgba(6, 182, 212, 0.3);
+            border-radius: 18px;
+            padding: 40px;
+            margin: 35px 0;
+        }
+
+        .calculator-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .calculator-title {
+            font-size: 1.8em;
+            color: #06b6d4;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .calculator-subtitle {
+            color: #94a3b8;
+            font-size: 0.95em;
+        }
+
+        .input-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+
+        .input-field {
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .input-label {
+            display: block;
+            color: #06b6d4;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-range {
+            width: 100%;
+            height: 6px;
+            background: rgba(6, 182, 212, 0.2);
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            cursor: pointer;
+        }
+
+        .input-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #06b6d4;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        .input-range::-webkit-slider-thumb:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.8);
+        }
+
+        .input-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #ffffff;
+            margin-top: 10px;
+        }
+
+        .roi-results {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 14px;
+            padding: 35px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+        }
+
+        .roi-metric {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, transparent 100%);
+            border-radius: 10px;
+        }
+
+        .roi-label {
+            font-size: 0.9em;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .roi-value {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #06b6d4 0%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .roi-description {
+            font-size: 0.85em;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        .strategy-list {
+            margin-top: 35px;
+        }
+
+        .strategy-item {
+            background: rgba(30, 41, 59, 0.5);
+            border-left: 4px solid #06b6d4;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .strategy-item:hover {
+            transform: translateX(12px);
+            background: rgba(30, 41, 59, 0.8);
+            border-left-width: 6px;
+        }
+
+        .strategy-item h3 {
+            color: #06b6d4;
+            font-size: 1.35em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .strategy-item p {
+            color: #cbd5e1;
+            line-height: 1.8;
+        }
+
+        .impact-badge {
+            display: inline-block;
+            background: rgba(52, 211, 153, 0.15);
+            color: #34d399;
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-top: 12px;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            border-radius: 18px;
+            padding: 60px;
+            text-align: center;
+            margin-top: 60px;
+            box-shadow: 0 20px 60px rgba(6, 182, 212, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.05) 10px,
+                rgba(255, 255, 255, 0.05) 20px
+            );
+            animation: slide 20s linear infinite;
+        }
+
+        .cta-section h2 {
+            color: #0f172a;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-section p {
+            color: #0f172a;
+            font-size: 1.15em;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: #0f172a;
+            color: #06b6d4;
+            padding: 20px 50px;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 25px;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.5);
+            position: relative;
+            z-index: 1;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(15, 23, 42, 0.7);
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slide {
+            from {
+                transform: translate(0, 0);
+            }
+            to {
+                transform: translate(50%, 50%);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.2em;
+            }
+
+            .section {
+                padding: 30px 20px;
+            }
+
+            .roi-calculator {
+                padding: 30px 20px;
+            }
+
+            .cta-section {
+                padding: 40px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-background"></div>
+    
+    <div class="container">
+        <header>
+            <div class="company-tag">HOLDING</div>
+            <h1>Portfolio SEO Strategie</h1>
+            <div class="subtitle">Analyse erstellt für <strong>Viking Holding GmbH</strong></div>
+            <div class="location-info">
+                <span>📍</span>
+                <span>Bad Aibling, Bayern</span>
+            </div>
+        </header>
+
+        <div class="section">
+            <h2><span>📊</span> Portfolio-weite Sichtbarkeitsanalyse</h2>
+            <p>Als Holding mit mehreren Tochtergesellschaften erfordert Local SEO eine koordinierte Strategie. Aktueller Stand Ihrer Portfolio-Unternehmen:</p>
+            
+            <div class="portfolio-grid">
+                <div class="portfolio-card">
+                    <div class="portfolio-type">Immobilien-Tochter</div>
+                    <div class="portfolio-rank">Platz 11</div>
+                    <div class="portfolio-metric">"Immobilien Bad Aibling"</div>
+                    <div class="portfolio-potential">
+                        <span>→</span>
+                        <span>Top 3 Potenzial</span>
+                    </div>
+                </div>
+
+                <div class="portfolio-card">
+                    <div class="portfolio-type">Dienstleistungs-Tochter</div>
+                    <div class="portfolio-rank">Platz 16</div>
+                    <div class="portfolio-metric">Generische Kategorisierung</div>
+                    <div class="portfolio-potential">
+                        <span>→</span>
+                        <span>Top 5 durch Spezialisierung</span>
+                    </div>
+                </div>
+
+                <div class="portfolio-card">
+                    <div class="portfolio-type">Holding-Profil</div>
+                    <div class="portfolio-rank">Nicht gelistet</div>
+                    <div class="portfolio-metric">Keine Google Maps Präsenz</div>
+                    <div class="portfolio-potential">
+                        <span>→</span>
+                        <span>Brand-Authority aufbauen</span>
+                    </div>
+                </div>
+
+                <div class="portfolio-card">
+                    <div class="portfolio-type">Cross-Synergien</div>
+                    <div class="portfolio-rank">0%</div>
+                    <div class="portfolio-metric">Keine Verlinkung zwischen Töchtern</div>
+                    <div class="portfolio-potential">
+                        <span>→</span>
+                        <span>+40% durch Synergie-SEO</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span>💰</span> ROI-Calculator: Local SEO Investment</h2>
+            
+            <div class="roi-calculator">
+                <div class="calculator-header">
+                    <div class="calculator-title">Berechnen Sie Ihren Return on Investment</div>
+                    <div class="calculator-subtitle">Passen Sie die Parameter an Ihre Portfolio-Größe an</div>
+                </div>
+
+                <div class="input-group">
+                    <div class="input-field">
+                        <label class="input-label">Anzahl Tochterunternehmen</label>
+                        <input type="range" min="1" max="10" value="3" class="input-range" id="companiesSlider">
+                        <div class="input-value"><span id="companiesValue">3</span> Unternehmen</div>
+                    </div>
+
+                    <div class="input-field">
+                        <label class="input-label">Ø Kundenauftragswert</label>
+                        <input type="range" min="500" max="50000" step="500" value="5000" class="input-range" id="orderValueSlider">
+                        <div class="input-value">€<span id="orderValue">5.000</span></div>
+                    </div>
+
+                    <div class="input-field">
+                        <label class="input-label">Optimierungszeitraum (Monate)</label>
+                        <input type="range" min="3" max="24" value="12" class="input-range" id="timeframeSlider">
+                        <div class="input-value"><span id="timeframeValue">12</span> Monate</div>
+                    </div>
+                </div>
+
+                <div class="roi-results">
+                    <div class="roi-metric">
+                        <div class="roi-label">Neue Leads/Monat</div>
+                        <div class="roi-value" id="leadsPerMonth">45</div>
+                        <div class="roi-description">Pro Portfolio-Unternehmen</div>
+                    </div>
+
+                    <div class="roi-metric">
+                        <div class="roi-label">Jahresumsatz</div>
+                        <div class="roi-value">€<span id="yearlyRevenue">810k</span></div>
+                        <div class="roi-description">Über alle Töchter</div>
+                    </div>
+
+                    <div class="roi-metric">
+                        <div class="roi-label">ROI</div>
+                        <div class="roi-value"><span id="roiPercentage">1.350</span>%</div>
+                        <div class="roi-description">Nach 12 Monaten</div>
+                    </div>
+
+                    <div class="roi-metric">
+                        <div class="roi-label">Payback Period</div>
+                        <div class="roi-value"><span id="paybackMonths">2.3</span> Monate</div>
+                        <div class="roi-description">Break-even Zeitpunkt</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2><span>🎯</span> Portfolio-weite Optimierungsstrategie</h2>
+            
+            <div class="strategy-list">
+                <div class="strategy-item">
+                    <h3>1. Holding-Level Brand Authority</h3>
+                    <p>Erstellen Sie ein zentrales Google Business Profil für die Viking Holding als Dachmarke. Dies stärkt das Vertrauen in alle Tochterunternehmen und ermöglicht Cross-Referencing. Nutzen Sie "Unternehmensgruppe" als Kategorie und verlinken Sie alle Töchter.</p>
+                    <span class="impact-badge">+35% Brand Trust</span>
+                </div>
+
+                <div class="strategy-item">
+                    <h3>2. Cross-Company Local SEO Synergien</h3>
+                    <p>Verlinken Sie alle Tochter-Websites und Google-Profile untereinander. Wenn ein Kunde bei Ihrer Immobilien-Tochter landet, sollte er auch Ihre Dienstleistungs-Töchter sehen. Dies maximiert Customer Lifetime Value und Portfolio-Sichtbarkeit.</p>
+                    <span class="impact-badge">+40% Cross-Selling</span>
+                </div>
+
+                <div class="strategy-item">
+                    <h3>3. Spezialisierte Keyword-Strategie pro Tochter</h3>
+                    <p>Jede Tochtergesellschaft braucht eine maßgeschneiderte Keyword-Strategie für ihren Markt. Keine generischen Kategorien wie "Dienstleistung" — sondern präzise: "Facility Management Bad Aibling", "Immobilienverwaltung Rosenheim", etc.</p>
+                    <span class="impact-badge">+65% Ranking Improvement</span>
+                </div>
+
+                <div class="strategy-item">
+                    <h3>4. AI-gestützte Lead-Distribution</h3>
+                    <p>Implementieren Sie ein System, das Leads automatisch zur richtigen Tochtergesellschaft routet, basierend auf Suchanfrage und Standort. Dies reduziert Conversion-Verluste und maximiert die Effizienz Ihres Portfolios.</p>
+                    <span class="impact-badge">+50% Lead Quality</span>
+                </div>
+
+                <div class="strategy-item">
+                    <h3>5. Portfolio-weites Bewertungsmanagement</h3>
+                    <p>Zentral koordiniertes Review-Management über alle Töchter hinweg. Eine 5-Sterne-Bewertung bei einer Tochter sollte automatisch auf der Holding-Seite als Vertrauenssignal erscheinen. Skalierbarkeit ist der Key.</p>
+                    <span class="impact-badge">+45% Trust Score</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Skalieren Sie Ihre Portfolio-Sichtbarkeit</h2>
+            <p style="font-size: 1.15em; margin-bottom: 10px;">Als Investor verstehen Sie ROI. Local SEO für Holdings ist kein Kostenfaktor — es ist ein Multiplikator.</p>
+            <p style="font-size: 0.95em;">Lassen Sie uns besprechen, wie wir Ihre Töchter synergetisch positionieren.</p>
+            <a href="#" class="cta-button">📅 Lassen Sie uns 15 Min sprechen</a>
+        </div>
+    </div>
+
+    <script>
+        const companiesSlider = document.getElementById('companiesSlider');
+        const companiesValue = document.getElementById('companiesValue');
+        const orderValueSlider = document.getElementById('orderValueSlider');
+        const orderValue = document.getElementById('orderValue');
+        const timeframeSlider = document.getElementById('timeframeSlider');
+        const timeframeValue = document.getElementById('timeframeValue');
+
+        const leadsPerMonth = document.getElementById('leadsPerMonth');
+        const yearlyRevenue = document.getElementById('yearlyRevenue');
+        const roiPercentage = document.getElementById('roiPercentage');
+        const paybackMonths = document.getElementById('paybackMonths');
+
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function calculateROI() {
+            const companies = parseInt(companiesSlider.value);
+            const orderVal = parseInt(orderValueSlider.value);
+            const timeframe = parseInt(timeframeSlider.value);
+
+            const avgLeadsPerCompany = 15;
+            const totalLeadsPerMonth = companies * avgLeadsPerCompany;
+            const conversionRate = 0.25;
+            const newCustomersPerMonth = totalLeadsPerMonth * conversionRate;
+            const monthlyRevenue = newCustomersPerMonth * orderVal;
+            const totalRevenue = monthlyRevenue * timeframe;
+            const investment = 5000; // Average SEO investment
+            const roi = ((totalRevenue - investment) / investment) * 100;
+            const payback = investment / monthlyRevenue;
+
+            leadsPerMonth.textContent = totalLeadsPerMonth;
+            yearlyRevenue.textContent = totalRevenue >= 1000000 
+                ? (totalRevenue / 1000000).toFixed(1) + 'M'
+                : (totalRevenue / 1000).toFixed(0) + 'k';
+            roiPercentage.textContent = formatNumber(Math.round(roi));
+            paybackMonths.textContent = payback.toFixed(1);
+        }
+
+        companiesSlider.addEventListener('input', function() {
+            companiesValue.textContent = this.value;
+            calculateROI();
+        });
+
+        orderValueSlider.addEventListener('input', function() {
+            orderValue.textContent = formatNumber(this.value);
+            calculateROI();
+        });
+
+        timeframeSlider.addEventListener('input', function() {
+            timeframeValue.textContent = this.value;
+            calculateROI();
+        });
+
+        // Initialize
+        calculateROI();
+
+        // Animate sections on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'all 0.8s ease';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
