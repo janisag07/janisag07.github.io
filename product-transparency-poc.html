@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Transparency App - POC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1.1em;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .phone-mockup {
+            background: #1e1e2e;
+            border-radius: 30px;
+            padding: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+            animation: fadeInLeft 0.8s ease;
+        }
+
+        .phone-screen {
+            background: #0f0f1e;
+            border-radius: 20px;
+            padding: 20px;
+            min-height: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #2a2a3e;
+        }
+
+        .search-bar {
+            background: #1a1a2e;
+            border: 2px solid #2a2a3e;
+            border-radius: 12px;
+            padding: 12px 15px;
+            color: #e0e0e0;
+            width: 100%;
+            font-size: 1em;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .scanner-window {
+            background: #000;
+            border-radius: 15px;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 3px solid #667eea;
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #667eea, transparent);
+            animation: scan 2s ease-in-out infinite;
+            box-shadow: 0 0 20px #667eea;
+        }
+
+        @keyframes scan {
+            0%, 100% { top: 0; }
+            50% { top: calc(100% - 3px); }
+        }
+
+        .scan-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 60%;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+        }
+
+        .scan-overlay::before,
+        .scan-overlay::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #667eea;
+        }
+
+        .scan-overlay::before {
+            top: -3px;
+            left: -3px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .scan-overlay::after {
+            bottom: -3px;
+            right: -3px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .scan-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            padding: 15px 30px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .scan-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .ownership-panel {
+            background: #1e1e2e;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: fadeInRight 0.8s ease;
+        }
+
+        .product-info {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #2a2a3e;
+        }
+
+        .product-name {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        .product-meta {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .ownership-tree {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .ownership-node {
+            background: #2a2a3e;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            border-left: 4px solid #667eea;
+            animation: slideIn 0.5s ease;
+            transition: all 0.3s ease;
+        }
+
+        .ownership-node:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .ownership-node::before {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: -15px;
+            width: 2px;
+            height: 15px;
+            background: #667eea;
+        }
+
+        .ownership-node:first-child::before {
+            display: none;
+        }
+
+        .node-title {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .node-content {
+            font-size: 1.2em;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .node-detail {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .shareholders {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .shareholder-badge {
+            background: #1a1a2e;
+            border: 1px solid #667eea;
+            border-radius: 20px;
+            padding: 5px 15px;
+            font-size: 0.85em;
+            color: #667eea;
+        }
+
+        .tech-section {
+            margin-top: 40px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-card {
+            background: #1e1e2e;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #2a2a3e;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            border-color: #667eea;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .card-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .card-list {
+            list-style: none;
+            color: #888;
+        }
+
+        .card-list li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .card-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+        }
+
+        .disclaimer {
+            background: #2a2a3e;
+            border-left: 4px solid #f39c12;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+            color: #ccc;
+            font-size: 0.95em;
+            animation: fadeIn 1.2s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .result-view {
+            display: none;
+        }
+
+        .result-view.active {
+            display: block;
+        }
+
+        .scanner-view.active {
+            display: block;
+        }
+
+        .scanner-view {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Product Transparency App</h1>
+            <p class="subtitle">Barcode Scan + AI Ownership Engine - Concept Demo</p>
+        </header>
+
+        <div class="main-grid">
+            <div class="phone-mockup">
+                <div class="phone-screen">
+                    <div class="phone-header">
+                        <span style="font-weight: 600;">TransparencyApp</span>
+                        <span style="color: #888;">📱</span>
+                    </div>
+
+                    <input type="text" class="search-bar" placeholder="Search brands or scan barcode..." id="searchInput">
+
+                    <div class="scanner-view active" id="scannerView">
+                        <div class="scanner-window">
+                            <div class="scan-line"></div>
+                            <div class="scan-overlay"></div>
+                        </div>
+                        <button class="scan-button" id="scanBtn">Scan Barcode</button>
+                    </div>
+
+                    <div class="result-view" id="resultView">
+                        <div style="text-align: center; padding: 20px;">
+                            <div style="font-size: 3em; margin-bottom: 10px;">🥤</div>
+                            <div style="font-size: 1.3em; font-weight: 600; margin-bottom: 5px;">Coca-Cola Zero</div>
+                            <div style="color: #888; font-size: 0.9em;">EAN: 5449000000996</div>
+                            <div style="margin-top: 15px; padding: 10px; background: #2a2a3e; border-radius: 8px;">
+                                <div style="font-size: 0.8em; color: #888; margin-bottom: 5px;">OWNERSHIP VERIFIED</div>
+                                <div style="color: #4caf50; font-weight: 600;">✓ Data Retrieved</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ownership-panel">
+                <div class="product-info">
+                    <div class="product-name">Coca-Cola Zero</div>
+                    <div class="product-meta">Scanned: March 17, 2026 • EAN: 5449000000996</div>
+                </div>
+
+                <div class="ownership-tree">
+                    <div class="ownership-node">
+                        <div class="node-title">Brand</div>
+                        <div class="node-content">Coca-Cola</div>
+                        <div class="node-detail">Product line of The Coca-Cola Company</div>
+                    </div>
+
+                    <div class="ownership-node">
+                        <div class="node-title">Parent Company</div>
+                        <div class="node-content">The Coca-Cola Company</div>
+                        <div class="node-detail">NYSE: KO • Founded 1892 • Atlanta, Georgia</div>
+                    </div>
+
+                    <div class="ownership-node">
+                        <div class="node-title">Major Shareholders</div>
+                        <div class="node-content">Institutional & Public Ownership</div>
+                        <div class="shareholders">
+                            <div class="shareholder-badge">Berkshire Hathaway 9.2%</div>
+                            <div class="shareholder-badge">Vanguard 7.8%</div>
+                            <div class="shareholder-badge">BlackRock 6.5%</div>
+                            <div class="shareholder-badge">Public Float 76.5%</div>
+                        </div>
+                    </div>
+
+                    <div class="ownership-node">
+                        <div class="node-title">Country of Origin</div>
+                        <div class="node-content">🇺🇸 United States</div>
+                        <div class="node-detail">Headquarters: Atlanta, Georgia • Global Operations</div>
+                    </div>
+
+                    <div class="ownership-node">
+                        <div class="node-title">Ultimate Beneficial Owners (UBO)</div>
+                        <div class="node-content">Publicly Traded Company</div>
+                        <div class="node-detail">No single controlling shareholder • Distributed ownership</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tech-section">
+            <h2 class="section-title">Technical Architecture</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="card-title">📊 Data Sources</div>
+                    <ul class="card-list">
+                        <li>OpenFoodFacts API</li>
+                        <li>OpenCorporates API</li>
+                        <li>SEC EDGAR Database</li>
+                        <li>Company Registries</li>
+                        <li>Bloomberg Terminal</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-title">🛠️ Tech Stack</div>
+                    <ul class="card-list">
+                        <li>React Native (Mobile)</li>
+                        <li>Node.js Backend</li>
+                        <li>PostgreSQL Database</li>
+                        <li>REST APIs</li>
+                        <li>Redis Cache</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-title">🔍 Core Features</div>
+                    <ul class="card-list">
+                        <li>Barcode Scanner</li>
+                        <li>Ownership Tracing</li>
+                        <li>Brand Search</li>
+                        <li>Real-time Data</li>
+                        <li>Offline Cache</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <div class="card-title">🤖 AI Engine</div>
+                    <ul class="card-list">
+                        <li>Entity Resolution</li>
+                        <li>Ownership Mapping</li>
+                        <li>Data Aggregation</li>
+                        <li>Relationship Graphs</li>
+                        <li>Confidence Scoring</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <strong>⚠️ Concept Demo Notice:</strong> This is a proof-of-concept demonstration showing the proposed architecture and user experience. The production application will connect to live corporate registry data, verified SEC filings, and real-time ownership databases. All data shown is for demonstration purposes only.
+        </div>
+    </div>
+
+    <script>
+        const scanBtn = document.getElementById('scanBtn');
+        const scannerView = document.getElementById('scannerView');
+        const resultView = document.getElementById('resultView');
+        const searchInput = document.getElementById('searchInput');
+
+        scanBtn.addEventListener('click', () => {
+            scanBtn.textContent = 'Scanning...';
+            scanBtn.style.opacity = '0.7';
+            
+            setTimeout(() => {
+                scannerView.classList.remove('active');
+                resultView.classList.add('active');
+                scanBtn.textContent = 'Scan Another Product';
+                scanBtn.style.opacity = '1';
+            }, 2000);
+        });
+
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && searchInput.value.trim()) {
+                scannerView.classList.remove('active');
+                resultView.classList.add('active');
+            }
+        });
+
+        // Reset demo
+        searchInput.addEventListener('focus', () => {
+            if (resultView.classList.contains('active')) {
+                scannerView.classList.add('active');
+                resultView.classList.remove('active');
+                searchInput.value = '';
+            }
+        });
+    </script>
+</body>
+</html>
