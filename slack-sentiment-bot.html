@@ -323,6 +323,39 @@
             font-size: 0.9rem;
             color: #36C5F0;
         }
+
+        .disclaimer-banner {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #36C5F0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .disclaimer-content {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+        }
+
+        .disclaimer-icon {
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .disclaimer-banner h4 {
+            color: #36C5F0;
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .disclaimer-banner p {
+            color: #a0aec0;
+            line-height: 1.6;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -330,6 +363,16 @@
         <div class="header">
             <h1>💬 Slack Sentiment Bot</h1>
             <p>Daily team mood tracking with intelligent alerts and analytics</p>
+        </div>
+
+        <div class="disclaimer-banner">
+            <div class="disclaimer-content">
+                <div class="disclaimer-icon">⚠️</div>
+                <div>
+                    <h4>Demo Notice</h4>
+                    <p>All data, metrics, and statistics shown in this demo are simulated for demonstration purposes only. They do not represent real users, transactions, or results. The actual implementation will be configured with your specific requirements and real data.</p>
+                </div>
+            </div>
         </div>
 
         <div class="tabs">
