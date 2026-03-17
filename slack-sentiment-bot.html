@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slack Sentiment Bot - Team Mood Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e1e2e 0%, #2d2d44 100%);
+            color: #e0e6ed;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #36C5F0 0%, #2EB67D 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #a0aec0;
+            font-size: 1.1rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #36C5F0 0%, #2EB67D 100%);
+            border-color: transparent;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(54, 197, 240, 0.2);
+            border-color: rgba(54, 197, 240, 0.5);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: #36C5F0;
+            font-size: 1.3rem;
+        }
+
+        .slack-dm {
+            background: #fff;
+            color: #1d1c1d;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 600px;
+        }
+
+        .dm-message {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .dm-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #36C5F0 0%, #2EB67D 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .dm-content {
+            flex: 1;
+        }
+
+        .dm-name {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .dm-text {
+            line-height: 1.5;
+        }
+
+        .score-input {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .score-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+
+        .score-btn:hover {
+            background: #f8f9fa;
+            border-color: #36C5F0;
+        }
+
+        .score-btn.selected {
+            background: #36C5F0;
+            color: white;
+            border-color: #36C5F0;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .team-member {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .member-name {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .score-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .score-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .score-high { background: #2EB67D; color: white; }
+        .score-medium { background: #ECB22E; color: white; }
+        .score-low { background: #E01E5A; color: white; }
+
+        .alert-box {
+            background: rgba(224, 30, 90, 0.2);
+            border: 1px solid rgba(224, 30, 90, 0.5);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .alert-box p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .trend-chart {
+            height: 200px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .bar {
+            flex: 1;
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s;
+        }
+
+        .bar:hover {
+            transform: scaleY(1.1);
+            opacity: 0.8;
+        }
+
+        .rule-editor {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e0e6ed;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #36C5F0;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #36C5F0 0%, #2EB67D 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(54, 197, 240, 0.4);
+        }
+
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .comparison-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .comparison-item.us {
+            border: 2px solid #2EB67D;
+        }
+
+        .comparison-item.them {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .tech-stack {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .tech-badge {
+            padding: 8px 16px;
+            background: rgba(54, 197, 240, 0.2);
+            border: 1px solid rgba(54, 197, 240, 0.5);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #36C5F0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💬 Slack Sentiment Bot</h1>
+            <p>Daily team mood tracking with intelligent alerts and analytics</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('user')">👤 User View</div>
+            <div class="tab" onclick="switchTab('manager')">👔 Manager View</div>
+            <div class="tab" onclick="switchTab('admin')">⚙️ Admin View</div>
+            <div class="tab" onclick="switchTab('comparison')">🏆 vs HappyTrack</div>
+        </div>
+
+        <!-- User View -->
+        <div id="user" class="tab-content active">
+            <div class="card">
+                <h3>💬 Daily Check-in</h3>
+                <div class="slack-dm">
+                    <div class="dm-message">
+                        <div class="dm-avatar">🤖</div>
+                        <div class="dm-content">
+                            <div class="dm-name">Sentiment Bot <span style="color: #999; font-size: 0.9rem;">9:00 AM</span></div>
+                            <div class="dm-text">Good morning! How are you feeling today? Please rate your mood from 1 (very low) to 10 (excellent).</div>
+                        </div>
+                    </div>
+                    <div class="score-input">
+                        <button class="score-btn" onclick="selectScore(this, 1)">1</button>
+                        <button class="score-btn" onclick="selectScore(this, 2)">2</button>
+                        <button class="score-btn" onclick="selectScore(this, 3)">3</button>
+                        <button class="score-btn" onclick="selectScore(this, 4)">4</button>
+                        <button class="score-btn" onclick="selectScore(this, 5)">5</button>
+                        <button class="score-btn" onclick="selectScore(this, 6)">6</button>
+                        <button class="score-btn selected" onclick="selectScore(this, 7)">7</button>
+                        <button class="score-btn" onclick="selectScore(this, 8)">8</button>
+                        <button class="score-btn" onclick="selectScore(this, 9)">9</button>
+                        <button class="score-btn" onclick="selectScore(this, 10)">10</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📊 Your Mood History</h3>
+                <div class="trend-chart">
+                    <div class="bar" style="height: 70%; background: linear-gradient(180deg, #2EB67D 0%, #1a7a4d 100%);"></div>
+                    <div class="bar" style="height: 80%; background: linear-gradient(180deg, #2EB67D 0%, #1a7a4d 100%);"></div>
+                    <div class="bar" style="height: 60%; background: linear-gradient(180deg, #ECB22E 0%, #c89424 100%);"></div>
+                    <div class="bar" style="height: 85%; background: linear-gradient(180deg, #2EB67D 0%, #1a7a4d 100%);"></div>
+                    <div class="bar" style="height: 70%; background: linear-gradient(180deg, #2EB67D 0%, #1a7a4d 100%);"></div>
+                    <div class="bar" style="height: 90%; background: linear-gradient(180deg, #2EB67D 0%, #1a7a4d 100%);"></div>
+                    <div class="bar" style="height: 70%; background: linear-gradient(180deg, #2EB67D 0%, #1a7a4d 100%);"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-top: 10px; color: #a0aec0; font-size: 0.9rem;">
+                    <span>Mon</span>
+                    <span>Tue</span>
+                    <span>Wed</span>
+                    <span>Thu</span>
+                    <span>Fri</span>
+                    <span>Sat</span>
+                    <span>Sun</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Manager View -->
+        <div id="manager" class="tab-content">
+            <div class="alert-box">
+                <p>⚠️ <strong>Sarah Martinez</strong> scored <strong>3</strong> today (2nd low score this week)</p>
+            </div>
+
+            <div class="card">
+                <h3>👥 My Team (Engineering)</h3>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <div class="member-name">Sarah Martinez</div>
+                        <div class="score-display">
+                            <span class="score-badge score-low">3</span>
+                            <span style="color: #a0aec0; font-size: 0.9rem;">Today</span>
+                        </div>
+                        <p style="color: #E01E5A; font-size: 0.9rem; margin-top: 8px;">🔴 Alert triggered</p>
+                    </div>
+
+                    <div class="team-member">
+                        <div class="member-name">Michael Chen</div>
+                        <div class="score-display">
+                            <span class="score-badge score-high">8</span>
+                            <span style="color: #a0aec0; font-size: 0.9rem;">Today</span>
+                        </div>
+                    </div>
+
+                    <div class="team-member">
+                        <div class="member-name">Emily Johnson</div>
+                        <div class="score-display">
+                            <span class="score-badge score-high">9</span>
+                            <span style="color: #a0aec0; font-size: 0.9rem;">Today</span>
+                        </div>
+                    </div>
+
+                    <div class="team-member">
+                        <div class="member-name">David Park</div>
+                        <div class="score-display">
+                            <span class="score-badge score-medium">6</span>
+                            <span style="color: #a0aec0; font-size: 0.9rem;">Today</span>
+                        </div>
+                    </div>
+
+                    <div class="team-member">
+                        <div class="member-name">Lisa Thompson</div>
+                        <div class="score-display">
+                            <span class="score-badge score-high">8</span>
+                            <span style="color: #a0aec0; font-size: 0.9rem;">Today</span>
+                        </div>
+                    </div>
+
+                    <div class="team-member">
+                        <div class="member-name">Alex Rodriguez</div>
+                        <div class="score-display">
+                            <span class="score-badge score-high">7</span>
+                            <span style="color: #a0aec0; font-size: 0.9rem;">Today</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📈 Team Average Trend</h3>
+                <div style="font-size: 3rem; text-align: center; margin: 20px 0;">
+                    <span style="background: linear-gradient(135deg, #36C5F0 0%, #2EB67D 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">7.2</span>
+                </div>
+                <p style="text-align: center; color: #2EB67D;">↑ +0.4 vs last week</p>
+            </div>
+        </div>
+
+        <!-- Admin View -->
+        <div id="admin" class="tab-content">
+            <div class="card">
+                <h3>🌐 Company-Wide Overview</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div style="text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
+                        <div style="font-size: 2rem; color: #2EB67D; font-weight: 700;">7.4</div>
+                        <div style="color: #a0aec0;">Overall Average</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
+                        <div style="font-size: 2rem; color: #36C5F0; font-weight: 700;">94%</div>
+                        <div style="color: #a0aec0;">Response Rate</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
+                        <div style="font-size: 2rem; color: #E01E5A; font-weight: 700;">3</div>
+                        <div style="color: #a0aec0;">Active Alerts</div>
+                    </div>
+                    <div style="text-align: center; padding: 20px; background: rgba(255, 255, 255, 0.05); border-radius: 10px;">
+                        <div style="font-size: 2rem; color: #ECB22E; font-weight: 700;">127</div>
+                        <div style="color: #a0aec0;">Total Employees</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🔧 Alert Rule Editor</h3>
+                <div class="rule-editor">
+                    <p style="margin-bottom: 15px; color: #a0aec0;">Configure individual alert rules for team members</p>
+                    
+                    <label style="display: block; margin-bottom: 5px; color: #36C5F0;">Employee</label>
+                    <select>
+                        <option>Sarah Martinez</option>
+                        <option>Michael Chen</option>
+                        <option>Emily Johnson</option>
+                        <option>David Park</option>
+                    </select>
+
+                    <label style="display: block; margin-bottom: 5px; color: #36C5F0;">Manager</label>
+                    <select>
+                        <option>John Smith (Engineering Lead)</option>
+                        <option>Amanda Lee (Product Manager)</option>
+                        <option>Robert Taylor (HR Director)</option>
+                    </select>
+
+                    <label style="display: block; margin-bottom: 5px; color: #36C5F0;">Alert Threshold</label>
+                    <input type="number" value="5" min="1" max="10">
+
+                    <label style="display: block; margin-bottom: 5px; color: #36C5F0;">Alert Frequency</label>
+                    <select>
+                        <option>Once per day</option>
+                        <option selected>Twice per week</option>
+                        <option>Three times per week</option>
+                        <option>Every occurrence</option>
+                    </select>
+
+                    <button>💾 Save Rule</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📊 Department Breakdown</h3>
+                <div class="team-grid">
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px;">
+                        <div style="font-weight: 600; margin-bottom: 10px;">Engineering</div>
+                        <div style="font-size: 2rem; color: #2EB67D;">7.2</div>
+                        <div style="color: #a0aec0; font-size: 0.9rem;">28 members</div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px;">
+                        <div style="font-weight: 600; margin-bottom: 10px;">Product</div>
+                        <div style="font-size: 2rem; color: #2EB67D;">7.8</div>
+                        <div style="color: #a0aec0; font-size: 0.9rem;">15 members</div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px;">
+                        <div style="font-weight: 600; margin-bottom: 10px;">Sales</div>
+                        <div style="font-size: 2rem; color: #2EB67D;">7.5</div>
+                        <div style="color: #a0aec0; font-size: 0.9rem;">32 members</div>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 10px;">
+                        <div style="font-weight: 600; margin-bottom: 10px;">Marketing</div>
+                        <div style="font-size: 2rem; color: #ECB22E;">6.9</div>
+                        <div style="color: #a0aec0; font-size: 0.9rem;">18 members</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Tab -->
+        <div id="comparison" class="tab-content">
+            <div class="card">
+                <h3>🏆 Our Solution vs HappyTrack</h3>
+                <div class="comparison">
+                    <div class="comparison-item us">
+                        <h4 style="color: #2EB67D; margin-bottom: 15px;">✅ Our Bot</h4>
+                        <p style="margin-bottom: 10px;">✅ Granular per-person rules (threshold + frequency)</p>
+                        <p style="margin-bottom: 10px;">✅ Manager-specific team views (only see your team)</p>
+                        <p style="margin-bottom: 10px;">✅ Real-time Slack DM integration</p>
+                        <p style="margin-bottom: 10px;">✅ Custom alert frequencies per person</p>
+                        <p style="margin-bottom: 10px;">✅ 1-10 scale with flexible thresholds</p>
+                        <p style="margin-bottom: 10px;">✅ Department-level breakdowns</p>
+                        <p style="margin-bottom: 10px;">✅ Individual history tracking</p>
+                        <p style="margin-bottom: 10px;">✅ Self-hosted (full data control)</p>
+                    </div>
+
+                    <div class="comparison-item them">
+                        <h4 style="color: #a0aec0; margin-bottom: 15px;">❌ HappyTrack</h4>
+                        <p style="margin-bottom: 10px;">❌ One-size-fits-all alert rules</p>
+                        <p style="margin-bottom: 10px;">❌ Managers see all company data</p>
+                        <p style="margin-bottom: 10px;">❌ Email-based surveys (low response)</p>
+                        <p style="margin-bottom: 10px;">❌ Fixed weekly alerts only</p>
+                        <p style="margin-bottom: 10px;">❌ 1-5 scale (less granular)</p>
+                        <p style="margin-bottom: 10px;">❌ Company-wide view only</p>
+                        <p style="margin-bottom: 10px;">❌ Limited history (30 days)</p>
+                        <p style="margin-bottom: 10px;">❌ Cloud-only (privacy concerns)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🛠️ Tech Stack</h3>
+                <div class="tech-stack">
+                    <div class="tech-badge">Slack API</div>
+                    <div class="tech-badge">Python</div>
+                    <div class="tech-badge">Node.js</div>
+                    <div class="tech-badge">PostgreSQL</div>
+                    <div class="tech-badge">Redis</div>
+                    <div class="tech-badge">Docker</div>
+                    <div class="tech-badge">Chart.js</div>
+                    <div class="tech-badge">Express</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>✅ Key Features</h3>
+                <div style="margin-top: 15px;">
+                    <p style="margin-bottom: 10px;">✅ Daily Slack DM prompts for 1-10 mood rating</p>
+                    <p style="margin-bottom: 10px;">✅ Three-tier access: User, Manager, Admin views</p>
+                    <p style="margin-bottom: 10px;">✅ Manager-scoped team visibility (no data leakage)</p>
+                    <p style="margin-bottom: 10px;">✅ Per-person alert rules (threshold + frequency)</p>
+                    <p style="margin-bottom: 10px;">✅ Smart notifications (e.g., "≤5 twice/week")</p>
+                    <p style="margin-bottom: 10px;">✅ Individual mood history tracking</p>
+                    <p style="margin-bottom: 10px;">✅ Department-level analytics</p>
+                    <p style="margin-bottom: 10px;">✅ Weekly/monthly reporting</p>
+                    <p style="margin-bottom: 10px;">✅ Full data privacy and control</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function selectScore(btn, score) {
+            document.querySelectorAll('.score-btn').forEach(b => {
+                b.classList.remove('selected');
+            });
+            btn.classList.add('selected');
+        }
+    </script>
+</body>
+</html>

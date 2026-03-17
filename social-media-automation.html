@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Social Media Automation Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e6ed;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #a0aec0;
+            font-size: 1.1rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            backdrop-filter: blur(10px);
+        }
+
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .card h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+            font-size: 1.3rem;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .calendar-day {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px 10px;
+            text-align: center;
+            min-height: 80px;
+            position: relative;
+        }
+
+        .calendar-day.has-posts {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            border-color: rgba(102, 126, 234, 0.5);
+        }
+
+        .post-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 5px;
+        }
+
+        .dot-instagram { background: #E1306C; left: 10px; }
+        .dot-twitter { background: #1DA1F2; left: 20px; }
+        .dot-linkedin { background: #0077B5; left: 30px; }
+        .dot-facebook { background: #4267B2; left: 40px; }
+
+        .content-generator {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e0e6ed;
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        button {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .platform-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .preview-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .platform-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .icon-instagram { background: linear-gradient(45deg, #f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%); }
+        .icon-twitter { background: #1DA1F2; }
+        .icon-linkedin { background: #0077B5; }
+        .icon-facebook { background: #4267B2; }
+
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #a0aec0;
+            font-size: 0.9rem;
+        }
+
+        .workflow {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .workflow-step {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+
+        .workflow-arrow {
+            color: #667eea;
+            font-size: 1.5rem;
+        }
+
+        .tech-stack {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .tech-badge {
+            padding: 8px 16px;
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.5);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #667eea;
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+            border-radius: 5px 5px 0 0;
+            transition: all 0.3s;
+        }
+
+        .bar:hover {
+            transform: scaleY(1.1);
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 AI Social Media Automation</h1>
+            <p>Streamline your social media workflow with AI-powered content generation and scheduling</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('dashboard')">📊 Dashboard</div>
+            <div class="tab" onclick="switchTab('generator')">✨ AI Generator</div>
+            <div class="tab" onclick="switchTab('analytics')">📈 Analytics</div>
+            <div class="tab" onclick="switchTab('workflow')">⚙️ Workflow</div>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="grid">
+                <div class="card">
+                    <h3>📅 Content Calendar</h3>
+                    <p style="color: #a0aec0; margin-bottom: 10px;">March 2026 - Scheduled Posts</p>
+                    <div class="calendar">
+                        <div class="calendar-day" style="opacity: 0.5;">15</div>
+                        <div class="calendar-day" style="opacity: 0.5;">16</div>
+                        <div class="calendar-day has-posts">
+                            17
+                            <div class="post-dot dot-instagram"></div>
+                            <div class="post-dot dot-twitter"></div>
+                        </div>
+                        <div class="calendar-day has-posts">
+                            18
+                            <div class="post-dot dot-linkedin"></div>
+                            <div class="post-dot dot-facebook"></div>
+                        </div>
+                        <div class="calendar-day has-posts">
+                            19
+                            <div class="post-dot dot-instagram"></div>
+                            <div class="post-dot dot-twitter"></div>
+                            <div class="post-dot dot-linkedin"></div>
+                        </div>
+                        <div class="calendar-day">20</div>
+                        <div class="calendar-day has-posts">
+                            21
+                            <div class="post-dot dot-facebook"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🎯 Quick Stats</h3>
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">24</div>
+                            <div class="stat-label">Posts This Week</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">8.5K</div>
+                            <div class="stat-label">Total Reach</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">4.2%</div>
+                            <div class="stat-label">Engagement Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">+12%</div>
+                            <div class="stat-label">Follower Growth</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>⏰ Best Time to Post</h3>
+                <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+                    <div style="text-align: center;">
+                        <p style="color: #a0aec0;">Instagram</p>
+                        <p style="font-size: 1.5rem; color: #667eea;">1:00 PM</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="color: #a0aec0;">Twitter</p>
+                        <p style="font-size: 1.5rem; color: #667eea;">9:00 AM</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="color: #a0aec0;">LinkedIn</p>
+                        <p style="font-size: 1.5rem; color: #667eea;">8:00 AM</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p style="color: #a0aec0;">Facebook</p>
+                        <p style="font-size: 1.5rem; color: #667eea;">3:00 PM</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Generator Tab -->
+        <div id="generator" class="tab-content">
+            <div class="content-generator">
+                <h3>✨ AI Content Generator</h3>
+                <p style="color: #a0aec0; margin-bottom: 20px;">Enter a topic and let AI create platform-optimized content</p>
+                
+                <input type="text" placeholder="Enter topic (e.g., 'New product launch')" id="topicInput">
+                <select>
+                    <option>All Platforms</option>
+                    <option>Instagram Only</option>
+                    <option>Twitter Only</option>
+                    <option>LinkedIn Only</option>
+                    <option>Facebook Only</option>
+                </select>
+                <button onclick="generateContent()">🚀 Generate Content</button>
+
+                <div class="platform-preview" id="previewArea" style="display: none;">
+                    <div class="preview-card">
+                        <div class="preview-header">
+                            <div class="platform-icon icon-instagram">📷</div>
+                            <strong>Instagram</strong>
+                        </div>
+                        <p style="font-size: 0.95rem; line-height: 1.5;">🎉 Excited to announce our latest innovation! Transforming the way you work with cutting-edge AI technology. 
+
+#Innovation #AI #TechLaunch #FutureOfWork</p>
+                    </div>
+
+                    <div class="preview-card">
+                        <div class="preview-header">
+                            <div class="platform-icon icon-twitter">🐦</div>
+                            <strong>Twitter</strong>
+                        </div>
+                        <p style="font-size: 0.95rem; line-height: 1.5;">Big news! 🚀 We're launching something that will change how you think about AI automation. Stay tuned for the reveal tomorrow! #AI #ProductLaunch</p>
+                    </div>
+
+                    <div class="preview-card">
+                        <div class="preview-header">
+                            <div class="platform-icon icon-linkedin">💼</div>
+                            <strong>LinkedIn</strong>
+                        </div>
+                        <p style="font-size: 0.95rem; line-height: 1.5;">We're thrilled to introduce our newest solution designed to streamline enterprise workflows. After months of development and testing, we're ready to revolutionize the industry.
+
+Learn more: [link]</p>
+                    </div>
+
+                    <div class="preview-card">
+                        <div class="preview-header">
+                            <div class="platform-icon icon-facebook">👍</div>
+                            <strong>Facebook</strong>
+                        </div>
+                        <p style="font-size: 0.95rem; line-height: 1.5;">Hey everyone! 👋 We've been working on something special and can't wait to share it with you. Our new product combines innovation with simplicity to make your life easier. Check it out! 🎯</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div id="analytics" class="tab-content">
+            <div class="grid">
+                <div class="card">
+                    <h3>📊 Engagement Rate Trend</h3>
+                    <div class="chart-placeholder">
+                        <div class="bar" style="height: 45%;"></div>
+                        <div class="bar" style="height: 60%;"></div>
+                        <div class="bar" style="height: 55%;"></div>
+                        <div class="bar" style="height: 75%;"></div>
+                        <div class="bar" style="height: 85%;"></div>
+                        <div class="bar" style="height: 90%;"></div>
+                        <div class="bar" style="height: 80%;"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🏆 Best Performing Content</h3>
+                    <div style="margin-top: 15px;">
+                        <div style="padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; margin-bottom: 10px;">
+                            <p style="color: #667eea; margin-bottom: 5px;">Product Launch Announcement</p>
+                            <p style="color: #a0aec0; font-size: 0.9rem;">12.4K impressions • 8.2% engagement</p>
+                        </div>
+                        <div style="padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px; margin-bottom: 10px;">
+                            <p style="color: #667eea; margin-bottom: 5px;">Behind the Scenes Video</p>
+                            <p style="color: #a0aec0; font-size: 0.9rem;">9.8K impressions • 7.5% engagement</p>
+                        </div>
+                        <div style="padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 8px;">
+                            <p style="color: #667eea; margin-bottom: 5px;">Customer Success Story</p>
+                            <p style="color: #a0aec0; font-size: 0.9rem;">8.2K impressions • 6.9% engagement</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>👥 Follower Growth</h3>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">2.4K</div>
+                        <div class="stat-label">Instagram (+8%)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">1.8K</div>
+                        <div class="stat-label">Twitter (+12%)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">3.2K</div>
+                        <div class="stat-label">LinkedIn (+15%)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">1.5K</div>
+                        <div class="stat-label">Facebook (+5%)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow Tab -->
+        <div id="workflow" class="tab-content">
+            <div class="card">
+                <h3>⚙️ Distribution Flow</h3>
+                <div class="workflow">
+                    <div class="workflow-step">
+                        <p style="font-size: 2rem; margin-bottom: 10px;">📝</p>
+                        <p>Content Input</p>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step">
+                        <p style="font-size: 2rem; margin-bottom: 10px;">🤖</p>
+                        <p>AI Optimization</p>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step">
+                        <p style="font-size: 2rem; margin-bottom: 10px;">📱</p>
+                        <p>Platform Formatting</p>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step">
+                        <p style="font-size: 2rem; margin-bottom: 10px;">⏰</p>
+                        <p>Schedule</p>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step">
+                        <p style="font-size: 2rem; margin-bottom: 10px;">🚀</p>
+                        <p>Auto-Post</p>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step">
+                        <p style="font-size: 2rem; margin-bottom: 10px;">📊</p>
+                        <p>Track Results</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>🛠️ Tech Stack</h3>
+                <div class="tech-stack">
+                    <div class="tech-badge">Python</div>
+                    <div class="tech-badge">OpenAI API</div>
+                    <div class="tech-badge">Instagram API</div>
+                    <div class="tech-badge">Twitter API</div>
+                    <div class="tech-badge">LinkedIn API</div>
+                    <div class="tech-badge">Facebook Graph API</div>
+                    <div class="tech-badge">Make.com</div>
+                    <div class="tech-badge">n8n</div>
+                    <div class="tech-badge">PostgreSQL</div>
+                    <div class="tech-badge">Redis</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>✅ Features Implemented</h3>
+                <div style="margin-top: 15px;">
+                    <p style="margin-bottom: 10px;">✅ AI-powered content generation for all platforms</p>
+                    <p style="margin-bottom: 10px;">✅ Smart scheduling with best-time-to-post algorithm</p>
+                    <p style="margin-bottom: 10px;">✅ Auto-queue management with content calendar</p>
+                    <p style="margin-bottom: 10px;">✅ Real-time analytics and performance tracking</p>
+                    <p style="margin-bottom: 10px;">✅ Platform-specific formatting and optimization</p>
+                    <p style="margin-bottom: 10px;">✅ Live preview for all social media platforms</p>
+                    <p style="margin-bottom: 10px;">✅ Engagement rate monitoring and reporting</p>
+                    <p style="margin-bottom: 10px;">✅ Automated distribution workflow</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function generateContent() {
+            const previewArea = document.getElementById('previewArea');
+            previewArea.style.display = 'grid';
+            
+            // Animate in
+            previewArea.style.opacity = '0';
+            setTimeout(() => {
+                previewArea.style.transition = 'opacity 0.5s';
+                previewArea.style.opacity = '1';
+            }, 100);
+        }
+    </script>
+</body>
+</html>
