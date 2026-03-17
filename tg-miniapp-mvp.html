@@ -1,0 +1,1119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Mini-App MVP - Content Creator Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #0e1621;
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #6c7883;
+            font-size: 1.1em;
+        }
+
+        .demo-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-button {
+            background: #1c2733;
+            border: 2px solid #2e3d4d;
+            border-radius: 12px;
+            padding: 12px 24px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+            font-weight: 500;
+        }
+
+        .tab-button:hover {
+            border-color: #2AABEE;
+            background: #243447;
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
+            border-color: #2AABEE;
+            box-shadow: 0 5px 20px rgba(42, 171, 238, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 400px 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .phone-mockup {
+            background: #17212b;
+            border-radius: 30px;
+            padding: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+
+        .phone-screen {
+            background: #0e1621;
+            border-radius: 20px;
+            min-height: 700px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tg-header {
+            background: #17212b;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid #2e3d4d;
+        }
+
+        .tg-back {
+            font-size: 1.2em;
+            color: #2AABEE;
+            cursor: pointer;
+        }
+
+        .tg-title {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .phone-content {
+            padding: 20px;
+            height: 640px;
+            overflow-y: auto;
+        }
+
+        .phone-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .phone-content::-webkit-scrollbar-track {
+            background: #17212b;
+        }
+
+        .phone-content::-webkit-scrollbar-thumb {
+            background: #2e3d4d;
+            border-radius: 3px;
+        }
+
+        .onboarding-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .onboarding-steps::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            height: 2px;
+            background: #2e3d4d;
+            z-index: 0;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #2e3d4d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle,
+        .step.completed .step-circle {
+            background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
+            box-shadow: 0 0 15px rgba(42, 171, 238, 0.5);
+        }
+
+        .step-label {
+            font-size: 0.75em;
+            color: #6c7883;
+        }
+
+        .step.active .step-label {
+            color: #2AABEE;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #6c7883;
+            font-size: 0.9em;
+        }
+
+        .form-input {
+            width: 100%;
+            background: #17212b;
+            border: 1px solid #2e3d4d;
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: #fff;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #2AABEE;
+            box-shadow: 0 0 10px rgba(42, 171, 238, 0.2);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .tg-button {
+            background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 14px 24px;
+            color: white;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(42, 171, 238, 0.3);
+        }
+
+        .tg-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(42, 171, 238, 0.4);
+        }
+
+        .tg-button.secondary {
+            background: #17212b;
+            border: 1px solid #2e3d4d;
+            box-shadow: none;
+        }
+
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #17212b;
+            border: 1px solid #2e3d4d;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #2AABEE;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.75em;
+            color: #6c7883;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .content-thumb {
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, #2e3d4d 0%, #1c2733 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .content-thumb:hover {
+            transform: scale(1.05);
+        }
+
+        .creator-profile {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .creator-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #2AABEE 0%, #229ED9 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            margin: 0 auto 15px;
+            box-shadow: 0 5px 20px rgba(42, 171, 238, 0.3);
+        }
+
+        .creator-name {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .creator-bio {
+            color: #6c7883;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+
+        .subscribe-box {
+            background: #17212b;
+            border: 1px solid #2e3d4d;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .plan-option {
+            background: #1c2733;
+            border: 2px solid #2e3d4d;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .plan-option:hover,
+        .plan-option.selected {
+            border-color: #2AABEE;
+            background: #243447;
+        }
+
+        .plan-price {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: #2AABEE;
+            margin-bottom: 5px;
+        }
+
+        .wallet-connect {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #17212b;
+            border: 1px solid #2e3d4d;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .wallet-icon {
+            font-size: 1.5em;
+        }
+
+        .info-panel {
+            background: #17212b;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .feature-list li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            border-bottom: 1px solid #2e3d4d;
+            color: #b8c3cf;
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #2AABEE;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tech-badge {
+            background: #1c2733;
+            border: 1px solid #2e3d4d;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            color: #2AABEE;
+            font-weight: 500;
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .admin-table th {
+            background: #1c2733;
+            padding: 12px;
+            text-align: left;
+            font-size: 0.9em;
+            color: #6c7883;
+            border-bottom: 2px solid #2e3d4d;
+        }
+
+        .admin-table td {
+            padding: 12px;
+            border-bottom: 1px solid #2e3d4d;
+            color: #b8c3cf;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-badge.active {
+            background: rgba(42, 171, 238, 0.2);
+            color: #2AABEE;
+        }
+
+        .status-badge.pending {
+            background: rgba(255, 152, 0, 0.2);
+            color: #ff9800;
+        }
+
+        .disclaimer {
+            background: #1c2733;
+            border-left: 4px solid #f39c12;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 40px;
+            color: #b8c3cf;
+            font-size: 0.95em;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .phone-mockup {
+                position: relative;
+                top: 0;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .demo-tabs {
+                font-size: 0.9em;
+            }
+
+            .tab-button {
+                padding: 10px 16px;
+            }
+        }
+
+        .upload-zone {
+            border: 2px dashed #2e3d4d;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover {
+            border-color: #2AABEE;
+            background: #17212b;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .recent-posts {
+            margin-top: 20px;
+        }
+
+        .post-item {
+            background: #17212b;
+            border: 1px solid #2e3d4d;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-info {
+            flex: 1;
+        }
+
+        .post-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .post-meta {
+            font-size: 0.8em;
+            color: #6c7883;
+        }
+
+        .post-stats {
+            text-align: right;
+            color: #2AABEE;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Telegram Mini-App MVP</h1>
+            <p class="subtitle">Content Creator Platform with Crypto Payments</p>
+        </header>
+
+        <div class="demo-tabs">
+            <button class="tab-button active" data-tab="onboarding">Creator Onboarding</button>
+            <button class="tab-button" data-tab="dashboard">Dashboard</button>
+            <button class="tab-button" data-tab="channel">Channel View</button>
+            <button class="tab-button" data-tab="payment">Payment Flow</button>
+            <button class="tab-button" data-tab="posting">Content Posting</button>
+            <button class="tab-button" data-tab="admin">Admin Panel</button>
+        </div>
+
+        <!-- ONBOARDING TAB -->
+        <div class="tab-content active" id="tab-onboarding">
+            <div class="main-grid">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="tg-header">
+                            <div class="tg-back">←</div>
+                            <div class="tg-title">Creator Setup</div>
+                        </div>
+                        <div class="phone-content">
+                            <div class="onboarding-steps">
+                                <div class="step active">
+                                    <div class="step-circle">1</div>
+                                    <div class="step-label">Bio</div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-circle">2</div>
+                                    <div class="step-label">Content</div>
+                                </div>
+                                <div class="step">
+                                    <div class="step-circle">3</div>
+                                    <div class="step-label">Link TG</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Creator Name</label>
+                                <input type="text" class="form-input" placeholder="Your display name" value="Sarah Miller">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Bio</label>
+                                <textarea class="form-input" placeholder="Tell your audience about yourself">Fitness coach & wellness content creator 💪
+Helping you achieve your health goals!</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Category</label>
+                                <select class="form-input">
+                                    <option>Fitness & Wellness</option>
+                                    <option>Art & Design</option>
+                                    <option>Music</option>
+                                    <option>Education</option>
+                                    <option>Gaming</option>
+                                </select>
+                            </div>
+
+                            <button class="tg-button">Continue to Content Upload</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h2 class="section-title">Creator Onboarding Flow</h2>
+                    <ul class="feature-list">
+                        <li>Quick 3-step setup process</li>
+                        <li>Bio and profile customization</li>
+                        <li>Content preview upload (teaser images)</li>
+                        <li>Telegram account linking via Bot API</li>
+                        <li>Category selection for discovery</li>
+                        <li>Subscription tier configuration</li>
+                        <li>Crypto wallet connection (TON/USDT)</li>
+                        <li>Instant channel creation</li>
+                    </ul>
+
+                    <h3 class="section-title" style="margin-top: 30px; font-size: 1.2em;">Tech Stack</h3>
+                    <div class="tech-badges">
+                        <div class="tech-badge">React</div>
+                        <div class="tech-badge">Telegram Bot API</div>
+                        <div class="tech-badge">TON Connect</div>
+                        <div class="tech-badge">Node.js</div>
+                        <div class="tech-badge">MongoDB</div>
+                        <div class="tech-badge">Express</div>
+                        <div class="tech-badge">JWT Auth</div>
+                        <div class="tech-badge">Crypto Payments</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div class="tab-content" id="tab-dashboard">
+            <div class="main-grid">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="tg-header">
+                            <div class="tg-back">←</div>
+                            <div class="tg-title">My Dashboard</div>
+                        </div>
+                        <div class="phone-content">
+                            <div class="dashboard-stats">
+                                <div class="stat-card">
+                                    <div class="stat-value">1.2K</div>
+                                    <div class="stat-label">Subscribers</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">$3.4K</div>
+                                    <div class="stat-label">Revenue</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">89</div>
+                                    <div class="stat-label">Posts</div>
+                                </div>
+                            </div>
+
+                            <div class="recent-posts">
+                                <h3 style="margin-bottom: 15px; font-size: 1.1em;">Recent Posts</h3>
+                                <div class="post-item">
+                                    <div class="post-info">
+                                        <div class="post-title">Morning Workout Routine</div>
+                                        <div class="post-meta">Posted 2 hours ago</div>
+                                    </div>
+                                    <div class="post-stats">
+                                        <div>❤️ 234</div>
+                                        <div>👁️ 892</div>
+                                    </div>
+                                </div>
+                                <div class="post-item">
+                                    <div class="post-info">
+                                        <div class="post-title">Nutrition Guide Part 3</div>
+                                        <div class="post-meta">Posted yesterday</div>
+                                    </div>
+                                    <div class="post-stats">
+                                        <div>❤️ 189</div>
+                                        <div>👁️ 654</div>
+                                    </div>
+                                </div>
+                                <div class="post-item">
+                                    <div class="post-info">
+                                        <div class="post-title">Q&A Session Highlights</div>
+                                        <div class="post-meta">Posted 3 days ago</div>
+                                    </div>
+                                    <div class="post-stats">
+                                        <div>❤️ 312</div>
+                                        <div>👁️ 1.1K</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button class="tg-button" style="margin-top: 20px;">Create New Post</button>
+                            <button class="tg-button secondary" style="margin-top: 10px;">View Analytics</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h2 class="section-title">Creator Dashboard</h2>
+                    <ul class="feature-list">
+                        <li>Real-time subscriber count and revenue tracking</li>
+                        <li>Post performance analytics</li>
+                        <li>Engagement metrics (views, likes, comments)</li>
+                        <li>Revenue breakdown by subscription tier</li>
+                        <li>Quick post creation access</li>
+                        <li>Recent activity feed</li>
+                        <li>Growth trends visualization</li>
+                        <li>Subscriber demographics</li>
+                        <li>Content scheduling calendar</li>
+                        <li>Payout management</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- CHANNEL VIEW TAB -->
+        <div class="tab-content" id="tab-channel">
+            <div class="main-grid">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="tg-header">
+                            <div class="tg-back">←</div>
+                            <div class="tg-title">Sarah Miller</div>
+                        </div>
+                        <div class="phone-content">
+                            <div class="creator-profile">
+                                <div class="creator-avatar">💪</div>
+                                <div class="creator-name">Sarah Miller</div>
+                                <div class="creator-bio">Fitness coach & wellness content creator<br>Helping you achieve your health goals!</div>
+                                <div style="color: #6c7883; font-size: 0.85em;">1.2K subscribers</div>
+                            </div>
+
+                            <div class="content-grid">
+                                <div class="content-thumb">🏋️</div>
+                                <div class="content-thumb">🥗</div>
+                                <div class="content-thumb">🧘</div>
+                                <div class="content-thumb">💊</div>
+                                <div class="content-thumb">📊</div>
+                                <div class="content-thumb">🎯</div>
+                            </div>
+
+                            <button class="tg-button">Subscribe for Premium Content</button>
+                            <button class="tg-button secondary" style="margin-top: 10px;">View Free Preview</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h2 class="section-title">Channel Page Features</h2>
+                    <ul class="feature-list">
+                        <li>Creator profile with avatar and bio</li>
+                        <li>Subscriber count display</li>
+                        <li>Content preview grid (teaser images)</li>
+                        <li>Subscription call-to-action button</li>
+                        <li>Free content samples</li>
+                        <li>Category badges and tags</li>
+                        <li>Social proof (ratings, testimonials)</li>
+                        <li>Sample content previews</li>
+                        <li>Multiple subscription tiers</li>
+                        <li>Shareable channel links</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAYMENT FLOW TAB -->
+        <div class="tab-content" id="tab-payment">
+            <div class="main-grid">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="tg-header">
+                            <div class="tg-back">←</div>
+                            <div class="tg-title">Subscribe to Sarah Miller</div>
+                        </div>
+                        <div class="phone-content">
+                            <div class="subscribe-box">
+                                <h3 style="margin-bottom: 15px;">Select Plan</h3>
+                                
+                                <div class="plan-option selected">
+                                    <div class="plan-price">5 TON / month</div>
+                                    <div style="color: #6c7883; font-size: 0.9em;">Basic Access - All posts & photos</div>
+                                </div>
+
+                                <div class="plan-option">
+                                    <div class="plan-price">12 TON / month</div>
+                                    <div style="color: #6c7883; font-size: 0.9em;">Premium - Videos + 1-on-1 chat</div>
+                                </div>
+
+                                <div class="plan-option">
+                                    <div class="plan-price">50 TON / year</div>
+                                    <div style="color: #6c7883; font-size: 0.9em;">Annual - Save 17% + bonus content</div>
+                                </div>
+                            </div>
+
+                            <div style="margin: 20px 0;">
+                                <div style="color: #6c7883; font-size: 0.9em; margin-bottom: 10px;">Payment Method</div>
+                                <div class="wallet-connect">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div class="wallet-icon">💎</div>
+                                        <div>
+                                            <div style="font-weight: 600;">TON Wallet</div>
+                                            <div style="font-size: 0.8em; color: #6c7883;">Connect your wallet</div>
+                                        </div>
+                                    </div>
+                                    <div style="color: #2AABEE;">→</div>
+                                </div>
+
+                                <div class="wallet-connect">
+                                    <div style="display: flex; align-items: center; gap: 10px;">
+                                        <div class="wallet-icon">💵</div>
+                                        <div>
+                                            <div style="font-weight: 600;">USDT</div>
+                                            <div style="font-size: 0.8em; color: #6c7883;">Pay with stablecoin</div>
+                                        </div>
+                                    </div>
+                                    <div style="color: #2AABEE;">→</div>
+                                </div>
+                            </div>
+
+                            <button class="tg-button">Confirm Payment - 5 TON</button>
+                            
+                            <div style="margin-top: 15px; padding: 15px; background: #17212b; border-radius: 10px; font-size: 0.85em; color: #6c7883; text-align: center;">
+                                🔒 Secure payment via TON blockchain<br>
+                                Cancel anytime • Instant access
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h2 class="section-title">Crypto Payment Flow</h2>
+                    <ul class="feature-list">
+                        <li>Multiple subscription tier options</li>
+                        <li>TON and USDT payment support</li>
+                        <li>TON Connect wallet integration</li>
+                        <li>One-click subscription confirmation</li>
+                        <li>Automatic subscription renewal</li>
+                        <li>Instant content access after payment</li>
+                        <li>Secure blockchain transactions</li>
+                        <li>Payment history tracking</li>
+                        <li>Cancellation and refund management</li>
+                        <li>Multi-currency support (crypto + fiat)</li>
+                    </ul>
+
+                    <h3 class="section-title" style="margin-top: 30px; font-size: 1.2em;">Payment Integration</h3>
+                    <div class="tech-badges">
+                        <div class="tech-badge">TON Connect SDK</div>
+                        <div class="tech-badge">Wallet Authentication</div>
+                        <div class="tech-badge">Smart Contracts</div>
+                        <div class="tech-badge">Transaction Monitoring</div>
+                        <div class="tech-badge">Webhook Events</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- POSTING TAB -->
+        <div class="tab-content" id="tab-posting">
+            <div class="main-grid">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="tg-header">
+                            <div class="tg-back">←</div>
+                            <div class="tg-title">Create Post</div>
+                        </div>
+                        <div class="phone-content">
+                            <div class="upload-zone">
+                                <div class="upload-icon">📸</div>
+                                <div style="color: #2AABEE; font-weight: 600; margin-bottom: 5px;">Upload Media</div>
+                                <div style="color: #6c7883; font-size: 0.85em;">Photos, videos, or files</div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 20px;">
+                                <label class="form-label">Caption</label>
+                                <textarea class="form-input" placeholder="Write a caption for your post...">New workout routine dropping! 💪
+
+Check out these 5 exercises that transformed my clients...</textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Visibility</label>
+                                <select class="form-input">
+                                    <option>Premium Subscribers Only</option>
+                                    <option>All Subscribers</option>
+                                    <option>Public Preview</option>
+                                </select>
+                            </div>
+
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; background: #17212b; border-radius: 10px; margin-bottom: 15px;">
+                                <div>
+                                    <div style="font-weight: 600; margin-bottom: 3px;">Schedule Post</div>
+                                    <div style="font-size: 0.8em; color: #6c7883;">Post at a specific time</div>
+                                </div>
+                                <div style="width: 50px; height: 28px; background: #2AABEE; border-radius: 14px; position: relative; cursor: pointer;">
+                                    <div style="width: 24px; height: 24px; background: white; border-radius: 50%; position: absolute; right: 2px; top: 2px;"></div>
+                                </div>
+                            </div>
+
+                            <button class="tg-button">Publish Now</button>
+                            <button class="tg-button secondary" style="margin-top: 10px;">Save as Draft</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h2 class="section-title">Content Posting Interface</h2>
+                    <ul class="feature-list">
+                        <li>Multi-media upload (photos, videos, files)</li>
+                        <li>Rich text caption editor</li>
+                        <li>Visibility tier selection (free/paid content)</li>
+                        <li>Post scheduling functionality</li>
+                        <li>Draft saving and management</li>
+                        <li>Preview before publishing</li>
+                        <li>Hashtag and mention support</li>
+                        <li>Content categorization</li>
+                        <li>Bulk upload for multiple files</li>
+                        <li>Automatic optimization for Telegram</li>
+                    </ul>
+
+                    <h3 class="section-title" style="margin-top: 30px; font-size: 1.2em;">Media Handling</h3>
+                    <div class="tech-badges">
+                        <div class="tech-badge">File Upload API</div>
+                        <div class="tech-badge">Image Compression</div>
+                        <div class="tech-badge">Video Transcoding</div>
+                        <div class="tech-badge">CDN Distribution</div>
+                        <div class="tech-badge">Thumbnail Generation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ADMIN TAB -->
+        <div class="tab-content" id="tab-admin">
+            <div class="main-grid">
+                <div class="phone-mockup">
+                    <div class="phone-screen">
+                        <div class="tg-header">
+                            <div class="tg-back">←</div>
+                            <div class="tg-title">Admin Panel</div>
+                        </div>
+                        <div class="phone-content">
+                            <div class="dashboard-stats">
+                                <div class="stat-card">
+                                    <div class="stat-value">847</div>
+                                    <div class="stat-label">Creators</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">12.4K</div>
+                                    <div class="stat-label">Users</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-value">$89K</div>
+                                    <div class="stat-label">Volume</div>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 20px;">
+                                <h3 style="margin-bottom: 10px; font-size: 1em;">Recent Activity</h3>
+                                <div class="post-item">
+                                    <div class="post-info">
+                                        <div class="post-title">New creator signup</div>
+                                        <div class="post-meta">Mike Johnson • 5 min ago</div>
+                                    </div>
+                                    <span class="status-badge pending">Pending</span>
+                                </div>
+                                <div class="post-item">
+                                    <div class="post-info">
+                                        <div class="post-title">Content flagged</div>
+                                        <div class="post-meta">Report #3451 • 15 min ago</div>
+                                    </div>
+                                    <span class="status-badge pending">Review</span>
+                                </div>
+                                <div class="post-item">
+                                    <div class="post-info">
+                                        <div class="post-title">Payment processed</div>
+                                        <div class="post-meta">125 TON • 1 hour ago</div>
+                                    </div>
+                                    <span class="status-badge active">Success</span>
+                                </div>
+                            </div>
+
+                            <button class="tg-button" style="margin-top: 20px;">View All Reports</button>
+                            <button class="tg-button secondary" style="margin-top: 10px;">Platform Settings</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h2 class="section-title">Admin Panel Features</h2>
+                    <ul class="feature-list">
+                        <li>Platform-wide analytics dashboard</li>
+                        <li>User and creator management</li>
+                        <li>Content moderation queue</li>
+                        <li>Reported content review system</li>
+                        <li>Payment transaction monitoring</li>
+                        <li>Creator verification workflow</li>
+                        <li>Ban and suspension controls</li>
+                        <li>Platform fee configuration</li>
+                        <li>Automated content filtering</li>
+                        <li>Audit logs and activity tracking</li>
+                    </ul>
+
+                    <h3 class="section-title" style="margin-top: 30px; font-size: 1.2em;">Moderation Tools</h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Feature</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Auto-content filtering</td>
+                                <td><span class="status-badge active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>Manual review queue</td>
+                                <td><span class="status-badge active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>User reporting</td>
+                                <td><span class="status-badge active">Active</span></td>
+                            </tr>
+                            <tr>
+                                <td>AI content detection</td>
+                                <td><span class="status-badge pending">Beta</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <strong>⚠️ Concept Demo Notice:</strong> This is a proof-of-concept demonstration showing the proposed MVP architecture for a Telegram Mini-App content creator platform. The production application will integrate with Telegram Bot API for authentication and messaging, TON Connect for cryptocurrency payments, and include full backend infrastructure for content management, user authentication, and transaction processing. All features shown are for demonstration purposes only.
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetTab = button.getAttribute('data-tab');
+                
+                // Remove active class from all buttons and contents
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked button and corresponding content
+                button.classList.add('active');
+                document.getElementById(`tab-${targetTab}`).classList.add('active');
+            });
+        });
+
+        // Plan selection
+        document.querySelectorAll('.plan-option').forEach(option => {
+            option.addEventListener('click', () => {
+                document.querySelectorAll('.plan-option').forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+            });
+        });
+    </script>
+</body>
+</html>

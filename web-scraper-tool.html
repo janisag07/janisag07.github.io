@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scraper Pro - Advanced Data Extraction Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            animation: fadeIn 1s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 210, 255, 0.2);
+        }
+
+        .card h2 {
+            color: #00d2ff;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #b0b0b0;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00d2ff;
+            box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.2);
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            margin-right: 10px;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
+        }
+
+        .btn-success {
+            background: linear-gradient(45deg, #4ade80, #22c55e);
+        }
+
+        .btn-danger {
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .schedule-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .schedule-btn {
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .schedule-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .schedule-btn.active {
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            border-color: #00d2ff;
+        }
+
+        .status-bar {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.idle {
+            background: #6b7280;
+        }
+
+        .status-indicator.running {
+            background: #4ade80;
+        }
+
+        .status-indicator.error {
+            background: #ef4444;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
+            width: 0%;
+            transition: width 0.3s ease;
+            animation: progress 2s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            100% { width: 75%; }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        th {
+            background: rgba(0, 210, 255, 0.2);
+            color: #00d2ff;
+            font-weight: 600;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            padding: 8px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .export-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #00d2ff;
+        }
+
+        .log-console {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+            color: #4ade80;
+        }
+
+        .log-entry {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-left: 3px solid transparent;
+        }
+
+        .log-entry.info {
+            border-left-color: #00d2ff;
+            color: #00d2ff;
+        }
+
+        .log-entry.success {
+            border-left-color: #4ade80;
+            color: #4ade80;
+        }
+
+        .log-entry.error {
+            border-left-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .log-entry.warning {
+            border-left-color: #fbbf24;
+            color: #fbbf24;
+        }
+
+        .retry-indicator {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(251, 191, 36, 0.2);
+            border-radius: 12px;
+            color: #fbbf24;
+            font-size: 0.85em;
+            margin-left: 10px;
+        }
+
+        .stats-mini {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-mini {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+
+        .stat-mini-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #00d2ff;
+        }
+
+        .stat-mini-label {
+            font-size: 0.85em;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        .selector-builder {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .selector-type {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .selector-type button {
+            flex: 1;
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .selector-type button.active {
+            background: #00d2ff;
+            border-color: #00d2ff;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .schedule-options {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-mini {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .stats-mini {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🕷️ Web Scraper Pro</h1>
+            <p>Advanced Data Extraction & Analysis Tool</p>
+        </header>
+
+        <div class="status-bar">
+            <div class="status-indicator idle" id="statusIndicator"></div>
+            <div style="flex: 1;">
+                <strong id="statusText">Status: Idle</strong>
+                <div class="progress-bar" style="display: none;" id="progressBar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="card">
+                <h2>🎯 Scraper Configuration</h2>
+                
+                <div class="form-group">
+                    <label>Target URL</label>
+                    <input type="url" placeholder="https://example.com" value="https://example.com/products">
+                </div>
+
+                <div class="selector-builder">
+                    <div class="selector-type">
+                        <button class="active" onclick="switchSelectorType(this, 'css')">CSS Selector</button>
+                        <button onclick="switchSelectorType(this, 'xpath')">XPath</button>
+                    </div>
+                    <div class="form-group">
+                        <label id="selectorLabel">CSS Selector</label>
+                        <textarea placeholder=".product-item h2.title">.product-item h2.title</textarea>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Data Fields (comma-separated)</label>
+                    <input type="text" placeholder="title, price, description" value="title, price, rating, availability">
+                </div>
+
+                <div class="form-group">
+                    <label>Pagination Selector (optional)</label>
+                    <input type="text" placeholder=".next-page" value="a.pagination-next">
+                </div>
+
+                <div class="form-group">
+                    <label>Max Pages</label>
+                    <input type="number" value="10" min="1" max="1000">
+                </div>
+
+                <button class="btn" onclick="startScraping()">▶️ Start Scraping</button>
+                <button class="btn btn-danger" onclick="stopScraping()">⏹️ Stop</button>
+                <button class="btn btn-secondary" onclick="testSelector()">🧪 Test Selector</button>
+            </div>
+
+            <div class="card">
+                <h2>⏰ Scheduling</h2>
+                
+                <div class="schedule-options">
+                    <div class="schedule-btn active" onclick="selectSchedule(this, 'once')">
+                        <div style="font-size: 1.5em;">🎯</div>
+                        <div>Run Once</div>
+                    </div>
+                    <div class="schedule-btn" onclick="selectSchedule(this, 'hourly')">
+                        <div style="font-size: 1.5em;">⏱️</div>
+                        <div>Hourly</div>
+                    </div>
+                    <div class="schedule-btn" onclick="selectSchedule(this, 'daily')">
+                        <div style="font-size: 1.5em;">📅</div>
+                        <div>Daily</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Schedule Time (for recurring tasks)</label>
+                    <input type="time" value="09:00">
+                </div>
+
+                <div class="form-group">
+                    <label>Retry on Failure</label>
+                    <select>
+                        <option>No retry</option>
+                        <option selected>Retry 3 times</option>
+                        <option>Retry 5 times</option>
+                        <option>Retry 10 times</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Retry Delay (seconds)</label>
+                    <input type="number" value="30" min="1">
+                </div>
+
+                <h2 style="margin-top: 30px;">📤 Export Options</h2>
+                
+                <div class="export-buttons">
+                    <button class="export-btn" onclick="exportData('csv')">📊 Export CSV</button>
+                    <button class="export-btn" onclick="exportData('json')">📋 Export JSON</button>
+                    <button class="export-btn" onclick="exportData('excel')">📗 Export Excel</button>
+                    <button class="export-btn" onclick="exportData('xml')">📄 Export XML</button>
+                </div>
+
+                <div class="stats-mini">
+                    <div class="stat-mini">
+                        <div class="stat-mini-value">247</div>
+                        <div class="stat-mini-label">Items Scraped</div>
+                    </div>
+                    <div class="stat-mini">
+                        <div class="stat-mini-value">12</div>
+                        <div class="stat-mini-label">Pages Crawled</div>
+                    </div>
+                    <div class="stat-mini">
+                        <div class="stat-mini-value">2m 34s</div>
+                        <div class="stat-mini-label">Duration</div>
+                    </div>
+                    <div class="stat-mini">
+                        <div class="stat-mini-value">3</div>
+                        <div class="stat-mini-label">Retries</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📊 Data Preview</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Price</th>
+                        <th>Rating</th>
+                        <th>Availability</th>
+                        <th>Source URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Premium Wireless Headphones</td>
+                        <td>$129.99</td>
+                        <td>⭐⭐⭐⭐⭐ 4.8</td>
+                        <td><span style="color: #4ade80;">In Stock</span></td>
+                        <td>example.com/product/123</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Smart Watch Series 5</td>
+                        <td>$399.99</td>
+                        <td>⭐⭐⭐⭐ 4.5</td>
+                        <td><span style="color: #4ade80;">In Stock</span></td>
+                        <td>example.com/product/456</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>USB-C Fast Charger</td>
+                        <td>$29.99</td>
+                        <td>⭐⭐⭐⭐⭐ 4.9</td>
+                        <td><span style="color: #fbbf24;">Low Stock</span></td>
+                        <td>example.com/product/789</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Portable Power Bank 20000mAh</td>
+                        <td>$49.99</td>
+                        <td>⭐⭐⭐⭐ 4.6</td>
+                        <td><span style="color: #4ade80;">In Stock</span></td>
+                        <td>example.com/product/101</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Bluetooth Speaker Pro</td>
+                        <td>$89.99</td>
+                        <td>⭐⭐⭐⭐⭐ 4.7</td>
+                        <td><span style="color: #ef4444;">Out of Stock</span></td>
+                        <td>example.com/product/202</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <h2>📝 Live Log Console</h2>
+            <div class="log-console" id="logConsole">
+                <div class="log-entry info">[2026-03-17 16:50:12] INFO: Initializing scraper...</div>
+                <div class="log-entry success">[2026-03-17 16:50:13] SUCCESS: Connected to https://example.com/products</div>
+                <div class="log-entry info">[2026-03-17 16:50:14] INFO: Parsing page 1 of 10...</div>
+                <div class="log-entry success">[2026-03-17 16:50:16] SUCCESS: Extracted 25 items from page 1</div>
+                <div class="log-entry warning">[2026-03-17 16:50:18] WARNING: Rate limit detected, waiting 5 seconds...</div>
+                <div class="log-entry info">[2026-03-17 16:50:23] INFO: Resuming scraping...</div>
+                <div class="log-entry info">[2026-03-17 16:50:24] INFO: Parsing page 2 of 10...</div>
+                <div class="log-entry error">[2026-03-17 16:50:26] ERROR: Connection timeout on page 2 <span class="retry-indicator">Retry 1/3</span></div>
+                <div class="log-entry info">[2026-03-17 16:50:56] INFO: Retrying page 2...</div>
+                <div class="log-entry success">[2026-03-17 16:50:58] SUCCESS: Extracted 25 items from page 2</div>
+                <div class="log-entry info">[2026-03-17 16:51:00] INFO: Parsing page 3 of 10...</div>
+                <div class="log-entry success">[2026-03-17 16:51:02] SUCCESS: Extracted 23 items from page 3</div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🛠️ Technology Stack</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
+                    <div style="color: #00d2ff; font-weight: bold; margin-bottom: 5px;">🐍 Python 3.11+</div>
+                    <div style="color: #888; font-size: 0.9em;">Core language</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
+                    <div style="color: #00d2ff; font-weight: bold; margin-bottom: 5px;">🍜 BeautifulSoup4</div>
+                    <div style="color: #888; font-size: 0.9em;">HTML parsing</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
+                    <div style="color: #00d2ff; font-weight: bold; margin-bottom: 5px;">🕸️ Scrapy</div>
+                    <div style="color: #888; font-size: 0.9em;">Advanced crawling</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
+                    <div style="color: #00d2ff; font-weight: bold; margin-bottom: 5px;">🌐 Requests</div>
+                    <div style="color: #888; font-size: 0.9em;">HTTP library</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
+                    <div style="color: #00d2ff; font-weight: bold; margin-bottom: 5px;">📊 Pandas</div>
+                    <div style="color: #888; font-size: 0.9em;">Data processing</div>
+                </div>
+                <div style="background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px;">
+                    <div style="color: #00d2ff; font-weight: bold; margin-bottom: 5px;">📋 lxml</div>
+                    <div style="color: #888; font-size: 0.9em;">XPath support</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSchedule = 'once';
+        let currentSelectorType = 'css';
+
+        function selectSchedule(element, type) {
+            document.querySelectorAll('.schedule-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            element.classList.add('active');
+            currentSchedule = type;
+        }
+
+        function switchSelectorType(element, type) {
+            document.querySelectorAll('.selector-type button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            element.classList.add('active');
+            currentSelectorType = type;
+            document.getElementById('selectorLabel').textContent = type === 'css' ? 'CSS Selector' : 'XPath Expression';
+        }
+
+        function startScraping() {
+            const indicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const progressBar = document.getElementById('progressBar');
+            
+            indicator.className = 'status-indicator running';
+            statusText.innerHTML = '<strong>Status: Running</strong> - Scraping in progress...';
+            progressBar.style.display = 'block';
+            
+            addLogEntry('info', 'Scraping job started');
+            addLogEntry('success', 'Configuration validated');
+        }
+
+        function stopScraping() {
+            const indicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const progressBar = document.getElementById('progressBar');
+            
+            indicator.className = 'status-indicator idle';
+            statusText.innerHTML = '<strong>Status: Stopped</strong> - Scraping halted by user';
+            progressBar.style.display = 'none';
+            
+            addLogEntry('warning', 'Scraping job stopped by user');
+        }
+
+        function testSelector() {
+            addLogEntry('info', 'Testing selector...');
+            setTimeout(() => {
+                addLogEntry('success', 'Selector matched 247 elements');
+            }, 500);
+        }
+
+        function exportData(format) {
+            addLogEntry('info', `Exporting data as ${format.toUpperCase()}...`);
+            setTimeout(() => {
+                addLogEntry('success', `Data exported successfully as ${format.toUpperCase()}`);
+            }, 800);
+        }
+
+        function addLogEntry(type, message) {
+            const console = document.getElementById('logConsole');
+            const timestamp = new Date().toLocaleTimeString('en-GB', { hour12: false });
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[2026-03-17 ${timestamp}] ${type.toUpperCase()}: ${message}`;
+            console.appendChild(entry);
+            console.scrollTop = console.scrollHeight;
+        }
+    </script>
+</body>
+</html>
