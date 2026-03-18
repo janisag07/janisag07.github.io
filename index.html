@@ -211,6 +211,7 @@
 
         .step p {
             color: var(--text-secondary);
+            line-height: 1.8;
         }
 
         /* Skills Grid */
@@ -324,6 +325,15 @@
         }
 
         /* Custom Solutions */
+        .custom-intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            line-height: 1.8;
+        }
+
         .pricing-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -479,18 +489,18 @@
             <div class="steps">
                 <div class="step reveal">
                     <div class="step-number">1</div>
-                    <h3>Choose Your AI Agent</h3>
-                    <p>Browse our marketplace of pre-built AI agents designed for real business needs.</p>
+                    <h3>Tell Us What You Need</h3>
+                    <p>Share your business challenge or workflow bottleneck. Whether it's customer support, content creation, lead generation, or community management — we'll figure out the best AI solution for you.</p>
                 </div>
                 <div class="step reveal">
                     <div class="step-number">2</div>
-                    <h3>Install in Minutes</h3>
-                    <p>One-click setup with OpenClaw. No technical knowledge required.</p>
+                    <h3>We Build Your AI Team</h3>
+                    <p>Custom agents, intelligent bots, and workflow automations tailored to your exact needs. No generic templates — everything is built specifically for how your business operates.</p>
                 </div>
                 <div class="step reveal">
                     <div class="step-number">3</div>
-                    <h3>Watch It Work</h3>
-                    <p>Your agent starts working immediately. Sit back and let AI handle the work.</p>
+                    <h3>Launch & Scale</h3>
+                    <p>Deploy your AI agents to production, test in real conditions, and iterate based on results. We stay with you through rollout and optimization until everything runs perfectly.</p>
                 </div>
             </div>
         </div>
@@ -503,55 +513,54 @@
             <p class="section-subtitle">Plug-and-play solutions for your business</p>
             <div class="skills-grid">
                 <div class="skill-card reveal">
-                    <div class="skill-icon">💬</div>
-                    <h3>Discord Community Manager</h3>
-                    <p>Automates moderation, welcomes members, answers questions 24/7</p>
+                    <div class="skill-icon">📱</div>
+                    <h3>Telegram Referral Bot</h3>
+                    <p>Grow your community organically with intelligent referral tracking and anti-bot protection. Reward real members, block fake accounts.</p>
                     <div class="skill-footer">
-                        <div class="price">$49</div>
+                        <div class="price">From $299</div>
                         <div class="badge">Popular</div>
                     </div>
                 </div>
                 <div class="skill-card reveal">
-                    <div class="skill-icon">🐦</div>
-                    <h3>Twitter/X Growth Agent</h3>
-                    <p>Drafts content, manages campaigns, grows your audience on autopilot</p>
+                    <div class="skill-icon">💬</div>
+                    <h3>Discord Server Setup</h3>
+                    <p>Complete Discord infrastructure: channels, roles, permissions, moderation bot, welcome flows, and automated community management.</p>
                     <div class="skill-footer">
-                        <div class="price">$79</div>
+                        <div class="price">From $199</div>
                         <div class="badge">New</div>
                     </div>
                 </div>
                 <div class="skill-card reveal">
                     <div class="skill-icon">🎧</div>
-                    <h3>Customer Support Agent</h3>
-                    <p>AI-powered support that learns your business and answers instantly</p>
+                    <h3>AI Customer Support</h3>
+                    <p>Multi-channel AI support that handles Telegram, Discord, email, and WhatsApp. Available 24/7, learns your products, answers instantly.</p>
                     <div class="skill-footer">
-                        <div class="price">From $99</div>
+                        <div class="price">From $399</div>
                     </div>
                 </div>
                 <div class="skill-card reveal">
-                    <div class="skill-icon">📱</div>
-                    <h3>Telegram Business Bot</h3>
-                    <p>Automate orders, bookings, and customer communication</p>
+                    <div class="skill-icon">⚙️</div>
+                    <h3>Business Automation</h3>
+                    <p>Connect your CRM, email, WhatsApp, and internal tools. Automate lead follow-ups, customer onboarding, and routine workflows.</p>
                     <div class="skill-footer">
-                        <div class="price">$59</div>
-                        <div class="badge">Coming Soon</div>
+                        <div class="price">From $499</div>
                     </div>
                 </div>
                 <div class="skill-card reveal">
-                    <div class="skill-icon">✍️</div>
-                    <h3>Content Pipeline Agent</h3>
-                    <p>Research, write, and publish content automatically</p>
+                    <div class="skill-icon">🤖</div>
+                    <h3>OpenClaw Setup</h3>
+                    <p>Deploy your own AI agent team infrastructure. Custom skills, automations, and integrations — the foundation for serious AI operations.</p>
                     <div class="skill-footer">
-                        <div class="price">From $89</div>
-                        <div class="badge">Coming Soon</div>
+                        <div class="price">From $799</div>
+                        <div class="badge">Advanced</div>
                     </div>
                 </div>
                 <div class="skill-card reveal">
                     <div class="skill-icon">🎯</div>
-                    <h3>Lead Generation Agent</h3>
-                    <p>Find and qualify leads while you sleep</p>
+                    <h3>Data Scraping & Lead Gen</h3>
+                    <p>Automated lead discovery and qualification. Find prospects, gather contact data, enrich profiles, and deliver qualified leads daily.</p>
                     <div class="skill-footer">
-                        <div class="price">From $149</div>
+                        <div class="price">From $599</div>
                     </div>
                 </div>
             </div>
@@ -565,13 +574,13 @@
             <div class="reviews">
                 <div class="review reveal">
                     <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <p class="review-text">"Exceptional work! The AI agent completely transformed how we handle customer inquiries. Professional, fast, and exactly what we needed."</p>
+                    <p class="review-text">"Excellently clear instructions, very knowledgeable"</p>
                     <p class="reviewer">— Max Maydon</p>
                 </div>
                 <div class="review reveal">
                     <div class="stars">⭐⭐⭐⭐⭐</div>
-                    <p class="review-text">"Outstanding service and delivery. The automation saved us countless hours. Highly recommend for anyone looking to scale their business with AI."</p>
-                    <p class="reviewer">— Digital Wealth</p>
+                    <p class="review-text">"He went above and beyond my expectations. Highly recommended"</p>
+                    <p class="reviewer">— RickReactsNGames</p>
                 </div>
             </div>
             <div class="trust-badge reveal">
@@ -585,6 +594,9 @@
         <div class="container">
             <h2>Custom AI Solutions</h2>
             <p class="section-subtitle">Need something specific? We build custom AI agent systems for your business.</p>
+            <div class="custom-intro">
+                Every business is unique. If our pre-built agents don't fit your exact needs, we'll design and deploy a custom AI infrastructure tailored specifically to your workflows, tools, and goals. From concept to production deployment, we handle everything.
+            </div>
             <div class="pricing-cards">
                 <div class="pricing-card reveal">
                     <h3>Enterprise Setup</h3>
@@ -610,9 +622,9 @@
             <div class="brand">ARCEUS SKILLS</div>
             <div class="footer-links">
                 <a href="mailto:nani@agic.me">Contact</a>
-                <a href="https://github.com" target="_blank">GitHub</a>
-                <a href="https://linkedin.com" target="_blank">LinkedIn</a>
-                <a href="https://upwork.com" target="_blank">Upwork Profile</a>
+                <a href="https://github.com/janisag07" target="_blank">GitHub</a>
+                <a href="https://www.linkedin.com/in/janis-agic/" target="_blank">LinkedIn</a>
+                <a href="https://upwork.com/freelancers/~01a798cae09a131e14" target="_blank">Upwork Profile</a>
             </div>
             <p class="footer-brand">Powered by <span>OpenClaw</span></p>
         </div>
