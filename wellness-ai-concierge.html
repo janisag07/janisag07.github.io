@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wellness AI Concierge System - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-dark: #1a1a1a;
+            --secondary-dark: #2a2a2a;
+            --accent-gold: #d4af37;
+            --accent-light: #f4e4c1;
+            --text-light: #ffffff;
+            --text-muted: #b0b0b0;
+            --success: #4caf50;
+            --shadow: rgba(212, 175, 55, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .banner {
+            background: linear-gradient(90deg, var(--accent-gold) 0%, #c9a961 100%);
+            color: var(--primary-dark);
+            text-align: center;
+            padding: 8px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(42, 42, 42, 0.8) 100%);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .section {
+            background: var(--secondary-dark);
+            border-radius: 15px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 8px 32px var(--shadow);
+        }
+
+        .section-title {
+            font-size: 2em;
+            margin-bottom: 30px;
+            color: var(--accent-gold);
+            border-bottom: 2px solid var(--accent-gold);
+            padding-bottom: 10px;
+        }
+
+        /* Chat Widget Styles */
+        .chat-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .chat-widget {
+            background: #1e1e1e;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border: 2px solid var(--accent-gold);
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--accent-gold), #c9a961);
+            color: var(--primary-dark);
+            padding: 20px;
+            font-weight: 600;
+            font-size: 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .chat-messages {
+            height: 400px;
+            overflow-y: auto;
+            padding: 20px;
+            background: #1a1a1a;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.bot {
+            text-align: left;
+        }
+
+        .message.user {
+            text-align: right;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            padding: 12px 18px;
+            border-radius: 18px;
+            max-width: 80%;
+        }
+
+        .message.bot .message-bubble {
+            background: var(--secondary-dark);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, var(--accent-gold), #c9a961);
+            color: var(--primary-dark);
+        }
+
+        .quick-questions {
+            padding: 20px;
+            background: #1e1e1e;
+            border-top: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        .quick-questions h4 {
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+            font-size: 0.9em;
+        }
+
+        .question-btn {
+            display: block;
+            width: 100%;
+            background: var(--secondary-dark);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--text-light);
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.95em;
+            text-align: left;
+        }
+
+        .question-btn:hover {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: var(--accent-gold);
+            transform: translateX(5px);
+        }
+
+        .chat-info {
+            padding: 20px 0;
+        }
+
+        .chat-info h3 {
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+        }
+
+        .chat-info ul {
+            list-style: none;
+        }
+
+        .chat-info li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-info li:before {
+            content: "✓";
+            color: var(--accent-gold);
+            font-weight: bold;
+        }
+
+        /* Workflow Diagram */
+        .workflow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px 0;
+        }
+
+        .workflow-step {
+            background: linear-gradient(135deg, #2a2a2a, #1e1e1e);
+            padding: 20px 30px;
+            border-radius: 15px;
+            border: 2px solid var(--accent-gold);
+            text-align: center;
+            min-width: 150px;
+            position: relative;
+            transition: transform 0.3s;
+        }
+
+        .workflow-step:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .workflow-step h4 {
+            color: var(--accent-gold);
+            margin-bottom: 5px;
+            font-size: 1em;
+        }
+
+        .workflow-step p {
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
+        .arrow {
+            color: var(--accent-gold);
+            font-size: 2em;
+            margin: 0 10px;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #2a2a2a, #1e1e1e);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--accent-gold);
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            color: var(--accent-gold);
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        .stat-trend {
+            color: var(--success);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        /* Integration Map */
+        .integration-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .integration-card {
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid rgba(212, 175, 55, 0.2);
+            transition: all 0.3s;
+        }
+
+        .integration-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-5px);
+        }
+
+        .integration-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .integration-card h4 {
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+        }
+
+        .integration-card p {
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+
+        /* Features List */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .feature-card {
+            background: #1e1e1e;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 4px solid var(--accent-gold);
+        }
+
+        .feature-card h4 {
+            color: var(--accent-gold);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .feature-card p {
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
+
+            .chat-container {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow {
+                flex-direction: column;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
+            }
+
+            .section {
+                padding: 20px;
+            }
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+        }
+
+        .typing-indicator.active {
+            display: block;
+        }
+
+        .typing-dots {
+            display: inline-flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="banner">
+        Demo built specifically for [Client Name] by Janis Agic
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>Wellness AI Concierge</h1>
+            <p class="subtitle">Premium Customer Engagement & Booking Automation</p>
+            <p style="color: var(--text-muted);">Transform your spa experience with intelligent automation</p>
+        </header>
+
+        <!-- Live Chat Simulation -->
+        <div class="section">
+            <h2 class="section-title">🌟 Live Chat Simulation</h2>
+            <div class="chat-container">
+                <div class="chat-widget">
+                    <div class="chat-header">
+                        <span class="status-dot"></span>
+                        AI Concierge - Online
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot">
+                            <div class="message-bubble">
+                                Welcome to our wellness sanctuary! 🌿 I'm your AI concierge. How may I help you find your perfect treatment today?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="typing-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </div>
+                    <div class="quick-questions">
+                        <h4>Try asking:</h4>
+                        <button class="question-btn" data-question="services">What massage services do you offer?</button>
+                        <button class="question-btn" data-question="prenatal">I'm pregnant, what treatments are safe?</button>
+                        <button class="question-btn" data-question="gift">I'd like to purchase a gift certificate</button>
+                        <button class="question-btn" data-question="housecall">Do you offer house calls?</button>
+                        <button class="question-btn" data-question="founder">I'd like to book with the founder</button>
+                        <button class="question-btn" data-question="vip">I'm a first-time VIP client</button>
+                    </div>
+                </div>
+
+                <div class="chat-info">
+                    <h3>Smart Features in Action:</h3>
+                    <ul>
+                        <li>Instant service qualification & recommendations</li>
+                        <li>Detects special cases (pregnancy, VIP, gift purchases)</li>
+                        <li>Routes to appropriate staff or founder</li>
+                        <li>Intelligent booking link distribution</li>
+                        <li>Seamless human handoff for sensitive requests</li>
+                        <li>Personalized treatment suggestions</li>
+                        <li>24/7 availability - never miss a lead</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Workflow Diagram -->
+        <div class="section">
+            <h2 class="section-title">🔄 Complete Automation Workflow</h2>
+            <div class="workflow">
+                <div class="workflow-step">
+                    <h4>📱 Contact</h4>
+                    <p>Instagram, WhatsApp, SMS</p>
+                </div>
+                <span class="arrow">→</span>
+                <div class="workflow-step">
+                    <h4>🤖 ManyChat AI</h4>
+                    <p>Instant Response</p>
+                </div>
+                <span class="arrow">→</span>
+                <div class="workflow-step">
+                    <h4>✅ Qualify</h4>
+                    <p>Smart Routing</p>
+                </div>
+                <span class="arrow">→</span>
+                <div class="workflow-step">
+                    <h4>📅 IntakeQ</h4>
+                    <p>Booking & Forms</p>
+                </div>
+                <span class="arrow">→</span>
+                <div class="workflow-step">
+                    <h4>💳 Payment</h4>
+                    <p>Stripe/Square</p>
+                </div>
+                <span class="arrow">→</span>
+                <div class="workflow-step">
+                    <h4>🎯 OpenClaw</h4>
+                    <p>Smart Automation</p>
+                </div>
+                <span class="arrow">→</span>
+                <div class="workflow-step">
+                    <h4>✉️ Follow-ups</h4>
+                    <p>Reminders & Reviews</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Preview -->
+        <div class="section">
+            <h2 class="section-title">📊 Real-Time Dashboard</h2>
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Active Conversations</div>
+                    <div class="stat-value">12</div>
+                    <div class="stat-trend">↑ 3 in last hour</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Bookings Today</div>
+                    <div class="stat-value">8</div>
+                    <div class="stat-trend">↑ 60% vs yesterday</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Lead Pipeline</div>
+                    <div class="stat-value">34</div>
+                    <div class="stat-trend">↑ 12 new this week</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Response Time</div>
+                    <div class="stat-value">&lt;30s</div>
+                    <div class="stat-trend">100% instant response</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Conversion Rate</div>
+                    <div class="stat-value">68%</div>
+                    <div class="stat-trend">↑ 23% since automation</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Review Requests Sent</div>
+                    <div class="stat-value">45</div>
+                    <div class="stat-trend">4.8★ average rating</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Map -->
+        <div class="section">
+            <h2 class="section-title">🔗 Seamless Integrations</h2>
+            <div class="integration-grid">
+                <div class="integration-card">
+                    <div class="integration-icon">💬</div>
+                    <h4>ManyChat</h4>
+                    <p>WhatsApp, Instagram, SMS automation</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">📋</div>
+                    <h4>IntakeQ</h4>
+                    <p>Appointment booking & client forms</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">💳</div>
+                    <h4>Stripe/Square</h4>
+                    <p>Secure payment processing</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">📊</div>
+                    <h4>Google Sheets</h4>
+                    <p>Data sync & reporting</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">⭐</div>
+                    <h4>Review Platforms</h4>
+                    <p>Automated review requests</p>
+                </div>
+                <div class="integration-card">
+                    <div class="integration-icon">🤖</div>
+                    <h4>OpenClaw</h4>
+                    <p>Advanced AI orchestration</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Key Features -->
+        <div class="section">
+            <h2 class="section-title">✨ Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h4>⚡ Instant Response</h4>
+                    <p>Answer inquiries 24/7 within seconds. Never lose a lead to slow response times.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🎯 Smart Routing</h4>
+                    <p>Automatically route clients to the right staff member, founder, or specialist based on their needs.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🤰 Special Case Detection</h4>
+                    <p>Identifies prenatal clients, VIP requests, house calls, and gift purchases for specialized handling.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>📅 Automated Booking</h4>
+                    <p>Seamlessly guide clients through booking with IntakeQ integration and payment confirmation.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>🔔 Smart Reminders</h4>
+                    <p>Automated appointment reminders via SMS/WhatsApp to reduce no-shows.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>💬 Human Handoff</h4>
+                    <p>Intelligent escalation to human staff for VIP clients, complex requests, or sensitive situations.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>⭐ Review Generation</h4>
+                    <p>Automated post-session follow-ups with personalized review requests to boost your reputation.</p>
+                </div>
+                <div class="feature-card">
+                    <h4>👑 VIP/Celebrity Handling</h4>
+                    <p>Discrete, personalized service for high-profile clients with privacy protocols.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const questionBtns = document.querySelectorAll('.question-btn');
+
+        const responses = {
+            services: [
+                "We offer a range of premium treatments including:",
+                "• Deep Tissue Massage (90min) - $180",
+                "• Swedish Relaxation (60min) - $120",
+                "• Hot Stone Therapy (75min) - $160",
+                "• Prenatal Massage (60min) - $140",
+                "• Couples Retreat (120min) - $320",
+                "",
+                "What type of experience are you looking for? 🌿"
+            ],
+            prenatal: [
+                "Congratulations! 🌸 We specialize in prenatal care.",
+                "",
+                "Our Prenatal Massage (60min - $140) is specifically designed for expecting mothers. We use specialized cushioning and techniques safe for all trimesters.",
+                "",
+                "I'm routing you to our certified prenatal specialist. Would you like to book with Sarah (next available: Tomorrow 2pm) or our founder who has 15+ years prenatal experience?"
+            ],
+            gift: [
+                "What a thoughtful gift! 🎁",
+                "",
+                "Gift certificates available:",
+                "• Single Session ($120-$180)",
+                "• 3-Session Package ($340)",
+                "• Couples Experience ($320)",
+                "• Custom Amount",
+                "",
+                "Gift certificates include luxury presentation and never expire. I'll connect you with our team to personalize this. One moment... 💫"
+            ],
+            housecall: [
+                "Yes, we offer premium house call services! 🏠",
+                "",
+                "Our mobile spa brings the luxury experience to you:",
+                "• Service fee: +$75",
+                "• Available within 15-mile radius",
+                "• Full setup included (table, linens, music)",
+                "• Same treatments as in-spa",
+                "",
+                "Due to the specialized nature, I'm connecting you with our scheduling coordinator to arrange the perfect time. Transferring now..."
+            ],
+            founder: [
+                "I'd be honored to arrange a session with our founder! ✨",
+                "",
+                "As a master therapist with 20+ years experience, sessions with the founder are $220/hour and book quickly.",
+                "",
+                "This is a VIP request - transferring you to our personal concierge for priority scheduling. Please hold..."
+            ],
+            vip: [
+                "Welcome! We're delighted to serve you. 👑",
+                "",
+                "For first-time VIP clients, we offer:",
+                "• Private consultation",
+                "• Customized treatment plan",
+                "• Discrete scheduling",
+                "• Premium suite access",
+                "",
+                "I'm escalating this to our VIP coordinator who will reach out within 5 minutes to discuss your preferences personally."
+            ]
+        };
+
+        function addMessage(text, isUser = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user' : 'bot'}`;
+            
+            const bubbleDiv = document.createElement('div');
+            bubbleDiv.className = 'message-bubble';
+            bubbleDiv.innerHTML = text.replace(/\n/g, '<br>');
+            
+            messageDiv.appendChild(bubbleDiv);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function showTyping() {
+            typingIndicator.classList.add('active');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function hideTyping() {
+            typingIndicator.classList.remove('active');
+        }
+
+        questionBtns.forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const question = btn.dataset.question;
+                const questionText = btn.textContent;
+                
+                // Add user message
+                addMessage(questionText, true);
+                
+                // Show typing
+                showTyping();
+                
+                // Simulate delay
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                hideTyping();
+                
+                // Add bot response
+                const response = responses[question];
+                addMessage(response.join('<br>'));
+            });
+        });
+
+        // Auto-scroll animation on load
+        setTimeout(() => {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }, 100);
+    </script>
+</body>
+</html>
