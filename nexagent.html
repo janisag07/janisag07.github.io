@@ -120,6 +120,74 @@
             box-shadow: 0 8px 24px rgba(0, 102, 255, 0.5);
         }
 
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-white);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-menu-btn:hover {
+            color: var(--accent-blue);
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 280px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.98);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-left: 1px solid var(--glass-border);
+            padding: 6rem 2rem 2rem;
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu a {
+            color: var(--text-white);
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 500;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            color: var(--accent-blue);
+            padding-left: 0.5rem;
+        }
+
+        .mobile-menu-close {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            color: var(--text-white);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .mobile-menu-close:hover {
+            color: var(--accent-blue);
+        }
+
         /* Hero Section */
         .hero {
             position: relative;
@@ -285,6 +353,7 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
         .step:hover {
@@ -334,7 +403,8 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             position: relative;
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
         .agent-card::before {
@@ -393,9 +463,9 @@
         /* Pricing Section */
         .pricing-toggle {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 0.8rem;
+            justify-content: center;
+            gap: 1.2rem;
             margin-bottom: 4rem;
         }
 
@@ -409,11 +479,21 @@
             font-size: 1.1rem;
             font-weight: 500;
             color: var(--text-gray);
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            user-select: none;
+        }
+
+        .toggle-option:hover {
+            color: var(--text-white);
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .toggle-option.active {
             color: var(--text-white);
+            font-weight: 600;
         }
 
         .toggle-switch {
@@ -423,13 +503,19 @@
             background: rgba(255, 255, 255, 0.1);
             border-radius: 19px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             border: 1px solid var(--glass-border);
+        }
+
+        .toggle-switch:hover {
+            border-color: rgba(0, 102, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
         }
 
         .toggle-switch.active {
             background: var(--accent-blue);
             box-shadow: 0 0 20px rgba(0, 102, 255, 0.4);
+            border-color: var(--accent-blue);
         }
 
         .toggle-slider {
@@ -440,7 +526,7 @@
             height: 30px;
             background: white;
             border-radius: 50%;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
@@ -451,13 +537,18 @@
         .yearly-badge {
             background: linear-gradient(135deg, #00ff88, #00cc6a);
             color: #000;
-            padding: 0.5rem 1.2rem;
+            padding: 0.4rem 1rem;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
-            margin-left: 0.8rem;
             box-shadow: 0 4px 12px rgba(0, 255, 136, 0.3);
             letter-spacing: 0.3px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
         }
 
         .pricing-cards {
@@ -474,10 +565,11 @@
             border: 1px solid var(--glass-border);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            transition: all 0.4s ease;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             display: flex;
             flex-direction: column;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
         }
 
         .pricing-card.popular {
@@ -836,15 +928,37 @@
             }
         }
 
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+        }
+
         .reveal {
             opacity: 0;
             transform: translateY(50px);
-            transition: all 0.8s ease-out;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .reveal.active {
             opacity: 1;
             transform: translateY(0);
+        }
+
+        .agent-icon {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .agent-card:nth-child(2) .agent-icon {
+            animation-delay: 0.3s;
+        }
+
+        .agent-card:nth-child(3) .agent-icon {
+            animation-delay: 0.6s;
         }
 
         /* Responsive */
@@ -863,8 +977,16 @@
                 padding: 0 1.5rem;
             }
 
+            .nav-links {
+                gap: 1rem;
+            }
+
             .nav-links a:not(.nav-cta) {
                 display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
             }
 
             .container {
@@ -934,12 +1056,12 @@
 
             .pricing-toggle {
                 flex-wrap: wrap;
-                gap: 1rem;
+                gap: 0.8rem;
             }
 
             .yearly-badge {
-                margin-left: 0;
-                margin-top: 0.3rem;
+                width: 100%;
+                text-align: center;
             }
         }
         @media (max-width: 480px) {
@@ -966,14 +1088,25 @@
                 <a href="#pricing">Pricing</a>
                 <a href="#faq">FAQ</a>
                 <a href="#pricing" class="nav-cta">See Plans</a>
+                <button class="mobile-menu-btn" id="mobile-menu-btn">☰</button>
             </div>
         </div>
     </nav>
-<div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); border-left: 4px solid #6b5ce7; padding: 15px 20px; margin: 15px 20px; border-radius: 8px; display: flex; align-items: flex-start; gap: 12px;">
-  <span style="font-size: 18px;">⚠️</span>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <button class="mobile-menu-close" id="mobile-menu-close">×</button>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#agents">AI Agents</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#faq">FAQ</a>
+        <a href="#pricing" style="background: var(--accent-blue); color: white; text-align: center; border-radius: 10px; border: none; padding: 1rem;">See Plans</a>
+    </div>
+<div style="background: linear-gradient(135deg, rgba(0, 102, 255, 0.05) 0%, rgba(0, 102, 255, 0.02) 100%); border: 1px solid rgba(0, 102, 255, 0.2); padding: 20px 24px; margin: 80px auto 0; max-width: 1100px; border-radius: 12px; display: flex; align-items: flex-start; gap: 16px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);">
+  <span style="font-size: 24px; filter: drop-shadow(0 0 12px rgba(0, 102, 255, 0.5));">💡</span>
   <div>
-    <h3 style="color: #9d8ff7; margin: 0 0 8px 0; font-size: 14px; font-weight: 600;">Demo Notice</h3>
-    <p style="color: #a0a0b8; margin: 0; font-size: 13px; line-height: 1.5;">All data, metrics, and statistics shown in this demo are simulated for demonstration purposes only. They do not represent real users, transactions, or results. The actual implementation will be configured with your specific requirements and real data.</p>
+    <h3 style="color: #0066FF; margin: 0 0 8px 0; font-size: 15px; font-weight: 600; letter-spacing: 0.3px;">DEMO PREVIEW</h3>
+    <p style="color: #8b8b9d; margin: 0; font-size: 14px; line-height: 1.6; font-weight: 300;">This page showcases capabilities with simulated data. Real metrics, integrations, and custom configurations will be tailored to your business needs.</p>
   </div>
 </div>
 
@@ -1098,15 +1231,12 @@
             <p class="section-subtitle">Choose the plan that fits your needs. Scale as you grow.</p>
             
             <div class="pricing-toggle">
-                <div class="toggle-row">
-                    <span class="toggle-option active" id="monthly-label">Monthly</span>
-                    <div class="toggle-switch active" id="pricing-toggle">
-                        <div class="toggle-slider"></div>
-                    </div>
+                <span class="toggle-option active" id="monthly-label">Monthly</span>
+                <div class="toggle-switch active" id="pricing-toggle">
+                    <div class="toggle-slider"></div>
                 </div>
-                <div class="toggle-row">
-                    <span class="toggle-option" id="yearly-label">Yearly <span class="yearly-badge">Save 2 months</span></span>
-                </div>
+                <span class="toggle-option" id="yearly-label">Yearly</span>
+                <span class="yearly-badge">Save 2 months</span>
             </div>
 
             <div class="pricing-cards">
@@ -1406,6 +1536,9 @@
     </style>
 
     <script>
+        // Initialize Stripe
+        const stripe = Stripe('pk_test_51T9OIYEyYaMQFVgYx5cT0MfGGLfnLQ7VxGAx3XfRtVHU4Bv8Qr1KkRWz9Qx7Qx7Qx7Qx7Qx7Qx7Qx7Qx7Qx7Qx7Qx7Qx7Qx7');
+        
         // Pricing Toggle (Monthly/Yearly)
         const toggle = document.getElementById('pricing-toggle');
         const monthlyLabel = document.getElementById('monthly-label');
@@ -1453,6 +1586,55 @@
         // Initialize with monthly
         updatePricing();
 
+        // Stripe Checkout Handler
+        document.querySelectorAll('.stripe-checkout-btn').forEach(button => {
+            button.addEventListener('click', async function(e) {
+                e.preventDefault();
+                const priceId = isYearly ? this.dataset.priceYearly : this.dataset.priceMonthly;
+                
+                if (!priceId) {
+                    console.error('No price ID found');
+                    return;
+                }
+
+                // Show loading state
+                const originalText = this.textContent;
+                this.textContent = 'Processing...';
+                this.style.opacity = '0.7';
+                this.style.cursor = 'not-allowed';
+                this.disabled = true;
+
+                try {
+                    // In production, you'd call your backend to create a checkout session
+                    // For now, redirect to Stripe Checkout directly
+                    const { error } = await stripe.redirectToCheckout({
+                        lineItems: [{ price: priceId, quantity: 1 }],
+                        mode: 'subscription',
+                        successUrl: window.location.origin + '/success.html',
+                        cancelUrl: window.location.href,
+                    });
+
+                    if (error) {
+                        console.error('Stripe error:', error);
+                        alert('There was an error processing your request. Please try again.');
+                        // Restore button
+                        this.textContent = originalText;
+                        this.style.opacity = '1';
+                        this.style.cursor = 'pointer';
+                        this.disabled = false;
+                    }
+                } catch (err) {
+                    console.error('Checkout error:', err);
+                    alert('There was an error processing your request. Please try again.');
+                    // Restore button
+                    this.textContent = originalText;
+                    this.style.opacity = '1';
+                    this.style.cursor = 'pointer';
+                    this.disabled = false;
+                }
+            });
+        });
+
         // FAQ Accordion
         const faqItems = document.querySelectorAll('.faq-item');
         faqItems.forEach(item => {
@@ -1482,6 +1664,26 @@
         
         window.addEventListener('scroll', revealOnScroll);
         revealOnScroll(); // Initial check
+
+        // Mobile Menu
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuClose = document.getElementById('mobile-menu-close');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+
+        mobileMenuClose.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+
+        // Close mobile menu when clicking a link
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+            });
+        });
 
         // Chat Button - Smooth Transition to chat.html
         document.getElementById('chat-button').addEventListener('click', () => {
