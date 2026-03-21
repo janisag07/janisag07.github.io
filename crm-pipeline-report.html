@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Pipeline Health Report</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(145deg, #2d3748, #1a202c);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+        h1 {
+            color: #818cf8;
+            font-size: 2.2em;
+            margin-bottom: 8px;
+        }
+        .report-meta {
+            color: #a0aec0;
+            font-size: 1em;
+        }
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .summary-card {
+            background: linear-gradient(145deg, #2d3748, #1a202c);
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        .card-critical {
+            border-color: #f56565;
+        }
+        .card-warning {
+            border-color: #ed8936;
+        }
+        .card-active {
+            border-color: #48bb78;
+        }
+        .card-moving {
+            border-color: #4299e1;
+        }
+        .card-title {
+            font-size: 0.9em;
+            color: #a0aec0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .card-value {
+            font-size: 3em;
+            font-weight: 700;
+            line-height: 1;
+        }
+        .card-critical .card-value { color: #fc8181; }
+        .card-warning .card-value { color: #f6ad55; }
+        .card-active .card-value { color: #68d391; }
+        .card-moving .card-value { color: #63b3ed; }
+        .section {
+            background: rgba(26, 26, 46, 0.8);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        .section-title {
+            font-size: 1.5em;
+            color: #818cf8;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(99, 102, 241, 0.3);
+        }
+        .deal-item {
+            background: linear-gradient(145deg, #2d3748, #1a202c);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+        .deal-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        .deal-critical {
+            border-color: #f56565;
+            background: linear-gradient(145deg, #3d2828, #2d1a1a);
+        }
+        .deal-warning {
+            border-color: #ed8936;
+            background: linear-gradient(145deg, #3d3228, #2d2618);
+        }
+        .deal-good {
+            border-color: #48bb78;
+            background: linear-gradient(145deg, #283d32, #1a2d20);
+        }
+        .deal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .deal-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+        .deal-value {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #4299e1;
+        }
+        .deal-meta {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .deal-meta-item {
+            font-size: 0.9em;
+            color: #a0aec0;
+        }
+        .deal-meta-label {
+            font-weight: 600;
+            color: #718096;
+        }
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .status-critical {
+            background: rgba(245, 101, 101, 0.2);
+            color: #fc8181;
+            border: 1px solid #f56565;
+        }
+        .status-warning {
+            background: rgba(237, 137, 54, 0.2);
+            color: #f6ad55;
+            border: 1px solid #ed8936;
+        }
+        .status-good {
+            background: rgba(72, 187, 120, 0.2);
+            color: #68d391;
+            border: 1px solid #48bb78;
+        }
+        .pipeline-movement {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .movement-item {
+            background: linear-gradient(145deg, #2d3748, #1a202c);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .movement-stage {
+            color: #a0aec0;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+        .movement-count {
+            font-size: 2em;
+            font-weight: 700;
+            color: #4299e1;
+        }
+        .disclaimer {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid #818cf8;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 50px;
+            color: #a0aec0;
+        }
+        .disclaimer strong {
+            color: #818cf8;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.6em;
+            }
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            .deal-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Weekly Pipeline Health Report</h1>
+            <p class="report-meta">Healthcare AI Startup • Week of March 17-21, 2026 • HubSpot + Notion Integration</p>
+        </header>
+
+        <div class="summary-cards">
+            <div class="summary-card card-critical">
+                <div class="card-title">Critical Items</div>
+                <div class="card-value">7</div>
+                <p style="color: #fc8181; font-size: 0.9em; margin-top: 10px;">14+ days untouched</p>
+            </div>
+            <div class="summary-card card-warning">
+                <div class="card-title">Warnings</div>
+                <div class="card-value">12</div>
+                <p style="color: #f6ad55; font-size: 0.9em; margin-top: 10px;">7+ days no activity</p>
+            </div>
+            <div class="summary-card card-active">
+                <div class="card-title">Active This Week</div>
+                <div class="card-value">23</div>
+                <p style="color: #68d391; font-size: 0.9em; margin-top: 10px;">Recent engagement</p>
+            </div>
+            <div class="summary-card card-moving">
+                <div class="card-title">Pipeline Movement</div>
+                <div class="card-value">18</div>
+                <p style="color: #63b3ed; font-size: 0.9em; margin-top: 10px;">Stage changes</p>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">🚨 Critical Items (14+ Days Untouched)</h2>
+            
+            <div class="deal-item deal-critical">
+                <div class="deal-header">
+                    <div class="deal-name">MediTech Solutions Enterprise</div>
+                    <div class="deal-value">$180,000</div>
+                </div>
+                <div class="deal-meta">
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Stage:</span> Proposal Sent
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Last Contact:</span> 18 days ago
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Contact:</span> Sarah Chen (CTO)
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="status-indicator status-critical">Action Required</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deal-item deal-critical">
+                <div class="deal-header">
+                    <div class="deal-name">HealthVista AI Platform</div>
+                    <div class="deal-value">$240,000</div>
+                </div>
+                <div class="deal-meta">
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Stage:</span> Negotiation
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Last Contact:</span> 21 days ago
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Contact:</span> Marcus Rodriguez (VP Product)
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="status-indicator status-critical">Urgent Follow-up</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deal-item deal-critical">
+                <div class="deal-header">
+                    <div class="deal-name">CarePath Integration Project</div>
+                    <div class="deal-value">$95,000</div>
+                </div>
+                <div class="deal-meta">
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Stage:</span> Demo Scheduled
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Last Contact:</span> 16 days ago
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Contact:</span> Jennifer Wu (Director)
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="status-indicator status-critical">Stalled</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">⚠️ Warning Items (7+ Days)</h2>
+            
+            <div class="deal-item deal-warning">
+                <div class="deal-header">
+                    <div class="deal-name">CliniCore Analytics Suite</div>
+                    <div class="deal-value">$125,000</div>
+                </div>
+                <div class="deal-meta">
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Stage:</span> Discovery Call
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Last Contact:</span> 9 days ago
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Contact:</span> David Park (CEO)
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="status-indicator status-warning">Follow-up Needed</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deal-item deal-warning">
+                <div class="deal-header">
+                    <div class="deal-name">NurseAI Workflow Automation</div>
+                    <div class="deal-value">$67,500</div>
+                </div>
+                <div class="deal-meta">
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Stage:</span> Qualification
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Last Contact:</span> 11 days ago
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Contact:</span> Lisa Thompson (COO)
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="status-indicator status-warning">Check-in Due</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">✅ New Activity This Week</h2>
+            
+            <div class="deal-item deal-good">
+                <div class="deal-header">
+                    <div class="deal-name">DiagnosticsPlus AI Integration</div>
+                    <div class="deal-value">$310,000</div>
+                </div>
+                <div class="deal-meta">
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Stage:</span> Contract Review
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Last Contact:</span> 2 days ago
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Contact:</span> Robert Chang (CFO)
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="status-indicator status-good">On Track</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="deal-item deal-good">
+                <div class="deal-header">
+                    <div class="deal-name">PatientFlow Optimization</div>
+                    <div class="deal-value">$89,000</div>
+                </div>
+                <div class="deal-meta">
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Stage:</span> Demo Completed
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Last Contact:</span> 1 day ago
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="deal-meta-label">Contact:</span> Amanda Foster (VP Operations)
+                    </div>
+                    <div class="deal-meta-item">
+                        <span class="status-indicator status-good">Advancing</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">📈 Pipeline Movement Summary</h2>
+            <div class="pipeline-movement">
+                <div class="movement-item">
+                    <div class="movement-stage">Discovery → Qualification</div>
+                    <div class="movement-count">5</div>
+                </div>
+                <div class="movement-item">
+                    <div class="movement-stage">Qualification → Demo</div>
+                    <div class="movement-count">7</div>
+                </div>
+                <div class="movement-item">
+                    <div class="movement-stage">Demo → Proposal</div>
+                    <div class="movement-count">4</div>
+                </div>
+                <div class="movement-item">
+                    <div class="movement-stage">Proposal → Negotiation</div>
+                    <div class="movement-count">2</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <strong>This is a demo preview built specifically for your project.</strong><br>
+            Built by Janis Agic — Web Developer &amp; Automation Specialist.
+        </div>
+    </div>
+</body>
+</html>

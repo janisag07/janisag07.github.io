@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dental Practice AI Automation Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            padding: 35px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+        }
+        h1 {
+            color: #60a5fa;
+            font-size: 2.4em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .subtitle {
+            color: #94a3b8;
+            font-size: 1.15em;
+        }
+        .automation-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        .automation-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .automation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+        }
+        .automation-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(59, 130, 246, 0.3);
+            border-color: #3b82f6;
+        }
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        .card-title {
+            font-size: 1.4em;
+            color: #60a5fa;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+        .card-description {
+            color: #cbd5e1;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 12px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 8px;
+        }
+        .metric-label {
+            color: #94a3b8;
+            font-size: 0.9em;
+        }
+        .metric-value {
+            color: #34d399;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+        .performance-section {
+            background: rgba(30, 41, 59, 0.8);
+            padding: 35px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+        }
+        .section-title {
+            font-size: 1.8em;
+            color: #60a5fa;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid rgba(59, 130, 246, 0.3);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .stat-box {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid rgba(59, 130, 246, 0.15);
+            transition: transform 0.3s ease;
+        }
+        .stat-box:hover {
+            transform: scale(1.05);
+            border-color: #3b82f6;
+        }
+        .stat-number {
+            font-size: 2.8em;
+            font-weight: 800;
+            background: linear-gradient(135deg, #60a5fa, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.95em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 10px;
+        }
+        .integration-flow {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            border: 2px solid rgba(139, 92, 246, 0.3);
+        }
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 25px 0;
+        }
+        .flow-node {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            padding: 20px 30px;
+            border-radius: 10px;
+            font-weight: 700;
+            color: white;
+            text-align: center;
+            min-width: 150px;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+        }
+        .flow-node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(59, 130, 246, 0.6);
+        }
+        .flow-arrow {
+            font-size: 2em;
+            color: #60a5fa;
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .feature-item {
+            background: rgba(15, 23, 42, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #34d399;
+            transition: all 0.3s ease;
+        }
+        .feature-item:hover {
+            background: rgba(15, 23, 42, 0.9);
+            transform: translateX(8px);
+        }
+        .feature-title {
+            font-weight: 600;
+            color: #60a5fa;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        .feature-desc {
+            color: #cbd5e1;
+            font-size: 0.95em;
+        }
+        .roi-banner {
+            background: linear-gradient(135deg, #059669, #10b981);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: 0 8px 30px rgba(16, 185, 129, 0.3);
+        }
+        .roi-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 10px;
+        }
+        .roi-value {
+            font-size: 3.5em;
+            font-weight: 900;
+            color: white;
+        }
+        .disclaimer {
+            background: rgba(59, 130, 246, 0.1);
+            border: 2px solid #3b82f6;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            margin-top: 50px;
+            color: #94a3b8;
+        }
+        .disclaimer strong {
+            color: #60a5fa;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            .automation-grid {
+                grid-template-columns: 1fr;
+            }
+            .flow-diagram {
+                flex-direction: column;
+            }
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🦷 Dental Practice AI Automation Suite</h1>
+            <p class="subtitle">Complete automation solution powered by Make.com + GoHighLevel</p>
+        </header>
+
+        <div class="roi-banner">
+            <div class="roi-title">Average Time Saved Per Practice</div>
+            <div class="roi-value">47 hrs/week</div>
+        </div>
+
+        <div class="automation-grid">
+            <div class="automation-card">
+                <div class="card-icon">⚡</div>
+                <div class="card-title">AI Lead Response System</div>
+                <div class="card-description">
+                    Intelligent AI responds to new inquiries within 60 seconds, qualifying leads and booking initial consultations automatically.
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Avg Response Time</span>
+                    <span class="metric-value">47 sec</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Lead Conversion</span>
+                    <span class="metric-value">+42%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">After-Hours Captures</span>
+                    <span class="metric-value">28/week</span>
+                </div>
+            </div>
+
+            <div class="automation-card">
+                <div class="card-icon">📅</div>
+                <div class="card-title">Appointment Booking Automation</div>
+                <div class="card-description">
+                    Smart scheduling system syncs with practice management software, sends confirmations, and handles rescheduling requests automatically.
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Booking Rate</span>
+                    <span class="metric-value">89%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">No-Show Reduction</span>
+                    <span class="metric-value">-34%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Auto-Confirmations</span>
+                    <span class="metric-value">412/month</span>
+                </div>
+            </div>
+
+            <div class="automation-card">
+                <div class="card-icon">🔄</div>
+                <div class="card-title">Patient Reactivation Sequences</div>
+                <div class="card-description">
+                    Automated campaigns reach out to inactive patients with personalized messages, special offers, and gentle reminders.
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Reactivation Rate</span>
+                    <span class="metric-value">23%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Revenue Recovered</span>
+                    <span class="metric-value">$18.7K/mo</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Contacts Reached</span>
+                    <span class="metric-value">347/month</span>
+                </div>
+            </div>
+
+            <div class="automation-card">
+                <div class="card-icon">⭐</div>
+                <div class="card-title">Review Request Automation</div>
+                <div class="card-description">
+                    Strategic review requests sent at optimal times via SMS and email, with smart follow-ups and easy one-click submission.
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Review Rate</span>
+                    <span class="metric-value">67%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Avg Rating</span>
+                    <span class="metric-value">4.8★</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">New Reviews</span>
+                    <span class="metric-value">52/month</span>
+                </div>
+            </div>
+
+            <div class="automation-card">
+                <div class="card-icon">📱</div>
+                <div class="card-title">Missed Call Text-Back</div>
+                <div class="card-description">
+                    Instantly text patients when calls are missed, providing alternative contact methods and booking links.
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Response Time</span>
+                    <span class="metric-value">12 sec</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Recovery Rate</span>
+                    <span class="metric-value">71%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Leads Saved</span>
+                    <span class="metric-value">38/week</span>
+                </div>
+            </div>
+
+            <div class="automation-card">
+                <div class="card-icon">💬</div>
+                <div class="card-title">Two-Way SMS Conversations</div>
+                <div class="card-description">
+                    AI-powered SMS system handles patient questions, appointment changes, and basic inquiries 24/7.
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Messages Handled</span>
+                    <span class="metric-value">1,247/mo</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Resolution Rate</span>
+                    <span class="metric-value">84%</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Staff Time Saved</span>
+                    <span class="metric-value">22 hrs/wk</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="performance-section">
+            <h2 class="section-title">📊 Performance Metrics</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number">97%</div>
+                    <div class="stat-label">Lead Response Rate</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">+$43K</div>
+                    <div class="stat-label">Avg Monthly Revenue Increase</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">186</div>
+                    <div class="stat-label">New Patients/Month</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">4.2x</div>
+                    <div class="stat-label">ROI</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="integration-flow">
+            <h2 class="section-title">🔗 Integration Flow</h2>
+            <div class="flow-diagram">
+                <div class="flow-node">Patient Inquiry</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">GoHighLevel CRM</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Make.com Automation</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">AI Processing</div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-node">Action Executed</div>
+            </div>
+        </div>
+
+        <div class="performance-section">
+            <h2 class="section-title">✨ Key Features</h2>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-title">Smart Lead Qualification</div>
+                    <div class="feature-desc">AI identifies high-value leads and prioritizes them automatically</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-title">Multi-Channel Communication</div>
+                    <div class="feature-desc">SMS, Email, Voice - all integrated in one platform</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-title">Calendar Sync</div>
+                    <div class="feature-desc">Real-time integration with practice management systems</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-title">Custom Workflows</div>
+                    <div class="feature-desc">Tailored automation sequences for each practice's needs</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-title">Analytics Dashboard</div>
+                    <div class="feature-desc">Real-time insights into automation performance and ROI</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-title">24/7 Operation</div>
+                    <div class="feature-desc">Never miss a lead, even after hours or on weekends</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            <strong>This is a demo preview built specifically for your project.</strong><br>
+            Built by Janis Agic — Web Developer &amp; Automation Specialist.
+        </div>
+    </div>
+</body>
+</html>

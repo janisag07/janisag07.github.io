@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Driven SEO Lead Generation Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 0;
+            border-bottom: 2px solid rgba(34, 211, 238, 0.3);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1.1rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .stat-card {
+            background: rgba(30, 35, 55, 0.6);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            border-color: rgba(34, 211, 238, 0.6);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(34, 211, 238, 0.2);
+        }
+        
+        .stat-label {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #22d3ee;
+        }
+        
+        .stat-change {
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        
+        .positive {
+            color: #10b981;
+        }
+        
+        .negative {
+            color: #ef4444;
+        }
+        
+        .section {
+            background: rgba(30, 35, 55, 0.6);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .section h2 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .icon {
+            font-size: 1.5rem;
+        }
+        
+        .keyword-clusters {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .keyword-cluster {
+            background: rgba(20, 25, 40, 0.8);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .keyword-cluster:hover {
+            background: rgba(25, 30, 45, 0.9);
+            border-color: rgba(34, 211, 238, 0.4);
+        }
+        
+        .keyword-main {
+            font-weight: 600;
+            color: #fff;
+            font-size: 1.05rem;
+        }
+        
+        .keyword-variants {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+            margin-top: 5px;
+        }
+        
+        .metric {
+            text-align: center;
+        }
+        
+        .metric-label {
+            font-size: 0.8rem;
+            color: #a0a0a0;
+            margin-bottom: 5px;
+        }
+        
+        .metric-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #22d3ee;
+        }
+        
+        .difficulty-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .diff-easy {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+        }
+        
+        .diff-medium {
+            background: rgba(251, 146, 60, 0.2);
+            color: #fb923c;
+            border: 1px solid rgba(251, 146, 60, 0.4);
+        }
+        
+        .diff-hard {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.4);
+        }
+        
+        .landing-pages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .landing-page-card {
+            background: rgba(20, 25, 40, 0.8);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .page-title {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .page-metrics {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .page-metric {
+            background: rgba(34, 211, 238, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .page-metric-label {
+            font-size: 0.75rem;
+            color: #a0a0a0;
+        }
+        
+        .page-metric-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #22d3ee;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(34, 211, 238, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #22d3ee 0%, #06b6d4 100%);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        .authority-map {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .authority-item {
+            background: rgba(20, 25, 40, 0.8);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .authority-topic {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .authority-score {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .funnel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            position: relative;
+        }
+        
+        .funnel-stage {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .funnel-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #0a0e27;
+        }
+        
+        .funnel-label {
+            color: #a0a0a0;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+        
+        .funnel-value {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .funnel-arrow {
+            font-size: 2rem;
+            color: #22d3ee;
+            opacity: 0.5;
+        }
+        
+        .sites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .site-card {
+            background: rgba(20, 25, 40, 0.8);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        
+        .site-name {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .site-score {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #22d3ee;
+            margin-bottom: 10px;
+        }
+        
+        .site-rating {
+            font-size: 0.85rem;
+            color: #a0a0a0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 30px;
+            margin-top: 50px;
+            border-top: 2px solid rgba(34, 211, 238, 0.3);
+            color: #a0a0a0;
+            font-size: 0.95rem;
+        }
+        
+        .disclaimer {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            padding: 15px 20px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .keyword-cluster {
+                grid-template-columns: 1fr;
+            }
+            
+            .funnel {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .funnel-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI-Driven SEO Lead Generation</h1>
+            <p class="subtitle">Multi-Site Demand Generation Dashboard</p>
+        </header>
+        
+        <!-- Key Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Organic Traffic</div>
+                <div class="stat-value">127,450</div>
+                <div class="stat-change positive">↑ 23.4% vs last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Qualified Leads</div>
+                <div class="stat-value">3,842</div>
+                <div class="stat-change positive">↑ 31.7% vs last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Conversion Rate</div>
+                <div class="stat-value">3.01%</div>
+                <div class="stat-change positive">↑ 0.4% vs last month</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Average Domain Authority</div>
+                <div class="stat-value">68</div>
+                <div class="stat-change positive">↑ 5 points</div>
+            </div>
+        </div>
+        
+        <!-- High-Intent Keyword Clusters -->
+        <div class="section">
+            <h2><span class="icon">🎯</span> High-Intent Keyword Clusters</h2>
+            <div class="keyword-clusters">
+                <div class="keyword-cluster">
+                    <div>
+                        <div class="keyword-main">Enterprise CRM software solutions</div>
+                        <div class="keyword-variants">+12 variants: "best crm for enterprise", "enterprise customer management", "crm for large teams"</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Search Volume</div>
+                        <div class="metric-value">18,400</div>
+                    </div>
+                    <div class="metric">
+                        <div class="difficulty-badge diff-medium">Medium (52)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Est. Traffic</div>
+                        <div class="metric-value">2,340</div>
+                    </div>
+                </div>
+                
+                <div class="keyword-cluster">
+                    <div>
+                        <div class="keyword-main">Marketing automation platform comparison</div>
+                        <div class="keyword-variants">+8 variants: "compare marketing automation", "best marketing automation tools", "automation platform reviews"</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Search Volume</div>
+                        <div class="metric-value">12,700</div>
+                    </div>
+                    <div class="metric">
+                        <div class="difficulty-badge diff-easy">Easy (34)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Est. Traffic</div>
+                        <div class="metric-value">1,890</div>
+                    </div>
+                </div>
+                
+                <div class="keyword-cluster">
+                    <div>
+                        <div class="keyword-main">B2B lead generation strategies</div>
+                        <div class="keyword-variants">+15 variants: "b2b lead gen tactics", "enterprise lead generation", "how to generate b2b leads"</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Search Volume</div>
+                        <div class="metric-value">24,300</div>
+                    </div>
+                    <div class="metric">
+                        <div class="difficulty-badge diff-hard">Hard (67)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Est. Traffic</div>
+                        <div class="metric-value">3,240</div>
+                    </div>
+                </div>
+                
+                <div class="keyword-cluster">
+                    <div>
+                        <div class="keyword-main">AI-powered sales analytics tools</div>
+                        <div class="keyword-variants">+6 variants: "ai sales analytics", "machine learning sales tools", "predictive sales analytics"</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Search Volume</div>
+                        <div class="metric-value">8,950</div>
+                    </div>
+                    <div class="metric">
+                        <div class="difficulty-badge diff-easy">Easy (28)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-label">Est. Traffic</div>
+                        <div class="metric-value">1,520</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Landing Page Performance -->
+        <div class="section">
+            <h2><span class="icon">📄</span> Landing Page Performance Matrix</h2>
+            <div class="landing-pages-grid">
+                <div class="landing-page-card">
+                    <div class="page-title">Enterprise CRM Guide</div>
+                    <div class="page-metrics">
+                        <div class="page-metric">
+                            <div class="page-metric-label">Visitors</div>
+                            <div class="page-metric-value">12.4K</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Leads</div>
+                            <div class="page-metric-value">487</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Conv. Rate</div>
+                            <div class="page-metric-value">3.9%</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Avg. Time</div>
+                            <div class="page-metric-value">4:32</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #a0a0a0;">Page Authority</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 85%;"></div>
+                    </div>
+                </div>
+                
+                <div class="landing-page-card">
+                    <div class="page-title">Marketing Automation ROI</div>
+                    <div class="page-metrics">
+                        <div class="page-metric">
+                            <div class="page-metric-label">Visitors</div>
+                            <div class="page-metric-value">9.2K</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Leads</div>
+                            <div class="page-metric-value">341</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Conv. Rate</div>
+                            <div class="page-metric-value">3.7%</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Avg. Time</div>
+                            <div class="page-metric-value">3:48</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #a0a0a0;">Page Authority</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 72%;"></div>
+                    </div>
+                </div>
+                
+                <div class="landing-page-card">
+                    <div class="page-title">B2B Lead Gen Playbook</div>
+                    <div class="page-metrics">
+                        <div class="page-metric">
+                            <div class="page-metric-label">Visitors</div>
+                            <div class="page-metric-value">15.8K</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Leads</div>
+                            <div class="page-metric-value">623</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Conv. Rate</div>
+                            <div class="page-metric-value">3.9%</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Avg. Time</div>
+                            <div class="page-metric-value">5:12</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #a0a0a0;">Page Authority</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 91%;"></div>
+                    </div>
+                </div>
+                
+                <div class="landing-page-card">
+                    <div class="page-title">AI Sales Tools Comparison</div>
+                    <div class="page-metrics">
+                        <div class="page-metric">
+                            <div class="page-metric-label">Visitors</div>
+                            <div class="page-metric-value">6.3K</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Leads</div>
+                            <div class="page-metric-value">214</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Conv. Rate</div>
+                            <div class="page-metric-value">3.4%</div>
+                        </div>
+                        <div class="page-metric">
+                            <div class="page-metric-label">Avg. Time</div>
+                            <div class="page-metric-value">3:22</div>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.8rem; color: #a0a0a0;">Page Authority</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 68%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Topic Authority Map -->
+        <div class="section">
+            <h2><span class="icon">🗺️</span> Topic Authority Map</h2>
+            <div class="authority-map">
+                <div class="authority-item">
+                    <div class="authority-topic">CRM Software</div>
+                    <div class="authority-score">87</div>
+                    <div style="font-size: 0.8rem; color: #10b981;">Strong Authority</div>
+                </div>
+                <div class="authority-item">
+                    <div class="authority-topic">Marketing Automation</div>
+                    <div class="authority-score">72</div>
+                    <div style="font-size: 0.8rem; color: #22d3ee;">Growing Authority</div>
+                </div>
+                <div class="authority-item">
+                    <div class="authority-topic">Lead Generation</div>
+                    <div class="authority-score">91</div>
+                    <div style="font-size: 0.8rem; color: #10b981;">Strong Authority</div>
+                </div>
+                <div class="authority-item">
+                    <div class="authority-topic">Sales Analytics</div>
+                    <div class="authority-score">64</div>
+                    <div style="font-size: 0.8rem; color: #fb923c;">Building Authority</div>
+                </div>
+                <div class="authority-item">
+                    <div class="authority-topic">B2B SaaS</div>
+                    <div class="authority-score">79</div>
+                    <div style="font-size: 0.8rem; color: #22d3ee;">Growing Authority</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Local SEO Multi-Site -->
+        <div class="section">
+            <h2><span class="icon">🌐</span> Local SEO Scores by Site</h2>
+            <div class="sites-grid">
+                <div class="site-card">
+                    <div class="site-name">Site A - New York</div>
+                    <div class="site-score">82</div>
+                    <div class="site-rating">⭐⭐⭐⭐⭐ Excellent</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 82%;"></div>
+                    </div>
+                </div>
+                <div class="site-card">
+                    <div class="site-name">Site B - San Francisco</div>
+                    <div class="site-score">76</div>
+                    <div class="site-rating">⭐⭐⭐⭐ Good</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 76%;"></div>
+                    </div>
+                </div>
+                <div class="site-card">
+                    <div class="site-name">Site C - Chicago</div>
+                    <div class="site-score">68</div>
+                    <div class="site-rating">⭐⭐⭐ Average</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 68%;"></div>
+                    </div>
+                </div>
+                <div class="site-card">
+                    <div class="site-name">Site D - Austin</div>
+                    <div class="site-score">89</div>
+                    <div class="site-rating">⭐⭐⭐⭐⭐ Excellent</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 89%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Conversion Funnel -->
+        <div class="section">
+            <h2><span class="icon">📊</span> Conversion Funnel Visualization</h2>
+            <div class="funnel">
+                <div class="funnel-stage">
+                    <div class="funnel-circle">127K</div>
+                    <div class="funnel-label">Traffic</div>
+                    <div class="funnel-value">Organic Visitors</div>
+                </div>
+                <div class="funnel-arrow">→</div>
+                <div class="funnel-stage">
+                    <div class="funnel-circle" style="width: 70px; height: 70px; font-size: 1.3rem;">18K</div>
+                    <div class="funnel-label">Capture</div>
+                    <div class="funnel-value">Form Submissions</div>
+                </div>
+                <div class="funnel-arrow">→</div>
+                <div class="funnel-stage">
+                    <div class="funnel-circle" style="width: 65px; height: 65px; font-size: 1.2rem;">7.2K</div>
+                    <div class="funnel-label">Qualification</div>
+                    <div class="funnel-value">Lead Scoring</div>
+                </div>
+                <div class="funnel-arrow">→</div>
+                <div class="funnel-stage">
+                    <div class="funnel-circle" style="width: 60px; height: 60px; font-size: 1.1rem;">3.8K</div>
+                    <div class="funnel-label">CRM</div>
+                    <div class="funnel-value">Sales Qualified</div>
+                </div>
+                <div class="funnel-arrow">→</div>
+                <div class="funnel-stage">
+                    <div class="funnel-circle" style="width: 55px; height: 55px; font-size: 1rem;">891</div>
+                    <div class="funnel-label">Booking</div>
+                    <div class="funnel-value">Demo Scheduled</div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div class="disclaimer">
+                This is a demo preview built specifically for your project. Built by Janis Agic — Web Developer &amp; Automation Specialist.
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

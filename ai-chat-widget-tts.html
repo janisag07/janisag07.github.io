@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat Widget with TTS - NACA Group Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: #fff;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #b0b0b0;
+            font-size: 1.1em;
+        }
+
+        .demo-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .chat-widget {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .widget-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .widget-header h2 {
+            color: #fff;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .persona-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .persona-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .persona-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
+        .persona-btn.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 15px rgba(240, 147, 251, 0.4);
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .toggle-btn {
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-color: transparent;
+        }
+
+        .chat-container {
+            height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            margin-bottom: 20px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
+        }
+
+        .chat-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            text-align: right;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            max-width: 75%;
+            padding: 12px 18px;
+            border-radius: 18px;
+            position: relative;
+        }
+
+        .message.user .message-bubble {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+
+        .message.ai .message-bubble {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0e0e0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .message-label {
+            font-size: 0.75em;
+            color: #888;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .message.user .message-label {
+            justify-content: flex-end;
+        }
+
+        .waveform {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 30px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .waveform-bar {
+            width: 4px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 2px;
+            animation: wave 1.2s ease-in-out infinite;
+        }
+
+        .waveform-bar:nth-child(1) { height: 40%; animation-delay: 0s; }
+        .waveform-bar:nth-child(2) { height: 70%; animation-delay: 0.1s; }
+        .waveform-bar:nth-child(3) { height: 90%; animation-delay: 0.2s; }
+        .waveform-bar:nth-child(4) { height: 60%; animation-delay: 0.3s; }
+        .waveform-bar:nth-child(5) { height: 80%; animation-delay: 0.4s; }
+        .waveform-bar:nth-child(6) { height: 50%; animation-delay: 0.5s; }
+        .waveform-bar:nth-child(7) { height: 75%; animation-delay: 0.6s; }
+        .waveform-bar:nth-child(8) { height: 65%; animation-delay: 0.7s; }
+        .waveform-bar:nth-child(9) { height: 85%; animation-delay: 0.8s; }
+        .waveform-bar:nth-child(10) { height: 55%; animation-delay: 0.9s; }
+
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(1.5); }
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-area input {
+            flex: 1;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.95em;
+        }
+
+        .input-area input::placeholder {
+            color: #888;
+        }
+
+        .input-area button {
+            padding: 12px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .input-area button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .badge {
+            margin-top: 15px;
+            text-align: center;
+            font-size: 0.85em;
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .badge-logo {
+            padding: 4px 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            font-weight: 600;
+        }
+
+        .code-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code-section h3 {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .code-section p {
+            color: #b0b0b0;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #4facfe;
+            margin-bottom: 15px;
+        }
+
+        .code-block code {
+            color: #00f2fe;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin: 20px 0;
+        }
+
+        .feature-list li {
+            padding: 10px 0;
+            color: #b0b0b0;
+            position: relative;
+            padding-left: 25px;
+        }
+
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #4facfe;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 40px;
+            padding: 25px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .disclaimer {
+            color: #888;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .disclaimer strong {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        @media (max-width: 968px) {
+            .demo-section {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .persona-btn {
+                font-size: 0.85em;
+                padding: 10px 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .chat-container {
+                height: 300px;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎙️ AI Chat Widget with Voice Integration</h1>
+            <p>Interactive demo for NACA Group - Real-time conversation with AI-powered personas</p>
+        </div>
+
+        <div class="demo-section">
+            <div class="chat-widget">
+                <div class="widget-header">
+                    <h2>Choose Your Contact</h2>
+                    <div class="persona-buttons">
+                        <button class="persona-btn active">💼 Talk to CEO Jordan Hale</button>
+                        <button class="persona-btn">🗳️ Talk to Executive Director Alec Charles Reynolds</button>
+                    </div>
+                </div>
+
+                <div class="controls">
+                    <button class="toggle-btn active">🎤 Voice Mode</button>
+                    <button class="toggle-btn">💬 Text Mode</button>
+                </div>
+
+                <div class="chat-container">
+                    <div class="message ai">
+                        <div class="message-label">
+                            <span>💼 Jordan Hale (CEO)</span>
+                        </div>
+                        <div class="message-bubble">
+                            Hello! I'm Jordan Hale, CEO of NACA Group. I'm here to help you navigate the voting process and answer any questions about the upcoming midterm elections. How can I assist you today?
+                        </div>
+                        <div class="waveform">
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                        </div>
+                    </div>
+
+                    <div class="message user">
+                        <div class="message-label">
+                            <span>You</span>
+                        </div>
+                        <div class="message-bubble">
+                            I'm not sure if I'm registered to vote in the upcoming midterms. Can you help me check my voter registration status?
+                        </div>
+                    </div>
+
+                    <div class="message ai">
+                        <div class="message-label">
+                            <span>💼 Jordan Hale (CEO)</span>
+                        </div>
+                        <div class="message-bubble">
+                            Absolutely! I can help you with that. To check your voter registration status, I'll need your state of residence. Each state has different registration requirements and deadlines. Which state do you live in?
+                        </div>
+                        <div class="waveform">
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                        </div>
+                    </div>
+
+                    <div class="message user">
+                        <div class="message-label">
+                            <span>You</span>
+                        </div>
+                        <div class="message-bubble">
+                            I'm in Pennsylvania. What are the key races I should know about?
+                        </div>
+                    </div>
+
+                    <div class="message ai">
+                        <div class="message-label">
+                            <span>💼 Jordan Hale (CEO)</span>
+                        </div>
+                        <div class="message-bubble">
+                            Great! Pennsylvania has several critical races this cycle. According to Ballotpedia data, the major contests include the U.S. Senate seat, the Governor's race, and all 17 U.S. House districts. The Senate race is particularly important as it could determine control of the chamber. Would you like detailed information on any specific race or candidate positions?
+                        </div>
+                        <div class="waveform">
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                        </div>
+                    </div>
+
+                    <div class="message user">
+                        <div class="message-label">
+                            <span>You</span>
+                        </div>
+                        <div class="message-bubble">
+                            Yes, tell me about the Senate candidates and their positions on healthcare.
+                        </div>
+                    </div>
+
+                    <div class="message ai">
+                        <div class="message-label">
+                            <span>💼 Jordan Hale (CEO)</span>
+                        </div>
+                        <div class="message-bubble">
+                            Perfect! Let me pull up the latest candidate information from our integrated Ballotpedia database. The Pennsylvania Senate race features two main candidates with distinct healthcare positions. Candidate A supports expanding the Affordable Care Act with a public option and lowering prescription drug costs through Medicare negotiation. Candidate B advocates for market-based healthcare solutions with health savings accounts and reducing federal healthcare mandates. Both candidates have detailed policy platforms available. Would you like me to provide their full healthcare policy statements or information on other issues?
+                        </div>
+                        <div class="waveform">
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                            <div class="waveform-bar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <input type="text" placeholder="Type your question or click the microphone to speak...">
+                    <button>Send</button>
+                </div>
+
+                <div class="badge">
+                    <span>Powered by</span>
+                    <span class="badge-logo">ElevenLabs</span>
+                    <span>+</span>
+                    <span class="badge-logo">Grok API</span>
+                </div>
+            </div>
+
+            <div class="code-section">
+                <h3>🔧 Easy Integration</h3>
+                <p>Embed this AI chat widget on your website with just a few lines of code. The widget is fully customizable and works seamlessly across all devices.</p>
+
+                <div class="code-block">
+<code>&lt;!-- Add to your website --&gt;
+&lt;div id="naca-chat-widget"&gt;&lt;/div&gt;
+&lt;script src="https://cdn.nacagroup.org/widget.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  NACAChatWidget.init({
+    apiKey: 'your-api-key',
+    personas: ['jordan-hale', 'alec-reynolds'],
+    voiceEnabled: true,
+    theme: 'dark',
+    position: 'bottom-right'
+  });
+&lt;/script&gt;</code>
+                </div>
+
+                <h3>✨ Key Features</h3>
+                <ul class="feature-list">
+                    <li><strong>Dual Persona System</strong> - Switch between CEO Jordan Hale and Executive Director Alec Charles Reynolds</li>
+                    <li><strong>Voice Integration</strong> - Natural conversations powered by ElevenLabs cloned voices</li>
+                    <li><strong>Ballotpedia Integration</strong> - Real-time access to election data, candidate information, and voting resources</li>
+                    <li><strong>Voice & Text Modes</strong> - Users can speak or type their questions with seamless switching</li>
+                    <li><strong>Smart AI Responses</strong> - Context-aware answers using Grok Voice Agent API</li>
+                    <li><strong>Real-time Waveform</strong> - Visual feedback during voice interactions</li>
+                    <li><strong>Mobile Responsive</strong> - Perfect experience on desktop, tablet, and mobile</li>
+                    <li><strong>Easy Embedding</strong> - Simple integration with any website or CMS</li>
+                    <li><strong>Custom Branding</strong> - Fully customizable colors, logos, and messaging</li>
+                </ul>
+
+                <h3>🎯 Use Cases</h3>
+                <p><strong>Voter Education:</strong> Provide instant answers about registration, polling locations, and voting procedures.</p>
+                <p><strong>Candidate Information:</strong> Deliver detailed candidate positions, backgrounds, and policy statements.</p>
+                <p><strong>Election Updates:</strong> Share real-time information about races, results, and important deadlines.</p>
+                <p><strong>Civic Engagement:</strong> Encourage participation by making voting information accessible and engaging.</p>
+
+                <div class="code-block">
+<code>// Configuration Options
+{
+  personas: ['jordan-hale', 'alec-reynolds'],
+  voiceProvider: 'elevenlabs', // or 'grok'
+  dataSource: 'ballotpedia',
+  features: {
+    voice: true,
+    text: true,
+    waveform: true,
+    notifications: true
+  },
+  customization: {
+    primaryColor: '#667eea',
+    accentColor: '#764ba2',
+    position: 'bottom-right',
+    size: 'medium'
+  }
+}</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p class="disclaimer">
+                <strong>📋 Demo Notice:</strong> This is a demo preview built specifically for your project. Built by <strong>Janis Agic</strong> — Web Developer &amp; Automation Specialist.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
