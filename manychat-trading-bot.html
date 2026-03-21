@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManyChat Trading Bot - High-Ticket Options Offer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .card-title {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon {
+            width: 30px;
+            height: 30px;
+            display: inline-block;
+        }
+
+        .chat-container {
+            background: #1a1a2e;
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .chat-message {
+            margin-bottom: 15px;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-bot {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .message-user {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            line-height: 1.5;
+        }
+
+        .message-bot .message-bubble {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .message-user .message-bubble {
+            background: rgba(118, 75, 162, 0.2);
+            border: 1px solid rgba(118, 75, 162, 0.3);
+        }
+
+        .stage-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .stage {
+            background: rgba(102, 126, 234, 0.1);
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .stage::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 12px;
+            height: 12px;
+            background: #667eea;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #667eea;
+        }
+
+        .stage-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .stage-detail {
+            color: #b0b0b0;
+            font-size: 0.95em;
+        }
+
+        .tag-system {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            background: rgba(102, 126, 234, 0.2);
+            border: 1px solid #667eea;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #667eea;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .metric {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .metric-label {
+            color: #a0a0a0;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .intent-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .intent-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .confidence-bar {
+            width: 100px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .funnel-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .funnel-stage {
+            position: relative;
+            padding: 15px;
+            border-radius: 8px;
+            background: linear-gradient(90deg, rgba(102, 126, 234, 0.3), rgba(102, 126, 234, 0.1));
+            border-left: 4px solid #667eea;
+        }
+
+        .funnel-stage-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .funnel-stage-count {
+            color: #a0a0a0;
+            font-size: 0.9em;
+        }
+
+        .disclaimer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .message-bubble {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💬 ManyChat Trading Bot</h1>
+            <p class="subtitle">High-Ticket Options Trading Lead Generation System</p>
+        </header>
+
+        <div class="grid">
+            <!-- Chat Flow Preview -->
+            <div class="card" style="grid-column: span 1;">
+                <h2 class="card-title">
+                    <span class="icon">💬</span>
+                    Conversational Flow
+                </h2>
+                <div class="chat-container">
+                    <div class="chat-message message-bot">
+                        <div class="avatar">TB</div>
+                        <div class="message-bubble">
+                            👋 Hey there! I help serious traders unlock premium options strategies. Are you currently trading options?
+                        </div>
+                    </div>
+                    <div class="chat-message message-user">
+                        <div class="avatar">U</div>
+                        <div class="message-bubble">
+                            Yes, I've been trading for 2 years
+                        </div>
+                    </div>
+                    <div class="chat-message message-bot">
+                        <div class="avatar">TB</div>
+                        <div class="message-bubble">
+                            Awesome! 🎯 To ensure this program is a good fit, what's your current trading capital?
+                        </div>
+                    </div>
+                    <div class="chat-message message-user">
+                        <div class="avatar">U</div>
+                        <div class="message-bubble">
+                            Around $150,000
+                        </div>
+                    </div>
+                    <div class="chat-message message-bot">
+                        <div class="avatar">TB</div>
+                        <div class="message-bubble">
+                            Perfect! You qualify for our premium program. 🚀 I'm sending you an exclusive video that breaks down our proven strategy. Check your DMs in 30 seconds!
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lead Qualification Stages -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="icon">✅</span>
+                    Lead Qualification Pipeline
+                </h2>
+                <div class="stage-flow">
+                    <div class="stage">
+                        <div class="stage-title">Stage 1: Initial Contact</div>
+                        <div class="stage-detail">Welcome message + trading experience check</div>
+                    </div>
+                    <div class="stage">
+                        <div class="stage-title">Stage 2: Capital Verification</div>
+                        <div class="stage-detail">Minimum $100K+ trading capital required</div>
+                    </div>
+                    <div class="stage">
+                        <div class="stage-title">Stage 3: Video Delivery</div>
+                        <div class="stage-detail">Send exclusive strategy breakdown (15min video)</div>
+                    </div>
+                    <div class="stage">
+                        <div class="stage-title">Stage 4: Follow-Up Sequence</div>
+                        <div class="stage-detail">3-day nurture sequence with testimonials</div>
+                    </div>
+                    <div class="stage">
+                        <div class="stage-title">Stage 5: Booking</div>
+                        <div class="stage-detail">Calendar link for 1-on-1 strategy session</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Intent Recognition -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="icon">🤖</span>
+                    AI Intent Recognition
+                </h2>
+                <div class="intent-list">
+                    <div class="intent-item">
+                        <div>
+                            <strong>Qualified Lead</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">$100K+ capital mentioned</div>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 94%;"></div>
+                        </div>
+                    </div>
+                    <div class="intent-item">
+                        <div>
+                            <strong>Price Objection</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">"Too expensive" detected</div>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 87%;"></div>
+                        </div>
+                    </div>
+                    <div class="intent-item">
+                        <div>
+                            <strong>Ready to Book</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">"When can we talk?" keywords</div>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 92%;"></div>
+                        </div>
+                    </div>
+                    <div class="intent-item">
+                        <div>
+                            <strong>Unqualified</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">Low capital or beginner</div>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: 78%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tag System -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="icon">🏷️</span>
+                    Smart Tag System
+                </h2>
+                <div class="tag-system">
+                    <div class="tag">
+                        <div class="tag-dot" style="background: #4ade80;"></div>
+                        <span>Qualified $100K+</span>
+                    </div>
+                    <div class="tag">
+                        <div class="tag-dot" style="background: #3b82f6;"></div>
+                        <span>Video Sent</span>
+                    </div>
+                    <div class="tag">
+                        <div class="tag-dot" style="background: #f59e0b;"></div>
+                        <span>Follow-Up Day 2</span>
+                    </div>
+                    <div class="tag">
+                        <div class="tag-dot" style="background: #8b5cf6;"></div>
+                        <span>Interested</span>
+                    </div>
+                    <div class="tag">
+                        <div class="tag-dot" style="background: #ec4899;"></div>
+                        <span>Booked Call</span>
+                    </div>
+                    <div class="tag">
+                        <div class="tag-dot" style="background: #ef4444;"></div>
+                        <span>Unqualified</span>
+                    </div>
+                    <div class="tag">
+                        <div class="tag-dot" style="background: #06b6d4;"></div>
+                        <span>Hot Lead</span>
+                    </div>
+                    <div class="tag">
+                        <div class="tag-dot" style="background: #64748b;"></div>
+                        <span>Nurture Sequence</span>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                    <strong style="color: #667eea;">Auto-Tagging Rules:</strong>
+                    <ul style="margin-top: 10px; color: #a0a0a0; line-height: 1.8;">
+                        <li>Capital > $100K → "Qualified" tag</li>
+                        <li>Video delivered → "Video Sent" + 3-day timer</li>
+                        <li>No response 48h → "Cold Lead"</li>
+                        <li>Books calendar → "Hot Lead" + notify sales team</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Conversion Funnel -->
+            <div class="card" style="grid-column: span 1;">
+                <h2 class="card-title">
+                    <span class="icon">📊</span>
+                    Conversion Funnel Metrics
+                </h2>
+                <div class="metrics-grid">
+                    <div class="metric">
+                        <div class="metric-value">2,847</div>
+                        <div class="metric-label">Total Contacts</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">1,236</div>
+                        <div class="metric-label">Engaged</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">487</div>
+                        <div class="metric-label">Qualified ($100K+)</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">213</div>
+                        <div class="metric-label">Calls Booked</div>
+                    </div>
+                </div>
+                <div class="funnel-chart">
+                    <div class="funnel-stage" style="background: linear-gradient(90deg, rgba(102, 126, 234, 0.4), rgba(102, 126, 234, 0.2));">
+                        <div class="funnel-stage-title">Initial Contact</div>
+                        <div class="funnel-stage-count">2,847 subscribers (100%)</div>
+                    </div>
+                    <div class="funnel-stage" style="background: linear-gradient(90deg, rgba(102, 126, 234, 0.35), rgba(102, 126, 234, 0.15)); width: 85%;">
+                        <div class="funnel-stage-title">Message Opened</div>
+                        <div class="funnel-stage-count">2,418 opens (84.9%)</div>
+                    </div>
+                    <div class="funnel-stage" style="background: linear-gradient(90deg, rgba(102, 126, 234, 0.3), rgba(102, 126, 234, 0.1)); width: 70%;">
+                        <div class="funnel-stage-title">Engaged in Conversation</div>
+                        <div class="funnel-stage-count">1,236 engaged (43.4%)</div>
+                    </div>
+                    <div class="funnel-stage" style="background: linear-gradient(90deg, rgba(102, 126, 234, 0.25), rgba(102, 126, 234, 0.08)); width: 50%;">
+                        <div class="funnel-stage-title">Qualified Lead</div>
+                        <div class="funnel-stage-count">487 qualified (17.1%)</div>
+                    </div>
+                    <div class="funnel-stage" style="background: linear-gradient(90deg, rgba(102, 126, 234, 0.2), rgba(102, 126, 234, 0.05)); width: 35%;">
+                        <div class="funnel-stage-title">Call Booked</div>
+                        <div class="funnel-stage-count">213 booked (7.5%)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Messenger Interface -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span class="icon">📱</span>
+                    Mobile-First Design
+                </h2>
+                <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 15px;">
+                    <div style="text-align: center; margin-bottom: 15px; color: #a0a0a0;">
+                        <strong>Platform Distribution</strong>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>📱 Mobile</span>
+                            <span style="color: #667eea;">78%</span>
+                        </div>
+                        <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden;">
+                            <div style="width: 78%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>💻 Desktop</span>
+                            <span style="color: #667eea;">18%</span>
+                        </div>
+                        <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden;">
+                            <div style="width: 18%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>📧 Email</span>
+                            <span style="color: #667eea;">4%</span>
+                        </div>
+                        <div style="width: 100%; height: 10px; background: rgba(255,255,255,0.1); border-radius: 5px; overflow: hidden;">
+                            <div style="width: 4%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2);"></div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 20px; padding: 15px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; border-left: 3px solid #667eea;">
+                        <strong style="color: #667eea;">Avg Response Time:</strong> 2.3 minutes<br>
+                        <strong style="color: #667eea;">Best Performance:</strong> 8-10 PM EST<br>
+                        <strong style="color: #667eea;">Peak Engagement:</strong> Weekdays
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            ⚠️ All data shown is fictional and for demonstration purposes only.
+        </div>
+    </div>
+</body>
+</html>

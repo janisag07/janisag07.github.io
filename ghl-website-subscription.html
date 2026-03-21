@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoHighLevel Website Subscription System - UK Trades</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #a0a0a0;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #10b981;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .funnel-step {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #10b981;
+            position: relative;
+        }
+
+        .funnel-step::after {
+            content: '↓';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.8em;
+            color: #10b981;
+        }
+
+        .funnel-step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .step-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #10b981;
+        }
+
+        .step-detail {
+            color: #a0a0a0;
+            font-size: 0.95em;
+        }
+
+        .pipeline-stage {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .pipeline-stage.new-signup {
+            border-color: #3b82f6;
+        }
+
+        .pipeline-stage.building {
+            border-color: #f59e0b;
+        }
+
+        .pipeline-stage.live {
+            border-color: #10b981;
+        }
+
+        .stage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .stage-title {
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+
+        .stage-count {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, #10b981, transparent);
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+        }
+
+        .timeline-time {
+            color: #10b981;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .timeline-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .timeline-detail {
+            color: #a0a0a0;
+            font-size: 0.9em;
+        }
+
+        .snapshot-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .snapshot-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .snapshot-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .snapshot-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #10b981;
+        }
+
+        .snapshot-detail {
+            color: #a0a0a0;
+            font-size: 0.85em;
+        }
+
+        .client-row {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .client-info h4 {
+            color: #10b981;
+            margin-bottom: 5px;
+        }
+
+        .client-info p {
+            color: #a0a0a0;
+            font-size: 0.85em;
+        }
+
+        .subscription-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
+            padding: 6px 14px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .revenue-card {
+            background: rgba(0, 0, 0, 0.4);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #10b981;
+        }
+
+        .revenue-amount {
+            font-size: 3em;
+            font-weight: bold;
+            color: #10b981;
+            margin-bottom: 5px;
+        }
+
+        .revenue-label {
+            color: #a0a0a0;
+            font-size: 1em;
+        }
+
+        .revenue-breakdown {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .breakdown-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .breakdown-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #10b981;
+        }
+
+        .breakdown-label {
+            color: #a0a0a0;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .disclaimer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .snapshot-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .revenue-breakdown {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏗️ GoHighLevel Website Subscription System</h1>
+            <p class="subtitle">Automated Website Service for UK Trades</p>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value">87</div>
+                <div class="stat-label">Active Subscriptions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">£2,609</div>
+                <div class="stat-label">Monthly Recurring Revenue</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">14</div>
+                <div class="stat-label">Trial Signups (7 days)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">92%</div>
+                <div class="stat-label">Trial → Paid Conversion</div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Funnel Flow -->
+            <div class="card" style="grid-column: span 1;">
+                <h2 class="card-title">
+                    <span>🎯</span>
+                    Subscription Funnel Flow
+                </h2>
+                <div class="funnel-step">
+                    <div class="step-title">
+                        <span class="step-number">1</span>
+                        Landing Page
+                    </div>
+                    <div class="step-detail">
+                        High-converting landing page showcasing website templates for plumbers, electricians, builders<br>
+                        <strong>Headline:</strong> "Get Your Professional Trade Website in 48 Hours"
+                    </div>
+                </div>
+                <div class="funnel-step">
+                    <div class="step-title">
+                        <span class="step-number">2</span>
+                        Sign-Up Form
+                    </div>
+                    <div class="step-detail">
+                        Simple 4-field form: Business Name, Trade Type, Contact Email, Phone<br>
+                        <strong>CTA:</strong> "Start Your 7-Day Free Trial"
+                    </div>
+                </div>
+                <div class="funnel-step">
+                    <div class="step-title">
+                        <span class="step-number">3</span>
+                        Stripe Payment Setup
+                    </div>
+                    <div class="step-detail">
+                        Stripe Checkout: £29.99/month subscription with 7-day trial<br>
+                        <strong>No charge during trial</strong> — auto-billing after 7 days
+                    </div>
+                </div>
+                <div class="funnel-step">
+                    <div class="step-title">
+                        <span class="step-number">4</span>
+                        Confirmation Page
+                    </div>
+                    <div class="step-detail">
+                        Thank you page with next steps: "Check your email for login details"<br>
+                        <strong>Upsell:</strong> "Add logo design for £49 one-time"
+                    </div>
+                </div>
+            </div>
+
+            <!-- CRM Pipeline -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span>📊</span>
+                    CRM Pipeline Stages
+                </h2>
+                <div class="pipeline-stage new-signup">
+                    <div class="stage-header">
+                        <div class="stage-title" style="color: #3b82f6;">🆕 New Signup</div>
+                        <div class="stage-count">14 contacts</div>
+                    </div>
+                    <div style="color: #a0a0a0; font-size: 0.9em;">
+                        Trial started, pending website build. Automated welcome email sent.
+                    </div>
+                </div>
+                <div class="pipeline-stage building">
+                    <div class="stage-header">
+                        <div class="stage-title" style="color: #f59e0b;">🔨 Building</div>
+                        <div class="stage-count">9 contacts</div>
+                    </div>
+                    <div style="color: #a0a0a0; font-size: 0.9em;">
+                        Website in production. Team notified, template selected, content being added.
+                    </div>
+                </div>
+                <div class="pipeline-stage live">
+                    <div class="stage-header">
+                        <div class="stage-title" style="color: #10b981;">✅ Live</div>
+                        <div class="stage-count">87 contacts</div>
+                    </div>
+                    <div style="color: #a0a0a0; font-size: 0.9em;">
+                        Website deployed and active. Monthly billing active. Customer has full access.
+                    </div>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 8px; border-left: 3px solid #10b981;">
+                    <strong style="color: #10b981;">Automated Stage Movement:</strong>
+                    <ul style="margin-top: 10px; color: #a0a0a0; line-height: 1.8;">
+                        <li>New Signup → Building: Instant (on Stripe confirmation)</li>
+                        <li>Building → Live: Manual trigger after QA check</li>
+                        <li>Live → Churn: Auto-move if subscription canceled</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Workflow Automation Timeline -->
+            <div class="card" style="grid-column: span 1;">
+                <h2 class="card-title">
+                    <span>⚙️</span>
+                    Workflow Automation Timeline
+                </h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-time">T+0 min (Instant)</div>
+                        <div class="timeline-title">Stripe Webhook Received</div>
+                        <div class="timeline-detail">Customer subscribed → Create contact in GHL CRM → Move to "New Signup"</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">T+2 min</div>
+                        <div class="timeline-title">Confirmation Email Sent</div>
+                        <div class="timeline-detail">"Welcome to [Business Name]! Your website is being built..." with login credentials</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">T+5 min</div>
+                        <div class="timeline-title">Team Notification</div>
+                        <div class="timeline-detail">Slack/Email to dev team: "New website build for [Business Name] - [Trade Type]"</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">T+24 hours</div>
+                        <div class="timeline-title">Day 1 Check-In Email</div>
+                        <div class="timeline-detail">"Your website is 50% complete! Here's a preview link..."</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">T+48 hours</div>
+                        <div class="timeline-title">Website Ready Email</div>
+                        <div class="timeline-detail">"🎉 Your website is LIVE! Visit: yoursite.co.uk" + training video</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">Day 5 of Trial</div>
+                        <div class="timeline-title">Trial Reminder (2 days left)</div>
+                        <div class="timeline-detail">"Your trial ends in 2 days. No action needed — you'll be charged £29.99 on [date]"</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-time">Day 8 (Post-Trial)</div>
+                        <div class="timeline-title">Payment Successful Email</div>
+                        <div class="timeline-detail">"Thank you! Your subscription is now active. Receipt attached."</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Snapshot/Sub-Account System -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span>📸</span>
+                    Snapshot & Sub-Account System
+                </h2>
+                <div class="snapshot-grid">
+                    <div class="snapshot-item">
+                        <div class="snapshot-icon">🎨</div>
+                        <div class="snapshot-title">Master Template</div>
+                        <div class="snapshot-detail">5 trade-specific templates (Plumber, Electrician, Builder, etc.)</div>
+                    </div>
+                    <div class="snapshot-item">
+                        <div class="snapshot-icon">👤</div>
+                        <div class="snapshot-title">Sub-Account Creation</div>
+                        <div class="snapshot-detail">Each customer gets isolated GHL sub-account</div>
+                    </div>
+                    <div class="snapshot-item">
+                        <div class="snapshot-icon">🔄</div>
+                        <div class="snapshot-title">Auto-Deploy</div>
+                        <div class="snapshot-detail">Template cloned to sub-account on signup</div>
+                    </div>
+                    <div class="snapshot-item">
+                        <div class="snapshot-icon">🔐</div>
+                        <div class="snapshot-title">Client Portal Access</div>
+                        <div class="snapshot-detail">Customers edit content via branded login</div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+                    <strong style="color: #10b981;">How It Works:</strong>
+                    <ol style="margin-top: 10px; color: #a0a0a0; line-height: 1.8; padding-left: 20px;">
+                        <li>New signup triggers sub-account creation API call</li>
+                        <li>Master snapshot (template) cloned to new sub-account</li>
+                        <li>Custom fields populated: Business Name, Phone, Email, Address</li>
+                        <li>Login credentials auto-generated and emailed</li>
+                        <li>Customer can edit pages, add photos, update services</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Active Subscriptions -->
+            <div class="card" style="grid-column: span 1;">
+                <h2 class="card-title">
+                    <span>👥</span>
+                    Active Client Dashboard
+                </h2>
+                <div style="max-height: 450px; overflow-y: auto;">
+                    <div class="client-row">
+                        <div class="client-info">
+                            <h4>London Plumbing Services</h4>
+                            <p>Subscribed: 12 Jan 2026 | £29.99/mo</p>
+                        </div>
+                        <div class="subscription-badge">✓ Active</div>
+                    </div>
+                    <div class="client-row">
+                        <div class="client-info">
+                            <h4>Spark Electrical Ltd</h4>
+                            <p>Subscribed: 18 Jan 2026 | £29.99/mo</p>
+                        </div>
+                        <div class="subscription-badge">✓ Active</div>
+                    </div>
+                    <div class="client-row">
+                        <div class="client-info">
+                            <h4>Elite Builders Manchester</h4>
+                            <p>Subscribed: 3 Feb 2026 | £29.99/mo</p>
+                        </div>
+                        <div class="subscription-badge">✓ Active</div>
+                    </div>
+                    <div class="client-row">
+                        <div class="client-info">
+                            <h4>Green Heating Solutions</h4>
+                            <p>Subscribed: 14 Feb 2026 | £29.99/mo</p>
+                        </div>
+                        <div class="subscription-badge">✓ Active</div>
+                    </div>
+                    <div class="client-row">
+                        <div class="client-info">
+                            <h4>Birmingham Roofing Co</h4>
+                            <p>Subscribed: 28 Feb 2026 | £29.99/mo</p>
+                        </div>
+                        <div class="subscription-badge">✓ Active</div>
+                    </div>
+                    <div class="client-row">
+                        <div class="client-info">
+                            <h4>Pro Painters Leeds</h4>
+                            <p>Subscribed: 5 Mar 2026 | £29.99/mo</p>
+                        </div>
+                        <div class="subscription-badge">✓ Active</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Metrics -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span>💰</span>
+                    Revenue Metrics
+                </h2>
+                <div class="revenue-card">
+                    <div class="revenue-amount">£2,609</div>
+                    <div class="revenue-label">Monthly Recurring Revenue (MRR)</div>
+                </div>
+                <div class="revenue-breakdown">
+                    <div class="breakdown-item">
+                        <div class="breakdown-value">£31,308</div>
+                        <div class="breakdown-label">Annual Run Rate (ARR)</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value">£7,344</div>
+                        <div class="breakdown-label">Total Revenue (YTD)</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value">£419</div>
+                        <div class="breakdown-label">New MRR This Month</div>
+                    </div>
+                    <div class="breakdown-item">
+                        <div class="breakdown-value">-£89</div>
+                        <div class="breakdown-label">Churn This Month</div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(16, 185, 129, 0.1); border-radius: 8px;">
+                    <strong style="color: #10b981;">Revenue Growth:</strong>
+                    <div style="margin-top: 10px; color: #a0a0a0; line-height: 1.8;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>January MRR:</span>
+                            <span style="color: #10b981;">£1,799</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>February MRR:</span>
+                            <span style="color: #10b981;">£2,189</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>March MRR (Current):</span>
+                            <span style="color: #10b981;">£2,609</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            ⚠️ All data shown is fictional and for demonstration purposes only.
+        </div>
+    </div>
+</body>
+</html>

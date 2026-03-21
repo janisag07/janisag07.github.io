@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n8n Restaurant Menu Sync - Pipeline Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e0e0e0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #a0a0a0;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #06b6d4;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .architecture-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .flow-step::after {
+            content: '↓';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5em;
+            color: #06b6d4;
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .flow-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #06b6d4, #3b82f6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .flow-content h3 {
+            color: #06b6d4;
+            margin-bottom: 5px;
+        }
+
+        .flow-content p {
+            color: #a0a0a0;
+            font-size: 0.9em;
+        }
+
+        .queue-workers {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .worker {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .worker-status {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin: 10px auto;
+            animation: pulse 2s infinite;
+        }
+
+        .worker-active {
+            background: #4ade80;
+            box-shadow: 0 0 15px #4ade80;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hierarchy-tree {
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .tree-item {
+            padding: 8px 0;
+            color: #a0a0a0;
+            line-height: 1.8;
+        }
+
+        .tree-item strong {
+            color: #06b6d4;
+        }
+
+        .restaurant-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .restaurant-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid transparent;
+        }
+
+        .restaurant-item.success {
+            border-left-color: #4ade80;
+        }
+
+        .restaurant-item.pending {
+            border-left-color: #f59e0b;
+        }
+
+        .restaurant-item.failed {
+            border-left-color: #ef4444;
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .status-success {
+            background: rgba(74, 222, 128, 0.2);
+            color: #4ade80;
+            border: 1px solid #4ade80;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+        }
+
+        .status-failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        .error-log {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        .error-header {
+            color: #ef4444;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .error-detail {
+            color: #a0a0a0;
+        }
+
+        .performance-metric {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #06b6d4, #3b82f6);
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .disclaimer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .queue-workers {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>⚙️ n8n Restaurant Menu Sync Pipeline</h1>
+            <p class="subtitle">Real-time Menu Synchronization Dashboard</p>
+        </header>
+
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value">179</div>
+                <div class="stat-label">Restaurants Syncing</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Active Workers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">12,847</div>
+                <div class="stat-label">Menu Items Synced</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">98.7%</div>
+                <div class="stat-label">Success Rate</div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Architecture Flow -->
+            <div class="card" style="grid-column: span 1;">
+                <h2 class="card-title">
+                    <span>🏗️</span>
+                    Pipeline Architecture
+                </h2>
+                <div class="architecture-flow">
+                    <div class="flow-step">
+                        <div class="flow-icon">🕷️</div>
+                        <div class="flow-content">
+                            <h3>Apify Web Scraper</h3>
+                            <p>Extracts menu data from 179 restaurant websites daily</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-icon">📊</div>
+                        <div class="flow-content">
+                            <h3>Google Sheets</h3>
+                            <p>Staging area for raw scraped data + manual overrides</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-icon">⚙️</div>
+                        <div class="flow-content">
+                            <h3>n8n Queue Processor</h3>
+                            <p>Batch processing with 3 parallel workers, error handling & retries</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-icon">💾</div>
+                        <div class="flow-content">
+                            <h3>Bubble.io Database</h3>
+                            <p>Production database serving customer-facing app</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Queue Mode Visualization -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span>🔄</span>
+                    Queue Mode: Batched Processing
+                </h2>
+                <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span><strong>Queue Status:</strong></span>
+                        <span style="color: #4ade80;">✓ Active</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span><strong>Batch Size:</strong></span>
+                        <span>25 restaurants per batch</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                        <span><strong>Current Batch:</strong></span>
+                        <span>Batch 6 of 8</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span><strong>Est. Completion:</strong></span>
+                        <span>~8 minutes</span>
+                    </div>
+                </div>
+
+                <h3 style="color: #06b6d4; margin-bottom: 15px;">Active Workers</h3>
+                <div class="queue-workers">
+                    <div class="worker">
+                        <strong>Worker 1</strong>
+                        <div class="worker-status worker-active"></div>
+                        <div style="color: #a0a0a0; font-size: 0.85em;">Processing: Pizza Palace</div>
+                    </div>
+                    <div class="worker">
+                        <strong>Worker 2</strong>
+                        <div class="worker-status worker-active"></div>
+                        <div style="color: #a0a0a0; font-size: 0.85em;">Processing: Burger Hub</div>
+                    </div>
+                    <div class="worker">
+                        <strong>Worker 3</strong>
+                        <div class="worker-status worker-active"></div>
+                        <div style="color: #a0a0a0; font-size: 0.85em;">Processing: Sushi Station</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Hierarchy -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span>🌳</span>
+                    Menu Data Hierarchy
+                </h2>
+                <div class="hierarchy-tree">
+                    <div class="tree-item"><strong>Restaurant</strong> (ID, Name, Location, Contact)</div>
+                    <div class="tree-item">  └── <strong>Category</strong> (Appetizers, Mains, Desserts)</div>
+                    <div class="tree-item">      └── <strong>Menu Item</strong> (Name, Description, Price)</div>
+                    <div class="tree-item">          └── <strong>Option Group</strong> (Size, Add-ons, Sides)</div>
+                    <div class="tree-item">              └── <strong>Option</strong> (Small/Medium/Large, +Price)</div>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(6, 182, 212, 0.1); border-radius: 8px; border-left: 3px solid #06b6d4;">
+                    <strong style="color: #06b6d4;">Example Structure:</strong>
+                    <div style="color: #a0a0a0; margin-top: 10px; font-size: 0.9em; line-height: 1.6;">
+                        Pizza Palace → Pizzas → Margherita ($12.99)<br>
+                        → Size Options: Small ($12.99), Medium ($16.99), Large ($19.99)<br>
+                        → Extra Toppings: Mushrooms (+$2), Olives (+$1.50)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sync Status per Restaurant -->
+            <div class="card" style="grid-column: span 1;">
+                <h2 class="card-title">
+                    <span>📋</span>
+                    Restaurant Sync Status
+                </h2>
+                <div class="restaurant-list">
+                    <div class="restaurant-item success">
+                        <div>
+                            <strong>The Golden Fork</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">Last sync: 2 min ago</div>
+                        </div>
+                        <span class="status-badge status-success">✓ Success</span>
+                    </div>
+                    <div class="restaurant-item success">
+                        <div>
+                            <strong>Mama's Italian Kitchen</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">Last sync: 5 min ago</div>
+                        </div>
+                        <span class="status-badge status-success">✓ Success</span>
+                    </div>
+                    <div class="restaurant-item pending">
+                        <div>
+                            <strong>Dragon Wok Express</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">In queue...</div>
+                        </div>
+                        <span class="status-badge status-pending">⏳ Pending</span>
+                    </div>
+                    <div class="restaurant-item failed">
+                        <div>
+                            <strong>Steakhouse Prime</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">Error: Timeout after 30s</div>
+                        </div>
+                        <span class="status-badge status-failed">✗ Failed</span>
+                    </div>
+                    <div class="restaurant-item success">
+                        <div>
+                            <strong>Vegan Delight Café</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">Last sync: 8 min ago</div>
+                        </div>
+                        <span class="status-badge status-success">✓ Success</span>
+                    </div>
+                    <div class="restaurant-item success">
+                        <div>
+                            <strong>Seafood Harbor</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">Last sync: 11 min ago</div>
+                        </div>
+                        <span class="status-badge status-success">✓ Success</span>
+                    </div>
+                    <div class="restaurant-item pending">
+                        <div>
+                            <strong>Taco Fiesta</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">In queue...</div>
+                        </div>
+                        <span class="status-badge status-pending">⏳ Pending</span>
+                    </div>
+                    <div class="restaurant-item success">
+                        <div>
+                            <strong>French Bistro Le Petit</strong>
+                            <div style="color: #a0a0a0; font-size: 0.85em;">Last sync: 15 min ago</div>
+                        </div>
+                        <span class="status-badge status-success">✓ Success</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Error Handling Dashboard -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span>⚠️</span>
+                    Error Handling & Retries
+                </h2>
+                <div class="error-log">
+                    <div class="error-header">❌ Error: Steakhouse Prime</div>
+                    <div class="error-detail">
+                        Type: Request Timeout (30s)<br>
+                        URL: https://steakhouseprime.com/menu<br>
+                        Retry Attempt: 2 of 3<br>
+                        Next Retry: 5 minutes
+                    </div>
+                </div>
+                <div class="error-log">
+                    <div class="error-header">❌ Error: Burger Town</div>
+                    <div class="error-detail">
+                        Type: Invalid JSON Response<br>
+                        Field: "menu_items" expected array, got null<br>
+                        Status: Sent to manual review queue
+                    </div>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px;">
+                    <strong style="color: #06b6d4;">Retry Strategy:</strong>
+                    <ul style="margin-top: 10px; color: #a0a0a0; line-height: 1.8;">
+                        <li>1st retry: 2 minutes delay</li>
+                        <li>2nd retry: 5 minutes delay</li>
+                        <li>3rd retry: 15 minutes delay</li>
+                        <li>After 3 failures → Manual review queue</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Performance Metrics -->
+            <div class="card">
+                <h2 class="card-title">
+                    <span>📈</span>
+                    Performance Metrics
+                </h2>
+                <div class="performance-metric">
+                    <div class="metric-header">
+                        <span><strong>Memory Usage</strong></span>
+                        <span style="color: #4ade80;">512 MB / 2 GB</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 25.6%;"></div>
+                    </div>
+                </div>
+                <div class="performance-metric">
+                    <div class="metric-header">
+                        <span><strong>Processing Time per Batch</strong></span>
+                        <span style="color: #06b6d4;">~3.2 min avg</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 64%;"></div>
+                    </div>
+                </div>
+                <div class="performance-metric">
+                    <div class="metric-header">
+                        <span><strong>API Rate Limit (Bubble.io)</strong></span>
+                        <span style="color: #f59e0b;">847 / 1000 calls</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 84.7%; background: linear-gradient(90deg, #f59e0b, #ef4444);"></div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.8em; color: #4ade80; font-weight: bold;">2.8s</div>
+                        <div style="color: #a0a0a0; font-size: 0.85em; margin-top: 5px;">Avg Item Sync Time</div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 1.8em; color: #06b6d4; font-weight: bold;">5.2 MB</div>
+                        <div style="color: #a0a0a0; font-size: 0.85em; margin-top: 5px;">Data Processed/min</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="disclaimer">
+            ⚠️ All data shown is fictional and for demonstration purposes only.
+        </div>
+    </div>
+</body>
+</html>
