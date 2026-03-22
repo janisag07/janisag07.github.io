@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brand Intelligence Scanner - Live Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            padding: 40px;
+            text-align: center;
+            color: white;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .scanner-section {
+            display: block;
+        }
+        
+        .scanner-section.hidden {
+            display: none;
+        }
+        
+        /* Input Section */
+        .input-group {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .input-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .url-input {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .url-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .scan-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            width: 100%;
+        }
+        
+        .scan-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+        
+        /* Loading Animation */
+        .loading-section {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 30px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .loading-steps {
+            list-style: none;
+            text-align: left;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+        
+        .loading-steps li {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        .loading-steps li.active {
+            background: #e8f4fd;
+            color: #1e3c72;
+            font-weight: 600;
+        }
+        
+        .loading-steps li.done {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .loading-steps li.done::before {
+            content: '✓ ';
+            color: #28a745;
+            font-weight: 700;
+        }
+        
+        /* Results Dashboard */
+        .dashboard {
+            animation: fadeIn 0.5s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .brand-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .brand-logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .brand-info h2 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .brand-info p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .score-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .score-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 25px;
+            border-radius: 12px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        .score-card.blue {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .score-card.green {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        .score-card.purple {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .score-value {
+            font-size: 48px;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+        
+        .score-label {
+            font-size: 13px;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin: 30px 0 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .insight-card {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .insight-card h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .insight-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .insight-list {
+            list-style: none;
+            margin-top: 10px;
+        }
+        
+        .insight-list li {
+            padding: 8px 0;
+            color: #555;
+            font-size: 14px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .insight-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .insight-list li strong {
+            color: #333;
+        }
+        
+        .competitor-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .competitor-table th,
+        .competitor-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .competitor-table th {
+            background: #f9f9f9;
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+            text-transform: uppercase;
+        }
+        
+        .competitor-table tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge.high {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .badge.medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .badge.low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .disclaimer {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 40px;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #856404;
+        }
+        
+        .back-btn {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 24px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .brand-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .score-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .score-value {
+                font-size: 36px;
+            }
+            
+            .insights-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Brand Intelligence Scanner</h1>
+            <p>Automated Brand Analysis • Social Presence • Competitor Insights • Influencer Fit Score</p>
+        </div>
+        
+        <div class="content">
+            <!-- Input Section -->
+            <div id="inputSection" class="scanner-section">
+                <div class="input-group">
+                    <div class="input-label">🌐 Enter Brand Website URL</div>
+                    <input type="text" class="url-input" id="urlInput" placeholder="https://example.com" value="https://glossier.com">
+                    <button class="scan-btn" onclick="startScan()">🔍 Scan Brand</button>
+                </div>
+                
+                <div style="text-align: center; color: #666; font-size: 14px;">
+                    💡 Try scanning brands like: Nike, Glossier, Patagonia, or any brand website
+                </div>
+            </div>
+            
+            <!-- Loading Section -->
+            <div id="loadingSection" class="scanner-section hidden">
+                <div class="loading-section">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Scanning brand intelligence...</div>
+                    <ul class="loading-steps" id="loadingSteps">
+                        <li id="step1">Analyzing website content</li>
+                        <li id="step2">Scanning social media presence</li>
+                        <li id="step3">Identifying competitor landscape</li>
+                        <li id="step4">Calculating influencer fit score</li>
+                        <li id="step5">Generating insights</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Results Dashboard -->
+            <div id="resultsSection" class="scanner-section hidden">
+                <button class="back-btn" onclick="resetScan()">← New Scan</button>
+                
+                <div class="dashboard">
+                    <div class="brand-header">
+                        <div class="brand-logo">G</div>
+                        <div class="brand-info">
+                            <h2>Glossier</h2>
+                            <p>🌐 glossier.com • Beauty & Skincare • Est. 2014</p>
+                        </div>
+                    </div>
+                    
+                    <div class="score-grid">
+                        <div class="score-card">
+                            <div class="score-label">Overall Score</div>
+                            <div class="score-value">92</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Excellent</div>
+                        </div>
+                        <div class="score-card blue">
+                            <div class="score-label">Social Presence</div>
+                            <div class="score-value">95</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Outstanding</div>
+                        </div>
+                        <div class="score-card green">
+                            <div class="score-label">Influencer Fit</div>
+                            <div class="score-value">88</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Very High</div>
+                        </div>
+                        <div class="score-card purple">
+                            <div class="score-label">Market Position</div>
+                            <div class="score-value">85</div>
+                            <div style="font-size: 12px; margin-top: 5px;">Strong</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">📊 Social Media Analysis</div>
+                    <div class="insights-grid">
+                        <div class="insight-card">
+                            <h4>Instagram Performance</h4>
+                            <ul class="insight-list">
+                                <li><strong>3.2M</strong> followers</li>
+                                <li><strong>4.8%</strong> engagement rate</li>
+                                <li><strong>Daily</strong> posting frequency</li>
+                                <li><strong>UGC-focused</strong> content strategy</li>
+                            </ul>
+                        </div>
+                        <div class="insight-card">
+                            <h4>TikTok Presence</h4>
+                            <ul class="insight-list">
+                                <li><strong>850K</strong> followers</li>
+                                <li><strong>12.3%</strong> engagement rate</li>
+                                <li><strong>Tutorial-heavy</strong> content</li>
+                                <li><strong>Gen Z</strong> target audience</li>
+                            </ul>
+                        </div>
+                        <div class="insight-card">
+                            <h4>YouTube Channel</h4>
+                            <ul class="insight-list">
+                                <li><strong>245K</strong> subscribers</li>
+                                <li><strong>Weekly</strong> uploads</li>
+                                <li><strong>Long-form</strong> tutorials</li>
+                                <li><strong>Community-driven</strong> approach</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">🎯 Influencer Fit Analysis</div>
+                    <div class="insight-card">
+                        <h4>Recommended Influencer Types</h4>
+                        <p><strong>Micro-influencers (10K-100K):</strong> Perfect match! Brand thrives on authentic, user-generated content and community building.</p>
+                        <ul class="insight-list">
+                            <li><strong>Beauty enthusiasts</strong> - Makeup tutorials, skincare routines</li>
+                            <li><strong>Lifestyle creators</strong> - Morning routines, self-care content</li>
+                            <li><strong>Clean beauty advocates</strong> - Natural ingredients, sustainability</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="section-title">🏆 Competitor Landscape</div>
+                    <table class="competitor-table">
+                        <thead>
+                            <tr>
+                                <th>Brand</th>
+                                <th>Social Followers</th>
+                                <th>Market Position</th>
+                                <th>Threat Level</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Fenty Beauty</td>
+                                <td>11.5M Instagram</td>
+                                <td>Premium</td>
+                                <td><span class="badge high">High</span></td>
+                            </tr>
+                            <tr>
+                                <td>The Ordinary</td>
+                                <td>3.8M Instagram</td>
+                                <td>Value-focused</td>
+                                <td><span class="badge medium">Medium</span></td>
+                            </tr>
+                            <tr>
+                                <td>Milk Makeup</td>
+                                <td>1.2M Instagram</td>
+                                <td>Niche</td>
+                                <td><span class="badge low">Low</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="section-title">💡 Key Insights</div>
+                    <div class="insights-grid">
+                        <div class="insight-card" style="border-left-color: #43e97b;">
+                            <h4>✅ Strengths</h4>
+                            <p>• Strong community engagement<br>• Authentic brand voice<br>• UGC-first content strategy<br>• High influencer collaboration rate</p>
+                        </div>
+                        <div class="insight-card" style="border-left-color: #f5576c;">
+                            <h4>⚠️ Opportunities</h4>
+                            <p>• Expand TikTok presence<br>• Partner with mid-tier creators<br>• Increase video content output<br>• Target emerging markets</p>
+                        </div>
+                    </div>
+                    
+                    <div class="disclaimer">
+                        ⚠️ All data shown is fictional and for demonstration purposes only. This is a proof-of-concept demonstrating scanning capabilities.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function startScan() {
+            // Hide input section
+            document.getElementById('inputSection').classList.add('hidden');
+            document.getElementById('loadingSection').classList.remove('hidden');
+            
+            // Simulate loading steps
+            const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+            let currentStep = 0;
+            
+            const interval = setInterval(() => {
+                if (currentStep > 0) {
+                    document.getElementById(steps[currentStep - 1]).classList.remove('active');
+                    document.getElementById(steps[currentStep - 1]).classList.add('done');
+                }
+                
+                if (currentStep < steps.length) {
+                    document.getElementById(steps[currentStep]).classList.add('active');
+                    currentStep++;
+                } else {
+                    clearInterval(interval);
+                    // Show results
+                    setTimeout(() => {
+                        document.getElementById('loadingSection').classList.add('hidden');
+                        document.getElementById('resultsSection').classList.remove('hidden');
+                    }, 500);
+                }
+            }, 800);
+        }
+        
+        function resetScan() {
+            document.getElementById('resultsSection').classList.add('hidden');
+            document.getElementById('inputSection').classList.remove('hidden');
+            
+            // Reset loading steps
+            const steps = ['step1', 'step2', 'step3', 'step4', 'step5'];
+            steps.forEach(step => {
+                document.getElementById(step).classList.remove('active', 'done');
+            });
+        }
+    </script>
+</body>
+</html>
