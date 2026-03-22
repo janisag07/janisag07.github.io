@@ -223,17 +223,95 @@
             background: #fff;
         }
         
+        .disclaimer {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85em;
+            margin-top: 30px;
+            padding: 15px;
+        }
+
         @media (max-width: 768px) {
+            body {
+                padding: 15px 10px;
+            }
+
             .flow-steps {
                 flex-direction: column;
+                gap: 10px;
             }
             
             .arrow {
                 transform: rotate(90deg);
+                font-size: 1.5em;
+                margin: -5px 0;
             }
             
             .header h1 {
+                font-size: 1.5em;
+            }
+
+            .header p {
+                font-size: 0.95em;
+            }
+
+            .flow-diagram, .dashboard {
+                padding: 20px 15px;
+                border-radius: 15px;
+            }
+
+            .flow-title, .dashboard-title {
+                font-size: 1.3em;
+            }
+
+            .step {
+                min-width: unset;
+                padding: 20px 15px;
+            }
+
+            .step-icon {
                 font-size: 2em;
+                margin-bottom: 10px;
+            }
+
+            .step-title {
+                font-size: 1.1em;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat-card {
+                padding: 15px;
+            }
+
+            .stat-value {
+                font-size: 1.8em;
+            }
+
+            .stat-label {
+                font-size: 0.8em;
+            }
+
+            .payments-table {
+                font-size: 0.8em;
+            }
+
+            .payments-table th, .payments-table td {
+                padding: 10px 6px;
+            }
+
+            .status {
+                padding: 3px 8px;
+                font-size: 0.75em;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .stats {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -442,6 +520,7 @@
                 </tbody>
             </table>
         </div>
+        <div class="disclaimer">All data shown is fictional and for demonstration purposes only.</div>
     </div>
 </body>
 </html>
