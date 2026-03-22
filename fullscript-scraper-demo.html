@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fullscript Catalog Scraper - Live Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #2d3748;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #718096;
+            font-size: 1.1em;
+        }
+        
+        .dashboard {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: #48bb78;
+            color: white;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .progress-section {
+            margin-bottom: 30px;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            color: #2d3748;
+            font-weight: 600;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e2e8f0;
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #48bb78, #38a169);
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #38a169;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+        }
+        
+        .table-container {
+            overflow-x: auto;
+            margin-bottom: 30px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th {
+            background: #f7fafc;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #2d3748;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #4a5568;
+        }
+        
+        tr:hover {
+            background: #f7fafc;
+        }
+        
+        .category-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #edf2f7;
+            color: #2d3748;
+            border-radius: 12px;
+            font-size: 0.85em;
+        }
+        
+        .price {
+            font-weight: 600;
+            color: #48bb78;
+        }
+        
+        .log-section {
+            background: #1a202c;
+            color: #a0aec0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 30px;
+        }
+        
+        .log-entry {
+            margin-bottom: 5px;
+        }
+        
+        .log-timestamp {
+            color: #667eea;
+        }
+        
+        .log-success {
+            color: #48bb78;
+        }
+        
+        .disclaimer {
+            text-align: center;
+            color: #718096;
+            font-size: 0.9em;
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.5em;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            table {
+                font-size: 0.9em;
+            }
+            
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔍 Fullscript Catalog Scraper</h1>
+            <p class="subtitle">Real-time Product Data Extraction Dashboard</p>
+        </div>
+        
+        <div class="dashboard">
+            <div class="status-badge" id="status">● Scraping Active</div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Products Scraped</div>
+                    <div class="stat-value" id="productCount">2,847</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Categories Found</div>
+                    <div class="stat-value">47</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Success Rate</div>
+                    <div class="stat-value">99.8%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Time Elapsed</div>
+                    <div class="stat-value" id="timeElapsed">12:34</div>
+                </div>
+            </div>
+            
+            <div class="progress-section">
+                <div class="progress-label">
+                    <span>Scraping Progress</span>
+                    <span id="progressPercent">89%</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill" style="width: 89%">89%</div>
+                </div>
+            </div>
+            
+            <div class="export-buttons">
+                <button class="btn btn-primary" onclick="exportData('csv')">📊 Export CSV</button>
+                <button class="btn btn-primary" onclick="exportData('json')">📋 Export JSON</button>
+                <button class="btn btn-primary" onclick="exportData('excel')">📈 Export Excel</button>
+                <button class="btn btn-success" onclick="toggleScraping()">⏸ Pause Scraping</button>
+            </div>
+            
+            <h3 style="margin-bottom: 15px; color: #2d3748;">📦 Recent Products Scraped</h3>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTable">
+                        <tr>
+                            <td>Vitamin D3 5000 IU</td>
+                            <td><span class="category-tag">Vitamins</span></td>
+                            <td class="price">$24.99</td>
+                            <td>High-potency vitamin D supplement for bone health...</td>
+                        </tr>
+                        <tr>
+                            <td>Omega-3 Premium Fish Oil</td>
+                            <td><span class="category-tag">Essential Fatty Acids</span></td>
+                            <td class="price">$39.99</td>
+                            <td>Triple-strength EPA & DHA for cardiovascular support...</td>
+                        </tr>
+                        <tr>
+                            <td>Probiotic Complex 50B</td>
+                            <td><span class="category-tag">Digestive Health</span></td>
+                            <td class="price">$54.99</td>
+                            <td>50 billion CFU multi-strain probiotic formula...</td>
+                        </tr>
+                        <tr>
+                            <td>Magnesium Glycinate 400mg</td>
+                            <td><span class="category-tag">Minerals</span></td>
+                            <td class="price">$29.99</td>
+                            <td>Highly absorbable magnesium for muscle & nerve function...</td>
+                        </tr>
+                        <tr>
+                            <td>Curcumin Phytosome</td>
+                            <td><span class="category-tag">Herbal Supplements</span></td>
+                            <td class="price">$44.99</td>
+                            <td>Enhanced absorption turmeric extract for inflammation...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <h3 style="margin-bottom: 15px; color: #2d3748;">📝 Live Scraping Log</h3>
+            <div class="log-section" id="logSection">
+                <div class="log-entry"><span class="log-timestamp">[12:34:21]</span> <span class="log-success">✓</span> Scraped: Vitamin D3 5000 IU</div>
+                <div class="log-entry"><span class="log-timestamp">[12:34:22]</span> <span class="log-success">✓</span> Scraped: Omega-3 Premium Fish Oil</div>
+                <div class="log-entry"><span class="log-timestamp">[12:34:23]</span> <span class="log-success">✓</span> Scraped: Probiotic Complex 50B</div>
+                <div class="log-entry"><span class="log-timestamp">[12:34:24]</span> <span class="log-success">✓</span> Scraped: Magnesium Glycinate 400mg</div>
+                <div class="log-entry"><span class="log-timestamp">[12:34:25]</span> <span class="log-success">✓</span> Scraped: Curcumin Phytosome</div>
+            </div>
+            
+            <div class="disclaimer">
+                All data shown is fictional and for demonstration purposes only.
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let isRunning = true;
+        let productCount = 2847;
+        let progress = 89;
+        
+        const products = [
+            {name: 'CoQ10 Ubiquinol 200mg', cat: 'Antioxidants', price: '$49.99', desc: 'Active form of CoQ10 for cellular energy production...'},
+            {name: 'B-Complex Plus', cat: 'Vitamins', price: '$27.99', desc: 'Complete B-vitamin formula with methylated forms...'},
+            {name: 'Zinc Picolinate 30mg', cat: 'Minerals', price: '$15.99', desc: 'Highly absorbable zinc for immune support...'},
+            {name: 'Ashwagandha Extract', cat: 'Herbal Supplements', price: '$34.99', desc: 'Standardized KSM-66 extract for stress management...'},
+            {name: 'Methylfolate 5-MTHF', cat: 'Vitamins', price: '$32.99', desc: 'Bioactive folate for cardiovascular & neurological health...'}
+        ];
+        
+        function updateProgress() {
+            if (!isRunning) return;
+            
+            if (progress < 100) {
+                progress += 0.5;
+                productCount += 3;
+                
+                document.getElementById('progressFill').style.width = progress + '%';
+                document.getElementById('progressFill').textContent = Math.floor(progress) + '%';
+                document.getElementById('progressPercent').textContent = Math.floor(progress) + '%';
+                document.getElementById('productCount').textContent = productCount.toLocaleString();
+                
+                // Add new log entry
+                const randomProduct = products[Math.floor(Math.random() * products.length)];
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = document.createElement('div');
+                logEntry.className = 'log-entry';
+                logEntry.innerHTML = `<span class="log-timestamp">[${timestamp}]</span> <span class="log-success">✓</span> Scraped: ${randomProduct.name}`;
+                
+                const logSection = document.getElementById('logSection');
+                logSection.insertBefore(logEntry, logSection.firstChild);
+                
+                // Keep only last 10 entries
+                while (logSection.children.length > 10) {
+                    logSection.removeChild(logSection.lastChild);
+                }
+            } else {
+                document.getElementById('status').textContent = '✓ Scraping Complete';
+                document.getElementById('status').style.background = '#48bb78';
+                isRunning = false;
+            }
+        }
+        
+        function toggleScraping() {
+            isRunning = !isRunning;
+            const btn = event.target;
+            const status = document.getElementById('status');
+            
+            if (isRunning) {
+                btn.textContent = '⏸ Pause Scraping';
+                status.textContent = '● Scraping Active';
+                status.style.background = '#48bb78';
+            } else {
+                btn.textContent = '▶ Resume Scraping';
+                status.textContent = '⏸ Scraping Paused';
+                status.style.background = '#f6ad55';
+            }
+        }
+        
+        function exportData(format) {
+            alert(`Exporting ${productCount.toLocaleString()} products as ${format.toUpperCase()}...`);
+        }
+        
+        // Update time elapsed
+        let seconds = 754;
+        setInterval(() => {
+            seconds++;
+            const minutes = Math.floor(seconds / 60);
+            const secs = seconds % 60;
+            document.getElementById('timeElapsed').textContent = 
+                `${minutes}:${secs.toString().padStart(2, '0')}`;
+        }, 1000);
+        
+        // Update progress
+        setInterval(updateProgress, 2000);
+    </script>
+</body>
+</html>
