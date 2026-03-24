@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Local SEO Dashboard | Klemmer Immobilien GmbH</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-card: #151923;
+            --bg-hover: #1e2431;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #10b981;
+            --accent-warning: #f59e0b;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --border: #1e293b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-hover) 100%);
+            border-bottom: 2px solid var(--accent-primary);
+            padding: 30px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .brand {
+            flex: 1;
+        }
+
+        .brand h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .brand p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .location-badge {
+            background: rgba(59, 130, 246, 0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--accent-primary);
+            color: var(--accent-primary);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 2px;
+        }
+
+        .tab {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px 24px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .tab.active {
+            color: var(--accent-primary);
+            border-bottom-color: var(--accent-primary);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent-primary);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--accent-secondary);
+        }
+
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--accent-warning);
+        }
+
+        .badge-info {
+            background: rgba(59, 130, 246, 0.2);
+            color: var(--accent-primary);
+        }
+
+        /* Score Circle */
+        .score-display {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        .score-circle {
+            position: relative;
+            text-align: center;
+        }
+
+        .score-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .score-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        /* Rankings */
+        .ranking-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: var(--bg-hover);
+            border-radius: 8px;
+            margin-bottom: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .ranking-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateX(5px);
+        }
+
+        .keyword {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .position {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .rank-badge {
+            background: var(--accent-primary);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .trend {
+            font-size: 1.2rem;
+        }
+
+        .trend-up { color: var(--accent-secondary); }
+        .trend-down { color: #ef4444; }
+
+        /* AI Posts */
+        .post-preview {
+            background: var(--bg-hover);
+            border-left: 4px solid var(--accent-primary);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 15px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+        }
+
+        .post-content {
+            color: var(--text-primary);
+            line-height: 1.8;
+            margin-bottom: 12px;
+        }
+
+        .post-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--accent-primary);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+        }
+
+        /* Reviews */
+        .review-template {
+            background: var(--bg-hover);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .review-original {
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .review-ai-response {
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        .ai-label {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        /* Competitor */
+        .competitor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .competitor-card {
+            background: var(--bg-hover);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .competitor-name {
+            font-weight: 600;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .metric:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .metric-value {
+            font-weight: 600;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        /* Stats */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--bg-hover);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Checklist */
+        .checklist {
+            list-style: none;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: var(--bg-hover);
+            border-radius: 6px;
+        }
+
+        .check-icon {
+            color: var(--accent-secondary);
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .cross-icon {
+            color: #ef4444;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            margin: 30px 0;
+            padding: 20px;
+            background: var(--bg-hover);
+            border-radius: 8px;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .brand h1 {
+                font-size: 1.6rem;
+            }
+
+            .tabs {
+                gap: 5px;
+            }
+
+            .tab {
+                padding: 10px 16px;
+                font-size: 0.9rem;
+            }
+
+            .card {
+                padding: 16px;
+            }
+
+            .score-display {
+                gap: 20px;
+            }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 14px 32px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="brand">
+                    <h1>Klemmer Immobilien GmbH</h1>
+                    <p>AI-Powered Local SEO Dashboard – Ihre Sichtbarkeit in Main-Spessart</p>
+                </div>
+                <div class="location-badge">
+                    📍 Lohr am Main, Bayern
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab(0)">📊 GBP Optimization</button>
+            <button class="tab" onclick="switchTab(1)">🔍 Local Rankings</button>
+            <button class="tab" onclick="switchTab(2)">✨ AI Content</button>
+            <button class="tab" onclick="switchTab(3)">💬 Review Intelligence</button>
+            <button class="tab" onclick="switchTab(4)">📈 Wettbewerb</button>
+        </div>
+
+        <!-- Tab 1: GBP Optimization -->
+        <div class="tab-content active">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Google Business Profile Analyse</h2>
+                    <span class="badge badge-warning">Optimierungspotenzial</span>
+                </div>
+
+                <div class="score-display">
+                    <div class="score-circle">
+                        <canvas id="currentScore" width="150" height="150"></canvas>
+                        <div class="score-label">Aktueller Score</div>
+                    </div>
+                    <div class="score-circle">
+                        <canvas id="potentialScore" width="150" height="150"></canvas>
+                        <div class="score-label">Möglicher Score</div>
+                    </div>
+                </div>
+
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">+187%</div>
+                        <div class="stat-label">Mehr Impressions</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">+94%</div>
+                        <div class="stat-label">Mehr Klicks</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">+156%</div>
+                        <div class="stat-label">Mehr Anfragen</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card">
+                    <h3 class="card-title" style="margin-bottom: 20px;">✅ Gut gemacht</h3>
+                    <ul class="checklist">
+                        <li class="checklist-item">
+                            <span class="check-icon">✓</span>
+                            <span>Vollständiges Unternehmensprofil</span>
+                        </li>
+                        <li class="checklist-item">
+                            <span class="check-icon">✓</span>
+                            <span>Kontaktdaten korrekt hinterlegt</span>
+                        </li>
+                        <li class="checklist-item">
+                            <span class="check-icon">✓</span>
+                            <span>Öffnungszeiten aktuell</span>
+                        </li>
+                        <li class="checklist-item">
+                            <span class="check-icon">✓</span>
+                            <span>Hochwertige Bilder vorhanden</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title" style="margin-bottom: 20px;">🎯 Quick Wins (AI-optimiert)</h3>
+                    <ul class="checklist">
+                        <li class="checklist-item">
+                            <span class="cross-icon">○</span>
+                            <span>Wöchentliche AI-Posts (Engagement +240%)</span>
+                        </li>
+                        <li class="checklist-item">
+                            <span class="cross-icon">○</span>
+                            <span>Produktkatalog mit 16 Ratgebern</span>
+                        </li>
+                        <li class="checklist-item">
+                            <span class="cross-icon">○</span>
+                            <span>FAQ-Schema-Markup (CTR +38%)</span>
+                        </li>
+                        <li class="checklist-item">
+                            <span class="cross-icon">○</span>
+                            <span>Video-Content für Immobilien-Tipps</span>
+                        </li>
+                        <li class="checklist-item">
+                            <span class="cross-icon">○</span>
+                            <span>AI-Antworten auf Bewertungen (binnen 2h)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Local Rankings -->
+        <div class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Local Search Rankings – Main-Spessart</h2>
+                    <span class="badge badge-info">4 Kernregionen</span>
+                </div>
+
+                <div class="ranking-item">
+                    <div class="keyword">
+                        <strong>Immobilienmakler Lohr am Main</strong>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">200 Suchanfragen/Monat</div>
+                    </div>
+                    <div class="position">
+                        <span class="trend trend-up">↑</span>
+                        <span class="rank-badge">#2</span>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <div class="keyword">
+                        <strong>Haus verkaufen Main-Spessart</strong>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">340 Suchanfragen/Monat</div>
+                    </div>
+                    <div class="position">
+                        <span class="trend trend-up">↑</span>
+                        <span class="rank-badge">#4</span>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <div class="keyword">
+                        <strong>Wohnung mieten Karlstadt</strong>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">180 Suchanfragen/Monat</div>
+                    </div>
+                    <div class="position">
+                        <span class="trend trend-down">↓</span>
+                        <span class="rank-badge">#7</span>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <div class="keyword">
+                        <strong>Immobilienbewertung Marktheidenfeld</strong>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">95 Suchanfragen/Monat</div>
+                    </div>
+                    <div class="position">
+                        <span class="trend trend-up">↑</span>
+                        <span class="rank-badge">#3</span>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <div class="keyword">
+                        <strong>Makler Gemünden am Main</strong>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">75 Suchanfragen/Monat</div>
+                    </div>
+                    <div class="position">
+                        <span class="trend trend-up">↑</span>
+                        <span class="rank-badge">#5</span>
+                    </div>
+                </div>
+
+                <div class="ranking-item">
+                    <div class="keyword">
+                        <strong>Immobilien Lohr kaufen</strong>
+                        <div style="color: var(--text-secondary); font-size: 0.85rem;">220 Suchanfragen/Monat</div>
+                    </div>
+                    <div class="position">
+                        <span class="trend trend-up">↑</span>
+                        <span class="rank-badge">#6</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title" style="margin-bottom: 20px;">🎯 AI-Empfehlungen für Top 3</h3>
+                <div class="chart-container">
+                    <canvas id="rankingChart" width="800" height="300"></canvas>
+                </div>
+                <ul class="checklist" style="margin-top: 20px;">
+                    <li class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>5 neue Location-Pages mit regionalem Content (Lohr, Karlstadt, Marktheidenfeld, Gemünden + Main-Spessart)</span>
+                    </li>
+                    <li class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>AI-generierte Marktberichte je Region (monatlich)</span>
+                    </li>
+                    <li class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>Schema.org LocalBusiness Markup für alle 4 Kernregionen</span>
+                    </li>
+                    <li class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span>16 Ratgeber mit Geo-Targeting optimieren</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tab 3: AI Content -->
+        <div class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">AI-generierte Google Business Posts</h2>
+                    <span class="badge badge-success">Ready to publish</span>
+                </div>
+
+                <div class="post-preview">
+                    <div class="post-meta">
+                        <span>📅 KW 12/2026</span>
+                        <span>🏷️ Saisonaler Tipp</span>
+                    </div>
+                    <div class="post-content">
+                        <strong>Frühjahrsmarkt in Main-Spessart boomt! 🌸</strong><br><br>
+                        Der März bringt neue Bewegung in den Immobilienmarkt Lohr am Main und Umgebung. Unsere aktuellen Zahlen zeigen: Die Nachfrage nach Einfamilienhäusern in Karlstadt und Marktheidenfeld steigt um 23% gegenüber dem Vormonat.<br><br>
+                        ✨ Jetzt ist der perfekte Zeitpunkt für Ihren Verkauf!<br><br>
+                        📞 Kostenlose Erstberatung mit Marco Tengler – Ihr Experte für Main-Spessart seit über 15 Jahren.
+                    </div>
+                    <div class="post-tags">
+                        <span class="tag">#LohrAmMain</span>
+                        <span class="tag">#Frühjahrsmarkt</span>
+                        <span class="tag">#ImmobilienBayern</span>
+                    </div>
+                </div>
+
+                <div class="post-preview">
+                    <div class="post-meta">
+                        <span>📅 KW 13/2026</span>
+                        <span>🏷️ Ratgeber</span>
+                    </div>
+                    <div class="post-content">
+                        <strong>Immobilienbewertung: Diese 5 Faktoren zählen in Main-Spessart 🏡</strong><br><br>
+                        Als zertifizierter Makler (Deutsche Immobilien Akademie) wissen wir, worauf es ankommt:<br><br>
+                        1️⃣ Mikrolage – Nähe zu Lohr Innenstadt, Schulen, Nahverkehr<br>
+                        2️⃣ Ausstattung & Zustand<br>
+                        3️⃣ Energieeffizienz (seit 2024 Pflichtangabe!)<br>
+                        4️⃣ Grundstücksgröße & Schnitt<br>
+                        5️⃣ Aktuelle Marktdaten Main-Spessart<br><br>
+                        📊 Kostenlose Bewertung? Jetzt anfragen!
+                    </div>
+                    <div class="post-tags">
+                        <span class="tag">#Immobilienbewertung</span>
+                        <span class="tag">#MainSpessart</span>
+                        <span class="tag">#Expertenwissen</span>
+                    </div>
+                </div>
+
+                <div class="post-preview">
+                    <div class="post-meta">
+                        <span>📅 KW 14/2026</span>
+                        <span>🏷️ Lokaler Bezug</span>
+                    </div>
+                    <div class="post-content">
+                        <strong>Gemünden am Main – unterschätzter Geheimtipp! 🌊</strong><br><br>
+                        Während alle nach Lohr und Karlstadt schauen, entwickelt sich Gemünden am Main still und leise zum Preis-Leistungs-Sieger der Region:<br><br>
+                        ✅ Durchschnittspreis EFH: 12% unter Lohr<br>
+                        ✅ Direkter Bahnanschluß nach Würzburg<br>
+                        ✅ Altstadt mit Charme & Main-Flair<br>
+                        ✅ Familienfreundlich mit starker Infrastruktur<br><br>
+                        🔍 Aktuelle Objekte in Gemünden? Wir haben sie!
+                    </div>
+                    <div class="post-tags">
+                        <span class="tag">#GemündenAmMain</span>
+                        <span class="tag">#Geheimtipp</span>
+                        <span class="tag">#Marktwissen</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 4: Review Intelligence -->
+        <div class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">AI-gestützte Review-Antworten</h2>
+                    <span class="badge badge-success">Automatisch personalisiert</span>
+                </div>
+
+                <div class="review-template">
+                    <div class="review-original">
+                        ⭐⭐⭐⭐⭐ "Herr Tengler hat uns super beim Verkauf unseres Hauses in Karlstadt geholfen. Professionell, schnell und immer erreichbar. Absolut empfehlenswert!" – Familie Schmidt
+                    </div>
+                    <div class="ai-label">AI-GENERIERTE ANTWORT (2 Min. nach Review)</div>
+                    <div class="review-ai-response">
+                        Liebe Familie Schmidt,<br><br>
+                        vielen herzlichen Dank für Ihr tolles Feedback! 🙏 Es war uns eine Freude, Sie beim Verkauf Ihres Hauses in Karlstadt zu begleiten. Ihr Vertrauen bedeutet uns sehr viel.<br><br>
+                        Sollten Sie in Zukunft wieder Unterstützung rund um Immobilien in Main-Spessart benötigen – wir sind gerne für Sie da!<br><br>
+                        Beste Grüße aus Lohr am Main<br>
+                        Marco Tengler & Team Klemmer Immobilien
+                    </div>
+                </div>
+
+                <div class="review-template">
+                    <div class="review-original">
+                        ⭐⭐⭐⭐ "Gute Beratung, hat etwas länger gedauert bis ein Käufer gefunden wurde, aber am Ende hat alles geklappt." – Herr Müller
+                    </div>
+                    <div class="ai-label">AI-GENERIERTE ANTWORT (Erkennt: neutrales Feedback + Geduld gefordert)</div>
+                    <div class="review-ai-response">
+                        Hallo Herr Müller,<br><br>
+                        vielen Dank für Ihre ehrliche Bewertung! Wir verstehen, dass die Vermarktungsdauer manchmal Geduld erfordert – gerade wenn wir den bestmöglichen Preis für Sie erzielen wollen.<br><br>
+                        Umso mehr freut es uns, dass am Ende alles zu Ihrer Zufriedenheit geklappt hat. 😊<br><br>
+                        Falls Sie Feedback haben, wie wir den Prozess für Sie noch angenehmer gestalten können – wir haben immer ein offenes Ohr!<br><br>
+                        Viele Grüße<br>
+                        Ihr Team Klemmer Immobilien
+                    </div>
+                </div>
+
+                <div class="review-template">
+                    <div class="review-original">
+                        ⭐⭐⭐ "Fotos waren okay, hätte mir mehr Beratung zur Preisfindung gewünscht." – Anonym
+                    </div>
+                    <div class="ai-label">AI-GENERIERTE ANTWORT (Erkennt: Kritik + Verbesserungspotenzial)</div>
+                    <div class="review-ai-response">
+                        Vielen Dank für Ihr ehrliches Feedback!<br><br>
+                        Es tut uns leid, dass Sie sich bei der Preisfindung nicht optimal beraten gefühlt haben. Transparente Marktwertanalysen sind uns eigentlich sehr wichtig – hier hätten wir besser kommunizieren sollen.<br><br>
+                        Wir haben Ihre Anmerkung intern besprochen und optimieren unseren Prozess. Falls Sie nochmal ins Gespräch kommen möchten, melden Sie sich gerne direkt bei Marco Tengler: [Telefon]<br><br>
+                        Vielen Dank & beste Grüße<br>
+                        Klemmer Immobilien Team
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title" style="margin-bottom: 20px;">📊 Review Intelligence Dashboard</h3>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">4.6★</div>
+                        <div class="stat-label">Durchschnittsbewertung</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">87%</div>
+                        <div class="stat-label">Antwortrate (AI)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">2.4h</div>
+                        <div class="stat-label">Ø Antwortzeit</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">+34%</div>
+                        <div class="stat-label">Review-Wachstum</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 5: Competitor -->
+        <div class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Wettbewerbsvergleich Main-Spessart</h2>
+                    <span class="badge badge-info">Top 4 Makler</span>
+                </div>
+
+                <div class="competitor-grid">
+                    <div class="competitor-card" style="border: 2px solid var(--accent-primary);">
+                        <div class="competitor-name">🏆 Klemmer Immobilien</div>
+                        <div class="metric">
+                            <span class="metric-label">GBP Score</span>
+                            <span class="metric-value" style="color: var(--accent-secondary);">89/100</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Bewertungen</span>
+                            <span class="metric-value">47 (4.6★)</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Posting-Frequenz</span>
+                            <span class="metric-value">2x/Woche</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Local Rank Ø</span>
+                            <span class="metric-value">#4.2</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">AI-Powered</span>
+                            <span class="metric-value" style="color: var(--accent-secondary);">✓ Ready</span>
+                        </div>
+                    </div>
+
+                    <div class="competitor-card">
+                        <div class="competitor-name">Makler A (Lohr)</div>
+                        <div class="metric">
+                            <span class="metric-label">GBP Score</span>
+                            <span class="metric-value">72/100</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Bewertungen</span>
+                            <span class="metric-value">31 (4.3★)</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Posting-Frequenz</span>
+                            <span class="metric-value">1x/Monat</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Local Rank Ø</span>
+                            <span class="metric-value">#5.8</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">AI-Powered</span>
+                            <span class="metric-value" style="color: var(--text-secondary);">—</span>
+                        </div>
+                    </div>
+
+                    <div class="competitor-card">
+                        <div class="competitor-name">Makler B (Karlstadt)</div>
+                        <div class="metric">
+                            <span class="metric-label">GBP Score</span>
+                            <span class="metric-value">68/100</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Bewertungen</span>
+                            <span class="metric-value">19 (4.8★)</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Posting-Frequenz</span>
+                            <span class="metric-value">selten</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Local Rank Ø</span>
+                            <span class="metric-value">#7.1</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">AI-Powered</span>
+                            <span class="metric-value" style="color: var(--text-secondary);">—</span>
+                        </div>
+                    </div>
+
+                    <div class="competitor-card">
+                        <div class="competitor-name">Makler C (Marktheidenfeld)</div>
+                        <div class="metric">
+                            <span class="metric-label">GBP Score</span>
+                            <span class="metric-value">81/100</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Bewertungen</span>
+                            <span class="metric-value">62 (4.4★)</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Posting-Frequenz</span>
+                            <span class="metric-value">1x/Woche</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Local Rank Ø</span>
+                            <span class="metric-value">#3.9</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">AI-Powered</span>
+                            <span class="metric-value" style="color: var(--text-secondary);">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title" style="margin-bottom: 20px;">🎯 Ihr Wettbewerbsvorteil mit AI</h3>
+                <div class="chart-container">
+                    <canvas id="competitorChart" width="800" height="300"></canvas>
+                </div>
+                <ul class="checklist" style="margin-top: 20px;">
+                    <li class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span><strong>Content-Frequenz:</strong> Während Wettbewerber manuell 1-2x/Monat posten, generieren Sie mit AI 2x/Woche frischen, relevanten Content</span>
+                    </li>
+                    <li class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span><strong>Review-Management:</strong> AI antwortet in Ø 2.4h statt 3-5 Tage – zeigt Professionalität</span>
+                    </li>
+                    <li class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span><strong>Regionale Dominanz:</strong> 4 optimierte Location-Pages = bessere Rankings in allen Kernregionen</span>
+                    </li>
+                    <li class="checklist-item">
+                        <span class="check-icon">✓</span>
+                        <span><strong>Skalierbar:</strong> AI-Workflows skalieren ohne Mehraufwand – Sie bleiben flexibel</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <h3 style="margin-bottom: 15px; font-size: 1.5rem;">Bereit, Ihre Sichtbarkeit zu maximieren?</h3>
+            <p style="margin-bottom: 20px;">Diese Demo zeigt nur einen Bruchteil der Möglichkeiten. Lassen Sie uns gemeinsam Ihre individuelle AI-Strategie entwickeln.</p>
+            <a href="mailto:info@klemmer-immobilien.de" class="cta-button">📧 Kostenloses Strategiegespräch vereinbaren</a>
+            <p style="margin-top: 30px; font-size: 0.85rem;">
+                Demo erstellt für <strong>Klemmer Immobilien GmbH</strong> | Marco Tengler<br>
+                Alle Daten sind beispielhaft und basieren auf Marktanalysen für Main-Spessart.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab Switching
+        function switchTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(t => t.classList.remove('active'));
+            contents.forEach(c => c.classList.remove('active'));
+            
+            tabs[index].classList.add('active');
+            contents[index].classList.add('active');
+        }
+
+        // Draw Circle Chart
+        function drawCircle(canvasId, score, color) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const radius = 60;
+            const lineWidth = 12;
+            
+            // Background circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.lineWidth = lineWidth;
+            ctx.stroke();
+            
+            // Progress circle
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, -0.5 * Math.PI, (-0.5 + 2 * score / 100) * Math.PI);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = lineWidth;
+            ctx.lineCap = 'round';
+            ctx.stroke();
+            
+            // Score text
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = 'bold 32px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(score, centerX, centerY);
+        }
+
+        // Draw Bar Chart
+        function drawBarChart(canvasId, labels, data, colors) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 40;
+            const barWidth = (width - padding * 2) / data.length - 20;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw bars
+            data.forEach((value, index) => {
+                const barHeight = (value / 10) * (height - padding * 2);
+                const x = padding + index * (barWidth + 20);
+                const y = height - padding - barHeight;
+                
+                // Bar
+                ctx.fillStyle = colors[index];
+                ctx.fillRect(x, y, barWidth, barHeight);
+                
+                // Label
+                ctx.fillStyle = '#94a3b8';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(labels[index], x + barWidth / 2, height - 15);
+                
+                // Value
+                ctx.fillStyle = '#f8fafc';
+                ctx.font = 'bold 14px sans-serif';
+                ctx.fillText('#' + value, x + barWidth / 2, y - 10);
+            });
+        }
+
+        // Draw Line Chart
+        function drawLineChart(canvasId, labels, datasets) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const padding = 50;
+            const graphWidth = width - padding * 2;
+            const graphHeight = height - padding * 2;
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.lineWidth = 1;
+            for (let i = 0; i <= 5; i++) {
+                const y = padding + (graphHeight / 5) * i;
+                ctx.beginPath();
+                ctx.moveTo(padding, y);
+                ctx.lineTo(width - padding, y);
+                ctx.stroke();
+            }
+            
+            // Draw datasets
+            datasets.forEach((dataset, datasetIndex) => {
+                ctx.strokeStyle = dataset.color;
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                
+                ctx.beginPath();
+                dataset.data.forEach((value, index) => {
+                    const x = padding + (graphWidth / (dataset.data.length - 1)) * index;
+                    const y = height - padding - (value / 100) * graphHeight;
+                    
+                    if (index === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                });
+                ctx.stroke();
+                
+                // Draw points
+                dataset.data.forEach((value, index) => {
+                    const x = padding + (graphWidth / (dataset.data.length - 1)) * index;
+                    const y = height - padding - (value / 100) * graphHeight;
+                    
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = dataset.color;
+                    ctx.fill();
+                });
+            });
+            
+            // Draw labels
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '12px sans-serif';
+            ctx.textAlign = 'center';
+            labels.forEach((label, index) => {
+                const x = padding + (graphWidth / (labels.length - 1)) * index;
+                ctx.fillText(label, x, height - 20);
+            });
+            
+            // Legend
+            datasets.forEach((dataset, index) => {
+                const legendX = padding + index * 150;
+                const legendY = 20;
+                
+                ctx.fillStyle = dataset.color;
+                ctx.fillRect(legendX, legendY, 20, 3);
+                
+                ctx.fillStyle = '#f8fafc';
+                ctx.font = '13px sans-serif';
+                ctx.textAlign = 'left';
+                ctx.fillText(dataset.label, legendX + 30, legendY + 4);
+            });
+        }
+
+        // Initialize charts on load
+        window.addEventListener('load', function() {
+            // GBP Score circles
+            drawCircle('currentScore', 67, '#f59e0b');
+            drawCircle('potentialScore', 94, '#10b981');
+            
+            // Ranking chart
+            drawBarChart('rankingChart', 
+                ['Lohr', 'M-Spessart', 'Karlstadt', 'Marktheidenfeld', 'Gemünden'],
+                [2, 4, 7, 3, 5],
+                ['#3b82f6', '#3b82f6', '#f59e0b', '#10b981', '#3b82f6']
+            );
+            
+            // Competitor chart
+            drawLineChart('competitorChart',
+                ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun'],
+                [
+                    {
+                        label: 'Klemmer (mit AI)',
+                        data: [67, 73, 78, 84, 89, 94],
+                        color: '#10b981'
+                    },
+                    {
+                        label: 'Wettbewerber Ø',
+                        data: [68, 69, 70, 71, 72, 73],
+                        color: '#64748b'
+                    }
+                ]
+            );
+        });
+    </script>
+</body>
+</html>
