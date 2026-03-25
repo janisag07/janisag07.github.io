@@ -1,0 +1,946 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Comment Monitor + AI Response System | Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f0f1e;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #252538;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b8;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --spam: #ef4444;
+            --question: #3b82f6;
+            --feedback: #10b981;
+            --complaint: #f59e0b;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            font-size: 0.9rem;
+        }
+
+        .header-link:hover {
+            color: var(--accent-primary);
+            border-color: var(--accent-primary);
+            transform: translateY(-2px);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            overflow-x: auto;
+            padding-bottom: 0;
+        }
+
+        .tab {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .tab:hover {
+            color: var(--accent-primary);
+        }
+
+        .tab.active {
+            color: var(--accent-primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-primary);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.2);
+        }
+
+        .kpi-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .kpi-change {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .kpi-change.positive { color: var(--success); }
+        .kpi-change.negative { color: var(--danger); }
+
+        /* Comment Stream */
+        .comment-stream {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .comment-stream::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .comment-stream::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+        }
+
+        .comment-stream::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 4px;
+        }
+
+        .comment-item {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent-primary);
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .comment-item.spam { border-left-color: var(--spam); }
+        .comment-item.question { border-left-color: var(--question); }
+        .comment-item.feedback { border-left-color: var(--feedback); }
+        .comment-item.complaint { border-left-color: var(--complaint); }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .comment-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .comment-tag.spam { background: var(--spam); color: white; }
+        .comment-tag.question { background: var(--question); color: white; }
+        .comment-tag.feedback { background: var(--feedback); color: white; }
+        .comment-tag.complaint { background: var(--complaint); color: white; }
+
+        .comment-text {
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .comment-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .ai-response {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-top: 0.75rem;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .ai-response-label {
+            color: var(--accent-primary);
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .ai-response-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Workflow Visualization */
+        .workflow {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .workflow-steps {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 800px;
+            gap: 1rem;
+        }
+
+        .workflow-step {
+            flex: 1;
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .workflow-step:hover {
+            transform: scale(1.05);
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .workflow-step-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .workflow-step-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .workflow-step-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .workflow-arrow {
+            color: var(--accent-primary);
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        /* Analytics */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Slack Integration */
+        .slack-panel {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .slack-notification {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--warning);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .slack-channel {
+            color: var(--accent-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .slack-message {
+            color: var(--text-secondary);
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: var(--bg-tertiary);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .toggle.active {
+            background: var(--accent-primary);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+
+        .toggle.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(99, 102, 241, 0.2);
+            margin-top: 3rem;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .workflow-steps {
+                flex-direction: column;
+                min-width: auto;
+            }
+
+            .workflow-arrow {
+                transform: rotate(90deg);
+            }
+
+            .header h1 {
+                font-size: 1.2rem;
+            }
+
+            .tabs {
+                gap: 0.5rem;
+            }
+
+            .tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1>🎥 YouTube Comment Monitor + AI Response System</h1>
+            <a href="https://upwork.com/freelancers/~01a798cae09a131e14" target="_blank" class="header-link">
+                Built by Janis Agic →
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" data-tab="dashboard">Dashboard</button>
+            <button class="tab" data-tab="comments">Live Comments</button>
+            <button class="tab" data-tab="workflow">Workflow</button>
+            <button class="tab" data-tab="analytics">Analytics</button>
+            <button class="tab" data-tab="integrations">Integrations</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div class="tab-content active" data-content="dashboard">
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Comments Today</div>
+                    <div class="kpi-value" id="kpi-comments">247</div>
+                    <div class="kpi-change positive">↑ 12% from yesterday</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Auto-Responded</div>
+                    <div class="kpi-value" id="kpi-responded">189</div>
+                    <div class="kpi-change positive">↑ 76% response rate</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Flagged for Review</div>
+                    <div class="kpi-value" id="kpi-flagged">23</div>
+                    <div class="kpi-change negative">↓ 5% from yesterday</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Avg Sentiment</div>
+                    <div class="kpi-value" id="kpi-sentiment">4.2/5</div>
+                    <div class="kpi-change positive">↑ 0.3 points</div>
+                </div>
+            </div>
+
+            <h2 style="margin-bottom: 1rem;">Recent Activity</h2>
+            <div class="comment-stream" id="dashboard-stream">
+                <!-- Comments will be injected here -->
+            </div>
+        </div>
+
+        <!-- Live Comments Tab -->
+        <div class="tab-content" data-content="comments">
+            <div class="toggle-container">
+                <span>Auto-refresh</span>
+                <div class="toggle active" id="autoRefreshToggle">
+                    <div class="toggle-slider"></div>
+                </div>
+            </div>
+            <div class="comment-stream" id="comments-stream">
+                <!-- Comments will be injected here -->
+            </div>
+        </div>
+
+        <!-- Workflow Tab -->
+        <div class="tab-content" data-content="workflow">
+            <div class="workflow">
+                <h2 style="margin-bottom: 2rem;">n8n Automation Workflow</h2>
+                <div class="workflow-steps">
+                    <div class="workflow-step">
+                        <div class="workflow-step-icon">💬</div>
+                        <div class="workflow-step-title">Receive Comment</div>
+                        <div class="workflow-step-desc">YouTube webhook triggers on new comment</div>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-icon">🤖</div>
+                        <div class="workflow-step-title">AI Classification</div>
+                        <div class="workflow-step-desc">Categorize: spam, question, feedback, complaint</div>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-icon">🔀</div>
+                        <div class="workflow-step-title">Route Decision</div>
+                        <div class="workflow-step-desc">Auto-respond or flag for review</div>
+                    </div>
+                    <div class="workflow-arrow">→</div>
+                    <div class="workflow-step">
+                        <div class="workflow-step-icon">✉️</div>
+                        <div class="workflow-step-title">Action</div>
+                        <div class="workflow-step-desc">Post reply or send Slack notification</div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-top: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Classification Rules</h3>
+                <div style="display: grid; gap: 1rem;">
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--spam);">
+                        <strong style="color: var(--spam);">SPAM</strong> - Auto-deleted or flagged. Contains promotional links, repetitive text, or suspicious patterns.
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--question);">
+                        <strong style="color: var(--question);">QUESTION</strong> - Auto-responded with helpful answer based on FAQ database and context.
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--feedback);">
+                        <strong style="color: var(--feedback);">FEEDBACK</strong> - Thanked automatically, logged for product team review.
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--complaint);">
+                        <strong style="color: var(--complaint);">COMPLAINT</strong> - Flagged for manual review, Slack notification sent to support team.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Tab -->
+        <div class="tab-content" data-content="analytics">
+            <div class="analytics-grid">
+                <div class="chart-container">
+                    <h3 class="chart-title">Comments per Day (Last 7 Days)</h3>
+                    <canvas id="commentsChart" width="400" height="250"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3 class="chart-title">Sentiment Distribution</h3>
+                    <canvas id="sentimentChart" width="400" height="250"></canvas>
+                </div>
+            </div>
+            <div class="chart-container" style="margin-bottom: 2rem;">
+                <h3 class="chart-title">Response Time Performance</h3>
+                <div style="display: grid; gap: 1rem; margin-top: 1rem;">
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Questions</span>
+                            <span style="color: var(--question);">Avg: 2.3 min</span>
+                        </div>
+                        <div style="background: var(--bg-primary); border-radius: 4px; overflow: hidden;">
+                            <div style="background: var(--question); height: 8px; width: 85%;"></div>
+                        </div>
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Feedback</span>
+                            <span style="color: var(--feedback);">Avg: 1.8 min</span>
+                        </div>
+                        <div style="background: var(--bg-primary); border-radius: 4px; overflow: hidden;">
+                            <div style="background: var(--feedback); height: 8px; width: 95%;"></div>
+                        </div>
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>Complaints</span>
+                            <span style="color: var(--complaint);">Avg: 15.2 min (manual)</span>
+                        </div>
+                        <div style="background: var(--bg-primary); border-radius: 4px; overflow: hidden;">
+                            <div style="background: var(--complaint); height: 8px; width: 45%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integrations Tab -->
+        <div class="tab-content" data-content="integrations">
+            <div class="slack-panel">
+                <h2 style="margin-bottom: 1rem;">Slack Integration</h2>
+                <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                    Critical comments and complaints are automatically routed to your Slack workspace for immediate team attention.
+                </p>
+                
+                <div class="slack-notification">
+                    <div class="slack-channel">#youtube-support</div>
+                    <div class="slack-message">
+                        <strong>⚠️ New Complaint</strong><br>
+                        User: @TechReviewer42<br>
+                        "The product stopped working after the latest update. Very disappointed!"<br>
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;">2 minutes ago</span>
+                    </div>
+                </div>
+
+                <div class="slack-notification" style="border-left-color: var(--danger);">
+                    <div class="slack-channel">#spam-alerts</div>
+                    <div class="slack-message">
+                        <strong>🚨 Spam Detected</strong><br>
+                        User: @PromoBot123<br>
+                        "Check out this amazing offer! [suspicious link]"<br>
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;">5 minutes ago • Auto-deleted</span>
+                    </div>
+                </div>
+
+                <div class="slack-notification" style="border-left-color: var(--success);">
+                    <div class="slack-channel">#youtube-feedback</div>
+                    <div class="slack-message">
+                        <strong>✨ Positive Feedback</strong><br>
+                        User: @HappyCustomer<br>
+                        "This tutorial saved me hours! Thank you so much!"<br>
+                        <span style="color: var(--text-secondary); font-size: 0.85rem;">8 minutes ago • Auto-responded</span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem;">
+                <h3 style="margin-bottom: 1rem;">Connected Services</h3>
+                <div style="display: grid; gap: 1rem;">
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600;">YouTube API</div>
+                            <div style="color: var(--text-secondary); font-size: 0.85rem;">Real-time comment webhooks</div>
+                        </div>
+                        <div style="color: var(--success); font-weight: 600;">● Connected</div>
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600;">OpenAI GPT-4</div>
+                            <div style="color: var(--text-secondary); font-size: 0.85rem;">AI classification & response generation</div>
+                        </div>
+                        <div style="color: var(--success); font-weight: 600;">● Connected</div>
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600;">Slack Workspace</div>
+                            <div style="color: var(--text-secondary); font-size: 0.85rem;">Notifications & team collaboration</div>
+                        </div>
+                        <div style="color: var(--success); font-weight: 600;">● Connected</div>
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600;">n8n Cloud</div>
+                            <div style="color: var(--text-secondary); font-size: 0.85rem;">Workflow automation engine</div>
+                        </div>
+                        <div style="color: var(--success); font-weight: 600;">● Connected</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p class="footer-text">Custom demo — Ready to build this for you</p>
+    </div>
+
+    <script>
+        // Sample comment data
+        const sampleComments = [
+            { author: "TechEnthusiast99", text: "Great tutorial! Can you make a video about advanced features?", type: "question", time: "2 min ago" },
+            { author: "HappyViewer", text: "This is exactly what I needed. Thanks for the clear explanation!", type: "feedback", time: "5 min ago" },
+            { author: "SpamBot2024", text: "🎁 WIN FREE iPHONE! Click here: [suspicious-link.com]", type: "spam", time: "7 min ago" },
+            { author: "FrustratedUser", text: "Your previous video had wrong information. Please fix this!", type: "complaint", time: "12 min ago" },
+            { author: "NewSubscriber", text: "Just found your channel, where should I start?", type: "question", time: "15 min ago" },
+            { author: "RegularWatcher", text: "Another amazing video! Keep up the great work!", type: "feedback", time: "18 min ago" },
+            { author: "CuriousLearner", text: "How does this compare to the previous version?", type: "question", time: "22 min ago" },
+            { author: "ProductFan", text: "I've been using this for months now, absolutely love it!", type: "feedback", time: "25 min ago" },
+            { author: "SkepticalViewer", text: "This doesn't work as advertised. Waste of time.", type: "complaint", time: "30 min ago" },
+            { author: "PromoAccount", text: "Check out my channel for similar content! Subscribe now!", type: "spam", time: "32 min ago" }
+        ];
+
+        const aiResponses = {
+            question: "Thanks for your question! I'll be covering that topic in an upcoming video. Stay tuned!",
+            feedback: "Thank you so much for your kind words! I'm glad you found this helpful. 🙏",
+            spam: "[Auto-deleted]",
+            complaint: "I appreciate your feedback. Our team will review this and get back to you shortly."
+        };
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabName = tab.dataset.tab;
+                
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.querySelector(`[data-content="${tabName}"]`).classList.add('active');
+            });
+        });
+
+        // Toggle functionality
+        document.getElementById('autoRefreshToggle').addEventListener('click', function() {
+            this.classList.toggle('active');
+        });
+
+        // Render comments
+        function renderComment(comment) {
+            return `
+                <div class="comment-item ${comment.type}">
+                    <div class="comment-header">
+                        <span class="comment-author">${comment.author}</span>
+                        <span class="comment-tag ${comment.type}">${comment.type}</span>
+                    </div>
+                    <div class="comment-text">${comment.text}</div>
+                    <div class="comment-footer">
+                        <span>${comment.time}</span>
+                    </div>
+                    ${comment.type !== 'spam' ? `
+                        <div class="ai-response">
+                            <div class="ai-response-label">🤖 AI-GENERATED RESPONSE</div>
+                            <div class="ai-response-text">${aiResponses[comment.type]}</div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Initialize comment streams
+        function initializeComments() {
+            const dashboardStream = document.getElementById('dashboard-stream');
+            const commentsStream = document.getElementById('comments-stream');
+            
+            const html = sampleComments.map(renderComment).join('');
+            dashboardStream.innerHTML = html;
+            commentsStream.innerHTML = html;
+        }
+
+        // Simulate live comments
+        function simulateLiveComment() {
+            const randomComment = sampleComments[Math.floor(Math.random() * sampleComments.length)];
+            const newComment = {
+                ...randomComment,
+                time: "Just now"
+            };
+            
+            const streams = [document.getElementById('dashboard-stream'), document.getElementById('comments-stream')];
+            streams.forEach(stream => {
+                stream.insertAdjacentHTML('afterbegin', renderComment(newComment));
+            });
+
+            // Update KPIs
+            const kpiComments = document.getElementById('kpi-comments');
+            kpiComments.textContent = parseInt(kpiComments.textContent) + 1;
+            
+            if (newComment.type !== 'spam' && newComment.type !== 'complaint') {
+                const kpiResponded = document.getElementById('kpi-responded');
+                kpiResponded.textContent = parseInt(kpiResponded.textContent) + 1;
+            } else if (newComment.type === 'complaint') {
+                const kpiFlagged = document.getElementById('kpi-flagged');
+                kpiFlagged.textContent = parseInt(kpiFlagged.textContent) + 1;
+            }
+        }
+
+        // Charts
+        function drawBarChart() {
+            const canvas = document.getElementById('commentsChart');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            const data = [180, 235, 198, 267, 221, 243, 247];
+            const labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            const max = Math.max(...data);
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw bars
+            const barWidth = (width - 80) / data.length;
+            const barSpacing = 10;
+
+            data.forEach((value, index) => {
+                const barHeight = (value / max) * (height - 60);
+                const x = 40 + index * barWidth + barSpacing / 2;
+                const y = height - 40 - barHeight;
+
+                // Gradient
+                const gradient = ctx.createLinearGradient(0, y, 0, height - 40);
+                gradient.addColorStop(0, '#6366f1');
+                gradient.addColorStop(1, '#8b5cf6');
+
+                ctx.fillStyle = gradient;
+                ctx.fillRect(x, y, barWidth - barSpacing, barHeight);
+
+                // Labels
+                ctx.fillStyle = '#a0a0b8';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(labels[index], x + (barWidth - barSpacing) / 2, height - 20);
+
+                // Values
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText(value, x + (barWidth - barSpacing) / 2, y - 10);
+            });
+        }
+
+        function drawPieChart() {
+            const canvas = document.getElementById('sentimentChart');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const radius = Math.min(width, height) / 2 - 40;
+
+            const data = [
+                { label: 'Positive', value: 156, color: '#10b981' },
+                { label: 'Neutral', value: 68, color: '#6366f1' },
+                { label: 'Negative', value: 23, color: '#ef4444' }
+            ];
+
+            const total = data.reduce((sum, item) => sum + item.value, 0);
+            let currentAngle = -Math.PI / 2;
+
+            ctx.clearRect(0, 0, width, height);
+
+            data.forEach((item, index) => {
+                const sliceAngle = (item.value / total) * 2 * Math.PI;
+
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
+                ctx.lineTo(centerX, centerY);
+                ctx.fillStyle = item.color;
+                ctx.fill();
+
+                // Label
+                const labelAngle = currentAngle + sliceAngle / 2;
+                const labelX = centerX + Math.cos(labelAngle) * (radius + 30);
+                const labelY = centerY + Math.sin(labelAngle) * (radius + 30);
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '12px sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${item.label}`, labelX, labelY);
+                ctx.fillText(`${item.value} (${Math.round(item.value / total * 100)}%)`, labelX, labelY + 15);
+
+                currentAngle += sliceAngle;
+            });
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeComments();
+            drawBarChart();
+            drawPieChart();
+
+            // Simulate new comment every 8 seconds
+            setInterval(() => {
+                if (document.getElementById('autoRefreshToggle').classList.contains('active')) {
+                    simulateLiveComment();
+                }
+            }, 8000);
+        });
+
+        // Redraw charts on window resize
+        window.addEventListener('resize', () => {
+            drawBarChart();
+            drawPieChart();
+        });
+    </script>
+</body>
+</html>

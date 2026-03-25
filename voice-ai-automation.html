@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice AI Automation Engineer - Demo Portfolio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 2rem 0;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-title h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-title p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .header-cta {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: white;
+            color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.2);
+            border-color: var(--primary);
+        }
+
+        .kpi-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .kpi-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .kpi-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .kpi-trend {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+
+        .trend-up {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .trend-down {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin: 2rem 0 1rem;
+            border-bottom: 2px solid var(--border);
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 1rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Workflow Builder */
+        .workflow-builder {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .workflow-canvas {
+            position: relative;
+            height: 450px;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 19px,
+                rgba(99, 102, 241, 0.05) 20px
+            ),
+            repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 19px,
+                rgba(99, 102, 241, 0.05) 20px
+            );
+        }
+
+        .workflow-node {
+            position: absolute;
+            width: 180px;
+            background: var(--bg-dark);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: move;
+            transition: all 0.3s ease;
+        }
+
+        .workflow-node:hover {
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            transform: scale(1.05);
+        }
+
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .node-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .node-content {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .connection-line {
+            position: absolute;
+            stroke: var(--primary);
+            stroke-width: 2;
+            fill: none;
+            pointer-events: none;
+            filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.5));
+        }
+
+        /* Call Analytics */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .analytics-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        .analytics-card h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .chart-placeholder {
+            height: 200px;
+            background: var(--bg-dark);
+            border-radius: 8px;
+            display: flex;
+            align-items: flex-end;
+            padding: 1rem;
+            gap: 0.5rem;
+            justify-content: space-around;
+        }
+
+        .chart-bar {
+            background: linear-gradient(to top, var(--primary), var(--secondary));
+            border-radius: 4px 4px 0 0;
+            width: 30px;
+            transition: all 0.3s ease;
+            animation: barGrow 1s ease-out;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.05);
+        }
+
+        @keyframes barGrow {
+            from { transform: scaleY(0); }
+            to { transform: scaleY(1); }
+        }
+
+        /* Voice Agent Config */
+        .config-panel {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .config-section {
+            margin-bottom: 2rem;
+        }
+
+        .config-section h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+
+        .toggle-switch {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .toggle-slider {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: var(--bg-dark);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            top: 3px;
+            left: 3px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="checkbox"]:checked + .toggle-slider {
+            background: var(--primary);
+        }
+
+        input[type="checkbox"]:checked + .toggle-slider::before {
+            transform: translateX(24px);
+            background: white;
+        }
+
+        input[type="checkbox"] {
+            display: none;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        /* Live Call Simulation */
+        .call-viewer {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .call-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .call-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .transcript-area {
+            height: 400px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: var(--bg-dark);
+            border-radius: 8px;
+        }
+
+        .message {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .message-bubble {
+            background: var(--bg-card);
+            padding: 1rem;
+            border-radius: 12px;
+            max-width: 70%;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            font-size: 0.9rem;
+        }
+
+        .message-text {
+            color: var(--text-secondary);
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        .message.ai .message-avatar {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .message.customer .message-avatar {
+            background: linear-gradient(135deg, var(--accent), var(--success));
+        }
+
+        /* Integration Badges */
+        .integrations {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .integration-badge {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .integration-badge:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.2);
+        }
+
+        .integration-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            padding: 2rem 0;
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        footer p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-title h1 {
+                font-size: 1.5rem;
+            }
+
+            .kpi-value {
+                font-size: 2rem;
+            }
+
+            .tabs {
+                gap: 0.5rem;
+            }
+
+            .tab {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+
+            .workflow-node {
+                width: 150px;
+                font-size: 0.85rem;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="header-title">
+                    <h1>🚀 Voice AI Automation Platform</h1>
+                    <p>Built by Janis Agic - AI Automation Engineer</p>
+                </div>
+                <div class="header-cta">
+                    <a href="https://upwork.com/freelancers/~01a798cae09a131e14" target="_blank" class="btn btn-primary">
+                        View Profile on Upwork
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- KPI Dashboard -->
+    <div class="container">
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon" style="background: rgba(99, 102, 241, 0.2);">📞</div>
+                </div>
+                <div class="kpi-value" id="calls-today">1,247</div>
+                <div class="kpi-label">Calls Handled Today</div>
+                <span class="kpi-trend trend-up">↑ 18% vs yesterday</span>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon" style="background: rgba(139, 92, 246, 0.2);">⏱️</div>
+                </div>
+                <div class="kpi-value">3m 42s</div>
+                <div class="kpi-label">Avg Handle Time</div>
+                <span class="kpi-trend trend-down">↓ 12% improvement</span>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon" style="background: rgba(16, 185, 129, 0.2);">⭐</div>
+                </div>
+                <div class="kpi-value">4.8/5</div>
+                <div class="kpi-label">Customer Satisfaction</div>
+                <span class="kpi-trend trend-up">↑ 0.3 points</span>
+            </div>
+
+            <div class="kpi-card">
+                <div class="kpi-header">
+                    <div class="kpi-icon" style="background: rgba(6, 182, 212, 0.2);">📊</div>
+                </div>
+                <div class="kpi-value">2.4%</div>
+                <div class="kpi-label">Escalation Rate</div>
+                <span class="kpi-trend trend-down">↓ 1.2% improvement</span>
+            </div>
+        </div>
+
+        <!-- Integration Badges -->
+        <div class="integrations">
+            <div class="integration-badge">
+                <div class="integration-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">V</div>
+                <span><strong>Vapi</strong> Voice AI</span>
+            </div>
+            <div class="integration-badge">
+                <div class="integration-icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">n8n</div>
+                <span><strong>n8n</strong> Automation</span>
+            </div>
+            <div class="integration-badge">
+                <div class="integration-icon" style="background: linear-gradient(135deg, #06b6d4, #10b981);">T</div>
+                <span><strong>Twilio</strong> Communications</span>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab(0)">📊 Workflow Builder</button>
+            <button class="tab" onclick="switchTab(1)">📈 Call Analytics</button>
+            <button class="tab" onclick="switchTab(2)">⚙️ Agent Configuration</button>
+            <button class="tab" onclick="switchTab(3)">💬 Live Call Viewer</button>
+        </div>
+
+        <!-- Workflow Builder Tab -->
+        <div class="tab-content active" id="tab-0">
+            <div class="workflow-builder">
+                <h2 style="margin-bottom: 1.5rem;">Voice AI Workflow Builder</h2>
+                <div class="workflow-canvas" id="workflow-canvas">
+                    <svg style="position: absolute; width: 100%; height: 100%; pointer-events: none;">
+                        <path class="connection-line" d="M 190 80 Q 250 80 250 150 T 310 150"></path>
+                        <path class="connection-line" d="M 490 150 Q 550 150 550 250 T 610 250"></path>
+                        <path class="connection-line" d="M 790 250 Q 850 250 850 150 T 910 150"></path>
+                    </svg>
+
+                    <div class="workflow-node" style="left: 10px; top: 50px;">
+                        <div class="node-header">
+                            <div class="node-icon" style="background: rgba(99, 102, 241, 0.2);">📞</div>
+                            <span>Incoming Call</span>
+                        </div>
+                        <div class="node-content">Trigger: Phone rings</div>
+                    </div>
+
+                    <div class="workflow-node" style="left: 310px; top: 120px;">
+                        <div class="node-header">
+                            <div class="node-icon" style="background: rgba(139, 92, 246, 0.2);">🤖</div>
+                            <span>AI Greeting</span>
+                        </div>
+                        <div class="node-content">Vapi voice assistant</div>
+                    </div>
+
+                    <div class="workflow-node" style="left: 610px; top: 220px;">
+                        <div class="node-header">
+                            <div class="node-icon" style="background: rgba(6, 182, 212, 0.2);">🔍</div>
+                            <span>Intent Detection</span>
+                        </div>
+                        <div class="node-content">Classify customer need</div>
+                    </div>
+
+                    <div class="workflow-node" style="left: 910px; top: 120px;">
+                        <div class="node-header">
+                            <div class="node-icon" style="background: rgba(16, 185, 129, 0.2);">✅</div>
+                            <span>Resolution</span>
+                        </div>
+                        <div class="node-content">Handle or escalate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call Analytics Tab -->
+        <div class="tab-content" id="tab-1">
+            <div class="analytics-grid">
+                <div class="analytics-card">
+                    <h3>Daily Call Volume</h3>
+                    <div class="chart-placeholder">
+                        <div class="chart-bar" style="height: 60%;"></div>
+                        <div class="chart-bar" style="height: 75%;"></div>
+                        <div class="chart-bar" style="height: 85%;"></div>
+                        <div class="chart-bar" style="height: 70%;"></div>
+                        <div class="chart-bar" style="height: 95%;"></div>
+                        <div class="chart-bar" style="height: 100%;"></div>
+                        <div class="chart-bar" style="height: 90%;"></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3>Resolution Rate</h3>
+                    <div class="chart-placeholder">
+                        <div class="chart-bar" style="height: 88%;"></div>
+                        <div class="chart-bar" style="height: 92%;"></div>
+                        <div class="chart-bar" style="height: 85%;"></div>
+                        <div class="chart-bar" style="height: 94%;"></div>
+                        <div class="chart-bar" style="height: 96%;"></div>
+                        <div class="chart-bar" style="height: 97%;"></div>
+                        <div class="chart-bar" style="height: 98%;"></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3>Peak Hours</h3>
+                    <div class="chart-placeholder">
+                        <div class="chart-bar" style="height: 40%;"></div>
+                        <div class="chart-bar" style="height: 55%;"></div>
+                        <div class="chart-bar" style="height: 70%;"></div>
+                        <div class="chart-bar" style="height: 95%;"></div>
+                        <div class="chart-bar" style="height: 100%;"></div>
+                        <div class="chart-bar" style="height: 85%;"></div>
+                        <div class="chart-bar" style="height: 45%;"></div>
+                    </div>
+                </div>
+
+                <div class="analytics-card">
+                    <h3>Customer Sentiment</h3>
+                    <div class="chart-placeholder">
+                        <div class="chart-bar" style="height: 90%;"></div>
+                        <div class="chart-bar" style="height: 92%;"></div>
+                        <div class="chart-bar" style="height: 88%;"></div>
+                        <div class="chart-bar" style="height: 95%;"></div>
+                        <div class="chart-bar" style="height: 93%;"></div>
+                        <div class="chart-bar" style="height: 96%;"></div>
+                        <div class="chart-bar" style="height: 94%;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Agent Configuration Tab -->
+        <div class="tab-content" id="tab-2">
+            <div class="config-panel">
+                <h2 style="margin-bottom: 2rem;">Voice Agent Configuration</h2>
+
+                <div class="config-section">
+                    <h3>Personality Settings</h3>
+                    <div class="form-group">
+                        <label class="form-label">Agent Name</label>
+                        <input type="text" class="form-input" value="Sarah - Customer Support AI" placeholder="Enter agent name">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Voice Tone</label>
+                        <select class="form-input">
+                            <option>Professional & Friendly</option>
+                            <option>Casual & Warm</option>
+                            <option>Formal & Precise</option>
+                            <option>Empathetic & Supportive</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <div class="toggle-slider"></div>
+                            <span>Enable Emotional Intelligence</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked>
+                            <div class="toggle-slider"></div>
+                            <span>Allow Casual Conversation</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3>Knowledge Base</h3>
+                    <div class="upload-area">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">📄</div>
+                        <p style="color: var(--text-primary); font-weight: 600; margin-bottom: 0.5rem;">Upload Training Documents</p>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">Drag & drop PDFs, CSVs, or text files</p>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3>Escalation Rules</h3>
+                    <div class="form-group">
+                        <label class="form-label">Escalate When...</label>
+                        <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <div class="toggle-slider"></div>
+                                <span>Customer requests human agent</span>
+                            </label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <div class="toggle-slider"></div>
+                                <span>Sentiment score drops below 2/5</span>
+                            </label>
+                            <label class="toggle-switch">
+                                <input type="checkbox">
+                                <div class="toggle-slider"></div>
+                                <span>Call duration exceeds 10 minutes</span>
+                            </label>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <div class="toggle-slider"></div>
+                                <span>AI confidence level below 70%</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Save Configuration</button>
+            </div>
+        </div>
+
+        <!-- Live Call Viewer Tab -->
+        <div class="tab-content" id="tab-3">
+            <div class="call-viewer">
+                <div class="call-header">
+                    <div>
+                        <h3>Live Call #CR-2847</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;">Started 2m 14s ago</p>
+                    </div>
+                    <div class="call-status">
+                        <div class="status-dot"></div>
+                        <span style="color: var(--success); font-weight: 600;">Active</span>
+                    </div>
+                </div>
+
+                <div class="transcript-area" id="transcript">
+                    <div class="message ai">
+                        <div class="message-avatar">AI</div>
+                        <div>
+                            <div class="message-bubble">
+                                <div class="message-sender" style="color: var(--primary);">Sarah (AI Agent)</div>
+                                <div class="message-text">
+                                    Good afternoon! Thank you for calling. My name is Sarah. How can I help you today?
+                                </div>
+                                <div class="message-time">14:23:05</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message customer">
+                        <div class="message-avatar">JD</div>
+                        <div>
+                            <div class="message-bubble">
+                                <div class="message-sender" style="color: var(--accent);">Customer</div>
+                                <div class="message-text">
+                                    Hi, I'm having trouble with my recent order. It was supposed to arrive yesterday but I haven't received it yet.
+                                </div>
+                                <div class="message-time">14:23:12</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message ai">
+                        <div class="message-avatar">AI</div>
+                        <div>
+                            <div class="message-bubble">
+                                <div class="message-sender" style="color: var(--primary);">Sarah (AI Agent)</div>
+                                <div class="message-text">
+                                    I understand how frustrating that must be. I'd be happy to look into this for you right away. Can you please provide me with your order number?
+                                </div>
+                                <div class="message-time">14:23:18</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message customer">
+                        <div class="message-avatar">JD</div>
+                        <div>
+                            <div class="message-bubble">
+                                <div class="message-sender" style="color: var(--accent);">Customer</div>
+                                <div class="message-text">
+                                    Sure, it's ORD-48291-X
+                                </div>
+                                <div class="message-time">14:23:25</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message ai">
+                        <div class="message-avatar">AI</div>
+                        <div>
+                            <div class="message-bubble">
+                                <div class="message-sender" style="color: var(--primary);">Sarah (AI Agent)</div>
+                                <div class="message-text">
+                                    Thank you! I've pulled up your order. I see that it's currently with our delivery partner and shows an expected delivery for today by 6 PM. There was a slight delay due to weather conditions in your area. I can send you a tracking link via SMS if you'd like to monitor it in real-time. Would that be helpful?
+                                </div>
+                                <div class="message-time">14:23:32</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message customer">
+                        <div class="message-avatar">JD</div>
+                        <div>
+                            <div class="message-bubble">
+                                <div class="message-sender" style="color: var(--accent);">Customer</div>
+                                <div class="message-text">
+                                    That would be great, thank you! I appreciate the quick help.
+                                </div>
+                                <div class="message-time">14:23:40</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="message ai">
+                        <div class="message-avatar">AI</div>
+                        <div>
+                            <div class="message-bubble">
+                                <div class="message-sender" style="color: var(--primary);">Sarah (AI Agent)</div>
+                                <div class="message-text">
+                                    Perfect! I've just sent the tracking link to your phone. You'll receive it in the next minute. Is there anything else I can assist you with today?
+                                </div>
+                                <div class="message-time">14:23:48</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p style="font-size: 1.2rem; margin-bottom: 0.5rem; font-weight: 600;">Custom demo — Ready to build this for you</p>
+            <p style="font-size: 0.9rem;">Built by <a href="https://upwork.com/freelancers/~01a798cae09a131e14" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600;">Janis Agic</a> | AI Automation Engineer</p>
+        </div>
+    </footer>
+
+    <script>
+        // Tab Switching
+        function switchTab(index) {
+            const tabs = document.querySelectorAll('.tab');
+            const contents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach((tab, i) => {
+                if (i === index) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+
+            contents.forEach((content, i) => {
+                if (i === index) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        }
+
+        // Animated KPI Counter
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 60;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current).toLocaleString();
+                }
+            }, 16);
+        }
+
+        // Auto-scroll transcript
+        const transcript = document.getElementById('transcript');
+        if (transcript) {
+            transcript.scrollTop = transcript.scrollHeight;
+        }
+
+        // Simulate live call messages
+        let messageIndex = 0;
+        const newMessages = [
+            {
+                type: 'customer',
+                sender: 'Customer',
+                text: "No, that's all. Thanks for your help!",
+                time: '14:24:05'
+            },
+            {
+                type: 'ai',
+                sender: 'Sarah (AI Agent)',
+                text: "You're very welcome! Have a wonderful day, and your package should arrive soon. Feel free to reach out if you need anything else!",
+                time: '14:24:10'
+            }
+        ];
+
+        function addMessage(msg) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${msg.type}`;
+            messageDiv.innerHTML = `
+                <div class="message-avatar">${msg.type === 'ai' ? 'AI' : 'JD'}</div>
+                <div>
+                    <div class="message-bubble">
+                        <div class="message-sender" style="color: ${msg.type === 'ai' ? 'var(--primary)' : 'var(--accent)'};">${msg.sender}</div>
+                        <div class="message-text">${msg.text}</div>
+                        <div class="message-time">${msg.time}</div>
+                    </div>
+                </div>
+            `;
+            transcript.appendChild(messageDiv);
+            transcript.scrollTop = transcript.scrollHeight;
+        }
+
+        // Add messages periodically
+        setTimeout(() => {
+            if (messageIndex < newMessages.length) {
+                addMessage(newMessages[messageIndex]);
+                messageIndex++;
+            }
+        }, 5000);
+
+        setTimeout(() => {
+            if (messageIndex < newMessages.length) {
+                addMessage(newMessages[messageIndex]);
+                messageIndex++;
+            }
+        }, 10000);
+
+        // Make workflow nodes draggable
+        const nodes = document.querySelectorAll('.workflow-node');
+        nodes.forEach(node => {
+            let isDragging = false;
+            let currentX;
+            let currentY;
+            let initialX;
+            let initialY;
+
+            node.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                initialX = e.clientX - node.offsetLeft;
+                initialY = e.clientY - node.offsetTop;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    e.preventDefault();
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                    node.style.left = currentX + 'px';
+                    node.style.top = currentY + 'px';
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+        });
+
+        // Animate calls counter on load
+        window.addEventListener('load', () => {
+            const callsElement = document.getElementById('calls-today');
+            animateCounter(callsElement, 1247);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Betting Scraper & Discord Bot - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0f0f1e;
+            --bg-secondary: #1a1a2e;
+            --bg-tertiary: #25253f;
+            --accent-blue: #5865f2;
+            --accent-green: #43b581;
+            --accent-yellow: #faa61a;
+            --accent-red: #f04747;
+            --text-primary: #ffffff;
+            --text-secondary: #b9bbbe;
+            --text-muted: #72767d;
+            --border-color: #2e2e4e;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #16162a 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        header {
+            background: var(--bg-secondary);
+            padding: 1.5rem 2rem;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid var(--accent-blue);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .built-by {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .built-by a {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .built-by a:hover {
+            color: var(--accent-green);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 2rem 2rem;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .kpi-card:nth-child(1) { animation-delay: 0.1s; }
+        .kpi-card:nth-child(2) { animation-delay: 0.2s; }
+        .kpi-card:nth-child(3) { animation-delay: 0.3s; }
+        .kpi-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow);
+        }
+
+        .kpi-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-change {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .kpi-change.positive {
+            color: var(--accent-green);
+        }
+
+        .kpi-change.neutral {
+            color: var(--accent-yellow);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .tab:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            background: var(--accent-blue);
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+        }
+
+        /* Tab Content */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Section */
+        .section {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+        }
+
+        /* Odds Comparison Table */
+        .odds-table {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            color: var(--text-primary);
+        }
+
+        tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .best-odds {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        .bookmaker-logo {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        /* Arbitrage Opportunities */
+        .arbitrage-card {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid var(--accent-green);
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .arbitrage-card:hover {
+            transform: scale(1.02);
+        }
+
+        .arbitrage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .profit-badge {
+            background: var(--accent-green);
+            color: var(--text-primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .arbitrage-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .bet-side {
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 6px;
+        }
+
+        .bet-side-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+        }
+
+        .bet-side-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        /* Discord Panel */
+        .discord-panel {
+            background: #2f3136;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .discord-header {
+            background: #202225;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #1e1f22;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .discord-channel {
+            color: #8e9297;
+            font-weight: 600;
+        }
+
+        .discord-messages {
+            padding: 1.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .discord-message {
+            margin-bottom: 1.5rem;
+            animation: slideInLeft 0.4s ease;
+        }
+
+        .discord-user {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .discord-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .discord-username {
+            color: #ffffff;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+
+        .discord-timestamp {
+            color: #72767d;
+            font-size: 0.75rem;
+        }
+
+        .discord-content {
+            color: #dcddde;
+            margin-left: 56px;
+            line-height: 1.5;
+        }
+
+        .discord-embed {
+            background: #2b2d31;
+            border-left: 4px solid var(--accent-green);
+            padding: 1rem;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+        }
+
+        .discord-embed-title {
+            color: #00aff4;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Status Grid */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+            transition: background 0.3s ease;
+        }
+
+        .status-item:hover {
+            background: #2e2e50;
+        }
+
+        .status-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .status-value {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .status-value.success {
+            color: var(--accent-green);
+        }
+
+        .status-value.warning {
+            color: var(--accent-yellow);
+        }
+
+        .status-value.error {
+            color: var(--accent-red);
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-green));
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        /* Server Stats */
+        .server-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            text-align: center;
+            border-top: 2px solid var(--accent-blue);
+            margin-top: 3rem;
+        }
+
+        footer p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem 1rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .kpi-value {
+                font-size: 1.5rem;
+            }
+
+            .section {
+                padding: 1.5rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .discord-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .toggle {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            background: var(--bg-tertiary);
+            border-radius: 13px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle.active {
+            background: var(--accent-green);
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle.active .toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .toggle-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">⚡ Sports Betting Scraper & Discord Bot</div>
+            <div class="built-by">
+                Built by <a href="https://upwork.com/freelancers/~01a798cae09a131e14" target="_blank">Janis Agic</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Active Scrapers</div>
+                <div class="kpi-value">8</div>
+                <div class="kpi-change positive">
+                    ↑ All systems operational
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Opportunities Found</div>
+                <div class="kpi-value">23</div>
+                <div class="kpi-change positive">
+                    ↑ +12 in last 24h
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Discord Alerts Sent</div>
+                <div class="kpi-value">147</div>
+                <div class="kpi-change neutral">
+                    → 18 today
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Profit Potential</div>
+                <div class="kpi-value">$4,829</div>
+                <div class="kpi-change positive">
+                    ↑ Based on current opportunities
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <div class="tab active" data-tab="odds">📊 Live Odds</div>
+            <div class="tab" data-tab="arbitrage">💰 Arbitrage Finder</div>
+            <div class="tab" data-tab="discord">💬 Discord Bot</div>
+            <div class="tab" data-tab="monitoring">🔍 System Monitoring</div>
+        </div>
+
+        <!-- Tab Content: Live Odds -->
+        <div class="tab-content active" id="odds">
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="status-indicator"></span>
+                    Live Odds Comparison
+                </h2>
+                <div class="odds-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Market</th>
+                                <th>Bet365</th>
+                                <th>DraftKings</th>
+                                <th>FanDuel</th>
+                                <th>BetMGM</th>
+                                <th>Caesars</th>
+                                <th>Best</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Lakers vs Warriors</strong></td>
+                                <td>Moneyline Lakers</td>
+                                <td>+145</td>
+                                <td>+152</td>
+                                <td class="best-odds">+158</td>
+                                <td>+148</td>
+                                <td>+150</td>
+                                <td><span class="bookmaker-logo">FanDuel</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Celtics vs Nets</strong></td>
+                                <td>Over 224.5</td>
+                                <td>-108</td>
+                                <td>-105</td>
+                                <td>-110</td>
+                                <td class="best-odds">-102</td>
+                                <td>-106</td>
+                                <td><span class="bookmaker-logo">BetMGM</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Chiefs vs Bills</strong></td>
+                                <td>Spread Chiefs -3.5</td>
+                                <td>-112</td>
+                                <td class="best-odds">-108</td>
+                                <td>-110</td>
+                                <td>-115</td>
+                                <td>-111</td>
+                                <td><span class="bookmaker-logo">DraftKings</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Bucks vs 76ers</strong></td>
+                                <td>Moneyline Bucks</td>
+                                <td>-185</td>
+                                <td>-180</td>
+                                <td>-182</td>
+                                <td>-188</td>
+                                <td class="best-odds">-178</td>
+                                <td><span class="bookmaker-logo">Caesars</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Mavericks vs Suns</strong></td>
+                                <td>Under 232.5</td>
+                                <td class="best-odds">-104</td>
+                                <td>-108</td>
+                                <td>-110</td>
+                                <td>-112</td>
+                                <td>-106</td>
+                                <td><span class="bookmaker-logo">Bet365</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Arbitrage Finder -->
+        <div class="tab-content" id="arbitrage">
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="status-indicator"></span>
+                    Arbitrage Opportunities
+                </h2>
+                
+                <div class="arbitrage-card">
+                    <div class="arbitrage-header">
+                        <div>
+                            <strong>Lakers vs Warriors</strong> • NBA
+                        </div>
+                        <div class="profit-badge">+4.8% ROI</div>
+                    </div>
+                    <div class="arbitrage-details">
+                        <div class="bet-side">
+                            <div class="bet-side-label">Lakers ML @ FanDuel</div>
+                            <div class="bet-side-value">+158</div>
+                        </div>
+                        <div class="bet-side">
+                            <div class="bet-side-label">Warriors ML @ Bet365</div>
+                            <div class="bet-side-value">-142</div>
+                        </div>
+                        <div class="bet-side">
+                            <div class="bet-side-label">Stake Allocation</div>
+                            <div class="bet-side-value">$387 / $613</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arbitrage-card">
+                    <div class="arbitrage-header">
+                        <div>
+                            <strong>Chiefs vs Bills</strong> • NFL
+                        </div>
+                        <div class="profit-badge">+3.2% ROI</div>
+                    </div>
+                    <div class="arbitrage-details">
+                        <div class="bet-side">
+                            <div class="bet-side-label">Over 48.5 @ BetMGM</div>
+                            <div class="bet-side-value">-102</div>
+                        </div>
+                        <div class="bet-side">
+                            <div class="bet-side-label">Under 48.5 @ DraftKings</div>
+                            <div class="bet-side-value">+105</div>
+                        </div>
+                        <div class="bet-side">
+                            <div class="bet-side-label">Stake Allocation</div>
+                            <div class="bet-side-value">$510 / $490</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arbitrage-card">
+                    <div class="arbitrage-header">
+                        <div>
+                            <strong>Celtics vs Nets</strong> • NBA
+                        </div>
+                        <div class="profit-badge">+2.7% ROI</div>
+                    </div>
+                    <div class="arbitrage-details">
+                        <div class="bet-side">
+                            <div class="bet-side-label">Celtics -8.5 @ Caesars</div>
+                            <div class="bet-side-value">-108</div>
+                        </div>
+                        <div class="bet-side">
+                            <div class="bet-side-label">Nets +8.5 @ FanDuel</div>
+                            <div class="bet-side-value">+112</div>
+                        </div>
+                        <div class="bet-side">
+                            <div class="bet-side-label">Stake Allocation</div>
+                            <div class="bet-side-value">$529 / $471</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: Discord Bot -->
+        <div class="tab-content" id="discord">
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="status-indicator"></span>
+                    Discord Bot Integration
+                </h2>
+                
+                <div class="toggle-container">
+                    <div class="toggle active" onclick="this.classList.toggle('active')">
+                        <div class="toggle-slider"></div>
+                    </div>
+                    <span class="toggle-label">Real-time Alerts Enabled</span>
+                </div>
+
+                <div class="discord-panel">
+                    <div class="discord-header">
+                        <span style="color: #8e9297; font-size: 1.2rem;">#</span>
+                        <span class="discord-channel">betting-alerts</span>
+                    </div>
+                    <div class="discord-messages">
+                        <div class="discord-message">
+                            <div class="discord-user">
+                                <div class="discord-avatar">🤖</div>
+                                <div>
+                                    <span class="discord-username">Betting Bot</span>
+                                    <span class="discord-timestamp">Today at 2:45 PM</span>
+                                </div>
+                            </div>
+                            <div class="discord-content">
+                                <div class="discord-embed">
+                                    <div class="discord-embed-title">🚨 New Arbitrage Opportunity!</div>
+                                    <strong>Lakers vs Warriors</strong><br>
+                                    <strong style="color: #43b581;">ROI: +4.8%</strong><br>
+                                    Lakers ML @ FanDuel: +158<br>
+                                    Warriors ML @ Bet365: -142<br>
+                                    Recommended stake: $387 / $613
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="discord-message">
+                            <div class="discord-user">
+                                <div class="discord-avatar">🤖</div>
+                                <div>
+                                    <span class="discord-username">Betting Bot</span>
+                                    <span class="discord-timestamp">Today at 3:12 PM</span>
+                                </div>
+                            </div>
+                            <div class="discord-content">
+                                <div class="discord-embed">
+                                    <div class="discord-embed-title">📊 Line Movement Alert</div>
+                                    <strong>Celtics vs Nets</strong><br>
+                                    Spread moved from -7.5 to -8.5<br>
+                                    Heavy action on Celtics (72% of bets)<br>
+                                    Best line: FanDuel -8 (-108)
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="discord-message">
+                            <div class="discord-user">
+                                <div class="discord-avatar">🤖</div>
+                                <div>
+                                    <span class="discord-username">Betting Bot</span>
+                                    <span class="discord-timestamp">Today at 4:03 PM</span>
+                                </div>
+                            </div>
+                            <div class="discord-content">
+                                <div class="discord-embed">
+                                    <div class="discord-embed-title">💰 Best Odds Update</div>
+                                    <strong>Chiefs vs Bills Over 48.5</strong><br>
+                                    New best odds found!<br>
+                                    BetMGM: -102 (previously -108)<br>
+                                    Potential arbitrage with DraftKings Under
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: System Monitoring -->
+        <div class="tab-content" id="monitoring">
+            <div class="section">
+                <h2 class="section-title">
+                    <span class="status-indicator"></span>
+                    Scraping Status
+                </h2>
+                <div class="status-grid">
+                    <div class="status-item">
+                        <span class="status-label">Bet365</span>
+                        <span class="status-value success">✓ Active</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">DraftKings</span>
+                        <span class="status-value success">✓ Active</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">FanDuel</span>
+                        <span class="status-value success">✓ Active</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">BetMGM</span>
+                        <span class="status-value success">✓ Active</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Caesars</span>
+                        <span class="status-value success">✓ Active</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">PointsBet</span>
+                        <span class="status-value success">✓ Active</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Last Update</span>
+                        <span class="status-value">12 sec ago</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Success Rate</span>
+                        <span class="status-value success">99.4%</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">System Uptime</span>
+                        <span class="status-value success">23d 14h</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2 class="section-title">
+                    Server / VPS Status
+                </h2>
+                <div class="server-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">💻</div>
+                        <div class="stat-value" style="color: var(--accent-green);">18%</div>
+                        <div class="stat-label">CPU Usage</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 18%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🧠</div>
+                        <div class="stat-value" style="color: var(--accent-green);">2.4 GB</div>
+                        <div class="stat-label">RAM Usage (32%)</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 32%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💾</div>
+                        <div class="stat-value" style="color: var(--accent-yellow);">48 GB</div>
+                        <div class="stat-label">Disk Usage (68%)</div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 68%;"></div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏱️</div>
+                        <div class="stat-value" style="color: var(--accent-green);">23d 14h</div>
+                        <div class="stat-label">Server Uptime</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>Custom demo — Ready to build this for you 🚀</p>
+    </footer>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs and contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show corresponding content
+                const tabName = tab.getAttribute('data-tab');
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Simulate real-time updates
+        function updateKPI() {
+            const kpiValues = document.querySelectorAll('.kpi-value');
+            kpiValues.forEach(kpi => {
+                const currentValue = parseInt(kpi.textContent.replace(/[^0-9]/g, ''));
+                if (!isNaN(currentValue) && Math.random() > 0.7) {
+                    const change = Math.random() > 0.5 ? 1 : -1;
+                    const newValue = currentValue + change;
+                    if (kpi.textContent.includes('$')) {
+                        kpi.textContent = '$' + newValue.toLocaleString();
+                    } else {
+                        kpi.textContent = newValue;
+                    }
+                }
+            });
+        }
+
+        // Update every 5 seconds
+        setInterval(updateKPI, 5000);
+
+        // Animate progress bars on load
+        window.addEventListener('load', () => {
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            });
+        });
+
+        // Simulate last update timestamp
+        function updateTimestamp() {
+            const timestamp = document.querySelector('.status-item .status-value:not(.success):not(.warning):not(.error)');
+            if (timestamp && timestamp.textContent.includes('sec ago')) {
+                let seconds = parseInt(timestamp.textContent);
+                seconds = (seconds + 1) % 60;
+                timestamp.textContent = seconds + ' sec ago';
+            }
+        }
+
+        setInterval(updateTimestamp, 1000);
+    </script>
+</body>
+</html>

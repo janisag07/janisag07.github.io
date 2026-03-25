@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Multi-Brand Twitter Bot - Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --telegram-blue: #0088cc;
+            --telegram-dark: #17212b;
+            --telegram-darker: #0e1621;
+            --bg-dark: #1a1d29;
+            --bg-darker: #13151f;
+            --card-bg: #1f2333;
+            --text-primary: #e4e6eb;
+            --text-secondary: #b0b3b8;
+            --success: #00c853;
+            --warning: #ffa726;
+            --error: #ef5350;
+            --border: #2a2d3a;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--telegram-darker) 0%, var(--telegram-dark) 100%);
+            padding: 1.5rem 2rem;
+            border-bottom: 2px solid var(--telegram-blue);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--telegram-blue);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo svg {
+            width: 32px;
+            height: 32px;
+            fill: var(--telegram-blue);
+        }
+
+        .built-by {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .built-by a {
+            color: var(--telegram-blue);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .built-by a:hover {
+            color: #00aaff;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* KPI Cards */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 136, 204, 0.2);
+        }
+
+        .kpi-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--telegram-blue);
+            margin-bottom: 0.25rem;
+        }
+
+        .kpi-change {
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .kpi-change.positive {
+            color: var(--success);
+        }
+
+        .kpi-change.negative {
+            color: var(--error);
+        }
+
+        /* Main Grid */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* Card */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            background: var(--bg-darker);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Telegram Chat Interface */
+        .telegram-chat {
+            background: var(--telegram-darker);
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .message {
+            display: flex;
+            animation: messageSlideIn 0.3s ease;
+        }
+
+        @keyframes messageSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 12px;
+            font-size: 0.95rem;
+        }
+
+        .message.bot .message-bubble {
+            background: var(--card-bg);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message.user .message-bubble {
+            background: var(--telegram-blue);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .chat-input-area {
+            padding: 1rem;
+            background: var(--bg-darker);
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: var(--telegram-blue);
+        }
+
+        .send-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--telegram-blue);
+            border: none;
+            border-radius: 24px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .send-btn:hover {
+            background: #0099dd;
+            transform: scale(1.05);
+        }
+
+        .send-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Brand Switcher */
+        .brand-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .brand-item {
+            padding: 1rem;
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .brand-item:hover {
+            border-color: var(--telegram-blue);
+            background: var(--card-bg);
+        }
+
+        .brand-item.active {
+            border-color: var(--telegram-blue);
+            background: rgba(0, 136, 204, 0.1);
+        }
+
+        .brand-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .brand-details h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .brand-details p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .status-indicator.active {
+            background: var(--success);
+        }
+
+        .status-indicator.inactive {
+            background: var(--error);
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Post Scheduler */
+        .scheduler-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 0.75rem;
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: var(--telegram-blue);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .tweet-preview {
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+
+        .tweet-preview-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .tweet-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .tweet-author {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .tweet-handle {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .tweet-content {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 0.75rem;
+        }
+
+        .tweet-meta {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--telegram-blue);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn:hover {
+            background: #0099dd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 136, 204, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* GoLogin Session Manager */
+        .session-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .session-item {
+            padding: 1rem;
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 1rem;
+        }
+
+        .session-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .session-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .session-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .session-detail {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        .health-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .health-badge.healthy {
+            background: rgba(0, 200, 83, 0.2);
+            color: var(--success);
+        }
+
+        .health-badge.warning {
+            background: rgba(255, 167, 38, 0.2);
+            color: var(--warning);
+        }
+
+        .health-badge.error {
+            background: rgba(239, 83, 80, 0.2);
+            color: var(--error);
+        }
+
+        /* Analytics */
+        .analytics-grid {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .analytics-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: var(--bg-darker);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+        }
+
+        .analytics-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .analytics-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-darker);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--telegram-blue), #00aaff);
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        /* Command Reference */
+        .command-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .command-item {
+            padding: 1rem;
+            background: var(--bg-darker);
+            border-left: 3px solid var(--telegram-blue);
+            border-radius: 6px;
+        }
+
+        .command-syntax {
+            font-family: 'Courier New', monospace;
+            color: var(--telegram-blue);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .command-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-darker);
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .footer-text {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-cta {
+            font-size: 1.3rem;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--telegram-blue), #00aaff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .kpi-grid {
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            }
+        }
+
+        @media (max-width: 640px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .kpi-value {
+                font-size: 1.5rem;
+            }
+
+            .chat-messages {
+                padding: 0.75rem;
+            }
+
+            .message-bubble {
+                max-width: 85%;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--telegram-blue);
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            color: var(--telegram-blue);
+            border-bottom-color: var(--telegram-blue);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.67-.52.36-.99.53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.37-.48 1.03-.73 4.04-1.76 6.74-2.92 8.09-3.49 3.85-1.61 4.65-1.89 5.17-1.9.11 0 .37.03.54.17.14.11.18.26.2.37.01.06.03.24.01.38z"/>
+                </svg>
+                <span>Telegram Multi-Brand Bot</span>
+            </div>
+            <div class="built-by">
+                Built by <a href="https://upwork.com/freelancers/~01a798cae09a131e14" target="_blank">Janis Agic</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Active Brands</div>
+                <div class="kpi-value">5</div>
+                <div class="kpi-change positive">
+                    <span>↑</span> 2 from last week
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Posts Today</div>
+                <div class="kpi-value">27</div>
+                <div class="kpi-change positive">
+                    <span>↑</span> 12% vs yesterday
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Success Rate</div>
+                <div class="kpi-value">98.5%</div>
+                <div class="kpi-change positive">
+                    <span>↑</span> 1.2% this month
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Scheduled Posts</div>
+                <div class="kpi-value">43</div>
+                <div class="kpi-change">
+                    Next in 15 minutes
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Telegram Chat Interface -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        💬 Telegram Bot Interface
+                    </div>
+                </div>
+                <div class="telegram-chat">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot">
+                            <div>
+                                <div class="message-bubble">
+                                    👋 Welcome! I'm your Multi-Brand Twitter Bot. Use /help to see available commands.
+                                </div>
+                                <div class="message-time">10:23 AM</div>
+                            </div>
+                        </div>
+                        <div class="message user">
+                            <div>
+                                <div class="message-bubble">
+                                    /status
+                                </div>
+                                <div class="message-time">10:24 AM</div>
+                            </div>
+                        </div>
+                        <div class="message bot">
+                            <div>
+                                <div class="message-bubble">
+                                    ✅ Status Report:<br>
+                                    • Active Brand: TechCorp<br>
+                                    • Posts today: 12<br>
+                                    • Success rate: 100%<br>
+                                    • Next scheduled: 10:45 AM
+                                </div>
+                                <div class="message-time">10:24 AM</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Type a command... (/post, /schedule, /status)">
+                        <button class="send-btn" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Multi-Brand Management -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        🏢 Multi-Brand Management
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="brand-list">
+                        <div class="brand-item active" onclick="selectBrand(this)">
+                            <div class="brand-info">
+                                <div class="brand-avatar" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">TC</div>
+                                <div class="brand-details">
+                                    <h4>TechCorp</h4>
+                                    <p>@techcorp_io • 45.2K followers</p>
+                                </div>
+                            </div>
+                            <div class="status-indicator active"></div>
+                        </div>
+                        <div class="brand-item" onclick="selectBrand(this)">
+                            <div class="brand-info">
+                                <div class="brand-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">FS</div>
+                                <div class="brand-details">
+                                    <h4>FashionStyle</h4>
+                                    <p>@fashionstyle • 87.5K followers</p>
+                                </div>
+                            </div>
+                            <div class="status-indicator active"></div>
+                        </div>
+                        <div class="brand-item" onclick="selectBrand(this)">
+                            <div class="brand-info">
+                                <div class="brand-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">GF</div>
+                                <div class="brand-details">
+                                    <h4>GreenFuture</h4>
+                                    <p>@greenfuture • 32.1K followers</p>
+                                </div>
+                            </div>
+                            <div class="status-indicator active"></div>
+                        </div>
+                        <div class="brand-item" onclick="selectBrand(this)">
+                            <div class="brand-info">
+                                <div class="brand-avatar" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">FB</div>
+                                <div class="brand-details">
+                                    <h4>FoodBites</h4>
+                                    <p>@foodbites • 126.8K followers</p>
+                                </div>
+                            </div>
+                            <div class="status-indicator active"></div>
+                        </div>
+                        <div class="brand-item" onclick="selectBrand(this)">
+                            <div class="brand-info">
+                                <div class="brand-avatar" style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%);">DM</div>
+                                <div class="brand-details">
+                                    <h4>DigitalMarketing</h4>
+                                    <p>@digimkt_pro • 58.3K followers</p>
+                                </div>
+                            </div>
+                            <div class="status-indicator inactive"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Post Scheduler & Preview -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <div class="card-header">
+                <div class="card-title">
+                    📅 Post Scheduler
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab(0)">Create Post</button>
+                    <button class="tab" onclick="switchTab(1)">Schedule Queue</button>
+                </div>
+                
+                <div class="tab-content active" id="tab0">
+                    <div class="scheduler-form">
+                        <div class="form-group">
+                            <label>Brand</label>
+                            <select id="brandSelect">
+                                <option>TechCorp (@techcorp_io)</option>
+                                <option>FashionStyle (@fashionstyle)</option>
+                                <option>GreenFuture (@greenfuture)</option>
+                                <option>FoodBites (@foodbites)</option>
+                                <option>DigitalMarketing (@digimkt_pro)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tweet Content</label>
+                            <textarea id="tweetContent" oninput="updatePreview()" placeholder="What's happening?">🚀 Excited to announce our new AI-powered analytics dashboard! Get real-time insights and boost your productivity. 
+
+#TechInnovation #AI #Productivity</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Schedule Time (Optional)</label>
+                            <input type="datetime-local" id="scheduleTime">
+                        </div>
+                        
+                        <div class="tweet-preview">
+                            <div style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem; font-weight: 600;">PREVIEW ON X/TWITTER:</div>
+                            <div class="tweet-preview-header">
+                                <div class="tweet-avatar"></div>
+                                <div>
+                                    <div class="tweet-author">TechCorp</div>
+                                    <div class="tweet-handle">@techcorp_io</div>
+                                </div>
+                            </div>
+                            <div class="tweet-content" id="tweetPreviewContent">
+                                🚀 Excited to announce our new AI-powered analytics dashboard! Get real-time insights and boost your productivity.<br><br>
+                                #TechInnovation #AI #Productivity
+                            </div>
+                            <div class="tweet-meta">Just now • Twitter Web App</div>
+                        </div>
+                        
+                        <button class="btn" onclick="schedulePost()">Schedule Post</button>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="tab1">
+                    <div class="analytics-grid">
+                        <div class="analytics-row">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 0.25rem;">New Product Launch</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">TechCorp • Today at 2:30 PM</div>
+                            </div>
+                            <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Edit</button>
+                        </div>
+                        <div class="analytics-row">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 0.25rem;">Weekend Sale Announcement</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">FashionStyle • Tomorrow at 9:00 AM</div>
+                            </div>
+                            <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Edit</button>
+                        </div>
+                        <div class="analytics-row">
+                            <div>
+                                <div style="font-weight: 600; margin-bottom: 0.25rem;">Sustainability Report Q1</div>
+                                <div style="font-size: 0.85rem; color: var(--text-secondary);">GreenFuture • Friday at 10:00 AM</div>
+                            </div>
+                            <button class="btn" style="padding: 0.5rem 1rem; font-size: 0.85rem;">Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Grid -->
+        <div class="main-grid">
+            <!-- GoLogin Session Manager -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        🔐 GoLogin Session Manager
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="session-list">
+                        <div class="session-item">
+                            <div class="session-info">
+                                <div class="session-title">TechCorp Session</div>
+                                <div class="session-details">
+                                    <div class="session-detail">
+                                        <span class="detail-label">Proxy:</span>
+                                        <span class="detail-value">US-NY-01</span>
+                                    </div>
+                                    <div class="session-detail">
+                                        <span class="detail-label">Age:</span>
+                                        <span class="detail-value">12 days</span>
+                                    </div>
+                                    <div class="session-detail">
+                                        <span class="detail-label">Last active:</span>
+                                        <span class="detail-value">2 hours ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="health-badge healthy">Healthy</div>
+                        </div>
+                        <div class="session-item">
+                            <div class="session-info">
+                                <div class="session-title">FashionStyle Session</div>
+                                <div class="session-details">
+                                    <div class="session-detail">
+                                        <span class="detail-label">Proxy:</span>
+                                        <span class="detail-value">UK-LON-03</span>
+                                    </div>
+                                    <div class="session-detail">
+                                        <span class="detail-label">Age:</span>
+                                        <span class="detail-value">8 days</span>
+                                    </div>
+                                    <div class="session-detail">
+                                        <span class="detail-label">Last active:</span>
+                                        <span class="detail-value">45 min ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="health-badge healthy">Healthy</div>
+                        </div>
+                        <div class="session-item">
+                            <div class="session-info">
+                                <div class="session-title">GreenFuture Session</div>
+                                <div class="session-details">
+                                    <div class="session-detail">
+                                        <span class="detail-label">Proxy:</span>
+                                        <span class="detail-value">DE-BER-02</span>
+                                    </div>
+                                    <div class="session-detail">
+                                        <span class="detail-label">Age:</span>
+                                        <span class="detail-value">25 days</span>
+                                    </div>
+                                    <div class="session-detail">
+                                        <span class="detail-label">Last active:</span>
+                                        <span class="detail-value">5 hours ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="health-badge warning">Warning</div>
+                        </div>
+                        <div class="session-item">
+                            <div class="session-info">
+                                <div class="session-title">FoodBites Session</div>
+                                <div class="session-details">
+                                    <div class="session-detail">
+                                        <span class="detail-label">Proxy:</span>
+                                        <span class="detail-value">CA-TOR-01</span>
+                                    </div>
+                                    <div class="session-detail">
+                                        <span class="detail-label">Age:</span>
+                                        <span class="detail-value">3 days</span>
+                                    </div>
+                                    <div class="session-detail">
+                                        <span class="detail-label">Last active:</span>
+                                        <span class="detail-value">1 hour ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="health-badge healthy">Healthy</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics per Brand -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        📊 Brand Analytics
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="analytics-grid">
+                        <div>
+                            <div class="analytics-row">
+                                <span class="analytics-label">Posts Sent</span>
+                                <span class="analytics-value" style="color: var(--telegram-blue);">347</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 87%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="analytics-row">
+                                <span class="analytics-label">Engagement Rate</span>
+                                <span class="analytics-value" style="color: var(--success);">4.2%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 84%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="analytics-row">
+                                <span class="analytics-label">Failed Posts</span>
+                                <span class="analytics-value" style="color: var(--error);">5</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 1.4%; background: linear-gradient(90deg, var(--error), #ff6b6b);"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="analytics-row">
+                            <span class="analytics-label">Last Post</span>
+                            <span class="analytics-value" style="font-size: 0.95rem;">2 hours ago</span>
+                        </div>
+                        
+                        <div class="analytics-row">
+                            <span class="analytics-label">Average Response Time</span>
+                            <span class="analytics-value" style="font-size: 0.95rem;">1.2 seconds</span>
+                        </div>
+                        
+                        <div class="analytics-row">
+                            <span class="analytics-label">Total Impressions</span>
+                            <span class="analytics-value" style="font-size: 0.95rem; color: var(--telegram-blue);">1.2M</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Command Reference -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    ⚡ Command Reference
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="command-list">
+                    <div class="command-item">
+                        <div class="command-syntax">/post [brand] [content]</div>
+                        <div class="command-desc">Post immediately to the specified brand's Twitter account</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-syntax">/schedule [brand] [content] [time]</div>
+                        <div class="command-desc">Schedule a post for a specific time (format: YYYY-MM-DD HH:MM)</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-syntax">/status [brand]</div>
+                        <div class="command-desc">Get current status and analytics for a brand</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-syntax">/switch [brand]</div>
+                        <div class="command-desc">Switch active brand context</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-syntax">/sessions</div>
+                        <div class="command-desc">View all GoLogin sessions and their health status</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-syntax">/queue</div>
+                        <div class="command-desc">View all scheduled posts across all brands</div>
+                    </div>
+                    <div class="command-item">
+                        <div class="command-syntax">/help</div>
+                        <div class="command-desc">Display this command reference</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-text">Custom demo — Ready to build this for you</div>
+        <div class="footer-cta">Professional Telegram Bot Development Available</div>
+    </footer>
+
+    <script>
+        // Chat functionality
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const chatMessages = document.getElementById('chatMessages');
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerHTML = `
+                <div>
+                    <div class="message-bubble">${escapeHtml(message)}</div>
+                    <div class="message-time">${timeStr}</div>
+                </div>
+            `;
+            chatMessages.appendChild(userMsg);
+
+            // Clear input
+            input.value = '';
+
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulate bot response
+            setTimeout(() => {
+                const botMsg = document.createElement('div');
+                botMsg.className = 'message bot';
+                const response = getBotResponse(message);
+                botMsg.innerHTML = `
+                    <div>
+                        <div class="message-bubble">${response}</div>
+                        <div class="message-time">${timeStr}</div>
+                    </div>
+                `;
+                chatMessages.appendChild(botMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 500);
+        }
+
+        function getBotResponse(message) {
+            const cmd = message.toLowerCase();
+            if (cmd === '/help') {
+                return '📋 Available commands:<br>/post - Post immediately<br>/schedule - Schedule a post<br>/status - Get brand status<br>/switch - Switch brand<br>/sessions - View GoLogin sessions<br>/queue - View scheduled posts';
+            } else if (cmd === '/status') {
+                return '✅ Status Report:<br>• Active Brand: TechCorp<br>• Posts today: 12<br>• Success rate: 100%<br>• Next scheduled: 10:45 AM';
+            } else if (cmd === '/queue') {
+                return '📅 Upcoming posts:<br>1. TechCorp - Today 2:30 PM<br>2. FashionStyle - Tomorrow 9:00 AM<br>3. GreenFuture - Friday 10:00 AM';
+            } else if (cmd === '/sessions') {
+                return '🔐 GoLogin Sessions:<br>✅ TechCorp - Healthy<br>✅ FashionStyle - Healthy<br>⚠️ GreenFuture - Warning<br>✅ FoodBites - Healthy';
+            } else if (cmd.startsWith('/switch')) {
+                return '✅ Switched active brand to TechCorp';
+            } else if (cmd.startsWith('/post')) {
+                return '✅ Post published successfully!<br>Views: 0 • Likes: 0 • Retweets: 0';
+            } else {
+                return 'Command not recognized. Type /help for available commands.';
+            }
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Allow Enter key to send message
+        document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        // Brand selection
+        function selectBrand(element) {
+            document.querySelectorAll('.brand-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+
+        // Tweet preview update
+        function updatePreview() {
+            const content = document.getElementById('tweetContent').value;
+            const preview = document.getElementById('tweetPreviewContent');
+            preview.innerHTML = content.replace(/\n/g, '<br>') || '<span style="color: var(--text-secondary);">Your tweet preview will appear here...</span>';
+        }
+
+        // Schedule post
+        function schedulePost() {
+            const content = document.getElementById('tweetContent').value;
+            if (!content.trim()) {
+                alert('Please enter tweet content');
+                return;
+            }
+            alert('✅ Post scheduled successfully!');
+        }
+
+        // Tab switching
+        function switchTab(index) {
+            document.querySelectorAll('.tab').forEach((tab, i) => {
+                tab.classList.toggle('active', i === index);
+            });
+            document.querySelectorAll('.tab-content').forEach((content, i) => {
+                content.classList.toggle('active', i === index);
+            });
+        }
+    </script>
+</body>
+</html>
