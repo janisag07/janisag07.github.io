@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solar Company Lead Scraper Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #667eea;
+            font-size: 28px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .controls {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .control-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .control-label {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .control-input {
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .control-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-export {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-export:hover {
+            background: #059669;
+        }
+        
+        .progress-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .progress-title {
+            font-weight: bold;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        .progress-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #10b981;
+            font-weight: bold;
+        }
+        
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .progress-bar {
+            background: #e5e7eb;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        
+        .results-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .results-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .results-table th {
+            background: #f9fafb;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 14px;
+        }
+        
+        .results-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid #e5e7eb;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .results-table tr:hover {
+            background: #f9fafb;
+        }
+        
+        .quality-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        
+        .quality-high {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .quality-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .quality-low {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .action-icon {
+            cursor: pointer;
+            font-size: 16px;
+            margin: 0 5px;
+            transition: transform 0.2s;
+        }
+        
+        .action-icon:hover {
+            transform: scale(1.2);
+        }
+        
+        .disclaimer {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin: 20px 0 10px 0;
+        }
+        
+        footer {
+            text-align: center;
+            color: white;
+            padding: 20px;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .control-row,
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span>☀️</span> Solar Company Lead Scraper</h1>
+            <p class="subtitle">Automated Lead Discovery & Qualification - $150 Project Value</p>
+        </header>
+        
+        <div class="controls">
+            <div class="control-row">
+                <div class="control-group">
+                    <label class="control-label">Location</label>
+                    <input type="text" class="control-input" value="California" placeholder="State or City">
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Company Size</label>
+                    <select class="control-input">
+                        <option>All Sizes</option>
+                        <option>1-10 employees</option>
+                        <option selected>11-50 employees</option>
+                        <option>51-200 employees</option>
+                        <option>200+ employees</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Data Source</label>
+                    <select class="control-input">
+                        <option selected>Google Maps</option>
+                        <option>Yellow Pages</option>
+                        <option>Yelp</option>
+                        <option>All Sources</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Max Results</label>
+                    <input type="number" class="control-input" value="100" placeholder="100">
+                </div>
+            </div>
+            <div style="display: flex; gap: 15px;">
+                <button class="btn btn-primary">🔍 Start Scraping</button>
+                <button class="btn btn-export">💾 Export to CSV</button>
+                <button class="btn" style="background: white; border: 2px solid #667eea; color: #667eea;">⚙️ Advanced Filters</button>
+            </div>
+        </div>
+        
+        <div class="progress-section">
+            <div class="progress-header">
+                <div class="progress-title">Scraping Progress</div>
+                <div class="progress-status">
+                    <div class="pulse-dot"></div>
+                    <span>In Progress</span>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 68%;">68%</div>
+            </div>
+            <div class="progress-stats">
+                <span>68 of 100 companies processed</span>
+                <span>Est. time remaining: 2m 14s</span>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">68</div>
+                <div class="stat-label">Companies Found</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">54</div>
+                <div class="stat-label">With Phone</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">61</div>
+                <div class="stat-label">With Email</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">87%</div>
+                <div class="stat-label">Data Quality</div>
+            </div>
+        </div>
+        
+        <div class="results-panel">
+            <div class="results-header">
+                <div class="results-title">Scraped Results</div>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" placeholder="Search results..." style="padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px; width: 250px;">
+                    <select style="padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px;">
+                        <option>All Quality Levels</option>
+                        <option>High Quality</option>
+                        <option>Medium Quality</option>
+                        <option>Low Quality</option>
+                    </select>
+                </div>
+            </div>
+            
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th>Company Name</th>
+                        <th>Location</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Website</th>
+                        <th>Quality</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>SunPower Solar Solutions</strong></td>
+                        <td>Los Angeles, CA</td>
+                        <td>(555) 234-5678</td>
+                        <td>info@sunpower.com</td>
+                        <td>sunpower-solar.com</td>
+                        <td><span class="quality-badge quality-high">HIGH</span></td>
+                        <td>
+                            <span class="action-icon" title="View Details">👁️</span>
+                            <span class="action-icon" title="Export">📥</span>
+                            <span class="action-icon" title="Add to CRM">➕</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bright Energy Systems</strong></td>
+                        <td>San Diego, CA</td>
+                        <td>(555) 876-5432</td>
+                        <td>contact@brightenergy.com</td>
+                        <td>brightenergy.com</td>
+                        <td><span class="quality-badge quality-high">HIGH</span></td>
+                        <td>
+                            <span class="action-icon" title="View Details">👁️</span>
+                            <span class="action-icon" title="Export">📥</span>
+                            <span class="action-icon" title="Add to CRM">➕</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Golden State Solar</strong></td>
+                        <td>Sacramento, CA</td>
+                        <td>(555) 345-6789</td>
+                        <td>-</td>
+                        <td>goldenstatesolar.com</td>
+                        <td><span class="quality-badge quality-medium">MEDIUM</span></td>
+                        <td>
+                            <span class="action-icon" title="View Details">👁️</span>
+                            <span class="action-icon" title="Export">📥</span>
+                            <span class="action-icon" title="Add to CRM">➕</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>EcoSolar Installations</strong></td>
+                        <td>San Francisco, CA</td>
+                        <td>(555) 987-6543</td>
+                        <td>hello@ecosolar.com</td>
+                        <td>ecosolar-ca.com</td>
+                        <td><span class="quality-badge quality-high">HIGH</span></td>
+                        <td>
+                            <span class="action-icon" title="View Details">👁️</span>
+                            <span class="action-icon" title="Export">📥</span>
+                            <span class="action-icon" title="Add to CRM">➕</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Pacific Sun Solutions</strong></td>
+                        <td>Oakland, CA</td>
+                        <td>(555) 456-7890</td>
+                        <td>info@pacificsun.com</td>
+                        <td>-</td>
+                        <td><span class="quality-badge quality-medium">MEDIUM</span></td>
+                        <td>
+                            <span class="action-icon" title="View Details">👁️</span>
+                            <span class="action-icon" title="Export">📥</span>
+                            <span class="action-icon" title="Add to CRM">➕</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>California Solar Tech</strong></td>
+                        <td>Fresno, CA</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>casolartech.com</td>
+                        <td><span class="quality-badge quality-low">LOW</span></td>
+                        <td>
+                            <span class="action-icon" title="View Details">👁️</span>
+                            <span class="action-icon" title="Export">📥</span>
+                            <span class="action-icon" title="Add to CRM">➕</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>SolarWave Energy</strong></td>
+                        <td>San Jose, CA</td>
+                        <td>(555) 234-8901</td>
+                        <td>support@solarwave.com</td>
+                        <td>solarwave-energy.com</td>
+                        <td><span class="quality-badge quality-high">HIGH</span></td>
+                        <td>
+                            <span class="action-icon" title="View Details">👁️</span>
+                            <span class="action-icon" title="Export">📥</span>
+                            <span class="action-icon" title="Add to CRM">➕</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Green Power Solar Co.</strong></td>
+                        <td>Long Beach, CA</td>
+                        <td>(555) 678-9012</td>
+                        <td>contact@greenpower.com</td>
+                        <td>greenpower-solar.com</td>
+                        <td><span class="quality-badge quality-high">HIGH</span></td>
+                        <td>
+                            <span class="action-icon" title="View Details">👁️</span>
+                            <span class="action-icon" title="Export">📥</span>
+                            <span class="action-icon" title="Add to CRM">➕</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="disclaimer">
+            This is a conceptual demo built to showcase technical capabilities. It does not represent a finished product or use real data.
+        </div>
+        
+        <footer>
+            Built by Janis Agic
+        </footer>
+    </div>
+    
+    <script>
+        // Simulate progress
+        let progress = 68;
+        const progressFill = document.querySelector('.progress-fill');
+        const statsNumber = document.querySelector('.stat-number');
+        
+        setInterval(() => {
+            if (progress < 100) {
+                progress += Math.floor(Math.random() * 3) + 1;
+                if (progress > 100) progress = 100;
+                progressFill.style.width = progress + '%';
+                progressFill.textContent = progress + '%';
+                statsNumber.textContent = progress;
+            }
+        }, 2000);
+    </script>
+</body>
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full-Stack Lead Generation Pipeline</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: -30px auto 0;
+            padding: 0 20px 20px;
+        }
+        
+        .funnel-visualization {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 40px;
+            margin-bottom: 20px;
+        }
+        
+        .funnel-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        
+        .funnel-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+        
+        .funnel-step:not(:last-child)::after {
+            content: '→';
+            position: absolute;
+            right: -20px;
+            top: 35%;
+            font-size: 32px;
+            color: #667eea;
+        }
+        
+        .step-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 36px;
+            color: white;
+            box-shadow: 0 4px 6px rgba(102, 126, 234, 0.3);
+        }
+        
+        .step-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .step-description {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .preview-panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 25px;
+        }
+        
+        .preview-panel h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .ad-mockup {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .ad-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .ad-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .ad-info {
+            flex: 1;
+        }
+        
+        .ad-name {
+            font-weight: bold;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .ad-sponsor {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .ad-image {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 200px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        
+        .ad-text {
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .ad-cta {
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            width: 100%;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .ad-cta:hover {
+            background: #5568d3;
+        }
+        
+        .landing-page-preview {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .lp-hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        .lp-hero h3 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+        
+        .lp-form {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .zapier-flow {
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .zap-step {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .zap-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6a00 0%, #ee0979 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .zap-content {
+            flex: 1;
+        }
+        
+        .zap-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 3px;
+        }
+        
+        .zap-detail {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .crm-entry {
+            background: #f0fdf4;
+            border: 2px solid #86efac;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .crm-field {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #d1fae5;
+        }
+        
+        .crm-field:last-child {
+            border-bottom: none;
+        }
+        
+        .crm-label {
+            color: #065f46;
+            font-weight: 600;
+        }
+        
+        .crm-value {
+            color: #333;
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .disclaimer {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            margin: 20px 0 10px 0;
+        }
+        
+        footer {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .preview-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .funnel-steps {
+                flex-direction: column;
+            }
+            
+            .funnel-step:not(:last-child)::after {
+                content: '↓';
+                right: auto;
+                top: auto;
+                bottom: -30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎯 Full-Stack Lead Generation Pipeline</h1>
+        <p>Landing Page + FB Ads + Zapier Integration - $200 Project Value</p>
+    </div>
+    
+    <div class="container">
+        <div class="funnel-visualization">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #333;">Complete Funnel Flow</h2>
+            <div class="funnel-steps">
+                <div class="funnel-step">
+                    <div class="step-icon">📘</div>
+                    <div class="step-title">Facebook Ad</div>
+                    <div class="step-description">Target audience sees your offer</div>
+                </div>
+                <div class="funnel-step">
+                    <div class="step-icon">🌐</div>
+                    <div class="step-title">Landing Page</div>
+                    <div class="step-description">Visitor submits lead form</div>
+                </div>
+                <div class="funnel-step">
+                    <div class="step-icon">⚡</div>
+                    <div class="step-title">Zapier</div>
+                    <div class="step-description">Auto-processes data</div>
+                </div>
+                <div class="funnel-step">
+                    <div class="step-icon">💼</div>
+                    <div class="step-title">CRM</div>
+                    <div class="step-description">Lead stored & notified</div>
+                </div>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="stat-number">1,247</div>
+                    <div class="stat-label">Ad Clicks (7d)</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">342</div>
+                    <div class="stat-label">Form Submissions</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number">27.4%</div>
+                    <div class="stat-label">Conversion Rate</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="preview-grid">
+            <div class="preview-panel">
+                <h2>1. Facebook Ad Preview</h2>
+                <div class="ad-mockup">
+                    <div class="ad-header">
+                        <div class="ad-avatar">JA</div>
+                        <div class="ad-info">
+                            <div class="ad-name">Your Business Name</div>
+                            <div class="ad-sponsor">Sponsored · 📍 United States</div>
+                        </div>
+                    </div>
+                    <div class="ad-text">
+                        <strong>🎁 Limited Time Offer: Get Your Free Marketing Audit!</strong><br><br>
+                        Discover exactly what's holding your business back from generating more leads. Our expert team will analyze your current strategy and provide actionable insights - completely free!
+                    </div>
+                    <div class="ad-image">📊</div>
+                    <button class="ad-cta">Get My Free Audit →</button>
+                </div>
+            </div>
+            
+            <div class="preview-panel">
+                <h2>2. Landing Page Form</h2>
+                <div class="landing-page-preview">
+                    <div class="lp-hero">
+                        <h3>Get Your Free Marketing Audit</h3>
+                        <p style="opacity: 0.95;">Limited spots available this week!</p>
+                    </div>
+                    <div class="lp-form">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Email Address *</label>
+                            <input type="email" placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number *</label>
+                            <input type="tel" placeholder="+1 (555) 000-0000">
+                        </div>
+                        <div class="form-group">
+                            <label>Company Name</label>
+                            <input type="text" placeholder="Your Company Inc.">
+                        </div>
+                        <button class="ad-cta">Claim My Free Audit</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-panel">
+                <h2>3. Zapier Automation Flow</h2>
+                <div class="zapier-flow">
+                    <div class="zap-step">
+                        <div class="zap-icon">1</div>
+                        <div class="zap-content">
+                            <div class="zap-title">Trigger: Form Submitted</div>
+                            <div class="zap-detail">Webhook receives new lead data from landing page</div>
+                        </div>
+                    </div>
+                    <div class="zap-step">
+                        <div class="zap-icon">2</div>
+                        <div class="zap-content">
+                            <div class="zap-title">Filter: Validate Data</div>
+                            <div class="zap-detail">Check email format, phone number, required fields</div>
+                        </div>
+                    </div>
+                    <div class="zap-step">
+                        <div class="zap-icon">3</div>
+                        <div class="zap-content">
+                            <div class="zap-title">Action: Create CRM Contact</div>
+                            <div class="zap-detail">Add lead to CRM with source tag "FB-Audit-Campaign"</div>
+                        </div>
+                    </div>
+                    <div class="zap-step">
+                        <div class="zap-icon">4</div>
+                        <div class="zap-content">
+                            <div class="zap-title">Action: Send Notifications</div>
+                            <div class="zap-detail">Email to sales team + SMS alert to account manager</div>
+                        </div>
+                    </div>
+                    <div class="zap-step">
+                        <div class="zap-icon">5</div>
+                        <div class="zap-content">
+                            <div class="zap-title">Action: Welcome Email</div>
+                            <div class="zap-detail">Automated thank you email with next steps</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="preview-panel">
+                <h2>4. CRM Entry Result</h2>
+                <div class="crm-entry">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <strong style="color: #065f46; font-size: 18px;">✓ Lead Successfully Created</strong>
+                    </div>
+                    <div class="crm-field">
+                        <span class="crm-label">Name:</span>
+                        <span class="crm-value">Sarah Johnson</span>
+                    </div>
+                    <div class="crm-field">
+                        <span class="crm-label">Email:</span>
+                        <span class="crm-value">sarah.johnson@example.com</span>
+                    </div>
+                    <div class="crm-field">
+                        <span class="crm-label">Phone:</span>
+                        <span class="crm-value">+1 (555) 234-5678</span>
+                    </div>
+                    <div class="crm-field">
+                        <span class="crm-label">Company:</span>
+                        <span class="crm-value">TechStart Solutions</span>
+                    </div>
+                    <div class="crm-field">
+                        <span class="crm-label">Source:</span>
+                        <span class="crm-value">FB-Audit-Campaign</span>
+                    </div>
+                    <div class="crm-field">
+                        <span class="crm-label">Status:</span>
+                        <span class="crm-value">New Lead</span>
+                    </div>
+                    <div class="crm-field">
+                        <span class="crm-label">Timestamp:</span>
+                        <span class="crm-value">2026-03-26 13:42:18</span>
+                    </div>
+                    <div class="crm-field">
+                        <span class="crm-label">Assigned To:</span>
+                        <span class="crm-value">John Smith (Sales)</span>
+                    </div>
+                </div>
+                
+                <div style="background: white; border-radius: 8px; padding: 15px; margin-top: 15px;">
+                    <strong style="color: #333; display: block; margin-bottom: 10px;">Automated Actions Completed:</strong>
+                    <div style="font-size: 13px; color: #666; line-height: 1.8;">
+                        ✓ CRM contact created<br>
+                        ✓ Sales team notified via email<br>
+                        ✓ SMS alert sent to manager<br>
+                        ✓ Welcome email sent to lead<br>
+                        ✓ Lead tagged in campaign<br>
+                        ✓ Follow-up task created for tomorrow
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="disclaimer">
+            This is a conceptual demo built to showcase technical capabilities. It does not represent a finished product or use real data.
+        </div>
+        
+        <footer>
+            Built by Janis Agic
+        </footer>
+    </div>
+</body>
+</html>
