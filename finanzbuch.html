@@ -12,297 +12,299 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
-            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
+            color: #1a1a1a;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
             min-height: 100vh;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: rgba(30, 30, 30, 0.95);
+            background: white;
             border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        header {
             text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 2px solid #333;
-            padding-bottom: 30px;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            background: linear-gradient(135deg, #4CAF50, #2196F3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
 
-        .meta {
-            font-size: 1.1rem;
-            color: #888;
+        .header .meta {
+            font-size: 1.1em;
+            opacity: 0.95;
             margin-top: 10px;
         }
 
-        .meta strong {
-            color: #4CAF50;
-        }
-
-        section {
-            margin-bottom: 50px;
+        .content {
+            padding: 40px;
         }
 
         h2 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #fff;
-            border-left: 4px solid #4CAF50;
-            padding-left: 15px;
+            color: #667eea;
+            font-size: 1.8em;
+            margin: 40px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
         }
 
         h3 {
-            font-size: 1.4rem;
-            margin: 25px 0 15px;
-            color: #4CAF50;
+            color: #764ba2;
+            font-size: 1.4em;
+            margin: 30px 0 15px 0;
         }
 
-        h4 {
-            font-size: 1.2rem;
-            margin: 20px 0 10px;
-            color: #2196F3;
+        .divider {
+            height: 2px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            margin: 40px 0;
+            border-radius: 2px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
             margin: 20px 0;
-            background: rgba(20, 20, 20, 0.6);
+            background: white;
             border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
         thead {
-            background: linear-gradient(135deg, #2c2c2c, #1a1a1a);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
         }
 
         th {
-            padding: 15px 12px;
+            padding: 15px;
             text-align: left;
             font-weight: 600;
-            color: #4CAF50;
-            border-bottom: 2px solid #4CAF50;
+            font-size: 0.95em;
             text-transform: uppercase;
-            font-size: 0.85rem;
             letter-spacing: 0.5px;
         }
 
         td {
-            padding: 12px;
-            border-bottom: 1px solid #2a2a2a;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        tbody tr {
-            transition: all 0.3s ease;
+        tbody tr:nth-child(even) {
+            background-color: #f8f9ff;
         }
 
         tbody tr:hover {
-            background: rgba(76, 175, 80, 0.1);
-            transform: scale(1.01);
-            box-shadow: 0 4px 8px rgba(76, 175, 80, 0.2);
+            background-color: #f0f2ff;
+            transition: background-color 0.2s ease;
         }
 
         .positive {
-            color: #4CAF50;
+            color: #10b981;
             font-weight: 600;
         }
 
         .negative {
-            color: #f44336;
+            color: #ef4444;
             font-weight: 600;
         }
 
-        .pending {
-            color: #FFC107;
-            font-weight: 600;
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            margin: 25px 0;
-        }
-
-        .summary-card {
-            background: linear-gradient(135deg, #2a2a2a, #1f1f1f);
+        .summary-box {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e8ebff 100%);
+            border-left: 4px solid #667eea;
             padding: 20px;
-            border-radius: 12px;
-            border-left: 4px solid #4CAF50;
-            transition: all 0.3s ease;
+            margin: 20px 0;
+            border-radius: 8px;
         }
 
-        .summary-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(76, 175, 80, 0.3);
+        .summary-box h3 {
+            margin-top: 0;
+            color: #667eea;
         }
 
-        .summary-card h3 {
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-            color: #4CAF50;
+        .summary-box table {
+            margin-top: 15px;
+            box-shadow: none;
         }
 
-        .summary-card .amount {
-            font-size: 1.8rem;
+        .highlight-green {
+            background-color: #d1fae5 !important;
             font-weight: 700;
-            margin: 10px 0;
         }
 
-        .summary-card .label {
-            font-size: 0.9rem;
-            color: #888;
-            margin-bottom: 8px;
+        .highlight-red {
+            background-color: #fee2e2 !important;
+            font-weight: 700;
         }
 
-        .warning-box {
-            background: linear-gradient(135deg, #3a1f1f, #2a1515);
-            border-left: 4px solid #f44336;
+        .highlight-gold {
+            background-color: #fef3c7 !important;
+            font-weight: 700;
+        }
+
+        .alert-box {
+            background-color: #fef3c7;
+            border-left: 4px solid #f59e0b;
             padding: 20px;
+            margin: 20px 0;
             border-radius: 8px;
-            margin: 25px 0;
         }
 
-        .warning-box h3 {
-            color: #f44336;
-            margin-bottom: 15px;
+        .alert-box h2 {
+            color: #f59e0b;
+            margin-top: 0;
+            border-bottom: none;
         }
 
-        .warning-box ul {
-            list-style-position: inside;
-            color: #ffcccb;
+        .alert-box ol, .alert-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
         }
 
-        .warning-box li {
+        .alert-box li {
             margin: 8px 0;
+            line-height: 1.8;
         }
 
-        .note-box {
-            background: linear-gradient(135deg, #1f2a3a, #151f2a);
-            border-left: 4px solid #2196F3;
+        .notes-box {
+            background-color: #e0f2fe;
+            border-left: 4px solid #0ea5e9;
             padding: 20px;
+            margin: 20px 0;
             border-radius: 8px;
-            margin: 25px 0;
         }
 
-        .note-box h3 {
-            color: #2196F3;
-            margin-bottom: 15px;
+        .notes-box h2 {
+            color: #0ea5e9;
+            margin-top: 0;
+            border-bottom: none;
         }
 
-        .note-box ul {
-            list-style-position: inside;
-            color: #b3d9ff;
+        .notes-box ul {
+            margin-left: 20px;
+            margin-top: 10px;
         }
 
-        .note-box li {
+        .notes-box li {
             margin: 8px 0;
+            line-height: 1.8;
+        }
+
+        .footer {
+            background: #f8f9ff;
+            padding: 30px;
+            text-align: center;
+            color: #666;
+            border-top: 2px solid #e8ebff;
         }
 
         .badge {
             display: inline-block;
             padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.85rem;
+            border-radius: 12px;
+            font-size: 0.85em;
             font-weight: 600;
             margin-left: 8px;
         }
 
-        .badge-paid {
-            background: rgba(76, 175, 80, 0.2);
-            color: #4CAF50;
+        .badge-success {
+            background-color: #d1fae5;
+            color: #059669;
         }
 
-        .badge-pending {
-            background: rgba(255, 193, 7, 0.2);
-            color: #FFC107;
+        .badge-danger {
+            background-color: #fee2e2;
+            color: #dc2626;
         }
 
         .badge-warning {
-            background: rgba(244, 67, 54, 0.2);
-            color: #f44336;
+            background-color: #fef3c7;
+            color: #d97706;
         }
 
-        hr {
-            border: none;
-            border-top: 1px solid #333;
-            margin: 40px 0;
+        .badge-info {
+            background-color: #dbeafe;
+            color: #2563eb;
         }
 
-        footer {
-            text-align: center;
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 2px solid #333;
-            color: #666;
-            font-size: 0.9rem;
+        strong {
+            color: #1a1a1a;
         }
 
         @media (max-width: 768px) {
-            .container {
+            .content {
                 padding: 20px;
             }
 
-            h1 {
-                font-size: 1.8rem;
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
             }
 
             h2 {
-                font-size: 1.4rem;
+                font-size: 1.5em;
+            }
+
+            h3 {
+                font-size: 1.2em;
             }
 
             table {
-                font-size: 0.85rem;
+                font-size: 0.9em;
             }
 
             th, td {
                 padding: 10px 8px;
             }
+        }
 
-            .summary-grid {
-                grid-template-columns: 1fr;
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
             }
-        }
 
-        .checkmark {
-            color: #4CAF50;
-        }
+            .header h1 {
+                font-size: 1.5em;
+            }
 
-        .xmark {
-            color: #f44336;
+            table {
+                font-size: 0.8em;
+            }
+
+            th, td {
+                padding: 8px 6px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
+        <div class="header">
             <h1>📊 Finanzbuch - Janis Agic</h1>
             <div class="meta">
-                <strong>Stand:</strong> 14.03.2026 | <strong>CFO:</strong> Mauzi 💰 | Arceus Organisation
+                <strong>Stand:</strong> 26.03.2026, 19:30 Uhr<br>
+                <strong>CFO:</strong> Mauzi 💰 | Arceus Organisation
             </div>
-        </header>
+        </div>
 
-        <!-- UPWORK SECTION -->
-        <section>
+        <div class="content">
             <h2>💼 BUSINESS 1: UPWORK (Freelancing)</h2>
-            
+
             <h3>Transaktionen (Februar - März 2026)</h3>
             <table>
                 <thead>
@@ -321,7 +323,7 @@
                         <td>Connects</td>
                         <td>100 Connects</td>
                         <td>—</td>
-                        <td><span class="badge badge-paid">Bezahlt</span></td>
+                        <td>Bezahlt</td>
                         <td class="negative">-$17.85</td>
                     </tr>
                     <tr>
@@ -329,7 +331,7 @@
                         <td>Connects</td>
                         <td>200 Connects</td>
                         <td>—</td>
-                        <td><span class="badge badge-paid">Bezahlt</span></td>
+                        <td>Bezahlt</td>
                         <td class="negative">-$35.70</td>
                     </tr>
                     <tr>
@@ -337,7 +339,7 @@
                         <td>Fixed-price</td>
                         <td>OpenClaw Optimisation, MS1 — Removing bottlenecks</td>
                         <td>Audacity Talent Consulting</td>
-                        <td><span class="badge badge-paid">Added</span></td>
+                        <td>Added</td>
                         <td class="positive">+$29.07</td>
                     </tr>
                     <tr>
@@ -345,7 +347,7 @@
                         <td>Fixed-price</td>
                         <td>OpenClaw Optimisation, MS2 — Getting productive</td>
                         <td>Audacity Talent Consulting</td>
-                        <td><span class="badge badge-paid">Added</span></td>
+                        <td>Added</td>
                         <td class="positive">+$29.07</td>
                     </tr>
                     <tr>
@@ -353,7 +355,7 @@
                         <td>Fixed-price</td>
                         <td>OpenClaw Optimisation, MS3 — Tutorial</td>
                         <td>Audacity Talent Consulting</td>
-                        <td><span class="badge badge-paid">Added</span></td>
+                        <td>Added</td>
                         <td class="positive">+$88.10</td>
                     </tr>
                     <tr>
@@ -361,7 +363,7 @@
                         <td>Connects</td>
                         <td>200 Connects</td>
                         <td>—</td>
-                        <td><span class="badge badge-paid">Bezahlt</span></td>
+                        <td>Bezahlt</td>
                         <td class="negative">-$35.70</td>
                     </tr>
                     <tr>
@@ -369,7 +371,7 @@
                         <td>Connects</td>
                         <td>200 Connects</td>
                         <td>—</td>
-                        <td><span class="badge badge-paid">Bezahlt</span></td>
+                        <td>Bezahlt</td>
                         <td class="negative">-$35.70</td>
                     </tr>
                     <tr>
@@ -377,7 +379,7 @@
                         <td>Connects</td>
                         <td>40 Connects</td>
                         <td>—</td>
-                        <td><span class="badge badge-paid">Bezahlt</span></td>
+                        <td>Bezahlt</td>
                         <td class="negative">-$7.14</td>
                     </tr>
                     <tr>
@@ -385,7 +387,7 @@
                         <td>Connects</td>
                         <td>50 Connects</td>
                         <td>—</td>
-                        <td><span class="badge badge-paid">Bezahlt</span></td>
+                        <td>Bezahlt</td>
                         <td class="negative">-$8.93</td>
                     </tr>
                     <tr>
@@ -393,7 +395,7 @@
                         <td>Connects</td>
                         <td>10 Connects</td>
                         <td>—</td>
-                        <td><span class="badge badge-paid">Bezahlt</span></td>
+                        <td>Bezahlt</td>
                         <td class="negative">-$1.79</td>
                     </tr>
                     <tr>
@@ -401,7 +403,7 @@
                         <td>Connects</td>
                         <td>60 Connects (Checkout: 2031740752283382623)</td>
                         <td>—</td>
-                        <td><span class="badge badge-paid">Bezahlt</span></td>
+                        <td>Bezahlt</td>
                         <td class="negative">-$10.71</td>
                     </tr>
                     <tr>
@@ -409,396 +411,379 @@
                         <td>Fixed-price</td>
                         <td>Discord Restructure, MS1 — Begin</td>
                         <td>Digital Wealth</td>
-                        <td><span class="badge badge-pending">Pending</span></td>
-                        <td class="pending">+$22.02</td>
+                        <td>Pending</td>
+                        <td class="positive">+$22.02</td>
                     </tr>
                     <tr>
                         <td>12.03.2026</td>
                         <td>Fixed-price</td>
                         <td>Discord Restructure, MS2 — End Configuration</td>
                         <td>Digital Wealth</td>
-                        <td><span class="badge badge-pending">Pending</span></td>
-                        <td class="pending">+$17.62</td>
+                        <td>Pending</td>
+                        <td class="positive">+$17.62</td>
                     </tr>
                     <tr>
                         <td>15.03.2026</td>
                         <td>Bonus</td>
                         <td>Discord Restructure — Bonus</td>
                         <td>Digital Wealth</td>
-                        <td><span class="badge badge-pending">Pending</span></td>
-                        <td class="pending">+$0.88</td>
+                        <td>Pending</td>
+                        <td class="positive">+$0.88</td>
+                    </tr>
+                    <tr>
+                        <td>16.03.2026</td>
+                        <td>Connects</td>
+                        <td>40 Connects (Checkout: 2033669304775671185)</td>
+                        <td>—</td>
+                        <td>Bezahlt</td>
+                        <td class="negative">-$7.14</td>
+                    </tr>
+                    <tr>
+                        <td>22.03.2026</td>
+                        <td>Connects</td>
+                        <td>100 Connects</td>
+                        <td>—</td>
+                        <td>Bezahlt</td>
+                        <td class="negative">-$17.85</td>
+                    </tr>
+                    <tr>
+                        <td>26.03.2026</td>
+                        <td>Connects</td>
+                        <td>200 Connects (Checkout: 2037149022192961535)</td>
+                        <td>—</td>
+                        <td>Bezahlt</td>
+                        <td class="negative">-$35.70</td>
                     </tr>
                 </tbody>
             </table>
-            
-            <p style="font-style: italic; color: #888; margin-top: 10px;">
-                <strong>Hinweis:</strong> Alle Beträge sind NETTO nach Abzug der 20% Upwork Service Fee.
-            </p>
 
-            <h3>📊 Upwork-Zusammenfassung</h3>
-            <div class="summary-grid">
-                <div class="summary-card">
-                    <div class="label">Gesamteinnahmen (Netto nach Fee)</div>
-                    <div class="amount positive">$186.76</div>
-                </div>
-                <div class="summary-card">
-                    <div class="label">Betriebsausgaben (Connects)</div>
-                    <div class="amount negative">-$153.52</div>
-                </div>
-                <div class="summary-card">
-                    <div class="label">Gewinn vor Steuern</div>
-                    <div class="amount positive">$33.24</div>
-                </div>
-                <div class="summary-card">
-                    <div class="label">Steuerlast (31,65%)</div>
-                    <div class="amount negative">-$10.52</div>
-                </div>
-                <div class="summary-card" style="border-left-color: #4CAF50;">
-                    <div class="label">🟢 FREI VERFÜGBAR</div>
-                    <div class="amount positive">$22.72</div>
-                </div>
-                <div class="summary-card" style="border-left-color: #f44336;">
-                    <div class="label">🔴 ZURÜCKLEGEN (Steuer)</div>
-                    <div class="amount negative">$10.52</div>
-                </div>
-            </div>
+            <p><strong>Hinweis:</strong> Alle Beträge sind NETTO nach Abzug der 20% Upwork Service Fee.</p>
 
-            <p style="color: #888; margin-top: 15px;">
-                <strong>Steuersatz:</strong> 31,65% (30% Einkommensteuer + 5,5% Solidaritätszuschlag)
-            </p>
-
-            <div style="margin-top: 25px; padding: 15px; background: rgba(33, 150, 243, 0.1); border-radius: 8px; border-left: 4px solid #2196F3;">
-                <h4 style="color: #2196F3; margin-top: 0;">Aktuelle Bilanz</h4>
-                <ul style="list-style: none; padding: 0;">
-                    <li>• Available Balance: <strong class="positive">$39.13</strong></li>
-                    <li>• Pending Earnings: <strong class="pending">$40.52</strong></li>
-                    <li>• Connects übrig: <strong>15</strong></li>
-                </ul>
-
-                <h4 style="color: #2196F3; margin-top: 20px;">Aktive Proposals (5)</h4>
-                <ul style="list-style: none; padding: 0;">
-                    <li>• Sales Sniper ($2,000)</li>
-                    <li>• ServiceTitan ($350)</li>
-                    <li>• Claude Code (Hourly)</li>
-                    <li>• Compliance Automation ($900)</li>
-                    <li>• Real Estate Platform ($500)</li>
+            <div class="summary-box">
+                <h3>📊 Upwork-Zusammenfassung</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kategorie</th>
+                            <th>Betrag</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Gesamteinnahmen</strong> (Netto nach Fee)</td>
+                            <td class="positive"><strong>$186.76</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Betriebsausgaben</strong> (Connects)</td>
+                            <td class="negative"><strong>-$214.21</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gewinn vor Steuern</strong></td>
+                            <td class="negative"><strong>-$27.45</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Steuerlast</strong> (31,65%)</td>
+                            <td><strong>$0</strong></td>
+                        </tr>
+                        <tr class="highlight-red">
+                            <td>🟢 <strong>FREI VERFÜGBAR</strong></td>
+                            <td class="negative"><strong>-$27.45</strong></td>
+                        </tr>
+                        <tr class="highlight-green">
+                            <td>🔴 <strong>ZURÜCKLEGEN</strong> (Steuer)</td>
+                            <td><strong>$0</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;"><strong>Steuersatz:</strong> 31,65% (30% Einkommensteuer + 5,5% Solidaritätszuschlag)</p>
+                <p><strong>Aktuelle Bilanz:</strong></p>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Available Balance: ~$174.95</li>
+                    <li>Pending Earnings: ~$40.52</li>
+                    <li>Connects übrig: ~23</li>
+                    <li>Offene Bewerbungen: 17 (Gesamtwert ~$18,750)</li>
                 </ul>
             </div>
-        </section>
 
-        <hr>
+            <div class="divider"></div>
 
-        <!-- TRADING CAPITAL.COM SECTION -->
-        <section>
             <h2>📈 BUSINESS 2: TRADING (Capital.com / TradingView)</h2>
-            
-            <h3>Geschlossene Trades</h3>
 
-            <h4>Trade #1: BTC/USD Long <span class="checkmark">✅</span></h4>
+            <h3>Geschlossene Trades (Quelle: Capital.com Trade-History)</h3>
             <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Datum</th>
+                        <th>Instrument</th>
+                        <th>Richtung</th>
+                        <th>P&L</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Entry:</strong></td>
-                        <td>Buy Market 0.0335 BTC @ $67,083.30</td>
+                        <td>1</td>
+                        <td>09.03.2026, 09:45</td>
+                        <td>BTC/USD CFD</td>
+                        <td>Long</td>
+                        <td class="positive"><strong>+€19,31</strong></td>
+                        <td>✅</td>
                     </tr>
                     <tr>
-                        <td><strong>Datum Entry:</strong></td>
-                        <td>08.03.2026, 04:59:48</td>
+                        <td>2</td>
+                        <td>09.03.2026, 11:36</td>
+                        <td>BTC/USD CFD</td>
+                        <td>Long</td>
+                        <td class="negative"><strong>-€51,17</strong></td>
+                        <td>❌</td>
                     </tr>
                     <tr>
-                        <td><strong>Exit:</strong></td>
-                        <td>Sell Market 0.0335 BTC @ $67,752.25</td>
+                        <td>3</td>
+                        <td>09.03.2026, 14:15</td>
+                        <td>BTC/USD CFD</td>
+                        <td>Long</td>
+                        <td class="positive"><strong>+€21,37</strong></td>
+                        <td>✅</td>
                     </tr>
                     <tr>
-                        <td><strong>Datum Exit:</strong></td>
-                        <td>09.03.2026, 09:45:04</td>
+                        <td>4</td>
+                        <td>09.03.2026, 15:22</td>
+                        <td>BTC/USD CFD</td>
+                        <td>Long</td>
+                        <td class="positive"><strong>+€1,46</strong></td>
+                        <td>✅</td>
                     </tr>
                     <tr>
-                        <td><strong>Haltedauer:</strong></td>
-                        <td>~29 Stunden (1 Overnight)</td>
+                        <td>5</td>
+                        <td>12.03.2026, 08:01</td>
+                        <td>BTC/USD CFD</td>
+                        <td>Long</td>
+                        <td class="positive"><strong>+€1,89</strong></td>
+                        <td>✅</td>
                     </tr>
                     <tr>
-                        <td><strong>Brutto-Gewinn:</strong></td>
-                        <td class="positive">$22.41</td>
+                        <td>6</td>
+                        <td>12.03.2026, 12:14</td>
+                        <td>BTC/USD CFD</td>
+                        <td>Long</td>
+                        <td class="positive"><strong>+€27,31</strong></td>
+                        <td>✅</td>
                     </tr>
                     <tr>
-                        <td><strong>Gebühren:</strong></td>
-                        <td class="negative">~$2.50</td>
+                        <td>7</td>
+                        <td>12.03.2026, 19:21</td>
+                        <td>BTC/USD CFD</td>
+                        <td>Long</td>
+                        <td class="positive"><strong>+€6,81</strong></td>
+                        <td>✅</td>
                     </tr>
                     <tr>
-                        <td><strong>Netto-Gewinn:</strong></td>
-                        <td class="positive">$19.91 (≈ €18.44)</td>
+                        <td>8</td>
+                        <td>13.03.2026, 01:21</td>
+                        <td>BTC/USD CFD</td>
+                        <td>Long</td>
+                        <td class="positive"><strong>+€36,21</strong></td>
+                        <td>✅</td>
                     </tr>
                     <tr>
-                        <td><strong>Steuer (26,375%):</strong></td>
-                        <td class="negative">-€4.86</td>
+                        <td>9</td>
+                        <td>23.03.2026, 12:05</td>
+                        <td>BTC/USD CFD</td>
+                        <td>Long</td>
+                        <td class="positive"><strong>+€32,89</strong></td>
+                        <td>✅</td>
                     </tr>
-                    <tr style="background: rgba(76, 175, 80, 0.15);">
-                        <td><strong>🟢 FREI:</strong></td>
-                        <td class="positive"><strong>€13.58</strong></td>
-                    </tr>
-                    <tr style="background: rgba(244, 67, 54, 0.15);">
-                        <td><strong>🔴 ZURÜCKLEGEN:</strong></td>
-                        <td class="negative"><strong>€4.86</strong></td>
+                    <tr class="highlight-gold">
+                        <td>10</td>
+                        <td>26.03.2026, 19:20</td>
+                        <td>BTC/USD CFD</td>
+                        <td>Short</td>
+                        <td class="positive"><strong>+€76,20</strong></td>
+                        <td>✅ 🏆 <strong>BESTER TRADE!</strong></td>
                     </tr>
                 </tbody>
             </table>
 
-            <h4>Trade #2: BTC/USD Long <span class="xmark">❌</span></h4>
+            <h3>Übernacht-Finanzierungen (seit letztem Update)</h3>
             <table>
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Betrag</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Entry:</strong></td>
-                        <td>Buy Market 0.0029 BTC @ $88,015.15</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Datum Entry:</strong></td>
-                        <td>~08.03.2026 (alte Position)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Exit:</strong></td>
-                        <td>Sell Market 0.0029 BTC @ $67,770.30</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Datum Exit:</strong></td>
-                        <td>09.03.2026, 11:36:18</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Haltedauer:</strong></td>
-                        <td>~1+ Tag(e) mit mehreren Overnights</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Brutto-Verlust:</strong></td>
-                        <td class="negative">-$58.71</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Netto-Verlust:</strong></td>
-                        <td class="negative">-€50.00</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Steuer:</strong></td>
-                        <td>€0 (Verlust)</td>
-                    </tr>
-                    <tr style="background: rgba(244, 67, 54, 0.15);">
-                        <td><strong>🟢 FREI:</strong></td>
-                        <td class="negative"><strong>-€50.00</strong></td>
-                    </tr>
-                    <tr>
-                        <td><strong>🔴 ZURÜCKLEGEN:</strong></td>
-                        <td>€0</td>
+                        <td>25.03.2026, 22:00</td>
+                        <td class="positive">+€0,30</td>
                     </tr>
                 </tbody>
             </table>
 
-            <h4>Trade #3: BTC/USD Long <span class="checkmark">✅</span></h4>
+            <h3>Ein-/Auszahlungen (Capital.com)</h3>
             <table>
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Typ</th>
+                        <th>Betrag</th>
+                        <th>Methode</th>
+                        <th>Kontostatus</th>
+                    </tr>
+                </thead>
                 <tbody>
                     <tr>
-                        <td><strong>Entry:</strong></td>
-                        <td>Buy Market 0.0365 BTC @ $67,753.00</td>
+                        <td>08.03.2026, 04:09</td>
+                        <td>Einzahlung</td>
+                        <td class="positive">+€1.000,00</td>
+                        <td>PayPal</td>
+                        <td>€1.103,32</td>
                     </tr>
                     <tr>
-                        <td><strong>Datum Entry:</strong></td>
-                        <td>09.03.2026, 12:08:08</td>
+                        <td>13.03.2026, 10:37</td>
+                        <td>Auszahlung</td>
+                        <td class="negative">-€1.100,00</td>
+                        <td>PayPal</td>
+                        <td>€65,81</td>
                     </tr>
                     <tr>
-                        <td><strong>Exit:</strong></td>
-                        <td>Sell Market 0.0365 BTC @ $68,435.30</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Datum Exit:</strong></td>
-                        <td>09.03.2026, 14:15:07</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Haltedauer:</strong></td>
-                        <td>~2 Stunden (KEIN Overnight!)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Brutto-Gewinn:</strong></td>
-                        <td class="positive">$24.90 (≈ €21.37)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Gebühren:</strong></td>
-                        <td>€0 (zu kurze Haltedauer)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Netto-Gewinn:</strong></td>
-                        <td class="positive">€21.37</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Steuer (26,375%):</strong></td>
-                        <td class="negative">-€5.64</td>
-                    </tr>
-                    <tr style="background: rgba(76, 175, 80, 0.15);">
-                        <td><strong>🟢 FREI:</strong></td>
-                        <td class="positive"><strong>€15.73</strong></td>
-                    </tr>
-                    <tr style="background: rgba(244, 67, 54, 0.15);">
-                        <td><strong>🔴 ZURÜCKLEGEN:</strong></td>
-                        <td class="negative"><strong>€5.64</strong></td>
+                        <td>14.03.2026, 18:19</td>
+                        <td>Einzahlung</td>
+                        <td class="positive">+€1.020,00</td>
+                        <td>PayPal</td>
+                        <td>€1.085,81</td>
                     </tr>
                 </tbody>
             </table>
 
-            <div style="margin-top: 25px; padding: 15px; background: rgba(33, 150, 243, 0.1); border-radius: 8px; border-left: 4px solid #2196F3;">
-                <h4 style="color: #2196F3; margin-top: 0;">Account-Status (letzter Check: 09.03.2026)</h4>
-                <ul style="list-style: none; padding: 0;">
-                    <li>• Available: <strong class="positive">€1,091.53</strong></li>
-                    <li>• Equity: <strong class="positive">€1,091.53</strong></li>
-                    <li>• <span class="checkmark">✅</span> <strong>KEINE offenen Positionen</strong></li>
-                </ul>
+            <h3>Account-Status (letzter Check: 26.03.2026, 19:30 Uhr)</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Kontowert:</strong> €1.193,87</li>
+                <li><strong>Zum Traden verfügbar:</strong> €1.193,87</li>
+                <li><strong>CFD-Margin:</strong> €0</li>
+                <li>✅ <strong>KEINE offenen Positionen</strong></li>
+            </ul>
+
+            <div class="summary-box">
+                <h3>📊 Trading-Zusammenfassung (Capital.com)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kategorie</th>
+                            <th>Betrag</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Gewinne (9 Trades)</strong></td>
+                            <td class="positive"><strong>+€223,45</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Verluste (1 Trade)</strong></td>
+                            <td class="negative"><strong>-€51,17</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Finanzierungskosten</strong></td>
+                            <td class="negative"><strong>-€2,94</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>GESAMT (Netto)</strong></td>
+                            <td class="positive"><strong>+€169,34</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Steuerlast (26,375%)</strong></td>
+                            <td class="negative"><strong>-€44,66</strong></td>
+                        </tr>
+                        <tr class="highlight-green">
+                            <td>🟢 <strong>FREI VERFÜGBAR</strong></td>
+                            <td class="positive"><strong>€124,68</strong></td>
+                        </tr>
+                        <tr class="highlight-red">
+                            <td>🔴 <strong>ZURÜCKLEGEN</strong> (Steuer)</td>
+                            <td class="negative"><strong>€44,66</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;"><strong>Gewinnrate:</strong> 9/10 Trades (90%)</p>
+                <p><strong>Gewinnfaktor:</strong> 4.37 (€4,37 Gewinn pro €1 Verlust)</p>
+                <p><strong>Durchschnittliche Rendite:</strong> +€17,23 pro Trade</p>
+                <p><strong>Steuersatz:</strong> 26,375% (25% Abgeltungssteuer + 5,5% Soli)</p>
             </div>
 
-            <h3>📊 Trading-Zusammenfassung</h3>
-            <div class="summary-grid">
-                <div class="summary-card">
-                    <div class="label">Trade #1 Gewinn</div>
-                    <div class="amount positive">+€18.44</div>
-                </div>
-                <div class="summary-card" style="border-left-color: #f44336;">
-                    <div class="label">Trade #2 Verlust</div>
-                    <div class="amount negative">-€50.00</div>
-                </div>
-                <div class="summary-card">
-                    <div class="label">Trade #3 Gewinn</div>
-                    <div class="amount positive">+€21.37</div>
-                </div>
-                <div class="summary-card" style="border-left-color: #f44336;">
-                    <div class="label">GESAMT (Netto)</div>
-                    <div class="amount negative">-€10.19</div>
-                </div>
-                <div class="summary-card">
-                    <div class="label">Steuerlast</div>
-                    <div class="amount">€0</div>
-                </div>
-                <div class="summary-card">
-                    <div class="label">🟢 FREI VERFÜGBAR</div>
-                    <div class="amount">€0</div>
-                </div>
-            </div>
+            <div class="divider"></div>
 
-            <p style="color: #888; margin-top: 15px;">
-                <strong>Verlustvortrag:</strong> €10.19 (kann mit zukünftigen Gewinnen verrechnet werden)<br>
-                <strong>Steuersatz:</strong> 26,375% (25% Abgeltungssteuer + 5,5% Soli) — nur bei Gewinnen
-            </p>
-        </section>
-
-        <hr>
-
-        <!-- TRADING KRAKEN SECTION -->
-        <section>
             <h2>📈 BUSINESS 3: TRADING (Kraken Pro)</h2>
-            
+
             <h3>Geschlossene Trades</h3>
 
-            <h4>Trade #1: BTC/EUR Short <span class="xmark">❌</span></h4>
-            <table>
-                <tbody>
-                    <tr>
-                        <td><strong>Entry:</strong></td>
-                        <td>Sell Short 0.0613 BTC @ €62,100.00 (Margin 3x)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Datum Entry:</strong></td>
-                        <td>13.03.2026</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Exit:</strong></td>
-                        <td>Buy to Close 0.0613 BTC @ €62,120.00</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Datum Exit:</strong></td>
-                        <td>13.03.2026</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Haltedauer:</strong></td>
-                        <td>&lt; 1 Tag</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Positionsgröße:</strong></td>
-                        <td>€3,773 (0.0613 BTC × €62,100 × 3x Hebel)</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Brutto-Verlust:</strong></td>
-                        <td class="negative">-€1.23</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Opening Fee (0,40%):</strong></td>
-                        <td class="negative">-€15.09</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Closing Fee (0,40%):</strong></td>
-                        <td class="negative">-€15.09</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Margin Rollover Fees:</strong></td>
-                        <td class="negative">~-€0,38</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Gesamt-Gebühren:</strong></td>
-                        <td class="negative">-€30.56</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Netto-Verlust:</strong></td>
-                        <td class="negative">-€28.79</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Steuer:</strong></td>
-                        <td>€0 (Verlust)</td>
-                    </tr>
-                    <tr style="background: rgba(244, 67, 54, 0.15);">
-                        <td><strong>🟢 FREI:</strong></td>
-                        <td class="negative"><strong>-€28.79</strong></td>
-                    </tr>
-                    <tr>
-                        <td><strong>🔴 ZURÜCKLEGEN:</strong></td>
-                        <td>€0</td>
-                    </tr>
-                </tbody>
-            </table>
+            <h4 style="color: #764ba2; margin-top: 20px;">Trade #1: BTC/EUR Short ❌</h4>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Entry:</strong> Sell Short 0.0613 BTC @ €62,100.00 (Margin 3x)</li>
+                <li><strong>Datum Entry:</strong> 13.03.2026</li>
+                <li><strong>Exit:</strong> Buy to Close 0.0613 BTC @ €62,120.00</li>
+                <li><strong>Datum Exit:</strong> 13.03.2026</li>
+                <li><strong>Haltedauer:</strong> &lt; 1 Tag</li>
+                <li><strong>Positionsgröße:</strong> €3,773 (0.0613 BTC × €62,100 × 3x Hebel)</li>
+                <li><strong>Brutto-Verlust:</strong> (€62,100 - €62,120) × 0.0613 = <span class="negative"><strong>-€1.23</strong></span></li>
+                <li><strong>Opening Fee (0,40%):</strong> <span class="negative">-€15.09</span></li>
+                <li><strong>Closing Fee (0,40%):</strong> <span class="negative">-€15.09</span></li>
+                <li><strong>Margin Rollover Fees:</strong> <span class="negative">~-€0,38</span></li>
+                <li><strong>Gesamt-Gebühren:</strong> <span class="negative"><strong>-€30.56</strong></span></li>
+                <li><strong>Netto-Verlust:</strong> <span class="negative"><strong>-€28.79</strong></span></li>
+                <li><strong>Steuer:</strong> €0 (Verlust)</li>
+                <li>🟢 <strong>FREI:</strong> <span class="negative">-€28.79</span></li>
+                <li>🔴 <strong>ZURÜCKLEGEN:</strong> €0</li>
+            </ul>
 
-            <div style="margin-top: 25px; padding: 15px; background: rgba(33, 150, 243, 0.1); border-radius: 8px; border-left: 4px solid #2196F3;">
-                <h4 style="color: #2196F3; margin-top: 0;">Account-Status (letzter Check: 13.03.2026)</h4>
-                <ul style="list-style: none; padding: 0;">
-                    <li>• Kontowert vorher: <strong>€1,100.00</strong></li>
-                    <li>• Kontowert nachher: <strong class="positive">€1,071.21</strong></li>
-                    <li>• <span class="checkmark">✅</span> <strong>KEINE offenen Positionen</strong></li>
-                </ul>
+            <h3>Account-Status (letzter Check: 13.03.2026)</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Kontowert vorher:</strong> €1,100.00</li>
+                <li><strong>Kontowert nachher:</strong> €1,071.21</li>
+                <li>✅ <strong>KEINE offenen Positionen</strong></li>
+            </ul>
+
+            <div class="summary-box">
+                <h3>📊 Kraken-Zusammenfassung</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kategorie</th>
+                            <th>Betrag</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Trade #1 Verlust</strong></td>
+                            <td class="negative"><strong>-€28.79</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>GESAMT (Netto)</strong></td>
+                            <td class="negative"><strong>-€28.79</strong></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Steuerlast</strong></td>
+                            <td><strong>€0</strong></td>
+                        </tr>
+                        <tr class="highlight-green">
+                            <td>🟢 <strong>FREI VERFÜGBAR</strong></td>
+                            <td><strong>€0</strong></td>
+                        </tr>
+                        <tr class="highlight-red">
+                            <td>🔴 <strong>ZURÜCKLEGEN</strong> (Steuer)</td>
+                            <td><strong>€0</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;"><strong>Verlustvortrag:</strong> €28.79 (kann mit zukünftigen Gewinnen verrechnet werden)</p>
+                <p><strong>Steuersatz:</strong> 26,375% (25% Abgeltungssteuer + 5,5% Soli) — nur bei Gewinnen</p>
+                <p><strong>Gebührenstruktur:</strong> 0,40% Opening + 0,40% Closing + Margin Rollover (~€0,38/4h)</p>
             </div>
 
-            <h3>📊 Kraken-Zusammenfassung</h3>
-            <div class="summary-grid">
-                <div class="summary-card" style="border-left-color: #f44336;">
-                    <div class="label">Trade #1 Verlust</div>
-                    <div class="amount negative">-€28.79</div>
-                </div>
-                <div class="summary-card" style="border-left-color: #f44336;">
-                    <div class="label">GESAMT (Netto)</div>
-                    <div class="amount negative">-€28.79</div>
-                </div>
-                <div class="summary-card">
-                    <div class="label">Steuerlast</div>
-                    <div class="amount">€0</div>
-                </div>
-                <div class="summary-card">
-                    <div class="label">🟢 FREI VERFÜGBAR</div>
-                    <div class="amount">€0</div>
-                </div>
-            </div>
+            <div class="divider"></div>
 
-            <p style="color: #888; margin-top: 15px;">
-                <strong>Verlustvortrag:</strong> €28.79 (kann mit zukünftigen Gewinnen verrechnet werden)<br>
-                <strong>Steuersatz:</strong> 26,375% (25% Abgeltungssteuer + 5,5% Soli) — nur bei Gewinnen<br>
-                <strong>Gebührenstruktur:</strong> 0,40% Opening + 0,40% Closing + Margin Rollover (~€0,38/4h)
-            </p>
-        </section>
-
-        <hr>
-
-        <!-- BETRIEBSAUSGABEN SECTION -->
-        <section>
             <h2>💸 BUSINESS 4: BETRIEBSAUSGABEN (Monatlich)</h2>
-            
+
             <h3>Laufende Kosten</h3>
             <table>
                 <thead>
@@ -811,94 +796,90 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Claude Max Plan (Anthropic)</td>
-                        <td class="negative">€214,20/Monat</td>
-                        <td><span class="badge badge-paid">🟢 Laufend</span></td>
-                        <td><span class="checkmark">✅</span> Ja</td>
+                        <td><strong>Claude Max Plan (Anthropic)</strong></td>
+                        <td>€214,20/Monat</td>
+                        <td><span class="badge badge-success">🟢 Laufend</span></td>
+                        <td>✅ Ja</td>
                     </tr>
                     <tr>
-                        <td>Anthropic API Credits</td>
-                        <td class="negative">~€5-10 (variabel)</td>
-                        <td><span class="badge badge-paid">🟢 Laufend</span></td>
-                        <td><span class="checkmark">✅</span> Ja</td>
+                        <td><strong>Anthropic API Credits</strong></td>
+                        <td>~€5-10 (variabel)</td>
+                        <td><span class="badge badge-success">🟢 Laufend</span></td>
+                        <td>✅ Ja</td>
                     </tr>
                     <tr>
-                        <td>GitHub Copilot</td>
-                        <td class="negative">€10 (~$10.60)</td>
-                        <td><span class="badge badge-pending">🟡 Wird gekündigt</span></td>
-                        <td><span class="checkmark">✅</span> Ja</td>
-                    </tr>
-                    <tr style="background: rgba(244, 67, 54, 0.1);">
-                        <td>LinkedIn Sales Navigator</td>
-                        <td class="negative">€118.99 (~$126.50)</td>
-                        <td><span class="badge badge-warning">🔴 KÜNDIGEN vor 04.04.2026!</span></td>
-                        <td><span class="checkmark">✅</span> Ja</td>
+                        <td><strong>GitHub Copilot</strong></td>
+                        <td>€10 (~$10.60)</td>
+                        <td><span class="badge badge-warning">🟡 Wird gekündigt</span></td>
+                        <td>✅ Ja</td>
                     </tr>
                     <tr>
-                        <td>Upwork Connects</td>
-                        <td class="negative">~$50-75 (variabel)</td>
-                        <td><span class="badge badge-paid">🟢 Laufend</span></td>
-                        <td><span class="checkmark">✅</span> Ja</td>
+                        <td><strong>LinkedIn Sales Navigator</strong></td>
+                        <td>€118.99 (~$126.50)</td>
+                        <td><span class="badge badge-danger">🔴 KÜNDIGEN vor 04.04.2026!</span></td>
+                        <td>✅ Ja</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Upwork Connects</strong></td>
+                        <td>~$50-75 (variabel)</td>
+                        <td><span class="badge badge-success">🟢 Laufend</span></td>
+                        <td>✅ Ja</td>
                     </tr>
                 </tbody>
             </table>
 
-            <h3>📊 Ausgaben-Zusammenfassung (März 2026)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Kategorie</th>
-                        <th>Betrag</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Claude Max Plan (14.03.2026)</td>
-                        <td class="negative">-€214,20</td>
-                    </tr>
-                    <tr>
-                        <td>Upwork Connects (Feb-März)</td>
-                        <td class="negative">-$153.52</td>
-                    </tr>
-                    <tr>
-                        <td>Anthropic API Credits</td>
-                        <td class="negative">-€5,95</td>
-                    </tr>
-                    <tr>
-                        <td>GitHub Copilot</td>
-                        <td class="negative">-€10</td>
-                    </tr>
-                    <tr>
-                        <td>LinkedIn Sales Navigator</td>
-                        <td class="negative">-€118,99</td>
-                    </tr>
-                    <tr style="background: rgba(244, 67, 54, 0.15);">
-                        <td><strong>GESAMT</strong></td>
-                        <td class="negative"><strong>~€502,66</strong></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="summary-box">
+                <h3>📊 Ausgaben-Zusammenfassung (März 2026)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kategorie</th>
+                            <th>Betrag</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Claude Max Plan (14.03.2026)</td>
+                            <td class="negative">-€214,20</td>
+                        </tr>
+                        <tr>
+                            <td>Upwork Connects (Feb-März)</td>
+                            <td class="negative">-$214.21</td>
+                        </tr>
+                        <tr>
+                            <td>Anthropic API Credits</td>
+                            <td class="negative">-€5,95</td>
+                        </tr>
+                        <tr>
+                            <td>GitHub Copilot</td>
+                            <td class="negative">-€10</td>
+                        </tr>
+                        <tr>
+                            <td>LinkedIn Sales Navigator</td>
+                            <td class="negative">-€118,99</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GESAMT</strong></td>
+                            <td class="negative"><strong>~€502,66</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;"><strong>Alle Betriebsausgaben sind steuerlich absetzbar!</strong></p>
+            </div>
 
-            <p style="font-weight: 600; color: #4CAF50; margin-top: 15px;">
-                Alle Betriebsausgaben sind steuerlich absetzbar!
-            </p>
-        </section>
+            <div class="divider"></div>
 
-        <hr>
-
-        <!-- ANTHROPIC SECTION -->
-        <section>
             <h2>🤖 Anthropic — Komplett-Abrechnung</h2>
-            
+
             <h3>Claude Max Abo (claude.ai)</h3>
-            <ul style="color: #888; margin-bottom: 20px; line-height: 2;">
-                <li>• <strong>Plan:</strong> Max (20x Pro Nutzung)</li>
-                <li>• <strong>Zahlungsmittel:</strong> Visa •••• 5378</li>
-                <li>• <strong>Verlängerung:</strong> 14. April 2026 (monatlich)</li>
-                <li>• <strong>Billing-Seite:</strong> <a href="https://claude.ai/settings/billing" style="color: #2196F3;">claude.ai/settings/billing</a></li>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Plan:</strong> Max (20x Pro Nutzung)</li>
+                <li><strong>Zahlungsmittel:</strong> Visa •••• 5378</li>
+                <li><strong>Verlängerung:</strong> 14. April 2026 (monatlich)</li>
+                <li><strong>Billing-Seite:</strong> <a href="https://claude.ai/settings/billing" target="_blank">https://claude.ai/settings/billing</a></li>
             </ul>
 
-            <h4>Rechnungshistorie</h4>
+            <h3>Rechnungshistorie</h3>
             <table>
                 <thead>
                     <tr>
@@ -913,196 +894,195 @@
                         <td>14.03.2026</td>
                         <td>Max Plan (monatlich)</td>
                         <td class="negative">€214,20</td>
-                        <td><span class="badge badge-paid">✅ Paid</span></td>
+                        <td>✅ Paid</td>
                     </tr>
                     <tr>
                         <td>02.03.2026</td>
                         <td>Korrektur/Gutschrift</td>
                         <td>€0,00</td>
-                        <td><span class="badge badge-paid">✅ Paid</span></td>
+                        <td>✅ Paid</td>
                     </tr>
                     <tr>
                         <td>18.02.2026</td>
                         <td>API Credits</td>
                         <td class="negative">€5,95</td>
-                        <td><span class="badge badge-paid">✅ Paid</span></td>
+                        <td>✅ Paid</td>
                     </tr>
                     <tr>
                         <td>14.02.2026</td>
                         <td>Abo (Upgrade auf Max)</td>
                         <td class="negative">€110,05</td>
-                        <td><span class="badge badge-paid">✅ Paid</span></td>
+                        <td>✅ Paid</td>
                     </tr>
                     <tr>
                         <td>13.02.2026</td>
                         <td>Abo (erster Plan)</td>
                         <td class="negative">€107,10</td>
-                        <td><span class="badge badge-paid">✅ Paid</span></td>
-                    </tr>
-                    <tr style="background: rgba(244, 67, 54, 0.15);">
-                        <td colspan="2"><strong>Gesamt bezahlt (Feb-März 2026)</strong></td>
-                        <td class="negative"><strong>€437,30</strong></td>
-                        <td></td>
+                        <td>✅ Paid</td>
                     </tr>
                 </tbody>
             </table>
+            <p style="margin-top: 15px;"><strong>Gesamt bezahlt (Feb-März 2026): €437,30</strong></p>
 
-            <h3 style="margin-top: 30px;">Anthropic API (console.anthropic.com)</h3>
-            <ul style="color: #888; line-height: 2;">
-                <li>• <strong>Billing-Seite:</strong> <a href="https://platform.claude.com/settings/billing" style="color: #2196F3;">platform.claude.com/settings/billing</a></li>
-                <li>• <strong>Credit Balance:</strong> <span class="positive">$3,57</span> (remaining)</li>
-                <li>• <strong>Pending (März):</strong> <span class="pending">$1,42</span></li>
-                <li>• <strong>Einzige Rechnung:</strong> 01.03.2026 — $5,95 (Credit Grant, läuft ab 02.03.2027)</li>
+            <h3>Anthropic API (console.anthropic.com)</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li><strong>Billing-Seite:</strong> <a href="https://platform.claude.com/settings/billing" target="_blank">https://platform.claude.com/settings/billing</a></li>
+                <li><strong>Credit Balance:</strong> $3,57 (remaining)</li>
+                <li><strong>Pending (März):</strong> $1,42</li>
+                <li><strong>Einzige Rechnung:</strong> 01.03.2026 — $5,95 (Credit Grant, läuft ab 02.03.2027)</li>
             </ul>
-        </section>
 
-        <hr>
+            <div class="divider"></div>
 
-        <!-- GESAMTÜBERSICHT -->
-        <section>
             <h2>🎯 GESAMTÜBERSICHT ALLER BUSINESSES</h2>
-            
-            <h3>🟢 FREI VERFÜGBAR (Gesamt)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Business</th>
-                        <th>Betrag (nach Steuern)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Upwork</td>
-                        <td class="positive">$22.72</td>
-                    </tr>
-                    <tr>
-                        <td>Trading (Capital.com)</td>
-                        <td>€0</td>
-                    </tr>
-                    <tr>
-                        <td>Trading (Kraken Pro)</td>
-                        <td>€0</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p style="color: #888; margin-top: 10px;"><strong>Umgerechnet (ca.):</strong> $22.72 ≈ €21.04</p>
 
-            <h3 style="margin-top: 30px;">🔴 ZURÜCKLEGEN (Steuerrücklagen)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Business</th>
-                        <th>Betrag</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Upwork</td>
-                        <td class="negative">$10.52</td>
-                    </tr>
-                    <tr>
-                        <td>Trading (Capital.com)</td>
-                        <td>€0</td>
-                    </tr>
-                    <tr>
-                        <td>Trading (Kraken Pro)</td>
-                        <td>€0</td>
-                    </tr>
-                </tbody>
-            </table>
-            <p style="color: #888; margin-top: 10px;"><strong>Umgerechnet (ca.):</strong> $10.52 ≈ €9.74</p>
+            <div class="summary-box">
+                <h3>🟢 FREI VERFÜGBAR (Gesamt)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Business</th>
+                            <th>Betrag (nach Steuern)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Upwork</td>
+                            <td class="negative"><strong>-$27,45</strong> (noch negativ, Connects > Einnahmen)</td>
+                        </tr>
+                        <tr>
+                            <td>Trading (Capital.com)</td>
+                            <td class="positive"><strong>€124,68</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Trading (Kraken Pro)</td>
+                            <td><strong>€0</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;"><strong>Umgerechnet (ca.):</strong> ~<strong>€99,23</strong></p>
+            </div>
 
-            <h3 style="margin-top: 30px;">📊 Trading Verlustvortrag (gesamt)</h3>
-            <ul style="color: #888; line-height: 2;">
-                <li>• Capital.com: <span class="negative">€10.19</span></li>
-                <li>• Kraken Pro: <span class="negative">€28.79</span></li>
-                <li>• <strong>Gesamt:</strong> <span class="negative"><strong>€38.98</strong></span> (kann mit zukünftigen Gewinnen verrechnet werden)</li>
-            </ul>
+            <div class="summary-box">
+                <h3>🔴 ZURÜCKLEGEN (Steuerrücklagen)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Business</th>
+                            <th>Betrag</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Upwork</td>
+                            <td><strong>$0</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Trading (Capital.com)</td>
+                            <td class="negative"><strong>€44,66</strong></td>
+                        </tr>
+                        <tr>
+                            <td>Trading (Kraken Pro)</td>
+                            <td><strong>€0</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;"><strong>Umgerechnet (ca.):</strong> ~<strong>€44,66</strong></p>
+            </div>
 
-            <h3 style="margin-top: 30px;">💰 Gesamt-Cashflow (Feb-März 2026)</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Kategorie</th>
-                        <th>Betrag</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Einnahmen (Netto Upwork)</td>
-                        <td class="positive">+$186.76 (~€173)</td>
-                    </tr>
-                    <tr>
-                        <td>Trading Verluste</td>
-                        <td class="negative">-€38.98</td>
-                    </tr>
-                    <tr>
-                        <td>Claude Max Plan (Feb+März)</td>
-                        <td class="negative">-€431,35</td>
-                    </tr>
-                    <tr>
-                        <td>Anthropic API Credits</td>
-                        <td class="negative">-€5,95</td>
-                    </tr>
-                    <tr>
-                        <td>Upwork Connects</td>
-                        <td class="negative">-$153.52 (~€142)</td>
-                    </tr>
-                    <tr>
-                        <td>LinkedIn Sales Navigator</td>
-                        <td class="negative">-€118,99</td>
-                    </tr>
-                    <tr>
-                        <td>GitHub Copilot</td>
-                        <td class="negative">-€10</td>
-                    </tr>
-                    <tr style="background: rgba(244, 67, 54, 0.2);">
-                        <td><strong>Netto-Cashflow</strong></td>
-                        <td class="negative"><strong>~-€574</strong></td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="summary-box">
+                <h3>📊 Trading Verlustvortrag</h3>
+                <ul style="margin-left: 20px; margin-top: 10px;">
+                    <li>Capital.com: <strong>€0</strong> (Verluste durch Gewinne aufgebraucht)</li>
+                    <li>Kraken Pro: <strong>€28,79</strong></li>
+                    <li><strong>Gesamt:</strong> <strong>€28,79</strong> (kann mit zukünftigen Kraken-Gewinnen verrechnet werden)</li>
+                </ul>
+            </div>
 
-            <p style="color: #f44336; font-weight: 600; margin-top: 20px; font-size: 1.1rem;">
-                ⚠️ Deutlich mehr Ausgaben als Einnahmen! Claude Max allein ist €214/Monat. Muss durch Aufträge gedeckt werden.
-            </p>
-        </section>
+            <div class="summary-box">
+                <h3>💰 Gesamt-Cashflow (Feb-März 2026)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Kategorie</th>
+                            <th>Betrag</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Einnahmen (Netto Upwork)</strong></td>
+                            <td class="positive">+$186.76 (~€173)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Trading Capital.com (Netto)</strong></td>
+                            <td class="positive">+€169,34</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Trading Kraken (Verlust)</strong></td>
+                            <td class="negative">-€28,79</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Claude Max Plan (Feb+März)</strong></td>
+                            <td class="negative">-€431,35</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Anthropic API Credits</strong></td>
+                            <td class="negative">-€5,95</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Upwork Connects</strong></td>
+                            <td class="negative">-$214.21 (~€198)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>LinkedIn Sales Navigator</strong></td>
+                            <td class="negative">-€118,99</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GitHub Copilot</strong></td>
+                            <td class="negative">-€10</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Netto-Cashflow</strong></td>
+                            <td class="negative"><strong>~-€451</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p style="margin-top: 15px;">⚠️ <strong>Noch negativ, aber Trading zieht an!</strong> +€169 aus Trading (90% Winrate). 17 offene Bewerbungen (Wert ~$18.750) — Upwork-Einnahmen sollten bald steigen.</p>
+            </div>
 
-        <hr>
+            <div class="divider"></div>
 
-        <!-- WICHTIGE TO-DOs -->
-        <div class="warning-box">
-            <h3>⚠️ WICHTIGE TO-DOs</h3>
-            <ul>
-                <li><strong>LinkedIn Sales Navigator KÜNDIGEN vor 04.04.2026</strong> (€118.99/Monat!)</li>
-                <li><strong>GitHub Copilot kündigen</strong> (€10/Monat) — nutzen wir nicht mehr</li>
-                <li><strong>Connects-Strategie optimieren</strong> — 430 Connects/Auftrag ist zu viel</li>
-                <li><strong>Mehr Aufträge akquirieren</strong> — Cashflow ist negativ!</li>
-                <li><strong>Claude Max Plan prüfen</strong> — brauchen wir wirklich 20x? 5x Max wäre €100/Monat statt €214</li>
-            </ul>
+            <div class="alert-box">
+                <h2>⚠️ WICHTIGE TO-DOs</h2>
+                <ol>
+                    <li><strong>LinkedIn Sales Navigator KÜNDIGEN vor 04.04.2026</strong> (€118.99/Monat!)</li>
+                    <li><strong>GitHub Copilot kündigen</strong> (€10/Monat) — nutzen wir nicht mehr</li>
+                    <li><strong>Connects-Strategie optimieren</strong> — 430 Connects/Auftrag ist zu viel</li>
+                    <li><strong>Mehr Aufträge akquirieren</strong> — Cashflow ist negativ!</li>
+                    <li><strong>Claude Max Plan prüfen</strong> — brauchen wir wirklich 20x? 5x Max wäre €100/Monat statt €214</li>
+                </ol>
+            </div>
+
+            <div class="notes-box">
+                <h2>📝 Notizen</h2>
+                <ul>
+                    <li><strong>Upwork:</strong> Pending-Zahlungen ($40.52) müssen noch bestätigt werden</li>
+                    <li><strong>Trading Capital.com:</strong> Im Plus! +€169,34 Netto (Stand 26.03.2026) — 90% Winrate, Bester Trade +€76,20</li>
+                    <li><strong>Trading Kraken Pro:</strong> Verlustvortrag €28,79 (kann mit zukünftigen Gewinnen verrechnet werden)</li>
+                    <li><strong>Währung:</strong> Businesses laufen in unterschiedlichen Währungen (USD/EUR)</li>
+                    <li><strong>Steuern:</strong> Quartalsweise/jährlich ans Finanzamt abführen</li>
+                    <li><strong>Claude Max Plan:</strong> €214,20/Monat (20x Pro), Visa ••••5378, verlängert am 14. jedes Monats</li>
+                    <li><strong>Anthropic API:</strong> Separat, $3,57 Credit Balance (Stand 14.03.2026)</li>
+                    <li><strong>Kraken Gebühren:</strong> 0,40% pro Trade-Seite (Opening/Closing) + Margin Rollover ~€0,38/4h — deutlich höher als Capital.com!</li>
+                </ul>
+            </div>
         </div>
 
-        <!-- NOTIZEN -->
-        <div class="note-box">
-            <h3>📝 Notizen</h3>
-            <ul>
-                <li><strong>Upwork:</strong> Pending-Zahlungen ($40.52) müssen noch bestätigt werden</li>
-                <li><strong>Trading Capital.com:</strong> Verlustvortrag €10.19 kann mit zukünftigen Gewinnen verrechnet werden</li>
-                <li><strong>Trading Kraken Pro:</strong> Verlustvortrag €28.79 kann mit zukünftigen Gewinnen verrechnet werden</li>
-                <li><strong>Trading gesamt:</strong> Verlustvortrag €38.98 (beide Plattformen kombiniert)</li>
-                <li><strong>Währung:</strong> Businesses laufen in unterschiedlichen Währungen (USD/EUR)</li>
-                <li><strong>Steuern:</strong> Quartalsweise/jährlich ans Finanzamt abführen</li>
-                <li><strong>Claude Max Plan:</strong> €214,20/Monat (20x Pro), Visa ••••5378, verlängert am 14. jedes Monats</li>
-                <li><strong>Anthropic API:</strong> Separat, $3,57 Credit Balance (Stand 14.03.2026)</li>
-                <li><strong>Kraken Gebühren:</strong> 0,40% pro Trade-Seite (Opening/Closing) + Margin Rollover ~€0,38/4h — deutlich höher als Capital.com!</li>
-            </ul>
-        </div>
-
-        <footer>
+        <div class="footer">
             <p><strong>Erstellt am:</strong> 09.03.2026</p>
-            <p><strong>Letzte Aktualisierung:</strong> 14.03.2026, 15:52 Uhr</p>
-            <p><strong>Von:</strong> Mauzi 💰 | Arceus Organisation</p>
-        </footer>
+            <p><strong>Letzte Aktualisierung:</strong> 26.03.2026, 19:30 Uhr</p>
+            <p><strong>Von:</strong> Arceus 🌟 | Arceus Organisation</p>
+        </div>
     </div>
 </body>
 </html>
