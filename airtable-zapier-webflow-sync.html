@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airtable + Zapier + Webflow Sync Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #00d4ff 0%, #090979 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        .sync-status {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .sync-status h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .pipeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .pipeline-step {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .pipeline-step:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .pipeline-step .logo {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+        
+        .pipeline-step h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        .pipeline-step .status {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .pipeline-arrow {
+            font-size: 3rem;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .listings-panel {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .listings-panel h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .listings-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .listings-table thead {
+            background: #667eea;
+            color: white;
+        }
+        
+        .listings-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .listings-table td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .listings-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .status-synced {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .property-image {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .sync-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #e3f2fd;
+            border-radius: 10px;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .sync-indicator .pulse {
+            width: 15px;
+            height: 15px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+            }
+            50% {
+                box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+            }
+        }
+        
+        .activity-log {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .log-entry {
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-left: 3px solid #667eea;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            opacity: 0;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        .log-entry:nth-child(1) { animation-delay: 0.1s; }
+        .log-entry:nth-child(2) { animation-delay: 0.2s; }
+        .log-entry:nth-child(3) { animation-delay: 0.3s; }
+        
+        .log-timestamp {
+            color: #999;
+            font-size: 0.8rem;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            padding: 20px;
+        }
+        
+        .footer strong {
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .pipeline {
+                flex-direction: column;
+            }
+            
+            .pipeline-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .listings-table {
+                font-size: 0.85rem;
+            }
+            
+            .listings-table th,
+            .listings-table td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Airtable + Zapier + Webflow Sync</h1>
+            <p>Automated Property Listing Pipeline</p>
+        </div>
+        
+        <div class="sync-status">
+            <div class="sync-indicator">
+                <div class="pulse"></div>
+                <div>
+                    <strong>SYNC STATUS: ACTIVE</strong>
+                    <div style="font-size: 0.9rem; color: #666; margin-top: 5px;">
+                        Last sync: 3 minutes ago • Next sync: in 7 minutes
+                    </div>
+                </div>
+            </div>
+            
+            <h2>🔄 Automation Pipeline</h2>
+            <div class="pipeline">
+                <div class="pipeline-step">
+                    <div class="logo">📊</div>
+                    <h3>Airtable</h3>
+                    <p>Property Database</p>
+                    <div class="status">✅ Connected</div>
+                </div>
+                
+                <div class="pipeline-arrow">→</div>
+                
+                <div class="pipeline-step">
+                    <div class="logo">⚡</div>
+                    <h3>Zapier</h3>
+                    <p>Automation Engine</p>
+                    <div class="status">⚙️ Processing</div>
+                </div>
+                
+                <div class="pipeline-arrow">→</div>
+                
+                <div class="pipeline-step">
+                    <div class="logo">🌐</div>
+                    <h3>Webflow</h3>
+                    <p>Live Website</p>
+                    <div class="status">🚀 Published</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number">247</div>
+                <div class="label">Total Properties</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">234</div>
+                <div class="label">Synced</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">8</div>
+                <div class="label">Pending</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">5</div>
+                <div class="label">Failed</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">99.7%</div>
+                <div class="label">Success Rate</div>
+            </div>
+        </div>
+        
+        <div class="listings-panel">
+            <h2>🏠 Property Listings Status</h2>
+            
+            <table class="listings-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Property</th>
+                        <th>Location</th>
+                        <th>Price</th>
+                        <th>Last Updated</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="property-image">🏡</div></td>
+                        <td><strong>Modern Downtown Apartment</strong></td>
+                        <td>New York, NY</td>
+                        <td><strong>$2,400/mo</strong></td>
+                        <td>3 min ago</td>
+                        <td><span class="status-badge status-synced">✅ Synced</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="property-image">🏢</div></td>
+                        <td><strong>Luxury Penthouse Suite</strong></td>
+                        <td>Los Angeles, CA</td>
+                        <td><strong>$5,200/mo</strong></td>
+                        <td>12 min ago</td>
+                        <td><span class="status-badge status-synced">✅ Synced</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="property-image">🏠</div></td>
+                        <td><strong>Cozy Suburban House</strong></td>
+                        <td>Austin, TX</td>
+                        <td><strong>$1,850/mo</strong></td>
+                        <td>5 min ago</td>
+                        <td><span class="status-badge status-pending">⏳ Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="property-image">🏘️</div></td>
+                        <td><strong>Beach Front Villa</strong></td>
+                        <td>Miami, FL</td>
+                        <td><strong>$6,800/mo</strong></td>
+                        <td>8 min ago</td>
+                        <td><span class="status-badge status-synced">✅ Synced</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="property-image">🌆</div></td>
+                        <td><strong>City Center Loft</strong></td>
+                        <td>Chicago, IL</td>
+                        <td><strong>$2,100/mo</strong></td>
+                        <td>15 min ago</td>
+                        <td><span class="status-badge status-synced">✅ Synced</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="property-image">🏚️</div></td>
+                        <td><strong>Historic Brownstone</strong></td>
+                        <td>Boston, MA</td>
+                        <td><strong>$3,400/mo</strong></td>
+                        <td>22 min ago</td>
+                        <td><span class="status-badge status-error">❌ Error</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="property-image">🏘️</div></td>
+                        <td><strong>Mountain View Cabin</strong></td>
+                        <td>Denver, CO</td>
+                        <td><strong>$2,700/mo</strong></td>
+                        <td>18 min ago</td>
+                        <td><span class="status-badge status-synced">✅ Synced</span></td>
+                    </tr>
+                    <tr>
+                        <td><div class="property-image">🏖️</div></td>
+                        <td><strong>Waterfront Condo</strong></td>
+                        <td>Seattle, WA</td>
+                        <td><strong>$3,900/mo</strong></td>
+                        <td>7 min ago</td>
+                        <td><span class="status-badge status-pending">⏳ Pending</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="activity-log">
+                <h3 style="margin-bottom: 15px; color: #333;">📜 Recent Activity</h3>
+                <div class="log-entry">
+                    <div class="log-timestamp">12:47:23</div>
+                    <div>✅ Property "Modern Downtown Apartment" synced to Webflow</div>
+                </div>
+                <div class="log-entry">
+                    <div class="log-timestamp">12:46:18</div>
+                    <div>⚙️ Zapier workflow triggered for new Airtable record</div>
+                </div>
+                <div class="log-entry">
+                    <div class="log-timestamp">12:45:42</div>
+                    <div>✅ Property "Luxury Penthouse Suite" published successfully</div>
+                </div>
+                <div class="log-entry">
+                    <div class="log-timestamp">12:44:55</div>
+                    <div>⏳ Processing property "Cozy Suburban House"</div>
+                </div>
+                <div class="log-entry">
+                    <div class="log-timestamp">12:43:30</div>
+                    <div>❌ Sync failed for "Historic Brownstone" - Retrying...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>🌟 <strong>Built by Janis Agic</strong></p>
+            <p>Professional Airtable + Zapier + Webflow Integration</p>
+        </div>
+    </div>
+    
+    <script>
+        // Simulate real-time updates
+        const statuses = ['✅ Synced', '⏳ Pending'];
+        const statusClasses = ['status-synced', 'status-pending'];
+        
+        setInterval(() => {
+            const pendingRows = document.querySelectorAll('.status-pending');
+            if (pendingRows.length > 0) {
+                const row = pendingRows[0];
+                const badge = row.querySelector('.status-badge');
+                badge.className = 'status-badge status-synced';
+                badge.textContent = '✅ Synced';
+                
+                // Update stats
+                const syncedStat = document.querySelector('.stat-card:nth-child(2) .number');
+                const pendingStat = document.querySelector('.stat-card:nth-child(3) .number');
+                syncedStat.textContent = parseInt(syncedStat.textContent) + 1;
+                pendingStat.textContent = parseInt(pendingStat.textContent) - 1;
+                
+                // Add log entry
+                const activityLog = document.querySelector('.activity-log');
+                const newLog = document.createElement('div');
+                newLog.className = 'log-entry';
+                const now = new Date();
+                const time = now.toTimeString().split(' ')[0];
+                newLog.innerHTML = `
+                    <div class="log-timestamp">${time}</div>
+                    <div>✅ Property synced successfully to Webflow</div>
+                `;
+                activityLog.insertBefore(newLog, activityLog.querySelector('.log-entry'));
+                
+                if (activityLog.querySelectorAll('.log-entry').length > 8) {
+                    activityLog.removeChild(activityLog.lastElementChild);
+                }
+            }
+        }, 7000);
+    </script>
+</body>
+</html>

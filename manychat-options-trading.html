@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ManyChat Options Trading Bot - Interactive Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        .phone-mockup {
+            background: white;
+            border-radius: 40px;
+            padding: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            margin: 0 auto 30px;
+        }
+        
+        .phone-screen {
+            background: #f0f2f5;
+            border-radius: 25px;
+            overflow: hidden;
+            height: 700px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .messenger-header {
+            background: #0084ff;
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .messenger-header .avatar {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .messenger-header .name {
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .message {
+            margin-bottom: 15px;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .message.bot {
+            display: flex;
+            justify-content: flex-start;
+        }
+        
+        .message.user {
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .message-bubble {
+            max-width: 75%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+        
+        .message.bot .message-bubble {
+            background: white;
+            color: #000;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .message.user .message-bubble {
+            background: #0084ff;
+            color: white;
+        }
+        
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 0 20px;
+        }
+        
+        .quick-reply {
+            background: white;
+            border: 2px solid #0084ff;
+            color: #0084ff;
+            padding: 10px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        
+        .quick-reply:hover {
+            background: #0084ff;
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 18px;
+            width: fit-content;
+        }
+        
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #90949c;
+            border-radius: 50%;
+            animation: typing 1.4s infinite;
+        }
+        
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        .flow-visualization {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .flow-visualization h2 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .flow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .flow-step {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        
+        .flow-step .icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .flow-step h3 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+        }
+        
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: #3b82f6;
+        }
+        
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid #3b82f6;
+        }
+        
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card .label {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            padding: 20px;
+        }
+        
+        .footer strong {
+            font-size: 1.1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .phone-mockup {
+                padding: 10px;
+            }
+            
+            .phone-screen {
+                height: 600px;
+            }
+            
+            .flow-steps {
+                flex-direction: column;
+            }
+            
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📱 ManyChat Options Trading Bot</h1>
+            <p>High-Ticket Lead Qualification & Conversion</p>
+        </div>
+        
+        <div class="phone-mockup">
+            <div class="phone-screen">
+                <div class="messenger-header">
+                    <div class="avatar">💰</div>
+                    <div class="name">Options Trading Academy</div>
+                </div>
+                
+                <div class="chat-container" id="chatContainer">
+                    <div class="message bot">
+                        <div class="message-bubble">
+                            Hey! 👋 Welcome to Options Trading Academy. I'm here to help you master options trading and potentially earn $5k-$50k per month.
+                        </div>
+                    </div>
+                    
+                    <div class="message bot">
+                        <div class="message-bubble">
+                            Quick question: What's your current experience level with options trading?
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quick-replies" id="quickReplies">
+                    <div class="quick-reply" onclick="selectOption('beginner')">📚 Complete Beginner</div>
+                    <div class="quick-reply" onclick="selectOption('some')">📈 Some Experience</div>
+                    <div class="quick-reply" onclick="selectOption('advanced')">💎 Advanced Trader</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flow-visualization">
+            <h2>🔄 Bot Conversation Flow</h2>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="icon">👋</div>
+                    <h3>GREETING</h3>
+                    <p>Welcome & Intro</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="icon">❓</div>
+                    <h3>QUALIFY</h3>
+                    <p>Experience Level</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="icon">🎓</div>
+                    <h3>EDUCATE</h3>
+                    <p>Value Delivery</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="icon">📞</div>
+                    <h3>BOOK CALL</h3>
+                    <p>Calendar Link</p>
+                </div>
+            </div>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="number">847</div>
+                    <div class="label">Conversations Started</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">72%</div>
+                    <div class="label">Engagement Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">234</div>
+                    <div class="label">Calls Booked</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">$187k</div>
+                    <div class="label">Revenue Generated</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>🌟 <strong>Built by Janis Agic</strong></p>
+            <p>Professional ManyChat Bot Development</p>
+        </div>
+    </div>
+    
+    <script>
+        let conversationStep = 0;
+        
+        const conversations = {
+            beginner: [
+                { type: 'user', text: '📚 Complete Beginner' },
+                { type: 'bot', text: 'Perfect! Most of our successful students started exactly where you are. Options trading can seem complex, but with the right guidance, anyone can learn.' },
+                { type: 'bot', text: 'Our proven system has helped over 2,000 beginners earn their first $1,000 within 30 days. 💰' },
+                { type: 'bot', text: 'Here\'s what makes us different:\n\n✅ Step-by-step video training\n✅ Live trading sessions\n✅ Private community support\n✅ 1-on-1 mentorship' },
+                { type: 'bot', text: 'I\'d love to offer you a FREE strategy session with one of our senior traders. They\'ll create a personalized roadmap for you. Interested?' },
+                { type: 'options', options: ['✅ Yes, book my call!', '📧 Send me more info first'] }
+            ],
+            some: [
+                { type: 'user', text: '📈 Some Experience' },
+                { type: 'bot', text: 'Great! Having some foundation makes all the difference. Let me ask: what\'s been your biggest challenge so far?' },
+                { type: 'bot', text: 'Most traders struggle with:\n\n❌ Inconsistent profits\n❌ Emotional decision-making\n❌ Lack of a proven strategy' },
+                { type: 'bot', text: 'Our advanced program focuses on:\n\n✅ Risk management mastery\n✅ High-probability setups\n✅ Portfolio optimization\n✅ Weekly live analysis' },
+                { type: 'bot', text: 'Would you like to speak with a senior trader who can review your current approach and show you how to 3x your returns?' },
+                { type: 'options', options: ['📞 Yes, book my call!', '🎥 Show me results first'] }
+            ],
+            advanced: [
+                { type: 'user', text: '💎 Advanced Trader' },
+                { type: 'bot', text: 'Excellent! You\'re already ahead of 95% of traders. Our elite program is designed for serious traders like you.' },
+                { type: 'bot', text: 'We work with traders managing $50k-$500k+ portfolios who want to:\n\n💎 Scale with advanced strategies\n💎 Master options Greeks\n💎 Build consistent 6-figure income' },
+                { type: 'bot', text: 'Recent student results:\n\n🔥 $127k in 90 days (John M.)\n🔥 $89k in 60 days (Sarah K.)\n🔥 $203k in 120 days (Mike R.)' },
+                { type: 'bot', text: 'I have limited spots available for a 1-on-1 portfolio review with our head trader (normally $500, but FREE for you). Interested?' },
+                { type: 'options', options: ['🚀 Absolutely, let\'s go!', '💬 Tell me more'] }
+            ]
+        };
+        
+        function selectOption(option) {
+            const chat = conversations[option];
+            const container = document.getElementById('chatContainer');
+            const repliesContainer = document.getElementById('quickReplies');
+            
+            repliesContainer.innerHTML = '';
+            
+            let delay = 500;
+            
+            chat.forEach((msg, index) => {
+                setTimeout(() => {
+                    if (msg.type === 'user') {
+                        addMessage('user', msg.text);
+                    } else if (msg.type === 'bot') {
+                        showTyping();
+                        setTimeout(() => {
+                            removeTyping();
+                            addMessage('bot', msg.text);
+                        }, 1500);
+                    } else if (msg.type === 'options') {
+                        setTimeout(() => {
+                            msg.options.forEach(opt => {
+                                const btn = document.createElement('div');
+                                btn.className = 'quick-reply';
+                                btn.textContent = opt;
+                                btn.onclick = () => {
+                                    addMessage('user', opt);
+                                    setTimeout(() => {
+                                        showTyping();
+                                        setTimeout(() => {
+                                            removeTyping();
+                                            addMessage('bot', '🎉 Awesome! I\'m connecting you with our calendar. Pick a time that works best for you, and we\'ll send you the Zoom link immediately. See you soon! 🚀');
+                                        }, 1500);
+                                    }, 500);
+                                    repliesContainer.innerHTML = '';
+                                };
+                                repliesContainer.appendChild(btn);
+                            });
+                        }, 1000);
+                    }
+                }, delay);
+                
+                delay += msg.type === 'bot' ? 2500 : 1000;
+            });
+        }
+        
+        function addMessage(type, text) {
+            const container = document.getElementById('chatContainer');
+            const msg = document.createElement('div');
+            msg.className = `message ${type}`;
+            msg.innerHTML = `<div class="message-bubble">${text.replace(/\n/g, '<br>')}</div>`;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function showTyping() {
+            const container = document.getElementById('chatContainer');
+            const typing = document.createElement('div');
+            typing.className = 'message bot';
+            typing.id = 'typing';
+            typing.innerHTML = `
+                <div class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            container.appendChild(typing);
+            container.scrollTop = container.scrollHeight;
+        }
+        
+        function removeTyping() {
+            const typing = document.getElementById('typing');
+            if (typing) typing.remove();
+        }
+    </script>
+</body>
+</html>
