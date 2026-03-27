@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WooCommerce + GoHighLevel | Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-purple-900 via-gray-900 to-blue-900 min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">🛒 WooCommerce ↔ GoHighLevel</h1>
+            <p class="text-xl text-gray-300">Seamless E-commerce + CRM Integration</p>
+            <div class="flex justify-center gap-4 mt-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/WooCommerce_logo.svg" alt="WooCommerce" class="h-8 bg-white rounded px-2">
+                <span class="text-2xl">⚡</span>
+                <span class="text-2xl font-bold text-cyan-400">GHL</span>
+            </div>
+        </div>
+
+        <!-- Data Flow -->
+        <div class="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-arrows-alt-h mr-2 text-purple-400"></i>Data Sync Flow</h2>
+            
+            <div class="grid md:grid-cols-5 gap-4 items-center">
+                <div class="bg-purple-500/20 rounded-xl p-4 text-center border border-purple-500/30">
+                    <i class="fab fa-wordpress text-3xl text-purple-400 mb-2"></i>
+                    <div class="text-sm font-bold">WooCommerce</div>
+                    <div class="text-xs text-gray-400">Orders & Customers</div>
+                </div>
+                <div class="text-center"><i class="fas fa-arrow-right text-2xl text-gray-500"></i></div>
+                <div class="bg-blue-500/20 rounded-xl p-4 text-center border border-blue-500/30">
+                    <i class="fas fa-webhook text-3xl text-blue-400 mb-2"></i>
+                    <div class="text-sm font-bold">Webhook</div>
+                    <div class="text-xs text-gray-400">Real-time sync</div>
+                </div>
+                <div class="text-center"><i class="fas fa-arrow-right text-2xl text-gray-500"></i></div>
+                <div class="bg-cyan-500/20 rounded-xl p-4 text-center border border-cyan-500/30">
+                    <i class="fas fa-database text-3xl text-cyan-400 mb-2"></i>
+                    <div class="text-sm font-bold">GoHighLevel</div>
+                    <div class="text-xs text-gray-400">CRM & Automation</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Simulator -->
+        <div class="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-shopping-cart mr-2 text-green-400"></i>Order Sync Simulator</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- WooCommerce Side -->
+                <div>
+                    <h3 class="font-bold mb-4 text-purple-400">WooCommerce Order</h3>
+                    <div class="bg-black/30 rounded-lg p-4 space-y-3">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Order #</span>
+                            <span id="orderId">WC-4827</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Customer</span>
+                            <span>Sarah Johnson</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Email</span>
+                            <span>sarah@example.com</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Phone</span>
+                            <span>+1 555-987-6543</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-400">Product</span>
+                            <span>Premium Widget x2</span>
+                        </div>
+                        <div class="flex justify-between text-sm font-bold">
+                            <span class="text-gray-400">Total</span>
+                            <span class="text-green-400">$199.00</span>
+                        </div>
+                    </div>
+                    <button onclick="syncOrder()" class="mt-4 w-full bg-purple-600 rounded-lg py-3 font-bold hover:bg-purple-700 transition">
+                        <i class="fas fa-sync mr-2"></i>Trigger Sync
+                    </button>
+                </div>
+
+                <!-- GHL Side -->
+                <div>
+                    <h3 class="font-bold mb-4 text-cyan-400">GoHighLevel CRM</h3>
+                    <div id="ghlResult" class="bg-black/30 rounded-lg p-4 min-h-48">
+                        <div class="text-gray-500 text-center py-8">
+                            <i class="fas fa-database text-3xl mb-2"></i>
+                            <p>Sync data will appear here...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- What Gets Synced -->
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <div class="bg-white/5 rounded-xl p-6 backdrop-blur border border-white/10">
+                <h3 class="font-bold text-lg mb-4 text-purple-400">WooCommerce → GHL</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>New orders create contacts</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Customer data synced</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Order tags applied</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Purchase amount tracked</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Product interests noted</li>
+                </ul>
+            </div>
+            <div class="bg-white/5 rounded-xl p-6 backdrop-blur border border-white/10">
+                <h3 class="font-bold text-lg mb-4 text-cyan-400">GHL → WooCommerce</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Lead status updates</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Custom field sync</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Segment membership</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Campaign triggers</li>
+                    <li><i class="fas fa-check text-green-400 mr-2"></i>Abandoned cart recovery</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Automation Examples -->
+        <div class="bg-white/5 rounded-2xl p-8 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6">Automated Workflows</h2>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-green-500/10 rounded-lg p-4 border border-green-500/30">
+                    <h4 class="font-bold mb-2">🛒 New Purchase</h4>
+                    <p class="text-sm text-gray-400">Auto-send thank you SMS + add to "Customers" pipeline</p>
+                </div>
+                <div class="bg-yellow-500/10 rounded-lg p-4 border border-yellow-500/30">
+                    <h4 class="font-bold mb-2">⏰ Abandoned Cart</h4>
+                    <p class="text-sm text-gray-400">Trigger email sequence + SMS reminder after 1 hour</p>
+                </div>
+                <div class="bg-blue-500/10 rounded-lg p-4 border border-blue-500/30">
+                    <h4 class="font-bold mb-2">⭐ VIP Customer</h4>
+                    <p class="text-sm text-gray-400">Auto-tag after $500+ spend, move to VIP pipeline</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-12 text-gray-500 text-sm">
+            Demo by Janis Agic | Built for Upwork Proposal
+        </div>
+    </div>
+
+    <script>
+        async function syncOrder() {
+            const result = document.getElementById('ghlResult');
+            result.innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl text-cyan-400"></i><p class="mt-4">Syncing to GoHighLevel...</p></div>';
+            
+            await new Promise(r => setTimeout(r, 2000));
+            
+            result.innerHTML = `
+                <div class="space-y-3 text-sm">
+                    <div class="text-green-400 font-bold mb-4"><i class="fas fa-check-circle mr-2"></i>Sync Complete!</div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Contact Created</span>
+                        <span>✓</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Name</span>
+                        <span>Sarah Johnson</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Pipeline</span>
+                        <span class="text-cyan-400">New Customers</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Tags Added</span>
+                        <span class="text-purple-400">woo-customer, premium-buyer</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Lifetime Value</span>
+                        <span class="text-green-400">$199.00</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Workflow Triggered</span>
+                        <span class="text-yellow-400">Thank You Sequence</span>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-white/10 text-xs text-gray-500">
+                        Synced in 0.4s via webhook
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Social Media Agent | Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-pink-900 via-purple-900 to-blue-900 min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">📱 AI Social Media Agent</h1>
+            <p class="text-xl text-gray-300">Auto-post to LinkedIn, TikTok, Facebook & Instagram</p>
+            <div class="flex justify-center gap-3 mt-4">
+                <i class="fab fa-linkedin text-3xl text-blue-400"></i>
+                <i class="fab fa-tiktok text-3xl text-white"></i>
+                <i class="fab fa-facebook text-3xl text-blue-500"></i>
+                <i class="fab fa-instagram text-3xl text-pink-400"></i>
+            </div>
+        </div>
+
+        <!-- Content Generator -->
+        <div class="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-magic mr-2 text-purple-400"></i>AI Content Generator</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Topic / Product</label>
+                    <input type="text" id="topic" value="New AI productivity tool for remote teams" class="w-full bg-white/10 rounded-lg px-4 py-3 mb-4 border border-white/20 focus:border-purple-500 outline-none">
+                    
+                    <label class="block text-sm text-gray-400 mb-2">Target Platform</label>
+                    <select id="platform" class="w-full bg-white/10 rounded-lg px-4 py-3 mb-4 border border-white/20 focus:border-purple-500 outline-none">
+                        <option value="linkedin">LinkedIn (Professional)</option>
+                        <option value="tiktok">TikTok (Casual/Fun)</option>
+                        <option value="instagram">Instagram (Visual)</option>
+                        <option value="facebook">Facebook (Engaging)</option>
+                    </select>
+                    
+                    <button onclick="generateContent()" class="w-full bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg px-6 py-3 font-bold hover:opacity-90 transition">
+                        <i class="fas fa-wand-magic-sparkles mr-2"></i>Generate Content
+                    </button>
+                </div>
+
+                <div id="generatedContent" class="bg-white/10 rounded-xl p-6 border border-white/20">
+                    <div class="text-gray-400 text-center py-8">
+                        Generated content will appear here...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule -->
+        <div class="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-calendar mr-2 text-blue-400"></i>Auto-Schedule Queue</h2>
+            
+            <div class="space-y-4">
+                <div class="flex items-center justify-between bg-white/5 rounded-lg p-4">
+                    <div class="flex items-center gap-4">
+                        <i class="fab fa-linkedin text-2xl text-blue-400"></i>
+                        <div>
+                            <div class="font-bold">AI Productivity Tool Launch</div>
+                            <div class="text-sm text-gray-400">Mon 9:00 AM EST</div>
+                        </div>
+                    </div>
+                    <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded text-sm">Scheduled</span>
+                </div>
+                <div class="flex items-center justify-between bg-white/5 rounded-lg p-4">
+                    <div class="flex items-center gap-4">
+                        <i class="fab fa-tiktok text-2xl text-white"></i>
+                        <div>
+                            <div class="font-bold">Behind the scenes video</div>
+                            <div class="text-sm text-gray-400">Tue 2:00 PM EST</div>
+                        </div>
+                    </div>
+                    <span class="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded text-sm">Processing</span>
+                </div>
+                <div class="flex items-center justify-between bg-white/5 rounded-lg p-4">
+                    <div class="flex items-center gap-4">
+                        <i class="fab fa-instagram text-2xl text-pink-400"></i>
+                        <div>
+                            <div class="font-bold">Customer testimonial carousel</div>
+                            <div class="text-sm text-gray-400">Wed 6:00 PM EST</div>
+                        </div>
+                    </div>
+                    <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded text-sm">Draft</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="grid md:grid-cols-4 gap-6">
+            <div class="bg-gradient-to-br from-blue-600/20 to-blue-800/20 rounded-xl p-6 border border-blue-500/30 text-center">
+                <div class="text-3xl font-bold">247</div>
+                <div class="text-gray-400 text-sm">Posts This Month</div>
+            </div>
+            <div class="bg-gradient-to-br from-green-600/20 to-green-800/20 rounded-xl p-6 border border-green-500/30 text-center">
+                <div class="text-3xl font-bold">12.4K</div>
+                <div class="text-gray-400 text-sm">Total Engagement</div>
+            </div>
+            <div class="bg-gradient-to-br from-purple-600/20 to-purple-800/20 rounded-xl p-6 border border-purple-500/30 text-center">
+                <div class="text-3xl font-bold">+34%</div>
+                <div class="text-gray-400 text-sm">Growth Rate</div>
+            </div>
+            <div class="bg-gradient-to-br from-pink-600/20 to-pink-800/20 rounded-xl p-6 border border-pink-500/30 text-center">
+                <div class="text-3xl font-bold">98%</div>
+                <div class="text-gray-400 text-sm">Automation Rate</div>
+            </div>
+        </div>
+
+        <div class="text-center mt-12 text-gray-500 text-sm">
+            Demo by Janis Agic | Built for Upwork Proposal
+        </div>
+    </div>
+
+    <script>
+        const contents = {
+            linkedin: `🚀 Exciting news for remote teams!
+
+We just launched an AI-powered productivity tool that's helping teams save 10+ hours per week.
+
+Here's what makes it different:
+✅ Smart task prioritization
+✅ Automated meeting summaries
+✅ Team collaboration insights
+
+Early users are seeing 40% productivity gains in just 2 weeks.
+
+Want to try it? Link in comments 👇
+
+#ProductivityTools #RemoteWork #AI #TeamCollaboration`,
+            tiktok: `POV: Your team discovers AI that actually saves time 🤯
+
+No cap, this tool just:
+- Summarizes your meetings automatically
+- Tells you what to work on first
+- Shows who needs help
+
+Remote work just got way easier fr fr
+
+Link in bio to try free 🔗
+
+#productivityhack #remotework #techtools #workfromhome`,
+            instagram: `✨ Meet your new productivity bestie ✨
+
+Swipe to see how our AI tool transforms chaotic workdays into smooth sailing →
+
+Slide 1: The problem (drowning in tasks)
+Slide 2: The solution (AI prioritization)
+Slide 3: The results (10hrs saved/week)
+Slide 4: How to get started
+
+🔗 Link in bio for free trial
+
+#productivity #remotework #aitools #worklifebalance`,
+            facebook: `Big announcement! 🎉
+
+After months of development, we're finally launching our AI productivity tool for remote teams.
+
+What it does:
+📋 Automatically prioritizes your tasks
+📝 Summarizes meetings in seconds
+📊 Gives insights on team performance
+
+We're offering a FREE trial for the first 100 signups.
+
+Drop a "🙋" in the comments if you want early access!`
+        };
+
+        async function generateContent() {
+            const platform = document.getElementById('platform').value;
+            const content = document.getElementById('generatedContent');
+            
+            content.innerHTML = '<div class="text-center py-8"><i class="fas fa-spinner fa-spin text-3xl"></i><p class="mt-4">Generating AI content...</p></div>';
+            
+            await new Promise(r => setTimeout(r, 1500));
+            
+            content.innerHTML = `
+                <div class="flex items-center gap-2 mb-4">
+                    <i class="fab fa-${platform} text-xl"></i>
+                    <span class="font-bold capitalize">${platform} Post</span>
+                </div>
+                <div class="whitespace-pre-wrap text-sm">${contents[platform]}</div>
+                <div class="mt-4 pt-4 border-t border-white/20 flex gap-2">
+                    <button class="bg-green-600 rounded px-3 py-1 text-sm">Schedule</button>
+                    <button class="bg-blue-600 rounded px-3 py-1 text-sm">Edit</button>
+                    <button class="bg-purple-600 rounded px-3 py-1 text-sm">Post Now</button>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

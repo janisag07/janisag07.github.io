@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>n8n + Playwright Automation | Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-green-900 to-gray-900 min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">🔄 n8n + Playwright Automation</h1>
+            <p class="text-xl text-gray-300">Browser Automation for Field Nation Work Orders</p>
+            <span class="inline-block mt-4 px-4 py-2 bg-green-500/20 text-green-400 rounded-full text-sm">
+                <i class="fas fa-check-circle mr-2"></i>Live Demo
+            </span>
+        </div>
+
+        <!-- Workflow Diagram -->
+        <div class="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-project-diagram mr-2 text-green-400"></i>Workflow</h2>
+            <div class="flex flex-wrap justify-center items-center gap-4">
+                <div class="bg-orange-500/20 rounded-xl p-4 text-center border border-orange-500/30">
+                    <i class="fas fa-clock text-3xl text-orange-400 mb-2"></i>
+                    <div class="text-sm">n8n Cron Trigger</div>
+                </div>
+                <i class="fas fa-arrow-right text-gray-500"></i>
+                <div class="bg-blue-500/20 rounded-xl p-4 text-center border border-blue-500/30">
+                    <i class="fas fa-globe text-3xl text-blue-400 mb-2"></i>
+                    <div class="text-sm">Playwright Login</div>
+                </div>
+                <i class="fas fa-arrow-right text-gray-500"></i>
+                <div class="bg-purple-500/20 rounded-xl p-4 text-center border border-purple-500/30">
+                    <i class="fas fa-download text-3xl text-purple-400 mb-2"></i>
+                    <div class="text-sm">Scrape Orders</div>
+                </div>
+                <i class="fas fa-arrow-right text-gray-500"></i>
+                <div class="bg-green-500/20 rounded-xl p-4 text-center border border-green-500/30">
+                    <i class="fas fa-table text-3xl text-green-400 mb-2"></i>
+                    <div class="text-sm">Google Sheets</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulator -->
+        <div class="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-play-circle mr-2 text-green-400"></i>Run Automation</h2>
+            
+            <button onclick="runAutomation()" class="bg-gradient-to-r from-green-600 to-blue-600 rounded-lg px-6 py-3 font-bold hover:opacity-90 transition mb-6">
+                <i class="fas fa-rocket mr-2"></i>Execute Workflow
+            </button>
+
+            <div id="logs" class="bg-black/50 rounded-lg p-4 font-mono text-sm h-64 overflow-y-auto">
+                <div class="text-gray-500">// Click "Execute Workflow" to start...</div>
+            </div>
+        </div>
+
+        <!-- Sample Output -->
+        <div class="bg-white/5 rounded-2xl p-8 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-table mr-2 text-green-400"></i>Sample Output (Google Sheets)</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-white/10">
+                        <tr>
+                            <th class="p-3 text-left">Order ID</th>
+                            <th class="p-3 text-left">Client</th>
+                            <th class="p-3 text-left">Location</th>
+                            <th class="p-3 text-left">Status</th>
+                            <th class="p-3 text-left">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr class="border-t border-white/10">
+                            <td class="p-3">#WO-2847</td>
+                            <td class="p-3">TechCorp Inc</td>
+                            <td class="p-3">New York, NY</td>
+                            <td class="p-3"><span class="bg-green-500/20 text-green-400 px-2 py-1 rounded">Completed</span></td>
+                            <td class="p-3">$450</td>
+                        </tr>
+                        <tr class="border-t border-white/10">
+                            <td class="p-3">#WO-2848</td>
+                            <td class="p-3">DataFlow LLC</td>
+                            <td class="p-3">Chicago, IL</td>
+                            <td class="p-3"><span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">Pending</span></td>
+                            <td class="p-3">$320</td>
+                        </tr>
+                        <tr class="border-t border-white/10">
+                            <td class="p-3">#WO-2849</td>
+                            <td class="p-3">CloudSys</td>
+                            <td class="p-3">Austin, TX</td>
+                            <td class="p-3"><span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded">In Progress</span></td>
+                            <td class="p-3">$580</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="text-center mt-12 text-gray-500 text-sm">
+            Demo by Janis Agic | Built for Upwork Proposal
+        </div>
+    </div>
+
+    <script>
+        async function runAutomation() {
+            const logs = document.getElementById('logs');
+            logs.innerHTML = '';
+            
+            const steps = [
+                { text: '[n8n] Workflow triggered via cron schedule', color: 'text-orange-400' },
+                { text: '[Playwright] Launching headless browser...', color: 'text-blue-400' },
+                { text: '[Playwright] Navigating to Field Nation login page...', color: 'text-blue-400' },
+                { text: '[Playwright] Entering credentials...', color: 'text-blue-400' },
+                { text: '[Playwright] Login successful ✓', color: 'text-green-400' },
+                { text: '[Playwright] Navigating to Work Orders page...', color: 'text-blue-400' },
+                { text: '[Playwright] Scraping order data...', color: 'text-purple-400' },
+                { text: '[n8n] Processing 47 work orders...', color: 'text-orange-400' },
+                { text: '[n8n] Filtering new orders since last run...', color: 'text-orange-400' },
+                { text: '[n8n] Found 3 new orders', color: 'text-yellow-400' },
+                { text: '[Google Sheets] Appending rows to spreadsheet...', color: 'text-green-400' },
+                { text: '[Google Sheets] 3 rows added successfully ✓', color: 'text-green-400' },
+                { text: '[n8n] Workflow completed in 12.4s', color: 'text-green-400' },
+            ];
+
+            for (const step of steps) {
+                await new Promise(r => setTimeout(r, 400));
+                const div = document.createElement('div');
+                div.className = step.color;
+                div.textContent = step.text;
+                logs.appendChild(div);
+                logs.scrollTop = logs.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>

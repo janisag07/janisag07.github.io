@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Automation SaaS | Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">🤖 AI Automation for SaaS</h1>
+            <p class="text-xl text-gray-300">n8n Workflows + LLM Integration + Support Agents</p>
+            <div class="flex justify-center gap-4 mt-4">
+                <span class="px-4 py-2 bg-blue-500/20 text-blue-400 rounded-full text-sm">n8n</span>
+                <span class="px-4 py-2 bg-purple-500/20 text-purple-400 rounded-full text-sm">Claude API</span>
+                <span class="px-4 py-2 bg-green-500/20 text-green-400 rounded-full text-sm">EU-Based</span>
+            </div>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white/10 rounded-xl p-6 backdrop-blur border border-white/10">
+                <i class="fas fa-robot text-4xl text-purple-400 mb-4"></i>
+                <h3 class="font-bold text-xl mb-2">AI Support Agent</h3>
+                <p class="text-gray-400 text-sm mb-4">Automated ticket triage and response generation using LLMs</p>
+                <button onclick="demoSupport()" class="w-full bg-purple-600/50 rounded-lg py-2 text-sm hover:bg-purple-600 transition">Try Demo</button>
+            </div>
+            <div class="bg-white/10 rounded-xl p-6 backdrop-blur border border-white/10">
+                <i class="fas fa-cogs text-4xl text-blue-400 mb-4"></i>
+                <h3 class="font-bold text-xl mb-2">n8n Workflows</h3>
+                <p class="text-gray-400 text-sm mb-4">Custom automation workflows connecting your entire stack</p>
+                <button onclick="demoWorkflow()" class="w-full bg-blue-600/50 rounded-lg py-2 text-sm hover:bg-blue-600 transition">View Workflow</button>
+            </div>
+            <div class="bg-white/10 rounded-xl p-6 backdrop-blur border border-white/10">
+                <i class="fas fa-chart-line text-4xl text-green-400 mb-4"></i>
+                <h3 class="font-bold text-xl mb-2">Analytics</h3>
+                <p class="text-gray-400 text-sm mb-4">Real-time dashboards and automated reporting</p>
+                <button onclick="demoAnalytics()" class="w-full bg-green-600/50 rounded-lg py-2 text-sm hover:bg-green-600 transition">See Stats</button>
+            </div>
+        </div>
+
+        <!-- Demo Area -->
+        <div class="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6" id="demoTitle"><i class="fas fa-play-circle mr-2 text-purple-400"></i>AI Support Agent Demo</h2>
+            
+            <div id="supportDemo">
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">Customer Ticket</label>
+                        <textarea id="ticket" rows="4" class="w-full bg-white/10 rounded-lg px-4 py-3 border border-white/20 focus:border-purple-500 outline-none">Hi, I can't log into my account. I've tried resetting my password 3 times but the reset email never arrives. My email is john@example.com. This is urgent!</textarea>
+                        <button onclick="generateResponse()" class="mt-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg px-6 py-3 font-bold hover:opacity-90 transition">
+                            <i class="fas fa-magic mr-2"></i>Generate AI Response
+                        </button>
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-400 mb-2">AI-Generated Response</label>
+                        <div id="response" class="bg-white/10 rounded-lg px-4 py-3 min-h-32 border border-white/20">
+                            <span class="text-gray-500">Click "Generate AI Response" to see the magic...</span>
+                        </div>
+                        <div id="metadata" class="mt-4 hidden">
+                            <div class="flex gap-4 text-sm">
+                                <span class="bg-yellow-500/20 text-yellow-400 px-3 py-1 rounded">Priority: High</span>
+                                <span class="bg-blue-500/20 text-blue-400 px-3 py-1 rounded">Category: Login Issues</span>
+                                <span class="bg-green-500/20 text-green-400 px-3 py-1 rounded">Sentiment: Frustrated</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- What's Included -->
+        <div class="bg-white/5 rounded-2xl p-8 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6">Monthly Retainer Includes</h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Custom n8n workflow development</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>AI agent setup & training</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>24h response time for issues</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Monthly optimization reviews</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>API integrations & maintenance</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>EU-based (GDPR compliant)</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-12 text-gray-500 text-sm">
+            Demo by Janis Agic | EU-Based Automation Specialist
+        </div>
+    </div>
+
+    <script>
+        async function generateResponse() {
+            const response = document.getElementById('response');
+            const metadata = document.getElementById('metadata');
+            
+            response.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Analyzing ticket with Claude AI...';
+            
+            await new Promise(r => setTimeout(r, 2000));
+            
+            response.innerHTML = `
+                <p class="mb-3">Hi John,</p>
+                <p class="mb-3">I'm sorry to hear you're having trouble logging in — I understand how frustrating that can be, especially when it's urgent.</p>
+                <p class="mb-3">I've checked our email logs and it looks like the reset emails may be going to your spam folder. Could you please:</p>
+                <ol class="list-decimal list-inside mb-3 text-gray-300">
+                    <li>Check your spam/junk folder</li>
+                    <li>Add support@ourapp.com to your contacts</li>
+                    <li>Try the reset again</li>
+                </ol>
+                <p class="mb-3">If you still don't receive it within 5 minutes, reply to this email and I'll manually reset your password right away.</p>
+                <p>Best regards,<br>Support Team</p>
+            `;
+            
+            metadata.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

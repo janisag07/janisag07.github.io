@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GoHighLevel Voice AI | Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-cyan-900 to-gray-900 min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">📞 GoHighLevel Voice AI</h1>
+            <p class="text-xl text-gray-300">Inbound/Outbound AI Calling + CRM Automation</p>
+            <span class="inline-block mt-4 px-4 py-2 bg-cyan-500/20 text-cyan-400 rounded-full text-sm">
+                <i class="fas fa-check-circle mr-2"></i>Live Demo
+            </span>
+        </div>
+
+        <!-- Call Flow -->
+        <div class="grid md:grid-cols-2 gap-8 mb-12">
+            <!-- Inbound -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur border border-white/10">
+                <h3 class="text-xl font-bold mb-4 text-green-400"><i class="fas fa-phone-volume mr-2"></i>Inbound Calls</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">1</div>
+                        <span>Customer calls your business</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">2</div>
+                        <span>AI answers & qualifies lead</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">3</div>
+                        <span>Books appointment in calendar</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">4</div>
+                        <span>Creates contact in GHL CRM</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Outbound -->
+            <div class="bg-white/5 rounded-2xl p-6 backdrop-blur border border-white/10">
+                <h3 class="text-xl font-bold mb-4 text-blue-400"><i class="fas fa-phone-arrow-up-right mr-2"></i>Outbound Calls</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">1</div>
+                        <span>Lead enters GHL pipeline</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">2</div>
+                        <span>AI initiates call automatically</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">3</div>
+                        <span>Delivers personalized script</span>
+                    </div>
+                    <div class="flex items-center gap-3 text-sm">
+                        <div class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center">4</div>
+                        <span>Updates CRM with outcome</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Call Simulator -->
+        <div class="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-headset mr-2 text-cyan-400"></i>AI Call Simulator</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <div id="phone" class="bg-gray-800 rounded-3xl p-6 max-w-xs mx-auto">
+                        <div class="bg-gray-900 rounded-2xl p-4 text-center">
+                            <div id="callStatus" class="text-gray-400 mb-4">Ready to call</div>
+                            <div class="text-3xl font-bold mb-2" id="callerName">John Smith</div>
+                            <div class="text-gray-400 mb-6">+1 (555) 123-4567</div>
+                            <div class="flex justify-center gap-4">
+                                <button onclick="startCall()" id="callBtn" class="w-16 h-16 rounded-full bg-green-500 hover:bg-green-600 flex items-center justify-center transition">
+                                    <i class="fas fa-phone text-xl"></i>
+                                </button>
+                                <button onclick="endCall()" id="endBtn" class="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition hidden">
+                                    <i class="fas fa-phone-slash text-xl"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="transcript" class="bg-black/50 rounded-xl p-4 h-64 overflow-y-auto font-mono text-sm">
+                    <div class="text-gray-500">// Call transcript will appear here...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GHL Integration -->
+        <div class="bg-white/5 rounded-2xl p-8 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6">GoHighLevel Integration</h2>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Auto-create contacts from calls</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Pipeline stage updates</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Calendar booking integration</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Call recordings saved</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Custom tags & notes</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Workflow triggers</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-12 text-gray-500 text-sm">
+            Demo by Janis Agic | Built for Upwork Proposal
+        </div>
+    </div>
+
+    <script>
+        const conversation = [
+            { speaker: 'AI', text: "Hi, this is Sarah from ABC Services. Am I speaking with John?" },
+            { speaker: 'Customer', text: "Yes, this is John." },
+            { speaker: 'AI', text: "Great! I'm calling because you recently showed interest in our home renovation services. Do you have a moment to chat?" },
+            { speaker: 'Customer', text: "Sure, I have a few minutes." },
+            { speaker: 'AI', text: "Perfect! What type of renovation project are you considering?" },
+            { speaker: 'Customer', text: "I'm thinking about redoing my kitchen." },
+            { speaker: 'AI', text: "Excellent choice! Kitchen renovations are our specialty. Would you like to schedule a free consultation with one of our designers?" },
+            { speaker: 'Customer', text: "That sounds good. What times are available?" },
+            { speaker: 'AI', text: "I have openings this Thursday at 2 PM or Friday at 10 AM. Which works better for you?" },
+            { speaker: 'Customer', text: "Thursday at 2 works." },
+            { speaker: 'AI', text: "I've booked you for Thursday at 2 PM. You'll receive a confirmation email shortly. Is there anything else I can help with?" },
+            { speaker: 'Customer', text: "No, that's all. Thanks!" },
+            { speaker: 'AI', text: "Thank you, John! Have a great day. Goodbye!" },
+        ];
+
+        let callInterval;
+
+        async function startCall() {
+            document.getElementById('callBtn').classList.add('hidden');
+            document.getElementById('endBtn').classList.remove('hidden');
+            document.getElementById('callStatus').textContent = 'Connecting...';
+            document.getElementById('callStatus').className = 'text-yellow-400 mb-4';
+            
+            const transcript = document.getElementById('transcript');
+            transcript.innerHTML = '';
+            
+            await new Promise(r => setTimeout(r, 1500));
+            document.getElementById('callStatus').textContent = 'In Call - 00:00';
+            document.getElementById('callStatus').className = 'text-green-400 mb-4';
+            
+            let seconds = 0;
+            callInterval = setInterval(() => {
+                seconds++;
+                const mins = Math.floor(seconds / 60).toString().padStart(2, '0');
+                const secs = (seconds % 60).toString().padStart(2, '0');
+                document.getElementById('callStatus').textContent = `In Call - ${mins}:${secs}`;
+            }, 1000);
+
+            for (const line of conversation) {
+                await new Promise(r => setTimeout(r, 2000));
+                const div = document.createElement('div');
+                div.className = line.speaker === 'AI' ? 'text-cyan-400 mb-2' : 'text-gray-300 mb-2';
+                div.innerHTML = `<strong>${line.speaker}:</strong> ${line.text}`;
+                transcript.appendChild(div);
+                transcript.scrollTop = transcript.scrollHeight;
+            }
+            
+            await new Promise(r => setTimeout(r, 1000));
+            endCall();
+        }
+
+        function endCall() {
+            clearInterval(callInterval);
+            document.getElementById('callBtn').classList.remove('hidden');
+            document.getElementById('endBtn').classList.add('hidden');
+            document.getElementById('callStatus').textContent = 'Call Ended';
+            document.getElementById('callStatus').className = 'text-red-400 mb-4';
+            
+            const transcript = document.getElementById('transcript');
+            const summary = document.createElement('div');
+            summary.className = 'mt-4 pt-4 border-t border-gray-700 text-green-400';
+            summary.innerHTML = `
+                <div>✅ Contact updated in GHL</div>
+                <div>✅ Appointment booked: Thu 2 PM</div>
+                <div>✅ Pipeline: Consultation Scheduled</div>
+                <div>✅ Call recording saved</div>
+            `;
+            transcript.appendChild(summary);
+        }
+    </script>
+</body>
+</html>

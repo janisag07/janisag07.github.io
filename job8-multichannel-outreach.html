@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Channel Outreach System | Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">🚀 Multi-Channel Outreach System</h1>
+            <p class="text-xl text-gray-300">GoHighLevel + Apollo.io + ElevenLabs Voice AI</p>
+            <span class="inline-block mt-4 px-4 py-2 bg-green-500/20 text-green-400 rounded-full text-sm">
+                <i class="fas fa-check-circle mr-2"></i>Live Demo
+            </span>
+        </div>
+
+        <!-- Pipeline Overview -->
+        <div class="grid md:grid-cols-4 gap-4 mb-12">
+            <div class="bg-white/10 rounded-xl p-6 text-center backdrop-blur">
+                <i class="fas fa-database text-4xl text-blue-400 mb-4"></i>
+                <h3 class="font-bold mb-2">Lead Import</h3>
+                <p class="text-sm text-gray-400">Apollo.io enrichment</p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-6 text-center backdrop-blur">
+                <i class="fas fa-envelope text-4xl text-green-400 mb-4"></i>
+                <h3 class="font-bold mb-2">Email Sequence</h3>
+                <p class="text-sm text-gray-400">Automated follow-ups</p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-6 text-center backdrop-blur">
+                <i class="fas fa-comment-sms text-4xl text-yellow-400 mb-4"></i>
+                <h3 class="font-bold mb-2">SMS Campaign</h3>
+                <p class="text-sm text-gray-400">Personalized texts</p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-6 text-center backdrop-blur">
+                <i class="fas fa-phone text-4xl text-purple-400 mb-4"></i>
+                <h3 class="font-bold mb-2">Voice AI Calls</h3>
+                <p class="text-sm text-gray-400">ElevenLabs powered</p>
+            </div>
+        </div>
+
+        <!-- Live Campaign Simulator -->
+        <div class="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6"><i class="fas fa-play-circle mr-2 text-green-400"></i>Campaign Simulator</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Lead Input -->
+                <div>
+                    <label class="block text-sm text-gray-400 mb-2">Test Lead Email</label>
+                    <input type="email" id="leadEmail" value="john@example.com" class="w-full bg-white/10 rounded-lg px-4 py-3 mb-4 border border-white/20 focus:border-purple-500 outline-none">
+                    
+                    <label class="block text-sm text-gray-400 mb-2">Test Lead Phone</label>
+                    <input type="tel" id="leadPhone" value="+1 555-123-4567" class="w-full bg-white/10 rounded-lg px-4 py-3 mb-4 border border-white/20 focus:border-purple-500 outline-none">
+                    
+                    <button onclick="runCampaign()" class="w-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg px-6 py-3 font-bold hover:opacity-90 transition">
+                        <i class="fas fa-rocket mr-2"></i>Run Outreach Sequence
+                    </button>
+                </div>
+
+                <!-- Sequence Progress -->
+                <div id="sequenceProgress" class="space-y-4">
+                    <div class="text-gray-400 text-center py-8">
+                        <i class="fas fa-arrow-left text-2xl mb-2"></i>
+                        <p>Click "Run Outreach Sequence" to see the automation</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Dashboard -->
+        <div class="grid md:grid-cols-4 gap-6 mb-12">
+            <div class="bg-gradient-to-br from-blue-600/20 to-blue-800/20 rounded-xl p-6 border border-blue-500/30">
+                <div class="text-3xl font-bold" id="emailsSent">0</div>
+                <div class="text-gray-400 text-sm">Emails Sent</div>
+            </div>
+            <div class="bg-gradient-to-br from-green-600/20 to-green-800/20 rounded-xl p-6 border border-green-500/30">
+                <div class="text-3xl font-bold" id="smsSent">0</div>
+                <div class="text-gray-400 text-sm">SMS Sent</div>
+            </div>
+            <div class="bg-gradient-to-br from-purple-600/20 to-purple-800/20 rounded-xl p-6 border border-purple-500/30">
+                <div class="text-3xl font-bold" id="callsMade">0</div>
+                <div class="text-gray-400 text-sm">AI Calls Made</div>
+            </div>
+            <div class="bg-gradient-to-br from-yellow-600/20 to-yellow-800/20 rounded-xl p-6 border border-yellow-500/30">
+                <div class="text-3xl font-bold" id="responseRate">0%</div>
+                <div class="text-gray-400 text-sm">Response Rate</div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="bg-white/5 rounded-2xl p-8 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6">What You Get</h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>GoHighLevel pipeline with automated sequences</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Apollo.io integration for lead enrichment</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>ElevenLabs Voice AI for cold calls</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>LinkedIn automation workflows</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>SMS sequences with personalization</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Real-time analytics dashboard</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-12 text-gray-500 text-sm">
+            Demo by Janis Agic | Built for Upwork Proposal
+        </div>
+    </div>
+
+    <script>
+        let stats = { emails: 0, sms: 0, calls: 0 };
+
+        async function runCampaign() {
+            const email = document.getElementById('leadEmail').value;
+            const phone = document.getElementById('leadPhone').value;
+            const progress = document.getElementById('sequenceProgress');
+            
+            progress.innerHTML = '';
+            
+            const steps = [
+                { icon: 'fa-database', color: 'blue', text: 'Enriching lead data via Apollo.io...', stat: null },
+                { icon: 'fa-envelope', color: 'green', text: `Sending initial email to ${email}...`, stat: 'emails' },
+                { icon: 'fa-clock', color: 'gray', text: 'Waiting 24h (simulated)...', stat: null },
+                { icon: 'fa-comment-sms', color: 'yellow', text: `Sending SMS to ${phone}...`, stat: 'sms' },
+                { icon: 'fa-envelope', color: 'green', text: 'Sending follow-up email...', stat: 'emails' },
+                { icon: 'fa-phone', color: 'purple', text: 'Initiating ElevenLabs AI call...', stat: 'calls' },
+                { icon: 'fa-check-circle', color: 'green', text: 'Sequence complete! Lead marked as contacted.', stat: null }
+            ];
+
+            for (const step of steps) {
+                await new Promise(r => setTimeout(r, 800));
+                
+                const div = document.createElement('div');
+                div.className = `flex items-center space-x-3 p-3 bg-${step.color}-500/10 rounded-lg border border-${step.color}-500/30 animate-pulse`;
+                div.innerHTML = `
+                    <i class="fas ${step.icon} text-${step.color}-400"></i>
+                    <span class="text-sm">${step.text}</span>
+                `;
+                progress.appendChild(div);
+                
+                if (step.stat) {
+                    stats[step.stat]++;
+                    updateStats();
+                }
+                
+                progress.scrollTop = progress.scrollHeight;
+            }
+        }
+
+        function updateStats() {
+            document.getElementById('emailsSent').textContent = stats.emails;
+            document.getElementById('smsSent').textContent = stats.sms;
+            document.getElementById('callsMade').textContent = stats.calls;
+            document.getElementById('responseRate').textContent = Math.min(32 + Math.random() * 10, 45).toFixed(0) + '%';
+        }
+    </script>
+</body>
+</html>

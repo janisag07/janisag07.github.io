@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Content Operations Dashboard | Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-red-900 to-gray-900 min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">📊 Content Operations Dashboard</h1>
+            <p class="text-xl text-gray-300">YouTube Pipeline Tracking + Team Accountability</p>
+            <div class="flex justify-center gap-3 mt-4">
+                <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-sm">YouTube</span>
+                <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm">Trello</span>
+                <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm">Google Sheets</span>
+            </div>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="grid md:grid-cols-4 gap-4 mb-8">
+            <div class="bg-white/10 rounded-xl p-4 backdrop-blur">
+                <div class="text-gray-400 text-sm">Videos This Week</div>
+                <div class="text-3xl font-bold">12</div>
+                <div class="text-green-400 text-sm">↑ +3 vs last week</div>
+            </div>
+            <div class="bg-white/10 rounded-xl p-4 backdrop-blur">
+                <div class="text-gray-400 text-sm">In Progress</div>
+                <div class="text-3xl font-bold text-yellow-400">5</div>
+                <div class="text-gray-400 text-sm">2 filming, 3 editing</div>
+            </div>
+            <div class="bg-white/10 rounded-xl p-4 backdrop-blur">
+                <div class="text-gray-400 text-sm">Ready to Publish</div>
+                <div class="text-3xl font-bold text-green-400">3</div>
+                <div class="text-gray-400 text-sm">Awaiting review</div>
+            </div>
+            <div class="bg-white/10 rounded-xl p-4 backdrop-blur">
+                <div class="text-gray-400 text-sm">Delayed</div>
+                <div class="text-3xl font-bold text-red-400">1</div>
+                <div class="text-gray-400 text-sm">Needs attention</div>
+            </div>
+        </div>
+
+        <!-- Content Pipeline -->
+        <div class="bg-white/5 rounded-2xl p-6 mb-8 backdrop-blur border border-white/10">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-stream mr-2 text-red-400"></i>Content Pipeline</h2>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead class="bg-white/10">
+                        <tr>
+                            <th class="p-3 text-left">Video</th>
+                            <th class="p-3 text-left">Creator</th>
+                            <th class="p-3 text-left">Editor</th>
+                            <th class="p-3 text-left">Status</th>
+                            <th class="p-3 text-left">Due Date</th>
+                            <th class="p-3 text-left">Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-t border-white/10">
+                            <td class="p-3">How AI Changed My Workflow</td>
+                            <td class="p-3">Alex</td>
+                            <td class="p-3">Mike</td>
+                            <td class="p-3"><span class="bg-green-500/20 text-green-400 px-2 py-1 rounded text-xs">Ready</span></td>
+                            <td class="p-3">Mar 28</td>
+                            <td class="p-3">
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="bg-green-500 h-2 rounded-full" style="width: 100%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="border-t border-white/10">
+                            <td class="p-3">$10K Month Breakdown</td>
+                            <td class="p-3">Sarah</td>
+                            <td class="p-3">Jake</td>
+                            <td class="p-3"><span class="bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded text-xs">Editing</span></td>
+                            <td class="p-3">Mar 29</td>
+                            <td class="p-3">
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="bg-yellow-500 h-2 rounded-full" style="width: 65%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="border-t border-white/10 bg-red-500/10">
+                            <td class="p-3">Remote Team Secrets</td>
+                            <td class="p-3">Alex</td>
+                            <td class="p-3">Unassigned</td>
+                            <td class="p-3"><span class="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs">Delayed</span></td>
+                            <td class="p-3 text-red-400">Mar 26 ⚠️</td>
+                            <td class="p-3">
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="bg-red-500 h-2 rounded-full" style="width: 30%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="border-t border-white/10">
+                            <td class="p-3">Productivity Stack 2024</td>
+                            <td class="p-3">Sarah</td>
+                            <td class="p-3">Mike</td>
+                            <td class="p-3"><span class="bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-xs">Filming</span></td>
+                            <td class="p-3">Mar 30</td>
+                            <td class="p-3">
+                                <div class="w-full bg-gray-700 rounded-full h-2">
+                                    <div class="bg-blue-500 h-2 rounded-full" style="width: 25%"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Team Accountability -->
+        <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <div class="bg-white/5 rounded-xl p-6 backdrop-blur border border-white/10">
+                <h3 class="font-bold mb-4"><i class="fas fa-users mr-2 text-blue-400"></i>Team Status</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-green-500/30 flex items-center justify-center">A</div>
+                            <div>
+                                <div class="font-bold">Alex (Creator)</div>
+                                <div class="text-xs text-gray-400">Currently filming</div>
+                            </div>
+                        </div>
+                        <span class="text-green-400 text-sm">On Track</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-green-500/30 flex items-center justify-center">S</div>
+                            <div>
+                                <div class="font-bold">Sarah (Creator)</div>
+                                <div class="text-xs text-gray-400">2 videos ahead</div>
+                            </div>
+                        </div>
+                        <span class="text-green-400 text-sm">Excellent</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-yellow-500/30 flex items-center justify-center">M</div>
+                            <div>
+                                <div class="font-bold">Mike (Editor)</div>
+                                <div class="text-xs text-gray-400">3 videos in queue</div>
+                            </div>
+                        </div>
+                        <span class="text-yellow-400 text-sm">At Capacity</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-red-500/30 flex items-center justify-center">J</div>
+                            <div>
+                                <div class="font-bold">Jake (Editor)</div>
+                                <div class="text-xs text-gray-400">Missed yesterday's deadline</div>
+                            </div>
+                        </div>
+                        <span class="text-red-400 text-sm">Follow Up</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="bg-white/5 rounded-xl p-6 backdrop-blur border border-white/10">
+                <h3 class="font-bold mb-4"><i class="fas fa-tasks mr-2 text-yellow-400"></i>Today's Action Items</h3>
+                <div class="space-y-3">
+                    <div class="flex items-start gap-3 bg-red-500/10 rounded-lg p-3">
+                        <input type="checkbox" class="mt-1">
+                        <div>
+                            <div class="font-bold text-red-400">URGENT: Assign editor to "Remote Team Secrets"</div>
+                            <div class="text-xs text-gray-400">2 days overdue</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 bg-yellow-500/10 rounded-lg p-3">
+                        <input type="checkbox" class="mt-1">
+                        <div>
+                            <div>Follow up with Jake on "$10K Month" edit</div>
+                            <div class="text-xs text-gray-400">Due tomorrow</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 bg-white/5 rounded-lg p-3">
+                        <input type="checkbox" class="mt-1">
+                        <div>
+                            <div>Review "How AI Changed My Workflow" before publish</div>
+                            <div class="text-xs text-gray-400">Ready for QC</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3 bg-white/5 rounded-lg p-3">
+                        <input type="checkbox" class="mt-1">
+                        <div>
+                            <div>Send weekly report to content manager</div>
+                            <div class="text-xs text-gray-400">Due 5 PM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="bg-white/5 rounded-2xl p-6 backdrop-blur border border-white/10">
+            <h2 class="text-xl font-bold mb-4"><i class="fas fa-chart-line mr-2 text-green-400"></i>Channel Performance (Last 7 Days)</h2>
+            <div class="grid md:grid-cols-4 gap-4">
+                <div class="text-center">
+                    <div class="text-3xl font-bold">124K</div>
+                    <div class="text-gray-400 text-sm">Views</div>
+                    <div class="text-green-400 text-sm">↑ 23%</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold">8.2K</div>
+                    <div class="text-gray-400 text-sm">Engagements</div>
+                    <div class="text-green-400 text-sm">↑ 15%</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold">2.4K</div>
+                    <div class="text-gray-400 text-sm">New Subscribers</div>
+                    <div class="text-green-400 text-sm">↑ 31%</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-3xl font-bold">6:42</div>
+                    <div class="text-gray-400 text-sm">Avg Watch Time</div>
+                    <div class="text-yellow-400 text-sm">→ Same</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-12 text-gray-500 text-sm">
+            Demo by Janis Agic | Built for Upwork Proposal
+        </div>
+    </div>
+</body>
+</html>

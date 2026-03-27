@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Automation Script | Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 min-h-screen text-white">
+    <div class="container mx-auto px-4 py-8">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">🤖 Web Automation Script</h1>
+            <p class="text-xl text-gray-300">Selenium + Google Sheets + VPS Deployment</p>
+            <span class="inline-block mt-4 px-4 py-2 bg-blue-500/20 text-blue-400 rounded-full text-sm">
+                <i class="fas fa-check-circle mr-2"></i>Live Demo
+            </span>
+        </div>
+
+        <!-- Architecture -->
+        <div class="grid md:grid-cols-3 gap-6 mb-12">
+            <div class="bg-white/10 rounded-xl p-6 text-center backdrop-blur border border-white/10">
+                <i class="fas fa-server text-4xl text-blue-400 mb-4"></i>
+                <h3 class="font-bold mb-2">VPS (24/7)</h3>
+                <p class="text-sm text-gray-400">Runs daily at scheduled times</p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-6 text-center backdrop-blur border border-white/10">
+                <i class="fab fa-python text-4xl text-yellow-400 mb-4"></i>
+                <h3 class="font-bold mb-2">Selenium Script</h3>
+                <p class="text-sm text-gray-400">Headless browser automation</p>
+            </div>
+            <div class="bg-white/10 rounded-xl p-6 text-center backdrop-blur border border-white/10">
+                <i class="fas fa-table text-4xl text-green-400 mb-4"></i>
+                <h3 class="font-bold mb-2">Google Sheets</h3>
+                <p class="text-sm text-gray-400">Data storage & export</p>
+            </div>
+        </div>
+
+        <!-- Console -->
+        <div class="bg-white/5 rounded-2xl p-8 mb-12 backdrop-blur border border-white/10">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold"><i class="fas fa-terminal mr-2 text-green-400"></i>Script Console</h2>
+                <button onclick="runScript()" class="bg-green-600 rounded-lg px-4 py-2 font-bold hover:bg-green-700 transition">
+                    <i class="fas fa-play mr-2"></i>Run Script
+                </button>
+            </div>
+
+            <div id="console" class="bg-black rounded-lg p-4 font-mono text-sm h-80 overflow-y-auto">
+                <div class="text-green-400">$ python automation.py</div>
+                <div class="text-gray-500">Waiting for execution...</div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="bg-white/5 rounded-2xl p-8 backdrop-blur border border-white/10">
+            <h2 class="text-2xl font-bold mb-6">Deliverables</h2>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Python script with Selenium WebDriver</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Automatic login with session handling</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Google Sheets API integration</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>VPS deployment with cron scheduling</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Error handling & retry logic</span>
+                </div>
+                <div class="flex items-start space-x-3">
+                    <i class="fas fa-check text-green-400 mt-1"></i>
+                    <span>Email notifications on completion</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-12 text-gray-500 text-sm">
+            Demo by Janis Agic | Built for Upwork Proposal
+        </div>
+    </div>
+
+    <script>
+        async function runScript() {
+            const console = document.getElementById('console');
+            console.innerHTML = '<div class="text-green-400">$ python automation.py</div>';
+            
+            const logs = [
+                { text: '[INFO] Loading configuration...', color: 'text-gray-400' },
+                { text: '[INFO] Initializing Chrome WebDriver (headless)...', color: 'text-blue-400' },
+                { text: '[INFO] WebDriver ready', color: 'text-green-400' },
+                { text: '[INFO] Navigating to target website...', color: 'text-blue-400' },
+                { text: '[INFO] Page loaded (2.3s)', color: 'text-gray-400' },
+                { text: '[INFO] Locating login form...', color: 'text-blue-400' },
+                { text: '[INFO] Entering credentials...', color: 'text-yellow-400' },
+                { text: '[INFO] Submitting login form...', color: 'text-blue-400' },
+                { text: '[SUCCESS] Login successful!', color: 'text-green-400' },
+                { text: '[INFO] Navigating to data page...', color: 'text-blue-400' },
+                { text: '[INFO] Waiting for dynamic content...', color: 'text-gray-400' },
+                { text: '[INFO] Extracting data from table...', color: 'text-purple-400' },
+                { text: '[INFO] Found 156 records', color: 'text-yellow-400' },
+                { text: '[INFO] Processing records...', color: 'text-blue-400' },
+                { text: '[INFO] Connecting to Google Sheets API...', color: 'text-green-400' },
+                { text: '[INFO] Authenticating with service account...', color: 'text-gray-400' },
+                { text: '[INFO] Appending 156 rows to spreadsheet...', color: 'text-green-400' },
+                { text: '[SUCCESS] Data exported successfully!', color: 'text-green-400' },
+                { text: '[INFO] Closing WebDriver...', color: 'text-gray-400' },
+                { text: '[SUCCESS] Script completed in 34.7 seconds', color: 'text-green-400' },
+                { text: '', color: '' },
+                { text: '$ _', color: 'text-green-400' },
+            ];
+
+            for (const log of logs) {
+                await new Promise(r => setTimeout(r, 300));
+                const div = document.createElement('div');
+                div.className = log.color;
+                div.textContent = log.text;
+                console.appendChild(div);
+                console.scrollTop = console.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
