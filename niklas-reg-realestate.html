@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>REG Real Estate — GEO & Automation</title>
+    <title>REG Real Estate — Automatisierte Lead-Pipeline</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -11,262 +11,217 @@
             background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
             color: #fff;
             min-height: 100vh;
-            line-height: 1.6;
+            padding: 40px 20px;
         }
-        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .container { max-width: 700px; margin: 0 auto; }
         
         header {
             text-align: center;
-            padding: 30px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 40px;
         }
         header h1 {
-            font-size: 1.5rem;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.4rem;
+            color: #fff;
+            font-weight: 600;
         }
-        .badge {
-            display: inline-block;
-            background: rgba(102, 126, 234, 0.2);
+        header p {
             color: #667eea;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            margin-top: 10px;
+            font-size: 0.85rem;
+            margin-top: 8px;
         }
         
-        .section {
-            background: rgba(255,255,255,0.03);
-            border-radius: 12px;
-            padding: 25px;
-            margin: 25px 0;
-            border: 1px solid rgba(255,255,255,0.08);
+        .pipeline {
+            position: relative;
+            padding-left: 30px;
         }
-        .section-title {
+        .pipeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 20px;
+            bottom: 20px;
+            width: 2px;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+        }
+        
+        .step {
+            position: relative;
+            margin-bottom: 35px;
+        }
+        .step::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 8px;
+            width: 14px;
+            height: 14px;
+            background: #667eea;
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(102,126,234,0.5);
+        }
+        .step:last-child { margin-bottom: 0; }
+        
+        .step-card {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .step-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-            font-size: 1.1rem;
+            justify-content: space-between;
+            margin-bottom: 8px;
         }
-        .section-icon {
-            font-size: 1.3rem;
-        }
-        
-        /* GEO Chat Demos */
-        .demo-chat {
-            background: #1e1e2e;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-        .chat-header {
+        .step-title {
+            font-size: 1rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
             gap: 8px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            margin-bottom: 12px;
-            font-size: 0.85rem;
-            color: #888;
         }
-        .chat-logo {
-            width: 24px;
-            height: 24px;
-            background: #10a37f;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.7rem;
-        }
-        .chat-logo.perplexity { background: #1a7f64; }
-        .user-msg {
-            background: rgba(255,255,255,0.08);
-            padding: 10px 14px;
-            border-radius: 10px;
-            margin-bottom: 12px;
-            color: #bbb;
-            font-size: 0.9rem;
-        }
-        .ai-msg {
-            padding: 8px 0;
-            color: #999;
-            font-size: 0.9rem;
-        }
-        .ai-msg .mention {
-            background: rgba(102,126,234,0.3);
-            color: #a8b4ff;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 600;
-        }
-        
-        /* Automation Workflow */
-        .workflow {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-        }
-        .workflow-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-        .workflow-line {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .workflow-dot {
-            width: 12px;
-            height: 12px;
-            background: #667eea;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .workflow-connector {
-            width: 2px;
-            height: 35px;
-            background: linear-gradient(to bottom, #667eea, rgba(102,126,234,0.2));
-        }
-        .workflow-content {
-            padding: 8px 0 15px 0;
-        }
-        .workflow-content h4 {
-            color: #fff;
-            font-size: 0.95rem;
-            font-weight: 500;
-        }
-        .workflow-content p {
-            color: #666;
-            font-size: 0.8rem;
-            margin-top: 2px;
-        }
-        .workflow-time {
+        .step-time {
+            background: rgba(102,126,234,0.2);
             color: #667eea;
-            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
             font-weight: 600;
         }
+        .step-desc {
+            color: #888;
+            font-size: 0.9rem;
+        }
+        .step-example {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: #aaa;
+            font-style: italic;
+        }
         
-        .disclaimer {
+        .result-box {
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 40px;
             text-align: center;
-            padding: 20px;
+        }
+        .result-box h3 {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+        .result-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 4px;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
             color: #333;
             font-size: 0.7rem;
-            margin-top: 30px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🏠 REG Real Estate GmbH</h1>
-            <span class="badge">GEO & Automatisierung</span>
+            <h1>🏠 Automatisierte Lead-Pipeline</h1>
+            <p>REG Real Estate GmbH</p>
         </header>
 
-        <!-- GEO Section -->
-        <div class="section">
-            <div class="section-title">
-                <span class="section-icon">🤖</span>
-                <span>GEO — So würde das aussehen</span>
-            </div>
-            
-            <div class="demo-chat">
-                <div class="chat-header">
-                    <div class="chat-logo">G</div>
-                    <span>ChatGPT</span>
-                </div>
-                <div class="user-msg">
-                    "Welchen Immobilienmakler in Frankfurt empfiehlst du für Gewerbeimmobilien?"
-                </div>
-                <div class="ai-msg">
-                    Für Gewerbeimmobilien in Frankfurt empfehle ich:<br><br>
-                    • <span class="mention">REG Real Estate GmbH</span> — Spezialisiert auf Gewerbe- und Anlageimmobilien in der Rhein-Main-Region<br><br>
-                    • Müller Immobilien — Breites Portfolio...
+        <div class="pipeline">
+            <div class="step">
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-title">📥 Anfrage kommt rein</div>
+                    </div>
+                    <div class="step-desc">Website, ImmoScout, WhatsApp, Telefon</div>
                 </div>
             </div>
             
-            <div class="demo-chat">
-                <div class="chat-header">
-                    <div class="chat-logo perplexity">P</div>
-                    <span>Perplexity</span>
+            <div class="step">
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-title">⚡ Sofort-Antwort</div>
+                        <div class="step-time">< 30 Sek</div>
+                    </div>
+                    <div class="step-desc">Personalisierte Nachricht an den Interessenten</div>
+                    <div class="step-example">"Guten Tag Herr Müller, vielen Dank für Ihre Anfrage zur Gewerbeimmobilie in der Mainzer Landstraße. Wann passt Ihnen ein kurzer Telefontermin?"</div>
                 </div>
-                <div class="user-msg">
-                    "Bester Makler für Kapitalanlage-Immobilien Frankfurt"
+            </div>
+            
+            <div class="step">
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-title">📋 Qualifizierung</div>
+                        <div class="step-time">Automatisch</div>
+                    </div>
+                    <div class="step-desc">Budget, Zeitrahmen, Kaufen/Mieten — Lead-Score wird berechnet</div>
                 </div>
-                <div class="ai-msg">
-                    <strong><span class="mention">REG Real Estate GmbH</span></strong><br>
-                    Spezialisiert auf renditestarke Anlageimmobilien. [Quelle: reg-realestate.de]
+            </div>
+            
+            <div class="step">
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-title">📆 Termin gebucht</div>
+                        <div class="step-time">Automatisch</div>
+                    </div>
+                    <div class="step-desc">Interessent wählt freien Slot, landet direkt im Kalender</div>
+                </div>
+            </div>
+            
+            <div class="step">
+                <div class="step-card">
+                    <div class="step-header">
+                        <div class="step-title">🔄 Follow-up</div>
+                        <div class="step-time">Im Hintergrund</div>
+                    </div>
+                    <div class="step-desc">Kein Abschluss? Automatische Nachfass-Sequenz nach 3, 7, 14 Tagen</div>
                 </div>
             </div>
         </div>
 
-        <!-- Automation Section -->
-        <div class="section">
-            <div class="section-title">
-                <span class="section-icon">⚡</span>
-                <span>Automatisierung — Lead-Pipeline</span>
-            </div>
-            
-            <div class="workflow">
-                <div class="workflow-step">
-                    <div class="workflow-line">
-                        <div class="workflow-dot"></div>
-                        <div class="workflow-connector"></div>
-                    </div>
-                    <div class="workflow-content">
-                        <h4>📥 Lead kommt rein</h4>
-                        <p>Website, ImmoScout, WhatsApp</p>
-                    </div>
+        <div class="result-box">
+            <h3>Das Ergebnis</h3>
+            <div class="result-stats">
+                <div class="stat">
+                    <div class="stat-value">30 Sek</div>
+                    <div class="stat-label">statt 5+ Minuten<br>Reaktionszeit</div>
                 </div>
-                <div class="workflow-step">
-                    <div class="workflow-line">
-                        <div class="workflow-dot"></div>
-                        <div class="workflow-connector"></div>
-                    </div>
-                    <div class="workflow-content">
-                        <h4>🤖 Sofort-Antwort</h4>
-                        <p>Personalisierte WhatsApp/Email</p>
-                        <span class="workflow-time">< 30 Sekunden</span>
-                    </div>
+                <div class="stat">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">vergessene<br>Leads</div>
                 </div>
-                <div class="workflow-step">
-                    <div class="workflow-line">
-                        <div class="workflow-dot"></div>
-                        <div class="workflow-connector"></div>
-                    </div>
-                    <div class="workflow-content">
-                        <h4>📋 Qualifizierung</h4>
-                        <p>Budget, Zeitrahmen, Anforderungen</p>
-                    </div>
-                </div>
-                <div class="workflow-step">
-                    <div class="workflow-line">
-                        <div class="workflow-dot"></div>
-                        <div class="workflow-connector"></div>
-                    </div>
-                    <div class="workflow-content">
-                        <h4>📆 Termin gebucht</h4>
-                        <p>Automatisch in deinen Kalender</p>
-                    </div>
-                </div>
-                <div class="workflow-step">
-                    <div class="workflow-line">
-                        <div class="workflow-dot"></div>
-                    </div>
-                    <div class="workflow-content">
-                        <h4>🔔 Follow-up läuft</h4>
-                        <p>Kein Lead geht verloren</p>
-                    </div>
+                <div class="stat">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">erreichbar<br>ohne Mehraufwand</div>
                 </div>
             </div>
         </div>
 
-        <div class="disclaimer">
-            Alle Daten fiktiv — nur zur Veranschaulichung
+        <div class="footer">
+            Visualisierung für REG Real Estate — Alle Daten beispielhaft
         </div>
     </div>
 </body>
