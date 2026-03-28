@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>REG Real Estate — GEO & Automation Analyse</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+            color: #fff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        header h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        header p { color: #888; font-size: 0.95rem; }
+        .badge {
+            display: inline-block;
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 15px;
+        }
+        
+        .section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 30px 0;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        .section h2 { font-size: 1.4rem; }
+        .section h3 { 
+            font-size: 1.1rem; 
+            color: #667eea;
+            margin: 25px 0 15px 0;
+        }
+        .section p { color: #aaa; margin-bottom: 15px; }
+        
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(102,126,234,0.15), rgba(118,75,162,0.15));
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+        .highlight-box strong { color: #fff; }
+        
+        .demo-chat {
+            background: #1e1e2e;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 15px;
+        }
+        .chat-logo {
+            width: 32px;
+            height: 32px;
+            background: #10a37f;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        .chat-logo.perplexity { background: #1a7f64; }
+        .chat-logo.google { background: #4285f4; }
+        .user-msg {
+            background: rgba(255,255,255,0.1);
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            color: #ddd;
+        }
+        .ai-msg {
+            padding: 12px 0;
+            color: #ccc;
+        }
+        .ai-msg .mention {
+            background: rgba(102,126,234,0.3);
+            color: #a8b4ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        
+        .workflow {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 25px 0;
+        }
+        .workflow-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        .workflow-line {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .workflow-dot {
+            width: 16px;
+            height: 16px;
+            background: #667eea;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .workflow-connector {
+            width: 2px;
+            height: 50px;
+            background: linear-gradient(to bottom, #667eea, rgba(102,126,234,0.3));
+        }
+        .workflow-content {
+            background: rgba(255,255,255,0.05);
+            padding: 15px 20px;
+            border-radius: 12px;
+            flex: 1;
+            margin-bottom: 10px;
+        }
+        .workflow-content h4 {
+            color: #fff;
+            font-size: 1rem;
+            margin-bottom: 5px;
+        }
+        .workflow-content p {
+            color: #888;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        .workflow-time {
+            color: #667eea;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .benefit-card {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .benefit-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .benefit-card .label {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+        
+        .seo-note {
+            background: rgba(255,255,255,0.02);
+            border: 1px dashed rgba(255,255,255,0.15);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+        }
+        .seo-note h4 {
+            color: #888;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+        .seo-note p {
+            color: #666;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .cta {
+            text-align: center;
+            padding: 40px 20px;
+            margin-top: 30px;
+        }
+        .cta h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .cta p {
+            color: #888;
+            margin-bottom: 25px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+        }
+        
+        .disclaimer {
+            text-align: center;
+            padding: 20px;
+            color: #444;
+            font-size: 0.75rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏠 REG Real Estate GmbH</h1>
+            <p>Personalisierte Analyse: GEO & Automatisierung</p>
+            <span class="badge">Erstellt für Niklas Blässing</span>
+        </header>
+
+        <!-- GEO Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">🤖</div>
+                <div>
+                    <h2>GEO — Generative Engine Optimization</h2>
+                </div>
+            </div>
+            
+            <p>Die Art wie Menschen suchen verändert sich. Immer mehr nutzen <strong>ChatGPT, Perplexity, Google AI</strong> um direkte Empfehlungen zu bekommen — nicht mehr 10 blaue Links.</p>
+            
+            <div class="highlight-box">
+                <strong>Das Problem:</strong> Wenn jemand fragt "Welcher Immobilienmakler in Frankfurt ist gut für Gewerbeimmobilien?" — erscheint REG Real Estate in der Antwort? Aktuell: wahrscheinlich nicht.
+            </div>
+            
+            <h3>So sieht es aus wenn GEO funktioniert:</h3>
+            
+            <div class="demo-chat">
+                <div class="chat-header">
+                    <div class="chat-logo">G</div>
+                    <span style="color: #888;">ChatGPT</span>
+                </div>
+                <div class="user-msg">
+                    "Welchen Immobilienmakler in Frankfurt empfiehlst du für Gewerbeimmobilien?"
+                </div>
+                <div class="ai-msg">
+                    Für Gewerbeimmobilien in Frankfurt kann ich einige spezialisierte Makler empfehlen:<br><br>
+                    • <span class="mention">REG Real Estate GmbH</span> — Fokus auf Gewerbe- und Anlageimmobilien in der Rhein-Main-Region. Bekannt für persönliche Beratung und schnelle Abwicklung.<br><br>
+                    • Müller Immobilien — Breites Portfolio...<br><br>
+                    <em style="color: #667eea;">REG wird als erste Empfehlung genannt ✓</em>
+                </div>
+            </div>
+            
+            <div class="demo-chat">
+                <div class="chat-header">
+                    <div class="chat-logo perplexity">P</div>
+                    <span style="color: #888;">Perplexity</span>
+                </div>
+                <div class="user-msg">
+                    "Bester Makler für Kapitalanlage-Immobilien Frankfurt"
+                </div>
+                <div class="ai-msg">
+                    Basierend auf aktuellen Quellen sind diese Makler auf Kapitalanlagen spezialisiert:<br><br>
+                    <strong>1. <span class="mention">REG Real Estate GmbH</span></strong><br>
+                    Spezialisiert auf renditestarke Anlageimmobilien. Bietet vollständige Analyse inkl. Mietrendite-Berechnung. [Quelle: reg-realestate.de]<br><br>
+                    <em style="color: #667eea;">Mit Quellenangabe zitiert ✓</em>
+                </div>
+            </div>
+            
+            <h3>Was wir dafür tun:</h3>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="number">📊</div>
+                    <div class="label">Entity-Optimierung<br><small style="color:#555;">REG als "Autorität" etablieren</small></div>
+                </div>
+                <div class="benefit-card">
+                    <div class="number">📝</div>
+                    <div class="label">Strukturierte Inhalte<br><small style="color:#555;">AI-lesbare Formate</small></div>
+                </div>
+                <div class="benefit-card">
+                    <div class="number">🔗</div>
+                    <div class="label">Zitierbare Quellen<br><small style="color:#555;">Für AI-Referenzen</small></div>
+                </div>
+                <div class="benefit-card">
+                    <div class="number">🎯</div>
+                    <div class="label">Keyword-Mapping<br><small style="color:#555;">Auf AI-Anfragen optimiert</small></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Automation Section -->
+        <div class="section">
+            <div class="section-header">
+                <div class="section-icon">⚡</div>
+                <div>
+                    <h2>Automatisierungssysteme</h2>
+                </div>
+            </div>
+            
+            <p>Jeder Lead der reinkommt braucht schnelle Reaktion, Follow-up und strukturierte Bearbeitung. Manuell = Leads gehen verloren. Automatisiert = kein Lead fällt durch.</p>
+            
+            <div class="highlight-box">
+                <strong>Statistik:</strong> Makler die innerhalb von 5 Minuten antworten haben eine <strong>21x höhere Chance</strong> den Lead zu gewinnen als bei Antwort nach 30 Minuten.
+            </div>
+            
+            <h3>Beispiel: Automatisierte Lead-Pipeline</h3>
+            
+            <div class="workflow">
+                <div class="workflow-step">
+                    <div class="workflow-line">
+                        <div class="workflow-dot"></div>
+                        <div class="workflow-connector"></div>
+                    </div>
+                    <div class="workflow-content">
+                        <h4>📥 Lead kommt rein</h4>
+                        <p>Website-Formular, ImmoScout, WhatsApp, Telefon</p>
+                        <span class="workflow-time">Sofort</span>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-line">
+                        <div class="workflow-dot"></div>
+                        <div class="workflow-connector"></div>
+                    </div>
+                    <div class="workflow-content">
+                        <h4>🤖 Automatische Erstantwort</h4>
+                        <p>Personalisierte WhatsApp/Email: "Danke für Ihre Anfrage zu [Objekt]. Wann passt ein Termin?"</p>
+                        <span class="workflow-time">< 30 Sekunden</span>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-line">
+                        <div class="workflow-dot"></div>
+                        <div class="workflow-connector"></div>
+                    </div>
+                    <div class="workflow-content">
+                        <h4>📋 Lead-Qualifizierung</h4>
+                        <p>AI fragt: Budget? Zeitrahmen? Kaufen oder mieten? → Lead-Score berechnet</p>
+                        <span class="workflow-time">1-2 Minuten</span>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-line">
+                        <div class="workflow-dot"></div>
+                        <div class="workflow-connector"></div>
+                    </div>
+                    <div class="workflow-content">
+                        <h4>📆 Termin-Buchung</h4>
+                        <p>Automatisch Kalenderlücken anbieten, Termin eintragen, Erinnerung senden</p>
+                        <span class="workflow-time">Automatisch</span>
+                    </div>
+                </div>
+                <div class="workflow-step">
+                    <div class="workflow-line">
+                        <div class="workflow-dot"></div>
+                    </div>
+                    <div class="workflow-content">
+                        <h4>🔔 Follow-up Sequenz</h4>
+                        <p>Kein Abschluss? Automatische Nachfass-Mails nach 3, 7, 14 Tagen</p>
+                        <span class="workflow-time">Läuft im Hintergrund</span>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>Ergebnis:</h3>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="number">5 Min</div>
+                    <div class="label">→ 30 Sek<br>Reaktionszeit</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="number">0%</div>
+                    <div class="label">Verlorene Leads<br>durch Vergessen</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="number">24/7</div>
+                    <div class="label">Erreichbarkeit<br>ohne Mehrarbeit</div>
+                </div>
+                <div class="benefit-card">
+                    <div class="number">~3h</div>
+                    <div class="label">Zeitersparnis<br>pro Woche</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEO Note -->
+        <div class="seo-note">
+            <h4>💡 Zusätzlich möglich: Klassisches Local SEO</h4>
+            <p>Google Business Optimierung, Bewertungsmanagement, lokale Keyword-Rankings — falls gewünscht, können wir das ergänzen. Aber GEO und Automatisierung bringen aktuell den größeren Hebel.</p>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta">
+            <h3>Interesse?</h3>
+            <p>15 Minuten Call — ich zeige dir konkret was für REG möglich wäre.</p>
+            <a href="#" class="cta-button">Termin vereinbaren</a>
+        </div>
+
+        <div class="disclaimer">
+            Alle Daten in dieser Demo sind fiktiv und dienen nur zur Veranschaulichung.<br>
+            Erstellt von Janis Agic — Web Developer & Automation Specialist
+        </div>
+    </div>
+</body>
+</html>
