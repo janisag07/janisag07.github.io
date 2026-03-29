@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalshi Market Scanner — OpenClaw Agent Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        h1 { 
+            font-size: 2.5rem; 
+            background: linear-gradient(90deg, #00d4aa, #00a8ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        .subtitle { color: #888; font-size: 1.1rem; }
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 212, 170, 0.1);
+            border: 1px solid #00d4aa;
+            border-radius: 20px;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #00d4aa;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .controls {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        select, button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        select:hover, button:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: #00d4aa;
+        }
+        button.primary {
+            background: linear-gradient(90deg, #00d4aa, #00a8ff);
+            border: none;
+            font-weight: 600;
+        }
+        .markets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        .market-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        .market-card:hover {
+            border-color: #00d4aa;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px rgba(0, 212, 170, 0.1);
+        }
+        .market-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+        .market-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            color: #888;
+        }
+        .market-prices {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .price-box {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .price-yes {
+            background: rgba(0, 212, 170, 0.15);
+            border: 1px solid rgba(0, 212, 170, 0.3);
+        }
+        .price-no {
+            background: rgba(255, 99, 99, 0.15);
+            border: 1px solid rgba(255, 99, 99, 0.3);
+        }
+        .price-label { font-size: 0.8rem; color: #888; margin-bottom: 4px; }
+        .price-value { font-size: 1.5rem; font-weight: 700; }
+        .price-yes .price-value { color: #00d4aa; }
+        .price-no .price-value { color: #ff6363; }
+        .volume { 
+            margin-top: 1rem; 
+            padding-top: 1rem; 
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+            color: #888;
+        }
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            color: #888;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: #00d4aa;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .agent-log {
+            margin-top: 2rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        .log-entry { margin-bottom: 0.5rem; }
+        .log-time { color: #666; }
+        .log-action { color: #00d4aa; }
+        .log-data { color: #00a8ff; }
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        footer a { color: #00d4aa; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🤖 Kalshi Market Scanner</h1>
+            <p class="subtitle">OpenClaw AI Agent — Live Prediction Market Analysis</p>
+            <div class="status">
+                <span class="status-dot"></span>
+                <span>Agent Active — Scanning Markets</span>
+            </div>
+        </header>
+
+        <div class="controls">
+            <select id="category">
+                <option value="">All Categories</option>
+                <option value="Politics">Politics</option>
+                <option value="Economics">Economics</option>
+                <option value="Science">Science</option>
+                <option value="Sports">Sports</option>
+                <option value="Entertainment">Entertainment</option>
+            </select>
+            <select id="sort">
+                <option value="volume">Sort by Volume</option>
+                <option value="closing">Sort by Closing Soon</option>
+                <option value="spread">Sort by Spread</option>
+            </select>
+            <button class="primary" onclick="refreshMarkets()">🔄 Refresh Markets</button>
+        </div>
+
+        <div id="markets" class="markets-grid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Connecting to Kalshi API...</p>
+            </div>
+        </div>
+
+        <div class="agent-log" id="log">
+            <div class="log-entry">
+                <span class="log-time">[--:--:--]</span>
+                <span class="log-action">INIT</span>
+                <span>OpenClaw Agent initializing...</span>
+            </div>
+        </div>
+
+        <footer>
+            <p>Built with <a href="https://openclaw.ai" target="_blank">OpenClaw</a> | 
+            Demo for Kalshi Trading Agent Project</p>
+            <p style="margin-top: 0.5rem; font-size: 0.8rem;">
+                Data from Kalshi API • Not financial advice
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        const API_BASE = 'https://api.elections.kalshi.com/trade-api/v2';
+        
+        function log(action, message, isData = false) {
+            const logEl = document.getElementById('log');
+            const time = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = `
+                <span class="log-time">[${time}]</span>
+                <span class="log-action">${action}</span>
+                <span class="${isData ? 'log-data' : ''}">${message}</span>
+            `;
+            logEl.appendChild(entry);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        async function fetchMarkets() {
+            log('FETCH', 'Requesting markets from Kalshi API...');
+            
+            try {
+                const response = await fetch(`${API_BASE}/markets?limit=20&status=open`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                
+                const data = await response.json();
+                log('RECV', `Received ${data.markets?.length || 0} markets`, true);
+                return data.markets || [];
+            } catch (error) {
+                log('ERROR', error.message);
+                // Fallback to demo data
+                log('FALLBACK', 'Using demo data for display');
+                return getDemoMarkets();
+            }
+        }
+
+        function getDemoMarkets() {
+            return [
+                {
+                    ticker: 'PRES-2028-DEM',
+                    title: 'Will a Democrat win the 2028 Presidential Election?',
+                    category: 'Politics',
+                    yes_bid: 0.48,
+                    yes_ask: 0.52,
+                    no_bid: 0.48,
+                    no_ask: 0.52,
+                    volume: 1250000,
+                    close_time: '2028-11-05T00:00:00Z'
+                },
+                {
+                    ticker: 'FED-RATE-APR',
+                    title: 'Will the Fed cut rates in April 2026?',
+                    category: 'Economics',
+                    yes_bid: 0.23,
+                    yes_ask: 0.27,
+                    no_bid: 0.73,
+                    no_ask: 0.77,
+                    volume: 890000,
+                    close_time: '2026-04-30T00:00:00Z'
+                },
+                {
+                    ticker: 'BTC-100K-Q2',
+                    title: 'Will Bitcoin exceed $100K in Q2 2026?',
+                    category: 'Economics',
+                    yes_bid: 0.35,
+                    yes_ask: 0.38,
+                    no_bid: 0.62,
+                    no_ask: 0.65,
+                    volume: 2100000,
+                    close_time: '2026-06-30T00:00:00Z'
+                },
+                {
+                    ticker: 'AI-REGULATION',
+                    title: 'Will the US pass major AI regulation in 2026?',
+                    category: 'Politics',
+                    yes_bid: 0.18,
+                    yes_ask: 0.22,
+                    no_bid: 0.78,
+                    no_ask: 0.82,
+                    volume: 450000,
+                    close_time: '2026-12-31T00:00:00Z'
+                },
+                {
+                    ticker: 'RECESSION-2026',
+                    title: 'Will the US enter recession in 2026?',
+                    category: 'Economics',
+                    yes_bid: 0.28,
+                    yes_ask: 0.32,
+                    no_bid: 0.68,
+                    no_ask: 0.72,
+                    volume: 1800000,
+                    close_time: '2026-12-31T00:00:00Z'
+                },
+                {
+                    ticker: 'MARS-2030',
+                    title: 'Will humans land on Mars by 2030?',
+                    category: 'Science',
+                    yes_bid: 0.12,
+                    yes_ask: 0.16,
+                    no_bid: 0.84,
+                    no_ask: 0.88,
+                    volume: 320000,
+                    close_time: '2030-12-31T00:00:00Z'
+                }
+            ];
+        }
+
+        function formatPrice(price) {
+            return (price * 100).toFixed(0) + '¢';
+        }
+
+        function formatVolume(vol) {
+            if (vol >= 1000000) return '$' + (vol / 1000000).toFixed(1) + 'M';
+            if (vol >= 1000) return '$' + (vol / 1000).toFixed(0) + 'K';
+            return '$' + vol;
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        function calculateSpread(market) {
+            return ((market.yes_ask - market.yes_bid) * 100).toFixed(1);
+        }
+
+        function renderMarkets(markets) {
+            const container = document.getElementById('markets');
+            
+            if (markets.length === 0) {
+                container.innerHTML = '<div class="loading"><p>No markets found</p></div>';
+                return;
+            }
+
+            container.innerHTML = markets.map(market => `
+                <div class="market-card">
+                    <div class="market-title">${market.title}</div>
+                    <div class="market-meta">
+                        <span>📊 ${market.category || 'General'}</span>
+                        <span>📅 Closes: ${formatDate(market.close_time)}</span>
+                        <span>📈 Spread: ${calculateSpread(market)}¢</span>
+                    </div>
+                    <div class="market-prices">
+                        <div class="price-box price-yes">
+                            <div class="price-label">YES</div>
+                            <div class="price-value">${formatPrice(market.yes_ask)}</div>
+                        </div>
+                        <div class="price-box price-no">
+                            <div class="price-label">NO</div>
+                            <div class="price-value">${formatPrice(market.no_ask)}</div>
+                        </div>
+                    </div>
+                    <div class="volume">
+                        💰 Volume: ${formatVolume(market.volume)} | 
+                        🏷️ ${market.ticker}
+                    </div>
+                </div>
+            `).join('');
+
+            log('RENDER', `Displayed ${markets.length} market cards`);
+            log('ANALYZE', 'Scanning for arbitrage opportunities...');
+            
+            // Simulate analysis
+            setTimeout(() => {
+                const highSpread = markets.filter(m => calculateSpread(m) > 3);
+                if (highSpread.length > 0) {
+                    log('SIGNAL', `Found ${highSpread.length} markets with spread > 3¢`, true);
+                }
+            }, 1000);
+        }
+
+        async function refreshMarkets() {
+            document.getElementById('markets').innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Fetching latest market data...</p>
+                </div>
+            `;
+            
+            const markets = await fetchMarkets();
+            renderMarkets(markets);
+        }
+
+        // Initial load
+        log('BOOT', 'OpenClaw Kalshi Agent v1.0 starting...');
+        refreshMarkets();
+        
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            log('AUTO', 'Scheduled market refresh');
+            refreshMarkets();
+        }, 30000);
+    </script>
+</body>
+</html>
