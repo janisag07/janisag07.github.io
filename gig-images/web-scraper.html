@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      width: 1280px;
+      height: 720px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #1a2e1a 50%, #2e3d1a 100%);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      overflow: hidden;
+      position: relative;
+    }
+    .container { text-align: center; z-index: 2; }
+    .icon { font-size: 140px; margin-bottom: 30px; filter: drop-shadow(0 0 40px rgba(139, 195, 74, 0.6)); }
+    h1 { font-size: 72px; font-weight: 700; margin-bottom: 20px; background: linear-gradient(90deg, #fff, #8bc34a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .subtitle { font-size: 36px; color: #8892b0; font-weight: 300; letter-spacing: 2px; }
+    .decoration { position: absolute; opacity: 0.08; font-family: 'Courier New', monospace; font-size: 14px; color: #8bc34a; line-height: 1.8; }
+    .code-left { top: 60px; left: 60px; text-align: left; }
+    .code-right { bottom: 60px; right: 60px; text-align: right; }
+    .circle { position: absolute; border-radius: 50%; }
+    .circle-1 { width: 500px; height: 500px; top: -150px; right: -150px; background: radial-gradient(circle, rgba(139, 195, 74, 0.15) 0%, transparent 70%); }
+    .circle-2 { width: 400px; height: 400px; bottom: -100px; left: -100px; background: radial-gradient(circle, rgba(139, 195, 74, 0.1) 0%, transparent 70%); }
+    .grid { position: absolute; width: 100%; height: 100%; background-image: linear-gradient(rgba(139, 195, 74, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 195, 74, 0.03) 1px, transparent 1px); background-size: 50px 50px; }
+  </style>
+</head>
+<body>
+  <div class="grid"></div>
+  <div class="circle circle-1"></div>
+  <div class="circle circle-2"></div>
+  <div class="decoration code-left">const scraper = new Scraper();<br><br>const data = await scraper.run({<br>&nbsp;&nbsp;url: 'https://example.com',<br>&nbsp;&nbsp;selectors: {<br>&nbsp;&nbsp;&nbsp;&nbsp;title: 'h1',<br>&nbsp;&nbsp;&nbsp;&nbsp;price: '.price'<br>&nbsp;&nbsp;}<br>});</div>
+  <div class="decoration code-right">// Any Website<br>// Handle Pagination<br>// Anti-Bot Bypass<br>// CSV / JSON Export<br>// Google Sheets Sync<br>// Scheduled Runs</div>
+  <div class="container">
+    <div class="icon">🕷️</div>
+    <h1>Custom Web Scraper</h1>
+    <div class="subtitle">Extract Data From Any Website</div>
+  </div>
+</body>
+</html>
