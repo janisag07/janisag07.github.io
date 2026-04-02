@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Bot - Exchange API Integration</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; min-height: 100vh; color: #fff; padding: 40px 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #00d4ff; }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .back { color: #00d4ff; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        
+        .warning { background: rgba(247,183,49,0.1); border: 1px solid rgba(247,183,49,0.3); border-radius: 10px; padding: 15px 20px; margin-bottom: 30px; display: flex; align-items: center; gap: 15px; }
+        .warning .icon { font-size: 1.5rem; }
+        .warning p { color: #f7b731; font-size: 0.9rem; }
+        
+        .code-section { background: rgba(255,255,255,0.03); border-radius: 14px; margin-bottom: 30px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
+        .code-header { background: rgba(0,0,0,0.3); padding: 15px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .code-header h3 { color: #00d4ff; font-size: 1rem; display: flex; align-items: center; gap: 10px; }
+        .code-header .lang { background: rgba(0,212,255,0.2); color: #00d4ff; padding: 4px 12px; border-radius: 4px; font-size: 0.8rem; }
+        .code-body { padding: 20px 25px; overflow-x: auto; }
+        pre { margin: 0; font-family: 'Monaco', 'Menlo', 'Consolas', monospace; font-size: 0.85rem; line-height: 1.6; color: #ccc; white-space: pre; }
+        .comment { color: #6a9955; }
+        .keyword { color: #c586c0; }
+        .string { color: #ce9178; }
+        .function { color: #dcdcaa; }
+        .variable { color: #9cdcfe; }
+        .number { color: #b5cea8; }
+        
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin: 30px 0; }
+        .feature { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 20px; border: 1px solid rgba(255,255,255,0.08); }
+        .feature h4 { color: #00d4ff; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .feature p { color: #888; font-size: 0.9rem; line-height: 1.5; }
+        
+        .architecture { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 30px; margin-bottom: 30px; }
+        .architecture h2 { color: #00d4ff; margin-bottom: 25px; text-align: center; }
+        .arch-flow { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; }
+        .arch-box { background: linear-gradient(145deg, #1a1a2e, #16213e); border-radius: 10px; padding: 18px 22px; text-align: center; border: 1px solid #2a2a4a; }
+        .arch-box .icon { font-size: 1.8rem; margin-bottom: 8px; }
+        .arch-box .label { color: #fff; font-size: 0.9rem; font-weight: 500; }
+        .arch-arrow { color: #555; font-size: 1.3rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../" class="back">← Back to Portfolio</a>
+        <h1>📈 Trading Bot Integration</h1>
+        <p class="subtitle">Exchange API code samples for Telegram-based trading notifications</p>
+        
+        <div class="warning">
+            <span class="icon">⚠️</span>
+            <p><strong>Demo Code Only:</strong> These are simplified examples showing API integration patterns. Production bots require proper error handling, rate limiting, and security measures.</p>
+        </div>
+        
+        <div class="architecture">
+            <h2>Bot Architecture</h2>
+            <div class="arch-flow">
+                <div class="arch-box">
+                    <div class="icon">📊</div>
+                    <div class="label">Exchange API</div>
+                </div>
+                <span class="arch-arrow">→</span>
+                <div class="arch-box">
+                    <div class="icon">🔄</div>
+                    <div class="label">Price Monitor</div>
+                </div>
+                <span class="arch-arrow">→</span>
+                <div class="arch-box">
+                    <div class="icon">⚡</div>
+                    <div class="label">Signal Engine</div>
+                </div>
+                <span class="arch-arrow">→</span>
+                <div class="arch-box">
+                    <div class="icon">📱</div>
+                    <div class="label">Telegram Bot</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="code-section">
+            <div class="code-header">
+                <h3>🐍 Python - Binance Integration</h3>
+                <span class="lang">Python 3.10+</span>
+            </div>
+            <div class="code-body">
+<pre><span class="keyword">import</span> asyncio
+<span class="keyword">from</span> binance <span class="keyword">import</span> AsyncClient, BinanceSocketManager
+<span class="keyword">from</span> telegram <span class="keyword">import</span> Bot
+<span class="keyword">import</span> os
+
+<span class="comment"># Configuration</span>
+<span class="variable">BINANCE_API_KEY</span> = os.getenv(<span class="string">'BINANCE_API_KEY'</span>)
+<span class="variable">BINANCE_SECRET</span> = os.getenv(<span class="string">'BINANCE_SECRET'</span>)
+<span class="variable">TELEGRAM_TOKEN</span> = os.getenv(<span class="string">'TELEGRAM_BOT_TOKEN'</span>)
+<span class="variable">CHAT_ID</span> = os.getenv(<span class="string">'TELEGRAM_CHAT_ID'</span>)
+
+<span class="keyword">class</span> <span class="function">TradingBot</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.telegram = Bot(token=<span class="variable">TELEGRAM_TOKEN</span>)
+        self.price_alerts = {}  <span class="comment"># symbol -> {above: price, below: price}</span>
+        
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">start</span>(self):
+        <span class="comment"># Initialize Binance client</span>
+        self.client = <span class="keyword">await</span> AsyncClient.create(
+            <span class="variable">BINANCE_API_KEY</span>, 
+            <span class="variable">BINANCE_SECRET</span>
+        )
+        self.bsm = BinanceSocketManager(self.client)
+        
+        <span class="comment"># Start listening to price stream</span>
+        <span class="keyword">await</span> self.<span class="function">listen_prices</span>([<span class="string">'BTCUSDT'</span>, <span class="string">'ETHUSDT'</span>])
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">listen_prices</span>(self, symbols):
+        <span class="string">"""Listen to real-time price updates via WebSocket"""</span>
+        streams = [f<span class="string">"{s.lower()}@ticker"</span> <span class="keyword">for</span> s <span class="keyword">in</span> symbols]
+        socket = self.bsm.multiplex_socket(streams)
+        
+        <span class="keyword">async with</span> socket <span class="keyword">as</span> stream:
+            <span class="keyword">while</span> <span class="keyword">True</span>:
+                msg = <span class="keyword">await</span> stream.recv()
+                <span class="keyword">await</span> self.<span class="function">process_ticker</span>(msg)
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">process_ticker</span>(self, msg):
+        <span class="string">"""Process incoming ticker and check alerts"""</span>
+        data = msg[<span class="string">'data'</span>]
+        symbol = data[<span class="string">'s'</span>]
+        price = <span class="function">float</span>(data[<span class="string">'c'</span>])  <span class="comment"># Current price</span>
+        change = <span class="function">float</span>(data[<span class="string">'P'</span>])  <span class="comment"># 24h change %</span>
+        
+        <span class="comment"># Check price alerts</span>
+        <span class="keyword">if</span> symbol <span class="keyword">in</span> self.price_alerts:
+            alert = self.price_alerts[symbol]
+            <span class="keyword">if</span> <span class="string">'above'</span> <span class="keyword">in</span> alert <span class="keyword">and</span> price >= alert[<span class="string">'above'</span>]:
+                <span class="keyword">await</span> self.<span class="function">send_alert</span>(symbol, price, <span class="string">'above'</span>)
+            <span class="keyword">if</span> <span class="string">'below'</span> <span class="keyword">in</span> alert <span class="keyword">and</span> price <= alert[<span class="string">'below'</span>]:
+                <span class="keyword">await</span> self.<span class="function">send_alert</span>(symbol, price, <span class="string">'below'</span>)
+    
+    <span class="keyword">async</span> <span class="keyword">def</span> <span class="function">send_alert</span>(self, symbol, price, direction):
+        <span class="string">"""Send Telegram notification"""</span>
+        emoji = <span class="string">'🚀'</span> <span class="keyword">if</span> direction == <span class="string">'above'</span> <span class="keyword">else</span> <span class="string">'📉'</span>
+        message = f<span class="string">"""
+{emoji} <b>Price Alert: {symbol}</b>
+
+Price: ${price:,.2f}
+Triggered: {direction} threshold
+
+<i>Sent by TradingBot</i>
+"""</span>
+        <span class="keyword">await</span> self.telegram.send_message(
+            chat_id=<span class="variable">CHAT_ID</span>,
+            text=message,
+            parse_mode=<span class="string">'HTML'</span>
+        )
+
+<span class="comment"># Run the bot</span>
+<span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:
+    bot = TradingBot()
+    bot.price_alerts = {
+        <span class="string">'BTCUSDT'</span>: {<span class="string">'above'</span>: <span class="number">100000</span>, <span class="string">'below'</span>: <span class="number">90000</span>},
+        <span class="string">'ETHUSDT'</span>: {<span class="string">'above'</span>: <span class="number">4000</span>, <span class="string">'below'</span>: <span class="number">3000</span>}
+    }
+    asyncio.run(bot.start())</pre>
+            </div>
+        </div>
+        
+        <div class="code-section">
+            <div class="code-header">
+                <h3>📦 Node.js - Coinbase Integration</h3>
+                <span class="lang">TypeScript</span>
+            </div>
+            <div class="code-body">
+<pre><span class="keyword">import</span> { CoinbaseClient } <span class="keyword">from</span> <span class="string">'@coinbase/coinbase-sdk'</span>;
+<span class="keyword">import</span> { Telegraf } <span class="keyword">from</span> <span class="string">'telegraf'</span>;
+<span class="keyword">import</span> WebSocket <span class="keyword">from</span> <span class="string">'ws'</span>;
+
+<span class="keyword">interface</span> <span class="function">PriceAlert</span> {
+  symbol: <span class="keyword">string</span>;
+  above?: <span class="keyword">number</span>;
+  below?: <span class="keyword">number</span>;
+}
+
+<span class="keyword">class</span> <span class="function">CoinbaseTradingBot</span> {
+  <span class="keyword">private</span> bot: Telegraf;
+  <span class="keyword">private</span> alerts: Map&lt;<span class="keyword">string</span>, PriceAlert&gt; = <span class="keyword">new</span> Map();
+  <span class="keyword">private</span> chatId: <span class="keyword">string</span>;
+  
+  <span class="keyword">constructor</span>() {
+    <span class="keyword">this</span>.bot = <span class="keyword">new</span> Telegraf(process.env.<span class="variable">TELEGRAM_BOT_TOKEN</span>!);
+    <span class="keyword">this</span>.chatId = process.env.<span class="variable">TELEGRAM_CHAT_ID</span>!;
+    <span class="keyword">this</span>.<span class="function">setupCommands</span>();
+  }
+  
+  <span class="function">setupCommands</span>() {
+    <span class="comment">// /price BTC - Get current price</span>
+    <span class="keyword">this</span>.bot.command(<span class="string">'price'</span>, <span class="keyword">async</span> (ctx) => {
+      <span class="keyword">const</span> symbol = ctx.message.text.split(<span class="string">' '</span>)[<span class="number">1</span>] || <span class="string">'BTC'</span>;
+      <span class="keyword">const</span> price = <span class="keyword">await</span> <span class="keyword">this</span>.<span class="function">getPrice</span>(symbol);
+      ctx.reply(<span class="string">`💰 ${symbol}: $${price.toLocaleString()}`</span>);
+    });
+    
+    <span class="comment">// /alert BTC above 100000</span>
+    <span class="keyword">this</span>.bot.command(<span class="string">'alert'</span>, (ctx) => {
+      <span class="keyword">const</span> [, symbol, direction, priceStr] = ctx.message.text.split(<span class="string">' '</span>);
+      <span class="keyword">const</span> price = <span class="function">parseFloat</span>(priceStr);
+      
+      <span class="keyword">this</span>.alerts.set(symbol, { 
+        symbol, 
+        [direction]: price 
+      });
+      
+      ctx.reply(<span class="string">`✅ Alert set: ${symbol} ${direction} $${price.toLocaleString()}`</span>);
+    });
+  }
+  
+  <span class="keyword">async</span> <span class="function">getPrice</span>(symbol: <span class="keyword">string</span>): Promise&lt;<span class="keyword">number</span>&gt; {
+    <span class="keyword">const</span> response = <span class="keyword">await</span> fetch(
+      <span class="string">`https://api.coinbase.com/v2/prices/${symbol}-USD/spot`</span>
+    );
+    <span class="keyword">const</span> data = <span class="keyword">await</span> response.json();
+    <span class="keyword">return</span> <span class="function">parseFloat</span>(data.data.amount);
+  }
+  
+  <span class="function">startPriceStream</span>() {
+    <span class="keyword">const</span> ws = <span class="keyword">new</span> WebSocket(<span class="string">'wss://ws-feed.exchange.coinbase.com'</span>);
+    
+    ws.on(<span class="string">'open'</span>, () => {
+      ws.send(JSON.stringify({
+        type: <span class="string">'subscribe'</span>,
+        channels: [{ name: <span class="string">'ticker'</span>, product_ids: [<span class="string">'BTC-USD'</span>, <span class="string">'ETH-USD'</span>] }]
+      }));
+    });
+    
+    ws.on(<span class="string">'message'</span>, <span class="keyword">async</span> (data) => {
+      <span class="keyword">const</span> msg = JSON.parse(data.toString());
+      <span class="keyword">if</span> (msg.type === <span class="string">'ticker'</span>) {
+        <span class="keyword">await</span> <span class="keyword">this</span>.<span class="function">checkAlerts</span>(msg.product_id, <span class="function">parseFloat</span>(msg.price));
+      }
+    });
+  }
+  
+  <span class="keyword">async</span> <span class="function">checkAlerts</span>(productId: <span class="keyword">string</span>, price: <span class="keyword">number</span>) {
+    <span class="keyword">const</span> symbol = productId.replace(<span class="string">'-USD'</span>, <span class="string">''</span>);
+    <span class="keyword">const</span> alert = <span class="keyword">this</span>.alerts.get(symbol);
+    
+    <span class="keyword">if</span> (!alert) <span class="keyword">return</span>;
+    
+    <span class="keyword">if</span> (alert.above && price >= alert.above) {
+      <span class="keyword">await</span> <span class="keyword">this</span>.<span class="function">sendAlert</span>(symbol, price, <span class="string">'📈 Above'</span>);
+      <span class="keyword">this</span>.alerts.delete(symbol);
+    }
+    <span class="keyword">if</span> (alert.below && price <= alert.below) {
+      <span class="keyword">await</span> <span class="keyword">this</span>.<span class="function">sendAlert</span>(symbol, price, <span class="string">'📉 Below'</span>);
+      <span class="keyword">this</span>.alerts.delete(symbol);
+    }
+  }
+  
+  <span class="keyword">async</span> <span class="function">sendAlert</span>(symbol: <span class="keyword">string</span>, price: <span class="keyword">number</span>, type: <span class="keyword">string</span>) {
+    <span class="keyword">await</span> <span class="keyword">this</span>.bot.telegram.sendMessage(
+      <span class="keyword">this</span>.chatId,
+      <span class="string">`🚨 *${type} Alert*\n\n${symbol}: $${price.toLocaleString()}`</span>,
+      { parse_mode: <span class="string">'Markdown'</span> }
+    );
+  }
+  
+  <span class="keyword">async</span> <span class="function">start</span>() {
+    <span class="keyword">this</span>.<span class="function">startPriceStream</span>();
+    <span class="keyword">await</span> <span class="keyword">this</span>.bot.launch();
+    console.log(<span class="string">'🤖 Trading bot started!'</span>);
+  }
+}
+
+<span class="keyword">const</span> bot = <span class="keyword">new</span> CoinbaseTradingBot();
+bot.start();</pre>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h4>⚡ Real-time Data</h4>
+                <p>WebSocket connections for instant price updates without polling overhead.</p>
+            </div>
+            <div class="feature">
+                <h4>🔔 Custom Alerts</h4>
+                <p>Set price thresholds for any supported trading pair.</p>
+            </div>
+            <div class="feature">
+                <h4>📱 Telegram Interface</h4>
+                <p>Manage alerts and check prices directly from Telegram.</p>
+            </div>
+            <div class="feature">
+                <h4>🔒 Secure</h4>
+                <p>API keys stored in environment variables, never in code.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

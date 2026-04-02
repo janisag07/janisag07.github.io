@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Menu Automation - Shopify Solution</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; min-height: 100vh; color: #fff; padding: 40px 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #00d4ff; }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .back { color: #00d4ff; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        
+        .problem-box { background: linear-gradient(135deg, rgba(255,107,107,0.1), rgba(255,107,107,0.05)); border: 1px solid rgba(255,107,107,0.3); border-radius: 12px; padding: 25px; margin-bottom: 30px; }
+        .problem-box h2 { color: #ff6b6b; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .problem-box p { color: #aaa; line-height: 1.6; }
+        
+        .solution-box { background: linear-gradient(135deg, rgba(38,222,129,0.1), rgba(38,222,129,0.05)); border: 1px solid rgba(38,222,129,0.3); border-radius: 12px; padding: 25px; margin-bottom: 30px; }
+        .solution-box h2 { color: #26de81; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .solution-box p { color: #aaa; line-height: 1.6; }
+        
+        .diagram { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 35px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.08); }
+        .diagram h2 { color: #00d4ff; text-align: center; margin-bottom: 30px; }
+        
+        .schedule-visual { display: flex; justify-content: space-around; align-items: flex-start; flex-wrap: wrap; gap: 20px; }
+        .day-column { text-align: center; flex: 1; min-width: 120px; }
+        .day-column h4 { color: #888; margin-bottom: 15px; font-size: 0.9rem; }
+        .day-block { background: linear-gradient(145deg, #1a1a2e, #16213e); border-radius: 10px; padding: 15px; margin-bottom: 10px; border: 1px solid #2a2a4a; }
+        .day-block.active { border-color: #26de81; background: rgba(38,222,129,0.1); }
+        .day-block.inactive { opacity: 0.4; }
+        .day-block .time { color: #888; font-size: 0.75rem; margin-bottom: 5px; }
+        .day-block .action { color: #fff; font-size: 0.85rem; font-weight: 500; }
+        .day-block .action.publish { color: #26de81; }
+        .day-block .action.unpublish { color: #ff6b6b; }
+        
+        .logic-section { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 30px; margin-bottom: 30px; }
+        .logic-section h2 { color: #00d4ff; margin-bottom: 25px; }
+        
+        .logic-steps { display: grid; gap: 20px; }
+        .logic-step { display: flex; gap: 20px; align-items: flex-start; }
+        .step-number { background: linear-gradient(135deg, #00d4ff, #7b2cbf); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; }
+        .step-content h4 { color: #fff; margin-bottom: 8px; }
+        .step-content p { color: #888; font-size: 0.9rem; line-height: 1.5; }
+        
+        .code-block { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 20px; margin-top: 25px; overflow-x: auto; }
+        .code-block pre { font-family: 'Monaco', monospace; font-size: 0.82rem; color: #ccc; line-height: 1.6; }
+        .comment { color: #6a9955; }
+        .keyword { color: #c586c0; }
+        .string { color: #ce9178; }
+        
+        .benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 30px; }
+        .benefit { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 20px; border: 1px solid rgba(255,255,255,0.08); text-align: center; }
+        .benefit .icon { font-size: 2rem; margin-bottom: 10px; }
+        .benefit h4 { color: #00d4ff; margin-bottom: 8px; }
+        .benefit p { color: #888; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../" class="back">← Back to Portfolio</a>
+        <h1>🍽️ Weekly Menu Automation</h1>
+        <p class="subtitle">Shopify solution for automatic menu scheduling</p>
+        
+        <div class="problem-box">
+            <h2>❌ The Problem</h2>
+            <p>Food businesses with rotating weekly menus currently have to manually publish/unpublish products every week. This means:</p>
+            <ul style="margin-top: 15px; margin-left: 20px; color: #aaa; line-height: 1.8;">
+                <li>Waking up early Sunday to update the menu</li>
+                <li>Risk of forgetting and selling unavailable items</li>
+                <li>No way to schedule changes in advance</li>
+                <li>Staff time wasted on repetitive manual work</li>
+            </ul>
+        </div>
+        
+        <div class="solution-box">
+            <h2>✅ The Solution</h2>
+            <p>An automated scheduling system that publishes/unpublishes menu items based on predefined schedules. Set it once, and it handles the weekly rotation automatically — no manual intervention needed.</p>
+        </div>
+        
+        <div class="diagram">
+            <h2>Weekly Schedule Visualization</h2>
+            <div class="schedule-visual">
+                <div class="day-column">
+                    <h4>SUNDAY</h4>
+                    <div class="day-block active">
+                        <div class="time">6:00 AM</div>
+                        <div class="action publish">📤 Publish Week Menu</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <h4>MON-FRI</h4>
+                    <div class="day-block">
+                        <div class="action">Menu Active ✓</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <h4>SATURDAY</h4>
+                    <div class="day-block active">
+                        <div class="time">11:59 PM</div>
+                        <div class="action unpublish">📥 Unpublish Menu</div>
+                    </div>
+                </div>
+                <div class="day-column">
+                    <h4>NEXT SUNDAY</h4>
+                    <div class="day-block active">
+                        <div class="time">6:00 AM</div>
+                        <div class="action publish">📤 New Week Menu</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="logic-section">
+            <h2>How It Works</h2>
+            
+            <div class="logic-steps">
+                <div class="logic-step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h4>Tag Products by Week</h4>
+                        <p>Add tags to products indicating which week(s) they're available: <code style="background: rgba(0,212,255,0.2); padding: 2px 8px; border-radius: 4px;">week-1</code>, <code style="background: rgba(0,212,255,0.2); padding: 2px 8px; border-radius: 4px;">week-2</code>, etc. Products can have multiple week tags if they're available multiple weeks.</p>
+                    </div>
+                </div>
+                
+                <div class="logic-step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h4>Calculate Current Week</h4>
+                        <p>System automatically determines the current week number of the year (1-52). This ensures the correct menu is always shown without manual input.</p>
+                    </div>
+                </div>
+                
+                <div class="logic-step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h4>Scheduled Publish/Unpublish</h4>
+                        <p>Cron job runs at configured times (e.g., Sunday 6AM) to publish products matching current week and unpublish products from previous week.</p>
+                    </div>
+                </div>
+                
+                <div class="logic-step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <h4>Admin Dashboard</h4>
+                        <p>Simple interface to see what's currently active, preview next week's menu, and override schedules if needed.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="code-block">
+                <pre><span class="comment">// Simplified scheduling logic (n8n / Node.js)</span>
+
+<span class="keyword">async function</span> updateWeeklyMenu() {
+  <span class="keyword">const</span> currentWeek = getISOWeek(<span class="keyword">new</span> Date());
+  <span class="keyword">const</span> previousWeek = currentWeek === 1 ? 52 : currentWeek - 1;
+  
+  <span class="comment">// Unpublish last week's products</span>
+  <span class="keyword">await</span> shopify.products.updateByTag(
+    <span class="string">`week-${previousWeek}`</span>,
+    { status: <span class="string">'draft'</span> }
+  );
+  
+  <span class="comment">// Publish this week's products</span>
+  <span class="keyword">await</span> shopify.products.updateByTag(
+    <span class="string">`week-${currentWeek}`</span>,
+    { status: <span class="string">'active'</span> }
+  );
+  
+  <span class="comment">// Log & notify</span>
+  console.log(<span class="string">`Menu updated: Week ${currentWeek} now active`</span>);
+  <span class="keyword">await</span> sendSlackNotification(<span class="string">`✅ Week ${currentWeek} menu is live!`</span>);
+}</pre>
+            </div>
+        </div>
+        
+        <h2 style="color: #00d4ff; margin-bottom: 20px;">💡 Benefits</h2>
+        <div class="benefits">
+            <div class="benefit">
+                <div class="icon">⏰</div>
+                <h4>Set & Forget</h4>
+                <p>Configure once, runs automatically every week</p>
+            </div>
+            <div class="benefit">
+                <div class="icon">🚫</div>
+                <h4>No More Mistakes</h4>
+                <p>Never accidentally sell unavailable items</p>
+            </div>
+            <div class="benefit">
+                <div class="icon">👀</div>
+                <h4>Preview Ahead</h4>
+                <p>See next week's menu before it goes live</p>
+            </div>
+            <div class="benefit">
+                <div class="icon">🔄</div>
+                <h4>Flexible Schedules</h4>
+                <p>Customize publish times for your business</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

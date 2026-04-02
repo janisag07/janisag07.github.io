@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MrFixer Heating & Cooling - Denver</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .header { background: #1a365d; color: #fff; padding: 15px 0; position: sticky; top: 0; z-index: 100; }
+        .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        .logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 700; }
+        .logo span { color: #f6ad55; }
+        .nav { display: flex; gap: 25px; }
+        .nav a { color: #fff; text-decoration: none; font-size: 0.95rem; }
+        .nav a:hover { color: #f6ad55; }
+        .phone { background: #f6ad55; color: #1a365d; padding: 10px 20px; border-radius: 6px; font-weight: 700; text-decoration: none; }
+        .hero { background: linear-gradient(135deg, #2c5282 0%, #1a365d 100%); color: #fff; padding: 80px 20px; text-align: center; }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 20px; }
+        .hero h1 span { color: #f6ad55; }
+        .hero p { font-size: 1.1rem; color: #a0aec0; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .hero-btns { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+        .btn { padding: 15px 30px; border-radius: 8px; font-weight: 600; text-decoration: none; font-size: 1rem; }
+        .btn-primary { background: #f6ad55; color: #1a365d; }
+        .btn-secondary { background: transparent; color: #fff; border: 2px solid #fff; }
+        .trust { background: #f7fafc; padding: 30px 20px; }
+        .trust-inner { max-width: 1000px; margin: 0 auto; display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+        .trust-item { display: flex; align-items: center; gap: 10px; color: #2d3748; }
+        .services { padding: 70px 20px; max-width: 1200px; margin: 0 auto; }
+        .services h2 { text-align: center; font-size: 2rem; color: #1a365d; margin-bottom: 50px; }
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .service-card { background: #fff; border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; text-align: center; transition: transform 0.3s; cursor: pointer; }
+        .service-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+        .service-card .icon { font-size: 3rem; margin-bottom: 20px; }
+        .service-card h3 { color: #1a365d; margin-bottom: 12px; }
+        .service-card p { color: #718096; font-size: 0.95rem; line-height: 1.5; }
+        .why { background: #edf2f7; padding: 70px 20px; }
+        .why-inner { max-width: 1000px; margin: 0 auto; }
+        .why h2 { text-align: center; font-size: 2rem; color: #1a365d; margin-bottom: 50px; }
+        .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 30px; }
+        .why-item { text-align: center; }
+        .why-item .number { font-size: 2.5rem; font-weight: 700; color: #f6ad55; }
+        .why-item h4 { color: #1a365d; margin: 10px 0 8px; }
+        .why-item p { color: #718096; font-size: 0.9rem; }
+        .reviews { padding: 70px 20px; max-width: 1000px; margin: 0 auto; }
+        .reviews h2 { text-align: center; font-size: 2rem; color: #1a365d; margin-bottom: 50px; }
+        .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .review { background: #fff; border-radius: 12px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
+        .review-stars { color: #f6ad55; margin-bottom: 15px; font-size: 1.2rem; }
+        .review p { color: #4a5568; font-style: italic; line-height: 1.6; margin-bottom: 15px; }
+        .review-author { color: #1a365d; font-weight: 600; }
+        .review-location { color: #a0aec0; font-size: 0.85rem; }
+        .cta { background: linear-gradient(135deg, #f6ad55 0%, #ed8936 100%); padding: 60px 20px; text-align: center; }
+        .cta h2 { color: #1a365d; font-size: 2rem; margin-bottom: 15px; }
+        .cta p { color: #744210; margin-bottom: 25px; }
+        .cta .btn { background: #1a365d; color: #fff; }
+        .contact { background: #1a365d; color: #fff; padding: 60px 20px; }
+        .contact-inner { max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
+        .contact h3 { color: #f6ad55; margin-bottom: 20px; }
+        .contact p, .contact a { color: #a0aec0; text-decoration: none; line-height: 1.8; display: block; }
+        .contact a:hover { color: #fff; }
+        .contact-form input, .contact-form textarea { width: 100%; padding: 12px; border-radius: 6px; border: none; margin-bottom: 15px; }
+        .contact-form textarea { height: 100px; resize: vertical; }
+        .contact-form button { background: #f6ad55; color: #1a365d; border: none; padding: 12px 25px; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; }
+        .footer { background: #0f2744; color: #718096; padding: 20px; text-align: center; font-size: 0.9rem; }
+        .wireframe-badge { position: fixed; bottom: 20px; right: 20px; background: #7c3aed; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 0.85rem; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="logo">🔧 MrFixer <span>HVAC</span></div>
+            <nav class="nav">
+                <a href="#services">Services</a>
+                <a href="#reviews">Reviews</a>
+                <a href="#contact">Contact</a>
+            </nav>
+            <a href="tel:303-555-HVAC" class="phone">📞 (303) 555-HVAC</a>
+        </div>
+    </header>
+    
+    <section class="hero">
+        <h1>Denver's Most <span>Trusted</span><br>Heating & Cooling Experts</h1>
+        <p>Fast, reliable HVAC service for homes and businesses. 24/7 emergency repairs, transparent pricing, 100% satisfaction guaranteed.</p>
+        <div class="hero-btns">
+            <a href="#contact" class="btn btn-primary">Get Free Estimate</a>
+            <a href="#services" class="btn btn-secondary">Our Services</a>
+        </div>
+    </section>
+    
+    <section class="trust">
+        <div class="trust-inner">
+            <div class="trust-item"><span>✓</span> Licensed & Insured</div>
+            <div class="trust-item"><span>⭐</span> 4.9 Star Rating</div>
+            <div class="trust-item"><span>⏰</span> 24/7 Emergency</div>
+            <div class="trust-item"><span>💳</span> Financing Available</div>
+        </div>
+    </section>
+    
+    <section class="services" id="services">
+        <h2>Our Services</h2>
+        <div class="services-grid">
+            <div class="service-card"><div class="icon">🔥</div><h3>Heating Services</h3><p>Furnace repair, installation & maintenance. Stay warm during Colorado winters.</p></div>
+            <div class="service-card"><div class="icon">❄️</div><h3>Air Conditioning</h3><p>AC repair, replacement & tune-ups. Beat the summer heat efficiently.</p></div>
+            <div class="service-card"><div class="icon">🌬️</div><h3>Indoor Air Quality</h3><p>Air purifiers, humidifiers & duct cleaning for healthier air.</p></div>
+            <div class="service-card"><div class="icon">🚨</div><h3>Emergency Repairs</h3><p>24/7 emergency service. We're here when you need us most.</p></div>
+            <div class="service-card"><div class="icon">📋</div><h3>Maintenance Plans</h3><p>Annual tune-ups & priority service. Keep systems running efficiently.</p></div>
+            <div class="service-card"><div class="icon">🏠</div><h3>New Installation</h3><p>Energy-efficient HVAC systems. Free in-home consultations.</p></div>
+        </div>
+    </section>
+    
+    <section class="why">
+        <div class="why-inner">
+            <h2>Why Denver Chooses MrFixer</h2>
+            <div class="why-grid">
+                <div class="why-item"><div class="number">15+</div><h4>Years Experience</h4><p>Serving Denver since 2009</p></div>
+                <div class="why-item"><div class="number">10K+</div><h4>Happy Customers</h4><p>Homes & businesses served</p></div>
+                <div class="why-item"><div class="number">1hr</div><h4>Response Time</h4><p>For emergency calls</p></div>
+                <div class="why-item"><div class="number">100%</div><h4>Satisfaction</h4><p>Guaranteed or free</p></div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="reviews" id="reviews">
+        <h2>What Our Customers Say</h2>
+        <div class="reviews-grid">
+            <div class="review">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p>"Our furnace died on the coldest night of the year. MrFixer had someone here within an hour and fixed it the same night. Lifesavers!"</p>
+                <div class="review-author">Mike R.</div>
+                <div class="review-location">Highlands Ranch</div>
+            </div>
+            <div class="review">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p>"Transparent pricing, professional technicians, and they even cleaned up after themselves. This is how HVAC service should be."</p>
+                <div class="review-author">Sarah T.</div>
+                <div class="review-location">Cherry Creek</div>
+            </div>
+            <div class="review">
+                <div class="review-stars">⭐⭐⭐⭐⭐</div>
+                <p>"Got quotes from 3 companies for a new AC unit. MrFixer was the most competitive AND did the best quality work. Highly recommend!"</p>
+                <div class="review-author">James K.</div>
+                <div class="review-location">Aurora</div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="cta">
+        <h2>Ready for Comfort You Can Count On?</h2>
+        <p>Get a free estimate today. No pressure, no hidden fees.</p>
+        <a href="#contact" class="btn">Schedule Free Estimate</a>
+    </section>
+    
+    <section class="contact" id="contact">
+        <div class="contact-inner">
+            <div>
+                <h3>Contact Us</h3>
+                <p>📍 4521 Brighton Blvd, Denver, CO 80216</p>
+                <a href="tel:303-555-4822">📞 (303) 555-HVAC</a>
+                <a href="mailto:hello@mrfixer.com">✉️ hello@mrfixer.com</a>
+                <p style="margin-top: 20px;"><strong>Hours:</strong><br>Mon-Fri: 7am-7pm<br>Sat: 8am-4pm<br>Emergency: 24/7</p>
+            </div>
+            <div>
+                <h3>Service Areas</h3>
+                <p>Denver • Aurora • Lakewood<br>Littleton • Englewood • Arvada<br>Westminster • Thornton<br>Highlands Ranch • Parker</p>
+            </div>
+            <div>
+                <h3>Get a Quote</h3>
+                <form class="contact-form" onsubmit="event.preventDefault(); alert('Demo: Form submitted!');">
+                    <input type="text" placeholder="Your Name" required>
+                    <input type="tel" placeholder="Phone Number" required>
+                    <textarea placeholder="How can we help?"></textarea>
+                    <button type="submit">Request Quote</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    
+    <footer class="footer">
+        <p>© 2024 MrFixer Heating & Cooling. Licensed, Bonded, Insured. CO License #HVAC-12345</p>
+    </footer>
+    
+    <div class="wireframe-badge">📐 Clickable Wireframe</div>
+</body>
+</html>

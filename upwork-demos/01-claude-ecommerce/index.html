@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Categorization AI - Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; min-height: 100vh; color: #fff; padding: 40px 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #00d4ff; }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .demo-box { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 30px; border: 1px solid rgba(255,255,255,0.1); }
+        label { display: block; margin-bottom: 8px; color: #aaa; font-size: 0.9rem; }
+        textarea { width: 100%; height: 150px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 15px; color: #fff; font-size: 1rem; resize: vertical; margin-bottom: 20px; }
+        textarea:focus { outline: none; border-color: #00d4ff; }
+        button { padding: 12px 30px; background: linear-gradient(90deg, #00d4ff, #7b2cbf); color: #fff; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; }
+        button:hover { opacity: 0.9; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .result { margin-top: 30px; display: none; }
+        .result.show { display: block; }
+        .result-card { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); border-radius: 8px; padding: 20px; margin-bottom: 15px; }
+        .result-card h3 { color: #00d4ff; margin-bottom: 10px; font-size: 1rem; }
+        .category-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: 600; margin-right: 10px; margin-bottom: 10px; }
+        .category-return { background: #ff6b6b; }
+        .category-shipping { background: #4ecdc4; }
+        .category-fault { background: #f7b731; color: #000; }
+        .category-question { background: #a55eea; }
+        .priority { color: #888; font-size: 0.9rem; }
+        .draft-response { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 8px; margin-top: 10px; line-height: 1.6; color: #ccc; }
+        .examples { margin-top: 30px; }
+        .examples h3 { color: #888; margin-bottom: 15px; font-size: 0.9rem; }
+        .example-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; padding: 8px 16px; border-radius: 6px; margin-right: 10px; margin-bottom: 10px; cursor: pointer; font-size: 0.85rem; }
+        .example-btn:hover { background: rgba(255,255,255,0.15); }
+        .back { color: #00d4ff; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        .processing { display: none; align-items: center; gap: 10px; margin-top: 15px; color: #888; }
+        .processing.show { display: flex; }
+        .spinner { width: 20px; height: 20px; border: 2px solid rgba(0,212,255,0.3); border-top-color: #00d4ff; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../" class="back">← Back to Portfolio</a>
+        <h1>🤖 Email Categorization AI</h1>
+        <p class="subtitle">Claude-powered e-commerce email classifier with auto-generated responses</p>
+        
+        <div class="demo-box">
+            <label for="email-input">Paste customer email below:</label>
+            <textarea id="email-input" placeholder="Enter customer email text here..."></textarea>
+            
+            <button onclick="analyzeEmail()" id="analyze-btn">Analyze Email</button>
+            
+            <div class="processing" id="processing">
+                <div class="spinner"></div>
+                <span>Claude is analyzing the email...</span>
+            </div>
+            
+            <div class="examples">
+                <h3>Try these example emails:</h3>
+                <button class="example-btn" onclick="loadExample('return')">Return Request</button>
+                <button class="example-btn" onclick="loadExample('shipping')">Shipping Inquiry</button>
+                <button class="example-btn" onclick="loadExample('fault')">Product Defect</button>
+                <button class="example-btn" onclick="loadExample('question')">Product Question</button>
+            </div>
+        </div>
+        
+        <div class="result" id="result">
+            <div class="result-card">
+                <h3>📋 Classification Result</h3>
+                <span class="category-badge" id="category-badge">Loading...</span>
+                <span class="priority" id="priority">Priority: --</span>
+            </div>
+            
+            <div class="result-card">
+                <h3>✉️ Draft Response</h3>
+                <div class="draft-response" id="draft-response">
+                    Generating response...
+                </div>
+            </div>
+            
+            <div class="result-card">
+                <h3>🔍 Reasoning</h3>
+                <p id="reasoning" style="color: #aaa; line-height: 1.6;">Analyzing...</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const examples = {
+            return: `Hi there,
+
+I ordered a blue sweater (Order #45892) last week but it doesn't fit. The size chart said Large would work for me but it's way too small. I'd like to return it for a full refund.
+
+Can you send me a return label? I haven't worn it and still have the tags attached.
+
+Thanks,
+Sarah`,
+            shipping: `Hello,
+
+I placed an order 5 days ago (Order #67234) and it still shows "processing" in my account. I paid for express shipping because I need this for a birthday party this Saturday.
+
+Can you please tell me when it will ship? I'm getting worried it won't arrive in time.
+
+Best,
+Mike`,
+            fault: `Hi Support,
+
+I'm really disappointed. The coffee maker I received (Order #89012) has a crack in the water reservoir and it leaks everywhere when I try to use it. This was clearly damaged before shipping - the box looked fine but the product inside is broken.
+
+I need a replacement ASAP as my old coffee maker is already thrown out. This is unacceptable quality control.
+
+John`,
+            question: `Hey,
+
+I'm looking at the wireless headphones on your site (Model WH-500). A few questions:
+- Do these work with iPhone 15?
+- What's the actual battery life? The description says "up to 30 hours" but is that realistic?
+- Can I use them while charging?
+
+Thinking about buying for my daily commute.
+
+Thanks!
+Alex`
+        };
+        
+        function loadExample(type) {
+            document.getElementById('email-input').value = examples[type];
+        }
+        
+        function analyzeEmail() {
+            const email = document.getElementById('email-input').value.trim();
+            if (!email) {
+                alert('Please enter an email to analyze');
+                return;
+            }
+            
+            document.getElementById('analyze-btn').disabled = true;
+            document.getElementById('processing').classList.add('show');
+            document.getElementById('result').classList.remove('show');
+            
+            // Simulate AI processing
+            setTimeout(() => {
+                const result = classifyEmail(email);
+                displayResult(result);
+                document.getElementById('analyze-btn').disabled = false;
+                document.getElementById('processing').classList.remove('show');
+            }, 1500);
+        }
+        
+        function classifyEmail(email) {
+            const emailLower = email.toLowerCase();
+            
+            // Simple keyword-based classification (in production this would be Claude API)
+            let category, priority, reasoning, response;
+            
+            if (emailLower.includes('return') || emailLower.includes('refund') || emailLower.includes('send back')) {
+                category = 'return';
+                priority = 'Medium';
+                reasoning = 'Detected return/refund keywords. Customer is requesting to send product back. Standard return process applies.';
+                response = `Hi there,
+
+Thank you for reaching out about your return request.
+
+I'm sorry the sweater didn't fit as expected - sizing can definitely be tricky with online orders! I've initiated a return for Order #45892.
+
+Here's what happens next:
+1. You'll receive a prepaid return label via email within the next hour
+2. Pack the item with tags attached (sounds like you're all set!)
+3. Drop it off at any UPS location
+4. Refund will process within 3-5 business days after we receive it
+
+Is there anything else I can help you with? Would you like me to suggest a different size based on your measurements?
+
+Best regards,
+Customer Support Team`;
+            } else if (emailLower.includes('shipping') || emailLower.includes('ship') || emailLower.includes('delivery') || emailLower.includes('arrive') || emailLower.includes('processing')) {
+                category = 'shipping';
+                priority = 'High';
+                reasoning = 'Time-sensitive shipping inquiry detected. Customer paid for express shipping and has a deadline (Saturday event). Requires immediate attention.';
+                response = `Hi Mike,
+
+I completely understand your concern - when you pay for express shipping, you expect express results!
+
+I just checked Order #67234 and here's the update:
+✓ Your order has been prioritized in our fulfillment queue
+✓ It will ship TODAY with overnight express
+✓ Expected delivery: Friday before 5 PM
+
+I've also upgraded your shipping to overnight at no extra cost given the delay. You'll receive tracking information via email within the next 2 hours.
+
+I'm confident it will arrive well before Saturday's birthday party! 🎂
+
+Let me know if you need anything else.
+
+Best,
+Customer Support Team`;
+            } else if (emailLower.includes('broken') || emailLower.includes('damaged') || emailLower.includes('defect') || emailLower.includes('crack') || emailLower.includes('leak') || emailLower.includes('not working')) {
+                category = 'fault';
+                priority = 'High';
+                reasoning = 'Product defect/damage reported. Customer received broken item (cracked reservoir). Requires immediate replacement. High frustration level detected.';
+                response = `Hi John,
+
+I'm so sorry about this experience - receiving a damaged coffee maker is absolutely not the quality we stand for, and I completely understand your frustration.
+
+Here's what I'm doing right now:
+✓ Shipping a brand new replacement TODAY via express (arrives in 2 days)
+✓ No need to return the damaged unit - please recycle or dispose of it
+✓ Adding a $15 store credit to your account for the inconvenience
+
+You'll receive tracking for the replacement within the hour.
+
+I've also flagged this with our quality control team so we can investigate how this got through. Thank you for letting us know.
+
+Is there anything else I can do to make this right?
+
+Sincerely,
+Customer Support Team`;
+            } else {
+                category = 'question';
+                priority = 'Low';
+                reasoning = 'Pre-purchase product inquiry. Customer asking technical specifications about WH-500 headphones. Good sales opportunity.';
+                response = `Hey Alex!
+
+Great questions about the WH-500 - let me give you the real-world answers:
+
+📱 iPhone 15 Compatibility: Yes, 100%! Works perfectly via Bluetooth 5.2. Also supports the higher quality AAC codec that iPhones use.
+
+🔋 Real Battery Life: In our testing with moderate volume (~60%), you'll get about 25-28 hours. The "up to 30 hours" is at lower volumes. Still plenty for a week+ of commuting without charging!
+
+⚡ Use While Charging: Yes! You can charge via USB-C and keep listening. Takes about 2 hours for a full charge, or 10 minutes gets you ~3 hours of playback (quick charge feature).
+
+Bonus tip for commuters: The noise cancellation is solid for trains/buses - not quite Sony WH-1000XM5 level, but excellent for the price point.
+
+Want me to add any other info? Happy to help you decide!
+
+Cheers,
+Customer Support Team`;
+            }
+            
+            return { category, priority, reasoning, response };
+        }
+        
+        function displayResult(result) {
+            const badge = document.getElementById('category-badge');
+            badge.textContent = result.category.charAt(0).toUpperCase() + result.category.slice(1);
+            badge.className = 'category-badge category-' + result.category;
+            
+            document.getElementById('priority').textContent = 'Priority: ' + result.priority;
+            document.getElementById('draft-response').textContent = result.response;
+            document.getElementById('reasoning').textContent = result.reasoning;
+            document.getElementById('result').classList.add('show');
+        }
+    </script>
+</body>
+</html>

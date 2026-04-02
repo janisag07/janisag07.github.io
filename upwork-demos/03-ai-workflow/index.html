@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Workflow Classifier - Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; min-height: 100vh; color: #fff; padding: 40px 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #00d4ff; }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .back { color: #00d4ff; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        
+        .demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
+        @media (max-width: 768px) { .demo-grid { grid-template-columns: 1fr; } }
+        
+        .form-section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 30px; border: 1px solid rgba(255,255,255,0.1); }
+        .form-section h2 { color: #00d4ff; margin-bottom: 20px; font-size: 1.2rem; }
+        
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: #aaa; font-size: 0.9rem; }
+        input, textarea, select { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 12px 15px; color: #fff; font-size: 1rem; }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: #00d4ff; }
+        textarea { height: 120px; resize: vertical; }
+        select { cursor: pointer; }
+        
+        button { width: 100%; padding: 14px; background: linear-gradient(90deg, #00d4ff, #7b2cbf); color: #fff; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; font-weight: 600; margin-top: 10px; }
+        button:hover { opacity: 0.9; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .result-section { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 30px; border: 1px solid rgba(255,255,255,0.1); }
+        .result-section h2 { color: #00d4ff; margin-bottom: 20px; font-size: 1.2rem; }
+        
+        .result-placeholder { color: #555; text-align: center; padding: 40px 20px; }
+        .result-placeholder p { margin-bottom: 10px; }
+        
+        .result-content { display: none; }
+        .result-content.show { display: block; }
+        
+        .result-item { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .result-item h4 { color: #888; font-size: 0.85rem; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .result-item .value { font-size: 1.1rem; color: #fff; }
+        
+        .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; }
+        .badge-support { background: #4ecdc4; color: #000; }
+        .badge-sales { background: #a55eea; }
+        .badge-billing { background: #f7b731; color: #000; }
+        .badge-technical { background: #ff6b6b; }
+        .badge-feedback { background: #26de81; color: #000; }
+        
+        .priority-high { color: #ff6b6b; }
+        .priority-medium { color: #f7b731; }
+        .priority-low { color: #26de81; }
+        
+        .routing-visual { background: linear-gradient(90deg, rgba(0,212,255,0.1), rgba(123,44,191,0.1)); border: 1px dashed rgba(0,212,255,0.5); border-radius: 8px; padding: 20px; margin-top: 15px; text-align: center; }
+        .routing-visual .icon { font-size: 2rem; margin-bottom: 10px; }
+        .routing-visual .dept { color: #00d4ff; font-weight: 600; font-size: 1.1rem; }
+        .routing-visual .email { color: #888; font-size: 0.9rem; margin-top: 5px; }
+        
+        .processing { display: none; align-items: center; justify-content: center; gap: 10px; padding: 40px; color: #888; }
+        .processing.show { display: flex; }
+        .spinner { width: 24px; height: 24px; border: 3px solid rgba(0,212,255,0.3); border-top-color: #00d4ff; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../" class="back">← Back to Portfolio</a>
+        <h1>🔀 AI Workflow Classifier</h1>
+        <p class="subtitle">Intelligent request routing with AI-powered classification</p>
+        
+        <div class="demo-grid">
+            <div class="form-section">
+                <h2>📝 Submit a Request</h2>
+                <form id="request-form" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" placeholder="John Smith" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="john@company.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" placeholder="Brief subject line">
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" placeholder="Describe your request in detail..." required></textarea>
+                    </div>
+                    <button type="submit" id="submit-btn">Submit & Classify</button>
+                </form>
+                
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <p style="color: #666; font-size: 0.85rem; margin-bottom: 10px;">Try these examples:</p>
+                    <button onclick="loadExample('billing')" style="background: rgba(255,255,255,0.1); padding: 8px 12px; font-size: 0.85rem; margin-top: 0; width: auto; margin-right: 8px;">Billing Issue</button>
+                    <button onclick="loadExample('technical')" style="background: rgba(255,255,255,0.1); padding: 8px 12px; font-size: 0.85rem; margin-top: 0; width: auto; margin-right: 8px;">Tech Support</button>
+                    <button onclick="loadExample('sales')" style="background: rgba(255,255,255,0.1); padding: 8px 12px; font-size: 0.85rem; margin-top: 0; width: auto;">Sales Inquiry</button>
+                </div>
+            </div>
+            
+            <div class="result-section">
+                <h2>🤖 AI Classification Result</h2>
+                
+                <div class="result-placeholder" id="placeholder">
+                    <p style="font-size: 2rem;">📋</p>
+                    <p>Submit a request to see AI classification</p>
+                    <p style="font-size: 0.85rem;">The system will analyze the content and determine the appropriate category, priority, and routing.</p>
+                </div>
+                
+                <div class="processing" id="processing">
+                    <div class="spinner"></div>
+                    <span>Analyzing request...</span>
+                </div>
+                
+                <div class="result-content" id="result">
+                    <div class="result-item">
+                        <h4>Category</h4>
+                        <span class="badge" id="category-badge">--</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <h4>Priority Level</h4>
+                        <span class="value" id="priority">--</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <h4>Sentiment</h4>
+                        <span class="value" id="sentiment">--</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <h4>AI Reasoning</h4>
+                        <p id="reasoning" style="color: #aaa; font-size: 0.95rem; line-height: 1.5;">--</p>
+                    </div>
+                    
+                    <div class="routing-visual">
+                        <div class="icon">📧</div>
+                        <div class="dept" id="route-dept">--</div>
+                        <div class="email" id="route-email">--</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const examples = {
+            billing: {
+                name: 'Sarah Johnson',
+                email: 'sarah.j@example.com',
+                subject: 'Double charged on my account',
+                description: 'I was charged twice for my subscription this month - once on the 1st and again on the 15th. My account number is #45892. I need a refund for the duplicate charge ASAP as this has put my account in overdraft.'
+            },
+            technical: {
+                name: 'Mike Chen',
+                email: 'mchen@techcorp.io',
+                subject: 'API returning 500 errors',
+                description: 'Since yesterday afternoon, our integration with your API has been failing with 500 Internal Server errors. We\'re getting about 30% failure rate on the /v2/orders endpoint. Our API key is xxx-prod-789. This is blocking our production system.'
+            },
+            sales: {
+                name: 'Jennifer Williams',
+                email: 'jwilliams@bigcorp.com',
+                subject: 'Enterprise pricing inquiry',
+                description: 'We\'re a 500-person company looking to roll out your platform company-wide. Currently evaluating you against competitors. Can you provide enterprise pricing and information about bulk licensing? Also interested in SSO integration and dedicated support.'
+            }
+        };
+        
+        function loadExample(type) {
+            const ex = examples[type];
+            document.getElementById('name').value = ex.name;
+            document.getElementById('email').value = ex.email;
+            document.getElementById('subject').value = ex.subject;
+            document.getElementById('description').value = ex.description;
+        }
+        
+        function handleSubmit(e) {
+            e.preventDefault();
+            
+            document.getElementById('placeholder').style.display = 'none';
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('processing').classList.add('show');
+            document.getElementById('submit-btn').disabled = true;
+            
+            setTimeout(() => {
+                const result = classifyRequest();
+                displayResult(result);
+                document.getElementById('processing').classList.remove('show');
+                document.getElementById('submit-btn').disabled = false;
+            }, 1800);
+        }
+        
+        function classifyRequest() {
+            const desc = document.getElementById('description').value.toLowerCase();
+            const subject = document.getElementById('subject').value.toLowerCase();
+            const text = desc + ' ' + subject;
+            
+            let category, priority, sentiment, reasoning, dept, email;
+            
+            if (text.includes('billing') || text.includes('charge') || text.includes('invoice') || text.includes('refund') || text.includes('payment')) {
+                category = 'Billing';
+                priority = text.includes('asap') || text.includes('urgent') || text.includes('overdraft') ? 'High' : 'Medium';
+                sentiment = text.includes('frustrated') || text.includes('upset') || text.includes('overdraft') ? 'Negative' : 'Neutral';
+                reasoning = 'Detected billing-related keywords (charge, refund). Customer is experiencing a payment issue. Routing to billing team for resolution.';
+                dept = 'Billing Department';
+                email = 'billing@company.com';
+            } else if (text.includes('api') || text.includes('error') || text.includes('bug') || text.includes('integration') || text.includes('500') || text.includes('technical')) {
+                category = 'Technical';
+                priority = text.includes('production') || text.includes('blocking') || text.includes('down') ? 'High' : 'Medium';
+                sentiment = text.includes('failing') || text.includes('broken') ? 'Negative' : 'Neutral';
+                reasoning = 'Technical issue detected - API errors mentioned with specific error codes. Production impact indicated. Escalating to engineering support.';
+                dept = 'Technical Support';
+                email = 'tech-support@company.com';
+            } else if (text.includes('pricing') || text.includes('enterprise') || text.includes('demo') || text.includes('trial') || text.includes('purchase') || text.includes('evaluating')) {
+                category = 'Sales';
+                priority = text.includes('enterprise') || text.includes('500') ? 'High' : 'Medium';
+                sentiment = 'Positive';
+                reasoning = 'Sales inquiry detected - enterprise pricing request from mid-size company. High-value lead showing purchase intent. Priority routing to sales team.';
+                dept = 'Sales Team';
+                email = 'sales@company.com';
+            } else if (text.includes('cancel') || text.includes('feedback') || text.includes('suggestion') || text.includes('feature')) {
+                category = 'Feedback';
+                priority = text.includes('cancel') ? 'High' : 'Low';
+                sentiment = text.includes('love') || text.includes('great') ? 'Positive' : 'Neutral';
+                reasoning = 'Customer feedback or feature request detected. Routing to customer success for follow-up and product team visibility.';
+                dept = 'Customer Success';
+                email = 'success@company.com';
+            } else {
+                category = 'Support';
+                priority = 'Medium';
+                sentiment = 'Neutral';
+                reasoning = 'General support inquiry. No specific category triggers detected. Routing to general support queue for triage.';
+                dept = 'Support Team';
+                email = 'support@company.com';
+            }
+            
+            return { category, priority, sentiment, reasoning, dept, email };
+        }
+        
+        function displayResult(result) {
+            const badge = document.getElementById('category-badge');
+            badge.textContent = result.category;
+            badge.className = 'badge badge-' + result.category.toLowerCase();
+            
+            const priorityEl = document.getElementById('priority');
+            priorityEl.textContent = result.priority;
+            priorityEl.className = 'value priority-' + result.priority.toLowerCase();
+            
+            document.getElementById('sentiment').textContent = result.sentiment;
+            document.getElementById('reasoning').textContent = result.reasoning;
+            document.getElementById('route-dept').textContent = '→ ' + result.dept;
+            document.getElementById('route-email').textContent = 'Ticket auto-assigned to: ' + result.email;
+            
+            document.getElementById('result').classList.add('show');
+        }
+    </script>
+</body>
+</html>

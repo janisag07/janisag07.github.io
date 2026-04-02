@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Financial Model - Excel Template</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; min-height: 100vh; color: #fff; padding: 40px 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #00d4ff; }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .back { color: #00d4ff; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 0; }
+        .tab { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-bottom: none; border-radius: 8px 8px 0 0; padding: 12px 25px; cursor: pointer; color: #888; font-weight: 500; }
+        .tab.active { background: rgba(0,212,255,0.1); border-color: rgba(0,212,255,0.3); color: #00d4ff; }
+        
+        .spreadsheet { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 0 8px 8px 8px; overflow: hidden; margin-bottom: 30px; }
+        .sheet-header { background: rgba(0,0,0,0.3); padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; justify-content: space-between; align-items: center; }
+        .sheet-header h3 { color: #00d4ff; font-size: 1rem; }
+        .sheet-header span { color: #888; font-size: 0.85rem; }
+        
+        .table-wrapper { overflow-x: auto; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th { background: rgba(0,212,255,0.1); color: #00d4ff; padding: 12px 15px; text-align: left; font-size: 0.85rem; font-weight: 600; border: 1px solid rgba(255,255,255,0.1); }
+        td { padding: 10px 15px; border: 1px solid rgba(255,255,255,0.08); color: #ccc; font-size: 0.9rem; }
+        td.label { background: rgba(0,0,0,0.2); color: #888; font-weight: 500; }
+        td.input { background: rgba(247,183,49,0.1); color: #f7b731; }
+        td.formula { background: rgba(38,222,129,0.1); color: #26de81; font-family: monospace; font-size: 0.8rem; }
+        td.number { text-align: right; font-family: monospace; }
+        
+        .legend { display: flex; gap: 25px; margin: 20px 0; flex-wrap: wrap; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #888; }
+        .legend-color { width: 20px; height: 20px; border-radius: 4px; }
+        .legend-color.input { background: rgba(247,183,49,0.3); }
+        .legend-color.formula { background: rgba(38,222,129,0.3); }
+        .legend-color.label { background: rgba(255,255,255,0.1); }
+        
+        .description { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 25px; margin-bottom: 30px; border-left: 3px solid #00d4ff; }
+        .description h3 { color: #00d4ff; margin-bottom: 10px; }
+        .description p { color: #888; line-height: 1.6; }
+        
+        .download-section { background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(123,44,191,0.1)); border-radius: 12px; padding: 30px; text-align: center; border: 1px solid rgba(0,212,255,0.3); }
+        .download-section h3 { margin-bottom: 15px; }
+        .download-section p { color: #888; margin-bottom: 20px; }
+        .btn { display: inline-block; padding: 12px 30px; background: linear-gradient(90deg, #00d4ff, #7b2cbf); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 5px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../" class="back">← Back to Portfolio</a>
+        <h1>📊 Property Financial Model</h1>
+        <p class="subtitle">Excel/Google Sheets template for property investment analysis</p>
+        
+        <div class="legend">
+            <div class="legend-item"><div class="legend-color input"></div> Input cells (you edit)</div>
+            <div class="legend-item"><div class="legend-color formula"></div> Formula cells (auto-calculated)</div>
+            <div class="legend-item"><div class="legend-color label"></div> Labels</div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active">📥 Inputs</div>
+            <div class="tab">📈 Property P&L</div>
+            <div class="tab">👥 Co-owner View</div>
+        </div>
+        
+        <div class="spreadsheet">
+            <div class="sheet-header">
+                <h3>Tab 1: Inputs</h3>
+                <span>Enter your property details here</span>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th width="40%">Parameter</th>
+                            <th width="30%">Value</th>
+                            <th width="30%">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="3" style="background: rgba(0,212,255,0.05); color: #00d4ff; font-weight: 600;">Property Details</td></tr>
+                        <tr>
+                            <td class="label">Property Name</td>
+                            <td class="input">Beach House Alpha</td>
+                            <td>For reference</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Purchase Price</td>
+                            <td class="input number">$450,000</td>
+                            <td>Total acquisition cost</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Down Payment %</td>
+                            <td class="input number">25%</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="label">Mortgage Rate</td>
+                            <td class="input number">6.5%</td>
+                            <td>Annual interest rate</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Mortgage Term (years)</td>
+                            <td class="input number">30</td>
+                            <td></td>
+                        </tr>
+                        <tr><td colspan="3" style="background: rgba(0,212,255,0.05); color: #00d4ff; font-weight: 600;">Revenue Assumptions</td></tr>
+                        <tr>
+                            <td class="label">Nightly Rate (Peak)</td>
+                            <td class="input number">$350</td>
+                            <td>Jun-Aug, Holidays</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Nightly Rate (Off-Peak)</td>
+                            <td class="input number">$200</td>
+                            <td>Rest of year</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Occupancy Rate (Peak)</td>
+                            <td class="input number">85%</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="label">Occupancy Rate (Off-Peak)</td>
+                            <td class="input number">55%</td>
+                            <td></td>
+                        </tr>
+                        <tr><td colspan="3" style="background: rgba(0,212,255,0.05); color: #00d4ff; font-weight: 600;">Expenses</td></tr>
+                        <tr>
+                            <td class="label">Property Tax (annual)</td>
+                            <td class="input number">$5,400</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="label">Insurance (annual)</td>
+                            <td class="input number">$2,400</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="label">Cleaning (per turnover)</td>
+                            <td class="input number">$150</td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td class="label">Platform Fee %</td>
+                            <td class="input number">3%</td>
+                            <td>Airbnb/VRBO</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Property Mgmt Fee %</td>
+                            <td class="input number">15%</td>
+                            <td>Of gross revenue</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="spreadsheet">
+            <div class="sheet-header">
+                <h3>Tab 2: Property P&L</h3>
+                <span>Auto-calculated from inputs</span>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Monthly</th>
+                            <th>Annual</th>
+                            <th>Formula</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="4" style="background: rgba(38,222,129,0.1); color: #26de81; font-weight: 600;">Revenue</td></tr>
+                        <tr>
+                            <td class="label">Gross Rental Income</td>
+                            <td class="formula number">$5,458</td>
+                            <td class="formula number">$65,500</td>
+                            <td class="formula">=Peak_Rev + OffPeak_Rev</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Less: Platform Fees</td>
+                            <td class="formula number">($164)</td>
+                            <td class="formula number">($1,965)</td>
+                            <td class="formula">=Gross * Platform_Fee%</td>
+                        </tr>
+                        <tr>
+                            <td class="label"><strong>Net Revenue</strong></td>
+                            <td class="formula number"><strong>$5,294</strong></td>
+                            <td class="formula number"><strong>$63,535</strong></td>
+                            <td class="formula">=Gross - Fees</td>
+                        </tr>
+                        <tr><td colspan="4" style="background: rgba(255,107,107,0.1); color: #ff6b6b; font-weight: 600;">Operating Expenses</td></tr>
+                        <tr>
+                            <td class="label">Mortgage Payment</td>
+                            <td class="formula number">($2,133)</td>
+                            <td class="formula number">($25,596)</td>
+                            <td class="formula">=PMT(rate,term,principal)</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Property Tax</td>
+                            <td class="formula number">($450)</td>
+                            <td class="formula number">($5,400)</td>
+                            <td class="formula">=Inputs!Tax/12</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Insurance</td>
+                            <td class="formula number">($200)</td>
+                            <td class="formula number">($2,400)</td>
+                            <td class="formula">=Inputs!Insurance/12</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Cleaning</td>
+                            <td class="formula number">($525)</td>
+                            <td class="formula number">($6,300)</td>
+                            <td class="formula">=Turnovers * Cost</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Property Management</td>
+                            <td class="formula number">($794)</td>
+                            <td class="formula number">($9,530)</td>
+                            <td class="formula">=Net_Rev * Mgmt_Fee%</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Maintenance Reserve</td>
+                            <td class="formula number">($265)</td>
+                            <td class="formula number">($3,177)</td>
+                            <td class="formula">=Net_Rev * 5%</td>
+                        </tr>
+                        <tr><td colspan="4" style="background: rgba(0,212,255,0.1); color: #00d4ff; font-weight: 600;">Bottom Line</td></tr>
+                        <tr>
+                            <td class="label"><strong>Net Operating Income</strong></td>
+                            <td class="formula number"><strong>$927</strong></td>
+                            <td class="formula number"><strong>$11,132</strong></td>
+                            <td class="formula">=Net_Rev - All_Expenses</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Cash-on-Cash Return</td>
+                            <td colspan="2" class="formula" style="text-align: center;"><strong>9.9%</strong></td>
+                            <td class="formula">=NOI / Down_Payment</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="spreadsheet">
+            <div class="sheet-header">
+                <h3>Tab 3: Co-owner View</h3>
+                <span>Split by ownership percentage</span>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Co-owner</th>
+                            <th>Ownership %</th>
+                            <th>Initial Investment</th>
+                            <th>Monthly Cash Flow</th>
+                            <th>Annual Cash Flow</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="input">Partner A</td>
+                            <td class="input number">50%</td>
+                            <td class="formula number">$56,250</td>
+                            <td class="formula number">$464</td>
+                            <td class="formula number">$5,566</td>
+                        </tr>
+                        <tr>
+                            <td class="input">Partner B</td>
+                            <td class="input number">30%</td>
+                            <td class="formula number">$33,750</td>
+                            <td class="formula number">$278</td>
+                            <td class="formula number">$3,340</td>
+                        </tr>
+                        <tr>
+                            <td class="input">Partner C</td>
+                            <td class="input number">20%</td>
+                            <td class="formula number">$22,500</td>
+                            <td class="formula number">$185</td>
+                            <td class="formula number">$2,226</td>
+                        </tr>
+                        <tr style="background: rgba(0,212,255,0.05);">
+                            <td class="label"><strong>Total</strong></td>
+                            <td class="formula number"><strong>100%</strong></td>
+                            <td class="formula number"><strong>$112,500</strong></td>
+                            <td class="formula number"><strong>$927</strong></td>
+                            <td class="formula number"><strong>$11,132</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="description">
+            <h3>📝 About This Model</h3>
+            <p>This financial model template is designed for short-term rental property investments with multiple co-owners. All calculations are linked to the Inputs tab, so you can model different scenarios by simply changing the assumptions. The co-owner view automatically splits cash flows based on ownership percentages.</p>
+        </div>
+        
+        <div class="download-section">
+            <h3>Get the Full Template</h3>
+            <p>Complete Excel/Google Sheets file with all formulas, additional scenarios, and 5-year projections.</p>
+            <a href="#" class="btn">📥 Download Excel</a>
+            <a href="#" class="btn">📊 Open in Google Sheets</a>
+        </div>
+    </div>
+</body>
+</html>

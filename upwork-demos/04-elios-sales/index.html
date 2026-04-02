@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ELIOS Sales AI - Architecture Document</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; min-height: 100vh; color: #fff; padding: 40px 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #00d4ff; }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .back { color: #00d4ff; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        
+        .doc-header { background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(123,44,191,0.1)); border-radius: 12px; padding: 30px; margin-bottom: 30px; border: 1px solid rgba(0,212,255,0.3); }
+        .doc-header h2 { color: #fff; margin-bottom: 10px; }
+        .doc-meta { display: flex; gap: 30px; color: #888; font-size: 0.9rem; flex-wrap: wrap; }
+        
+        .section { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 30px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.08); }
+        .section h2 { color: #00d4ff; margin-bottom: 20px; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+        .section h3 { color: #fff; margin: 20px 0 15px 0; font-size: 1.1rem; }
+        .section p { color: #aaa; line-height: 1.7; margin-bottom: 15px; }
+        .section ul { margin-left: 20px; color: #aaa; line-height: 1.8; }
+        .section li { margin-bottom: 8px; }
+        
+        .architecture-diagram { background: #1a1a2e; border-radius: 10px; padding: 30px; margin: 25px 0; border: 1px solid #2a2a4a; }
+        .arch-row { display: flex; justify-content: center; align-items: center; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .arch-box { background: linear-gradient(145deg, #2d2d44, #252540); border-radius: 10px; padding: 20px 25px; text-align: center; min-width: 150px; border: 1px solid #3a3a5a; }
+        .arch-box.source { border-left: 4px solid #4ecdc4; }
+        .arch-box.process { border-left: 4px solid #a55eea; }
+        .arch-box.ai { border-left: 4px solid #ff6b6b; }
+        .arch-box.output { border-left: 4px solid #26de81; }
+        .arch-box .icon { font-size: 1.8rem; margin-bottom: 8px; }
+        .arch-box .label { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .arch-box .sublabel { color: #888; font-size: 0.8rem; margin-top: 4px; }
+        .arch-arrow { color: #555; font-size: 1.5rem; }
+        .arch-arrow.down { writing-mode: vertical-rl; }
+        
+        .prompt-box { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 20px; margin: 15px 0; border-left: 3px solid #00d4ff; font-family: 'Monaco', 'Menlo', monospace; font-size: 0.9rem; line-height: 1.6; color: #ccc; white-space: pre-wrap; }
+        .prompt-label { color: #00d4ff; font-weight: 600; margin-bottom: 10px; display: block; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        
+        .table-wrapper { overflow-x: auto; margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; background: rgba(0,0,0,0.2); border-radius: 8px; overflow: hidden; }
+        th { background: rgba(0,212,255,0.1); color: #00d4ff; padding: 15px; text-align: left; font-size: 0.9rem; }
+        td { padding: 15px; color: #aaa; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: 500; }
+        .badge-high { background: rgba(255,107,107,0.2); color: #ff6b6b; }
+        .badge-medium { background: rgba(247,183,49,0.2); color: #f7b731; }
+        .badge-low { background: rgba(38,222,129,0.2); color: #26de81; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../" class="back">← Back to Portfolio</a>
+        <h1>🏢 ELIOS Sales AI Architecture</h1>
+        <p class="subtitle">Enterprise AI-powered sales intelligence system</p>
+        
+        <div class="doc-header">
+            <h2>Technical Architecture Document</h2>
+            <div class="doc-meta">
+                <span>📅 Version 1.0</span>
+                <span>🏗️ Phase 1 Implementation</span>
+                <span>⏱️ Est. 8-12 weeks</span>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📋 Executive Summary</h2>
+            <p>This document outlines the architecture for an AI-powered sales intelligence system that integrates Snowflake data warehouse with Salesforce CRM, enhanced by AI agents for automated lead triage, scoring, and next-best-action recommendations.</p>
+            <p>The system will reduce manual lead qualification time by 60-70% while improving lead-to-opportunity conversion rates through intelligent prioritization and personalized engagement recommendations.</p>
+        </div>
+        
+        <div class="section">
+            <h2>🏗️ System Architecture</h2>
+            
+            <div class="architecture-diagram">
+                <div class="arch-row">
+                    <div class="arch-box source">
+                        <div class="icon">❄️</div>
+                        <div class="label">Snowflake</div>
+                        <div class="sublabel">Data Warehouse</div>
+                    </div>
+                    <span class="arch-arrow">→</span>
+                    <div class="arch-box process">
+                        <div class="icon">🔄</div>
+                        <div class="label">ETL Pipeline</div>
+                        <div class="sublabel">dbt + Airflow</div>
+                    </div>
+                    <span class="arch-arrow">→</span>
+                    <div class="arch-box ai">
+                        <div class="icon">🤖</div>
+                        <div class="label">AI Agents</div>
+                        <div class="sublabel">Claude + Custom</div>
+                    </div>
+                    <span class="arch-arrow">→</span>
+                    <div class="arch-box output">
+                        <div class="icon">☁️</div>
+                        <div class="label">Salesforce</div>
+                        <div class="sublabel">CRM Output</div>
+                    </div>
+                </div>
+            </div>
+            
+            <h3>Data Flow</h3>
+            <ul>
+                <li><strong>Snowflake →</strong> Historical customer data, transaction history, engagement metrics, firmographic data</li>
+                <li><strong>ETL →</strong> Clean, transform, aggregate data into AI-ready feature sets</li>
+                <li><strong>AI Agents →</strong> Score leads, triage priority, generate engagement recommendations</li>
+                <li><strong>Salesforce →</strong> Update lead records, create tasks, trigger workflows</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🤖 AI Agent: Lead Triage</h2>
+            <p>The Lead Triage Agent automatically evaluates incoming leads and assigns priority scores, recommended actions, and optimal sales rep routing.</p>
+            
+            <h3>Agent Capabilities</h3>
+            <ul>
+                <li>Score leads 0-100 based on firmographic fit, engagement signals, and historical patterns</li>
+                <li>Categorize leads: Hot (immediate follow-up), Warm (nurture), Cold (auto-sequence)</li>
+                <li>Generate personalized first-touch message drafts</li>
+                <li>Route to appropriate sales rep based on territory, expertise, capacity</li>
+            </ul>
+            
+            <h3>Example Prompts</h3>
+            
+            <div class="prompt-box">
+                <span class="prompt-label">Lead Scoring Prompt</span>
+You are a B2B sales lead qualification expert. Analyze the following lead data and provide a qualification score and recommendation.
+
+LEAD DATA:
+- Company: {{company_name}}
+- Industry: {{industry}}
+- Employee Count: {{employee_count}}
+- Annual Revenue: {{revenue_estimate}}
+- Lead Source: {{source}}
+- Engagement: {{engagement_summary}}
+- Tech Stack: {{detected_technologies}}
+
+SCORING CRITERIA:
+- ICP Fit (0-40): How well does this match our ideal customer profile?
+- Intent Signals (0-30): What buying signals are present?
+- Timing (0-30): Is there urgency or a clear timeline?
+
+OUTPUT FORMAT:
+{
+  "score": [0-100],
+  "tier": "hot|warm|cold",
+  "reasoning": "[2-3 sentence explanation]",
+  "recommended_action": "[specific next step]",
+  "personalization_hooks": ["[relevant talking points]"]
+}</div>
+            
+            <div class="prompt-box">
+                <span class="prompt-label">First Touch Message Generation</span>
+Generate a personalized first-touch email for a B2B SaaS prospect.
+
+CONTEXT:
+- Recipient: {{contact_name}}, {{title}} at {{company}}
+- Company Context: {{company_description}}
+- Pain Points (inferred): {{likely_pain_points}}
+- Our Solution: {{relevant_product_benefits}}
+- Trigger Event: {{trigger_event}}
+
+CONSTRAINTS:
+- Keep under 150 words
+- No generic "I hope this email finds you well"
+- Lead with value, not features
+- Include one specific, personalized observation
+- End with low-friction CTA (question, not meeting request)
+
+TONE: Professional but conversational, confident but not pushy</div>
+        </div>
+        
+        <div class="section">
+            <h2>📊 Lead Scoring Matrix</h2>
+            
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Signal Category</th>
+                            <th>Indicator</th>
+                            <th>Score Impact</th>
+                            <th>Weight</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Firmographic Fit</td>
+                            <td>Employee count 100-5000</td>
+                            <td><span class="badge badge-high">+15</span></td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td>Firmographic Fit</td>
+                            <td>Target industry match</td>
+                            <td><span class="badge badge-high">+20</span></td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td>Engagement</td>
+                            <td>Visited pricing page</td>
+                            <td><span class="badge badge-high">+25</span></td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td>Engagement</td>
+                            <td>Downloaded whitepaper</td>
+                            <td><span class="badge badge-medium">+10</span></td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <td>Engagement</td>
+                            <td>Multiple page views (5+)</td>
+                            <td><span class="badge badge-medium">+8</span></td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <td>Intent</td>
+                            <td>G2/Capterra comparison</td>
+                            <td><span class="badge badge-high">+20</span></td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td>Timing</td>
+                            <td>Contract renewal coming</td>
+                            <td><span class="badge badge-high">+15</span></td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td>Negative</td>
+                            <td>Generic email domain</td>
+                            <td><span class="badge badge-low">-10</span></td>
+                            <td>Medium</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🛠️ Tech Stack</h2>
+            <ul>
+                <li><strong>Data Warehouse:</strong> Snowflake (existing)</li>
+                <li><strong>ETL/Orchestration:</strong> dbt + Apache Airflow</li>
+                <li><strong>AI/ML:</strong> Claude API for reasoning, custom embeddings for similarity</li>
+                <li><strong>Integration:</strong> Salesforce REST API, MuleSoft (if available)</li>
+                <li><strong>Monitoring:</strong> DataDog, custom dashboards in Snowflake</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>📅 Implementation Timeline</h2>
+            <ul>
+                <li><strong>Weeks 1-2:</strong> Data audit, schema mapping, API access setup</li>
+                <li><strong>Weeks 3-4:</strong> ETL pipeline development, feature engineering</li>
+                <li><strong>Weeks 5-6:</strong> AI agent development, prompt engineering, testing</li>
+                <li><strong>Weeks 7-8:</strong> Salesforce integration, workflow automation</li>
+                <li><strong>Weeks 9-10:</strong> UAT, refinement, documentation</li>
+                <li><strong>Weeks 11-12:</strong> Pilot rollout, monitoring, optimization</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

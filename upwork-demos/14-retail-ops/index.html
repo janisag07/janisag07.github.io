@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Location Retail Ops - System Architecture</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; min-height: 100vh; color: #fff; padding: 40px 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #00d4ff; }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .back { color: #00d4ff; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        
+        .overview { background: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(123,44,191,0.1)); border-radius: 14px; padding: 30px; margin-bottom: 35px; border: 1px solid rgba(0,212,255,0.3); }
+        .overview h2 { margin-bottom: 15px; }
+        .overview p { color: #aaa; line-height: 1.6; max-width: 800px; }
+        
+        .architecture { background: rgba(255,255,255,0.03); border-radius: 14px; padding: 35px; margin-bottom: 30px; }
+        .architecture h2 { color: #00d4ff; text-align: center; margin-bottom: 30px; }
+        
+        .arch-diagram { display: flex; flex-direction: column; gap: 30px; }
+        
+        .arch-layer { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 25px; }
+        .layer-title { color: #888; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
+        .layer-title::before { content: ''; width: 20px; height: 2px; background: currentColor; }
+        
+        .modules { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        .module { background: linear-gradient(145deg, #1a1a2e, #16213e); border-radius: 10px; padding: 20px; min-width: 180px; text-align: center; border: 1px solid #2a2a4a; flex: 1; max-width: 220px; }
+        .module .icon { font-size: 2rem; margin-bottom: 10px; }
+        .module h4 { color: #fff; font-size: 0.95rem; margin-bottom: 5px; }
+        .module p { color: #888; font-size: 0.8rem; line-height: 1.4; }
+        
+        .module.scheduling { border-top: 3px solid #4ecdc4; }
+        .module.inventory { border-top: 3px solid #f7b731; }
+        .module.payroll { border-top: 3px solid #a55eea; }
+        .module.analytics { border-top: 3px solid #ff6b6b; }
+        .module.core { border-top: 3px solid #00d4ff; }
+        
+        .connections { display: flex; justify-content: center; gap: 50px; padding: 15px 0; flex-wrap: wrap; }
+        .connection { display: flex; flex-direction: column; align-items: center; color: #555; }
+        .connection .arrow { font-size: 1.5rem; }
+        .connection span { font-size: 0.75rem; }
+        
+        .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 30px; }
+        .feature { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 25px; border: 1px solid rgba(255,255,255,0.08); }
+        .feature h3 { color: #00d4ff; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 1.1rem; }
+        .feature ul { list-style: none; }
+        .feature li { padding: 8px 0; color: #aaa; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 10px; }
+        .feature li:last-child { border-bottom: none; }
+        .feature li::before { content: '→'; color: #00d4ff; }
+        
+        .integrations { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 30px; margin-top: 30px; }
+        .integrations h2 { color: #00d4ff; margin-bottom: 20px; }
+        .int-grid { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+        .int-item { background: rgba(0,0,0,0.3); border-radius: 8px; padding: 15px 25px; display: flex; align-items: center; gap: 10px; }
+        .int-item .icon { font-size: 1.3rem; }
+        .int-item span { color: #aaa; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../" class="back">← Back to Portfolio</a>
+        <h1>🏪 Multi-Location Retail Operations</h1>
+        <p class="subtitle">Unified system architecture for retail chain management</p>
+        
+        <div class="overview">
+            <h2>System Overview</h2>
+            <p>A comprehensive operations platform designed for retail businesses with multiple locations. Centralizes scheduling, inventory, payroll, and analytics into a single source of truth while maintaining location-specific flexibility.</p>
+        </div>
+        
+        <div class="architecture">
+            <h2>System Architecture</h2>
+            
+            <div class="arch-diagram">
+                <div class="arch-layer">
+                    <div class="layer-title" style="color: #4ecdc4;">Presentation Layer</div>
+                    <div class="modules">
+                        <div class="module core">
+                            <div class="icon">💻</div>
+                            <h4>Manager Dashboard</h4>
+                            <p>Web app for HQ oversight</p>
+                        </div>
+                        <div class="module core">
+                            <div class="icon">📱</div>
+                            <h4>Store App</h4>
+                            <p>Tablet/mobile for locations</p>
+                        </div>
+                        <div class="module core">
+                            <div class="icon">👤</div>
+                            <h4>Employee Portal</h4>
+                            <p>Self-service for staff</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="connections">
+                    <div class="connection"><span class="arrow">↕️</span><span>REST API</span></div>
+                    <div class="connection"><span class="arrow">↕️</span><span>WebSocket</span></div>
+                    <div class="connection"><span class="arrow">↕️</span><span>REST API</span></div>
+                </div>
+                
+                <div class="arch-layer">
+                    <div class="layer-title" style="color: #f7b731;">Core Modules</div>
+                    <div class="modules">
+                        <div class="module scheduling">
+                            <div class="icon">📅</div>
+                            <h4>Scheduling</h4>
+                            <p>Shift planning, availability, swaps</p>
+                        </div>
+                        <div class="module inventory">
+                            <div class="icon">📦</div>
+                            <h4>Inventory</h4>
+                            <p>Stock levels, transfers, reorders</p>
+                        </div>
+                        <div class="module payroll">
+                            <div class="icon">💰</div>
+                            <h4>Payroll</h4>
+                            <p>Time tracking, wages, tips</p>
+                        </div>
+                        <div class="module analytics">
+                            <div class="icon">📊</div>
+                            <h4>Analytics</h4>
+                            <p>Sales, labor cost, forecasting</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="connections">
+                    <div class="connection"><span class="arrow">↕️</span><span>Event Bus</span></div>
+                </div>
+                
+                <div class="arch-layer">
+                    <div class="layer-title" style="color: #a55eea;">Data Layer</div>
+                    <div class="modules">
+                        <div class="module core">
+                            <div class="icon">🗄️</div>
+                            <h4>PostgreSQL</h4>
+                            <p>Primary database</p>
+                        </div>
+                        <div class="module core">
+                            <div class="icon">⚡</div>
+                            <h4>Redis</h4>
+                            <p>Cache & real-time</p>
+                        </div>
+                        <div class="module core">
+                            <div class="icon">📈</div>
+                            <h4>TimescaleDB</h4>
+                            <p>Time-series analytics</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>📅 Scheduling Module</h3>
+                <ul>
+                    <li>Drag-and-drop shift builder</li>
+                    <li>Employee availability management</li>
+                    <li>Shift swap requests & approvals</li>
+                    <li>Overtime alerts & compliance</li>
+                    <li>Demand-based auto-scheduling</li>
+                    <li>Multi-location coverage view</li>
+                </ul>
+            </div>
+            
+            <div class="feature">
+                <h3>📦 Inventory Module</h3>
+                <ul>
+                    <li>Real-time stock levels per location</li>
+                    <li>Inter-store transfer requests</li>
+                    <li>Low stock alerts & auto-reorder</li>
+                    <li>Supplier management</li>
+                    <li>Inventory counts & variance</li>
+                    <li>Product catalog sync with POS</li>
+                </ul>
+            </div>
+            
+            <div class="feature">
+                <h3>💰 Payroll Module</h3>
+                <ul>
+                    <li>Clock in/out (GPS verified)</li>
+                    <li>Break tracking & compliance</li>
+                    <li>Tip pooling & distribution</li>
+                    <li>Wage calculation by role</li>
+                    <li>Export to payroll providers</li>
+                    <li>Labor cost forecasting</li>
+                </ul>
+            </div>
+            
+            <div class="feature">
+                <h3>📊 Analytics Module</h3>
+                <ul>
+                    <li>Sales vs labor cost ratio</li>
+                    <li>Location performance comparison</li>
+                    <li>Peak hours analysis</li>
+                    <li>Employee productivity metrics</li>
+                    <li>Inventory turnover rates</li>
+                    <li>Custom report builder</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="integrations">
+            <h2>🔌 Integrations</h2>
+            <div class="int-grid">
+                <div class="int-item"><span class="icon">💳</span><span>Square POS</span></div>
+                <div class="int-item"><span class="icon">💳</span><span>Toast POS</span></div>
+                <div class="int-item"><span class="icon">💵</span><span>Gusto Payroll</span></div>
+                <div class="int-item"><span class="icon">💵</span><span>ADP</span></div>
+                <div class="int-item"><span class="icon">📊</span><span>QuickBooks</span></div>
+                <div class="int-item"><span class="icon">📦</span><span>Supplier APIs</span></div>
+                <div class="int-item"><span class="icon">📧</span><span>Slack/Email</span></div>
+                <div class="int-item"><span class="icon">📱</span><span>SMS Alerts</span></div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Analyst - Amazon Data Pipeline</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; min-height: 100vh; color: #fff; padding: 40px 20px; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #00d4ff; }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .back { color: #00d4ff; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        
+        .workflow { display: flex; align-items: center; justify-content: space-between; gap: 20px; margin: 40px 0; flex-wrap: wrap; }
+        .step { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 25px 20px; text-align: center; flex: 1; min-width: 180px; position: relative; }
+        .step:not(:last-child)::after { content: '→'; position: absolute; right: -25px; top: 50%; transform: translateY(-50%); font-size: 1.5rem; color: #00d4ff; }
+        .step-icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .step h3 { color: #fff; margin-bottom: 8px; font-size: 1rem; }
+        .step p { color: #888; font-size: 0.85rem; line-height: 1.4; }
+        
+        .diagram-section { background: rgba(255,255,255,0.03); border-radius: 16px; padding: 40px; margin: 40px 0; }
+        .diagram-section h2 { color: #00d4ff; margin-bottom: 25px; font-size: 1.3rem; }
+        
+        .n8n-workflow { background: linear-gradient(145deg, #1a1a2e, #16213e); border-radius: 12px; padding: 30px; border: 2px solid #2a2a4a; }
+        .n8n-node { display: inline-flex; align-items: center; gap: 10px; background: #2d2d44; border-radius: 8px; padding: 12px 18px; margin: 8px; border-left: 4px solid #00d4ff; }
+        .n8n-node.trigger { border-left-color: #f7b731; }
+        .n8n-node.http { border-left-color: #4ecdc4; }
+        .n8n-node.code { border-left-color: #a55eea; }
+        .n8n-node.ai { border-left-color: #ff6b6b; }
+        .n8n-node.output { border-left-color: #26de81; }
+        .node-icon { width: 24px; height: 24px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; }
+        .node-icon.trigger { background: #f7b731; }
+        .node-icon.http { background: #4ecdc4; }
+        .node-icon.code { background: #a55eea; }
+        .node-icon.ai { background: #ff6b6b; }
+        .node-icon.output { background: #26de81; }
+        
+        .arrow { color: #555; margin: 0 5px; }
+        
+        .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 40px; }
+        .detail-card { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); }
+        .detail-card h3 { color: #00d4ff; margin-bottom: 15px; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .detail-card ul { list-style: none; }
+        .detail-card li { padding: 8px 0; color: #aaa; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .detail-card li:last-child { border-bottom: none; }
+        .detail-card li::before { content: '✓'; color: #26de81; margin-right: 10px; }
+        
+        .tech-stack { display: flex; gap: 15px; flex-wrap: wrap; margin-top: 30px; }
+        .tech { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); padding: 10px 20px; border-radius: 8px; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../" class="back">← Back to Portfolio</a>
+        <h1>📊 Virtual Analyst Pipeline</h1>
+        <p class="subtitle">Automated Amazon data analysis with AI-powered insights</p>
+        
+        <div class="workflow">
+            <div class="step">
+                <div class="step-icon">📥</div>
+                <h3>CSV Download</h3>
+                <p>Daily automated download of Amazon sales data</p>
+            </div>
+            <div class="step">
+                <div class="step-icon">🔍</div>
+                <h3>Filter Top 500</h3>
+                <p>Extract top performers by revenue/units</p>
+            </div>
+            <div class="step">
+                <div class="step-icon">🤖</div>
+                <h3>Claude Analysis</h3>
+                <p>AI identifies trends, anomalies, opportunities</p>
+            </div>
+            <div class="step">
+                <div class="step-icon">📈</div>
+                <h3>Dashboard</h3>
+                <p>Visual reports with actionable insights</p>
+            </div>
+        </div>
+        
+        <div class="diagram-section">
+            <h2>n8n Workflow Visualization</h2>
+            <div class="n8n-workflow">
+                <div class="n8n-node trigger">
+                    <span class="node-icon trigger">⏰</span>
+                    <span>Schedule Trigger<br><small style="color:#888">Daily 6:00 AM</small></span>
+                </div>
+                <span class="arrow">→</span>
+                <div class="n8n-node http">
+                    <span class="node-icon http">🌐</span>
+                    <span>HTTP Request<br><small style="color:#888">Amazon Seller API</small></span>
+                </div>
+                <span class="arrow">→</span>
+                <div class="n8n-node code">
+                    <span class="node-icon code">{ }</span>
+                    <span>Code Node<br><small style="color:#888">Parse & Filter Top 500</small></span>
+                </div>
+                <span class="arrow">→</span>
+                <div class="n8n-node ai">
+                    <span class="node-icon ai">🧠</span>
+                    <span>Claude AI<br><small style="color:#888">Trend Analysis</small></span>
+                </div>
+                <span class="arrow">→</span>
+                <div class="n8n-node output">
+                    <span class="node-icon output">📊</span>
+                    <span>Google Sheets<br><small style="color:#888">Dashboard Update</small></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="details-grid">
+            <div class="detail-card">
+                <h3>📥 Data Extraction</h3>
+                <ul>
+                    <li>Connect to Amazon Seller Central API</li>
+                    <li>Download sales, inventory, returns data</li>
+                    <li>Handle pagination for large datasets</li>
+                    <li>Error handling with Slack alerts</li>
+                </ul>
+            </div>
+            
+            <div class="detail-card">
+                <h3>🔍 Data Processing</h3>
+                <ul>
+                    <li>Sort by revenue, units sold, profit margin</li>
+                    <li>Filter top 500 products</li>
+                    <li>Calculate week-over-week changes</li>
+                    <li>Flag inventory warnings (&lt;10 days stock)</li>
+                </ul>
+            </div>
+            
+            <div class="detail-card">
+                <h3>🤖 AI Analysis</h3>
+                <ul>
+                    <li>Identify trending products (↑20%+ WoW)</li>
+                    <li>Detect declining performers</li>
+                    <li>Suggest pricing optimizations</li>
+                    <li>Generate executive summary</li>
+                </ul>
+            </div>
+            
+            <div class="detail-card">
+                <h3>📈 Dashboard Output</h3>
+                <ul>
+                    <li>Auto-updating Google Sheets</li>
+                    <li>Key metrics at a glance</li>
+                    <li>Charts for trends visualization</li>
+                    <li>Daily email digest option</li>
+                </ul>
+            </div>
+        </div>
+        
+        <h3 style="color: #888; margin-top: 40px; margin-bottom: 15px;">Tech Stack</h3>
+        <div class="tech-stack">
+            <span class="tech">n8n (Self-hosted)</span>
+            <span class="tech">Amazon SP-API</span>
+            <span class="tech">Claude API</span>
+            <span class="tech">Google Sheets API</span>
+            <span class="tech">PostgreSQL</span>
+            <span class="tech">Docker</span>
+        </div>
+    </div>
+</body>
+</html>

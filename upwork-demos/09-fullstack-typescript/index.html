@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Full-Stack TypeScript - Nuxt 3 + NestJS Sample</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; min-height: 100vh; color: #fff; padding: 40px 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #00d4ff; }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .back { color: #00d4ff; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        
+        .stack { display: flex; justify-content: center; gap: 30px; margin: 40px 0; flex-wrap: wrap; }
+        .stack-item { background: rgba(255,255,255,0.05); border-radius: 12px; padding: 25px 35px; text-align: center; border: 1px solid rgba(255,255,255,0.1); }
+        .stack-item .icon { font-size: 2.5rem; margin-bottom: 10px; }
+        .stack-item h3 { color: #00d4ff; font-size: 1.1rem; }
+        .stack-item p { color: #888; font-size: 0.85rem; margin-top: 5px; }
+        
+        .code-section { background: rgba(255,255,255,0.03); border-radius: 14px; margin-bottom: 25px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }
+        .code-header { background: rgba(0,0,0,0.3); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .code-header h3 { color: #aaa; font-size: 0.9rem; }
+        .code-header .file { background: rgba(0,212,255,0.15); color: #00d4ff; padding: 3px 10px; border-radius: 4px; font-size: 0.8rem; font-family: monospace; }
+        pre { margin: 0; padding: 20px; font-family: 'Monaco', 'Menlo', monospace; font-size: 0.82rem; line-height: 1.6; color: #ccc; overflow-x: auto; }
+        .comment { color: #6a9955; }
+        .keyword { color: #c586c0; }
+        .string { color: #ce9178; }
+        .type { color: #4ec9b0; }
+        .decorator { color: #dcdcaa; }
+        .variable { color: #9cdcfe; }
+        
+        .desc { background: rgba(255,255,255,0.03); border-radius: 10px; padding: 20px; margin-bottom: 25px; border-left: 3px solid #00d4ff; }
+        .desc h3 { color: #00d4ff; margin-bottom: 10px; }
+        .desc p { color: #888; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../" class="back">← Back to Portfolio</a>
+        <h1>🔷 Full-Stack TypeScript Sample</h1>
+        <p class="subtitle">Modern business tool architecture with Nuxt 3 + NestJS</p>
+        
+        <div class="stack">
+            <div class="stack-item">
+                <div class="icon">💚</div>
+                <h3>Nuxt 3</h3>
+                <p>Frontend</p>
+            </div>
+            <div class="stack-item">
+                <div class="icon">🔴</div>
+                <h3>NestJS</h3>
+                <p>Backend API</p>
+            </div>
+            <div class="stack-item">
+                <div class="icon">🐘</div>
+                <h3>PostgreSQL</h3>
+                <p>Database</p>
+            </div>
+            <div class="stack-item">
+                <div class="icon">🔷</div>
+                <h3>TypeScript</h3>
+                <p>End-to-end</p>
+            </div>
+        </div>
+        
+        <div class="desc">
+            <h3>📋 Project: Invoice Management Tool</h3>
+            <p>A simple business tool for creating, sending, and tracking invoices. Demonstrates full-stack TypeScript with shared types, REST API, authentication, and real-time updates.</p>
+        </div>
+        
+        <div class="code-section">
+            <div class="code-header">
+                <h3>Shared Types (used by both frontend & backend)</h3>
+                <span class="file">packages/shared/types/invoice.ts</span>
+            </div>
+            <pre><span class="comment">// Shared types ensure type safety across the entire stack</span>
+
+<span class="keyword">export interface</span> <span class="type">Invoice</span> {
+  id: <span class="type">string</span>;
+  number: <span class="type">string</span>;
+  clientId: <span class="type">string</span>;
+  client: <span class="type">Client</span>;
+  items: <span class="type">InvoiceItem</span>[];
+  status: <span class="type">InvoiceStatus</span>;
+  dueDate: <span class="type">Date</span>;
+  total: <span class="type">number</span>;
+  createdAt: <span class="type">Date</span>;
+  paidAt?: <span class="type">Date</span>;
+}
+
+<span class="keyword">export interface</span> <span class="type">InvoiceItem</span> {
+  description: <span class="type">string</span>;
+  quantity: <span class="type">number</span>;
+  unitPrice: <span class="type">number</span>;
+  total: <span class="type">number</span>;
+}
+
+<span class="keyword">export type</span> <span class="type">InvoiceStatus</span> = <span class="string">'draft'</span> | <span class="string">'sent'</span> | <span class="string">'paid'</span> | <span class="string">'overdue'</span>;
+
+<span class="keyword">export interface</span> <span class="type">CreateInvoiceDto</span> {
+  clientId: <span class="type">string</span>;
+  items: <span class="type">Omit</span>&lt;<span class="type">InvoiceItem</span>, <span class="string">'total'</span>&gt;[];
+  dueDate: <span class="type">string</span>;
+}</pre>
+        </div>
+        
+        <div class="code-section">
+            <div class="code-header">
+                <h3>NestJS Backend - Invoice Controller</h3>
+                <span class="file">apps/api/src/invoices/invoices.controller.ts</span>
+            </div>
+            <pre><span class="keyword">import</span> { Controller, Get, Post, Body, Param, UseGuards } <span class="keyword">from</span> <span class="string">'@nestjs/common'</span>;
+<span class="keyword">import</span> { <span class="type">Invoice</span>, <span class="type">CreateInvoiceDto</span> } <span class="keyword">from</span> <span class="string">'@shared/types'</span>;
+<span class="keyword">import</span> { InvoicesService } <span class="keyword">from</span> <span class="string">'./invoices.service'</span>;
+<span class="keyword">import</span> { JwtAuthGuard } <span class="keyword">from</span> <span class="string">'../auth/jwt-auth.guard'</span>;
+<span class="keyword">import</span> { CurrentUser } <span class="keyword">from</span> <span class="string">'../auth/current-user.decorator'</span>;
+
+<span class="decorator">@Controller</span>(<span class="string">'invoices'</span>)
+<span class="decorator">@UseGuards</span>(JwtAuthGuard)
+<span class="keyword">export class</span> <span class="type">InvoicesController</span> {
+  <span class="keyword">constructor</span>(<span class="keyword">private</span> invoicesService: InvoicesService) {}
+
+  <span class="decorator">@Get</span>()
+  <span class="keyword">async</span> <span class="variable">findAll</span>(<span class="decorator">@CurrentUser</span>() user: <span class="type">User</span>): <span class="type">Promise</span>&lt;<span class="type">Invoice</span>[]&gt; {
+    <span class="keyword">return</span> <span class="keyword">this</span>.invoicesService.findByUser(user.id);
+  }
+
+  <span class="decorator">@Get</span>(<span class="string">':id'</span>)
+  <span class="keyword">async</span> <span class="variable">findOne</span>(<span class="decorator">@Param</span>(<span class="string">'id'</span>) id: <span class="type">string</span>): <span class="type">Promise</span>&lt;<span class="type">Invoice</span>&gt; {
+    <span class="keyword">return</span> <span class="keyword">this</span>.invoicesService.findById(id);
+  }
+
+  <span class="decorator">@Post</span>()
+  <span class="keyword">async</span> <span class="variable">create</span>(
+    <span class="decorator">@CurrentUser</span>() user: <span class="type">User</span>,
+    <span class="decorator">@Body</span>() dto: <span class="type">CreateInvoiceDto</span>
+  ): <span class="type">Promise</span>&lt;<span class="type">Invoice</span>&gt; {
+    <span class="keyword">return</span> <span class="keyword">this</span>.invoicesService.create(user.id, dto);
+  }
+
+  <span class="decorator">@Post</span>(<span class="string">':id/send'</span>)
+  <span class="keyword">async</span> <span class="variable">send</span>(<span class="decorator">@Param</span>(<span class="string">'id'</span>) id: <span class="type">string</span>): <span class="type">Promise</span>&lt;<span class="type">Invoice</span>&gt; {
+    <span class="keyword">return</span> <span class="keyword">this</span>.invoicesService.sendToClient(id);
+  }
+}</pre>
+        </div>
+        
+        <div class="code-section">
+            <div class="code-header">
+                <h3>NestJS Backend - Invoice Service</h3>
+                <span class="file">apps/api/src/invoices/invoices.service.ts</span>
+            </div>
+            <pre><span class="keyword">import</span> { Injectable } <span class="keyword">from</span> <span class="string">'@nestjs/common'</span>;
+<span class="keyword">import</span> { PrismaService } <span class="keyword">from</span> <span class="string">'../prisma/prisma.service'</span>;
+<span class="keyword">import</span> { EmailService } <span class="keyword">from</span> <span class="string">'../email/email.service'</span>;
+<span class="keyword">import</span> { <span class="type">CreateInvoiceDto</span>, <span class="type">Invoice</span> } <span class="keyword">from</span> <span class="string">'@shared/types'</span>;
+
+<span class="decorator">@Injectable</span>()
+<span class="keyword">export class</span> <span class="type">InvoicesService</span> {
+  <span class="keyword">constructor</span>(
+    <span class="keyword">private</span> prisma: PrismaService,
+    <span class="keyword">private</span> emailService: EmailService
+  ) {}
+
+  <span class="keyword">async</span> <span class="variable">create</span>(userId: <span class="type">string</span>, dto: <span class="type">CreateInvoiceDto</span>): <span class="type">Promise</span>&lt;<span class="type">Invoice</span>&gt; {
+    <span class="comment">// Calculate totals</span>
+    <span class="keyword">const</span> items = dto.items.map(item => ({
+      ...item,
+      total: item.quantity * item.unitPrice
+    }));
+    <span class="keyword">const</span> total = items.reduce((sum, item) => sum + item.total, 0);
+
+    <span class="comment">// Generate invoice number</span>
+    <span class="keyword">const</span> number = <span class="keyword">await</span> <span class="keyword">this</span>.generateInvoiceNumber(userId);
+
+    <span class="keyword">return</span> <span class="keyword">this</span>.prisma.invoice.create({
+      data: {
+        number,
+        userId,
+        clientId: dto.clientId,
+        items: { create: items },
+        total,
+        dueDate: <span class="keyword">new</span> Date(dto.dueDate),
+        status: <span class="string">'draft'</span>
+      },
+      include: { client: <span class="keyword">true</span>, items: <span class="keyword">true</span> }
+    });
+  }
+
+  <span class="keyword">async</span> <span class="variable">sendToClient</span>(id: <span class="type">string</span>): <span class="type">Promise</span>&lt;<span class="type">Invoice</span>&gt; {
+    <span class="keyword">const</span> invoice = <span class="keyword">await</span> <span class="keyword">this</span>.prisma.invoice.update({
+      where: { id },
+      data: { status: <span class="string">'sent'</span> },
+      include: { client: <span class="keyword">true</span> }
+    });
+
+    <span class="comment">// Send email with invoice PDF</span>
+    <span class="keyword">await</span> <span class="keyword">this</span>.emailService.sendInvoice(invoice);
+
+    <span class="keyword">return</span> invoice;
+  }
+}</pre>
+        </div>
+        
+        <div class="code-section">
+            <div class="code-header">
+                <h3>Nuxt 3 Frontend - Invoice List Page</h3>
+                <span class="file">apps/web/pages/invoices/index.vue</span>
+            </div>
+            <pre><span class="keyword">&lt;script</span> setup lang=<span class="string">"ts"</span><span class="keyword">&gt;</span>
+<span class="keyword">import</span> type { <span class="type">Invoice</span> } <span class="keyword">from</span> <span class="string">'@shared/types'</span>;
+
+<span class="comment">// Auto-imported composable for API calls</span>
+<span class="keyword">const</span> { data: invoices, refresh } = <span class="keyword">await</span> useFetch&lt;<span class="type">Invoice</span>[]&gt;(<span class="string">'/api/invoices'</span>);
+
+<span class="keyword">const</span> statusColors: Record&lt;<span class="type">string</span>, <span class="type">string</span>&gt; = {
+  draft: <span class="string">'gray'</span>,
+  sent: <span class="string">'blue'</span>,
+  paid: <span class="string">'green'</span>,
+  overdue: <span class="string">'red'</span>
+};
+
+<span class="keyword">const</span> formatCurrency = (amount: <span class="type">number</span>) => 
+  <span class="keyword">new</span> Intl.NumberFormat(<span class="string">'en-US'</span>, { style: <span class="string">'currency'</span>, currency: <span class="string">'USD'</span> }).format(amount);
+<span class="keyword">&lt;/script&gt;</span>
+
+<span class="keyword">&lt;template&gt;</span>
+  <span class="keyword">&lt;div</span> class=<span class="string">"p-6"</span><span class="keyword">&gt;</span>
+    <span class="keyword">&lt;div</span> class=<span class="string">"flex justify-between items-center mb-6"</span><span class="keyword">&gt;</span>
+      <span class="keyword">&lt;h1</span> class=<span class="string">"text-2xl font-bold"</span><span class="keyword">&gt;</span>Invoices<span class="keyword">&lt;/h1&gt;</span>
+      <span class="keyword">&lt;NuxtLink</span> to=<span class="string">"/invoices/new"</span> class=<span class="string">"btn-primary"</span><span class="keyword">&gt;</span>
+        + New Invoice
+      <span class="keyword">&lt;/NuxtLink&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+
+    <span class="keyword">&lt;div</span> class=<span class="string">"bg-white rounded-lg shadow"</span><span class="keyword">&gt;</span>
+      <span class="keyword">&lt;table</span> class=<span class="string">"w-full"</span><span class="keyword">&gt;</span>
+        <span class="keyword">&lt;thead</span> class=<span class="string">"bg-gray-50"</span><span class="keyword">&gt;</span>
+          <span class="keyword">&lt;tr&gt;</span>
+            <span class="keyword">&lt;th&gt;</span>Invoice #<span class="keyword">&lt;/th&gt;</span>
+            <span class="keyword">&lt;th&gt;</span>Client<span class="keyword">&lt;/th&gt;</span>
+            <span class="keyword">&lt;th&gt;</span>Amount<span class="keyword">&lt;/th&gt;</span>
+            <span class="keyword">&lt;th&gt;</span>Status<span class="keyword">&lt;/th&gt;</span>
+            <span class="keyword">&lt;th&gt;</span>Due Date<span class="keyword">&lt;/th&gt;</span>
+          <span class="keyword">&lt;/tr&gt;</span>
+        <span class="keyword">&lt;/thead&gt;</span>
+        <span class="keyword">&lt;tbody&gt;</span>
+          <span class="keyword">&lt;tr</span> v-for=<span class="string">"invoice in invoices"</span> :key=<span class="string">"invoice.id"</span><span class="keyword">&gt;</span>
+            <span class="keyword">&lt;td&gt;</span>{{ invoice.number }}<span class="keyword">&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;</span>{{ invoice.client.name }}<span class="keyword">&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;</span>{{ formatCurrency(invoice.total) }}<span class="keyword">&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;</span>
+              <span class="keyword">&lt;UBadge</span> :color=<span class="string">"statusColors[invoice.status]"</span><span class="keyword">&gt;</span>
+                {{ invoice.status }}
+              <span class="keyword">&lt;/UBadge&gt;</span>
+            <span class="keyword">&lt;/td&gt;</span>
+            <span class="keyword">&lt;td&gt;</span>{{ new Date(invoice.dueDate).toLocaleDateString() }}<span class="keyword">&lt;/td&gt;</span>
+          <span class="keyword">&lt;/tr&gt;</span>
+        <span class="keyword">&lt;/tbody&gt;</span>
+      <span class="keyword">&lt;/table&gt;</span>
+    <span class="keyword">&lt;/div&gt;</span>
+  <span class="keyword">&lt;/div&gt;</span>
+<span class="keyword">&lt;/template&gt;</span></pre>
+        </div>
+        
+        <div class="desc">
+            <h3>🔗 View Full Code</h3>
+            <p>Complete source code with Prisma schema, authentication, email templates, and deployment configs available on request. This sample demonstrates clean architecture patterns suitable for any business application.</p>
+        </div>
+    </div>
+</body>
+</html>

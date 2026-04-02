@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Decision AI - Demo</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; min-height: 100vh; color: #fff; padding: 40px 20px; }
+        .container { max-width: 900px; margin: 0 auto; }
+        h1 { font-size: 2rem; margin-bottom: 10px; color: #00d4ff; }
+        .subtitle { color: #888; margin-bottom: 30px; }
+        .back { color: #00d4ff; text-decoration: none; display: inline-block; margin-bottom: 20px; }
+        
+        .demo-area { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px; }
+        @media (max-width: 768px) { .demo-area { grid-template-columns: 1fr; } }
+        
+        .input-section { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); }
+        .input-section h2 { color: #00d4ff; margin-bottom: 20px; font-size: 1.1rem; }
+        
+        .form-group { margin-bottom: 18px; }
+        label { display: block; color: #888; font-size: 0.85rem; margin-bottom: 6px; }
+        input, select { width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 10px 12px; color: #fff; font-size: 0.95rem; }
+        input:focus, select:focus { outline: none; border-color: #00d4ff; }
+        
+        button { width: 100%; padding: 14px; background: linear-gradient(90deg, #00d4ff, #7b2cbf); border: none; border-radius: 8px; color: #fff; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        button:hover { opacity: 0.9; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .output-section { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); }
+        .output-section h2 { color: #00d4ff; margin-bottom: 20px; font-size: 1.1rem; }
+        
+        .placeholder { color: #555; text-align: center; padding: 40px 20px; }
+        .placeholder p { margin-bottom: 10px; }
+        
+        .result { display: none; }
+        .result.show { display: block; }
+        
+        .decision-box { border-radius: 10px; padding: 25px; text-align: center; margin-bottom: 20px; }
+        .decision-box.stock { background: rgba(38,222,129,0.15); border: 2px solid #26de81; }
+        .decision-box.production { background: rgba(165,94,234,0.15); border: 2px solid #a55eea; }
+        .decision-box .icon { font-size: 3rem; margin-bottom: 10px; }
+        .decision-box h3 { font-size: 1.3rem; margin-bottom: 5px; }
+        .decision-box.stock h3 { color: #26de81; }
+        .decision-box.production h3 { color: #a55eea; }
+        .decision-box p { color: #888; font-size: 0.9rem; }
+        
+        .reasoning { background: rgba(0,0,0,0.2); border-radius: 8px; padding: 20px; }
+        .reasoning h4 { color: #00d4ff; margin-bottom: 12px; font-size: 0.95rem; }
+        .reasoning ul { list-style: none; }
+        .reasoning li { padding: 8px 0; color: #aaa; font-size: 0.9rem; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; align-items: center; gap: 10px; }
+        .reasoning li:last-child { border-bottom: none; }
+        .reasoning .factor { color: #888; font-size: 0.8rem; min-width: 100px; }
+        .reasoning .value { color: #fff; }
+        
+        .processing { display: none; align-items: center; justify-content: center; gap: 10px; padding: 50px; color: #888; }
+        .processing.show { display: flex; }
+        .spinner { width: 24px; height: 24px; border: 3px solid rgba(0,212,255,0.3); border-top-color: #00d4ff; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .examples { margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .examples p { color: #666; font-size: 0.8rem; margin-bottom: 10px; }
+        .example-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+        .example-btn { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #aaa; padding: 6px 12px; border-radius: 5px; font-size: 0.8rem; cursor: pointer; }
+        .example-btn:hover { background: rgba(255,255,255,0.12); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../" class="back">← Back to Portfolio</a>
+        <h1>📦 Inventory Decision AI</h1>
+        <p class="subtitle">AI-powered fulfillment routing for D2C brands</p>
+        
+        <div class="demo-area">
+            <div class="input-section">
+                <h2>📝 Order Details</h2>
+                <form id="order-form" onsubmit="handleOrder(event)">
+                    <div class="form-group">
+                        <label>Product SKU</label>
+                        <input type="text" id="sku" placeholder="e.g., TSHIRT-BLK-M" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity Ordered</label>
+                        <input type="number" id="quantity" min="1" value="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Current Stock Level</label>
+                        <input type="number" id="stock" min="0" value="50" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Production Lead Time (days)</label>
+                        <input type="number" id="leadtime" min="1" value="7" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Customer Priority</label>
+                        <select id="priority">
+                            <option value="standard">Standard</option>
+                            <option value="express">Express (2-day)</option>
+                            <option value="vip">VIP Customer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Customization Required?</label>
+                        <select id="custom">
+                            <option value="no">No - Standard Product</option>
+                            <option value="yes">Yes - Custom Print/Size</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="submit-btn">Analyze Order →</button>
+                </form>
+                
+                <div class="examples">
+                    <p>Try these scenarios:</p>
+                    <div class="example-btns">
+                        <button type="button" class="example-btn" onclick="loadExample('stock')">In Stock</button>
+                        <button type="button" class="example-btn" onclick="loadExample('lowstock')">Low Stock</button>
+                        <button type="button" class="example-btn" onclick="loadExample('custom')">Custom Order</button>
+                        <button type="button" class="example-btn" onclick="loadExample('vip')">VIP Rush</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <h2>🤖 AI Decision</h2>
+                
+                <div class="placeholder" id="placeholder">
+                    <p style="font-size: 2.5rem;">🧠</p>
+                    <p>Enter order details to see AI routing decision</p>
+                </div>
+                
+                <div class="processing" id="processing">
+                    <div class="spinner"></div>
+                    <span>Analyzing inventory & constraints...</span>
+                </div>
+                
+                <div class="result" id="result">
+                    <div class="decision-box" id="decision-box">
+                        <div class="icon" id="decision-icon">📦</div>
+                        <h3 id="decision-text">Fulfill from Stock</h3>
+                        <p id="decision-subtext">Ship within 24 hours</p>
+                    </div>
+                    
+                    <div class="reasoning">
+                        <h4>Decision Factors</h4>
+                        <ul id="factors-list">
+                            <!-- Filled by JS -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const examples = {
+            stock: { sku: 'TSHIRT-BLK-M', quantity: 2, stock: 150, leadtime: 7, priority: 'standard', custom: 'no' },
+            lowstock: { sku: 'HOODIE-GRY-L', quantity: 10, stock: 5, leadtime: 5, priority: 'standard', custom: 'no' },
+            custom: { sku: 'POSTER-CUSTOM', quantity: 1, stock: 0, leadtime: 3, priority: 'standard', custom: 'yes' },
+            vip: { sku: 'JACKET-BLU-XL', quantity: 1, stock: 3, leadtime: 10, priority: 'vip', custom: 'no' }
+        };
+        
+        function loadExample(type) {
+            const ex = examples[type];
+            document.getElementById('sku').value = ex.sku;
+            document.getElementById('quantity').value = ex.quantity;
+            document.getElementById('stock').value = ex.stock;
+            document.getElementById('leadtime').value = ex.leadtime;
+            document.getElementById('priority').value = ex.priority;
+            document.getElementById('custom').value = ex.custom;
+        }
+        
+        function handleOrder(e) {
+            e.preventDefault();
+            
+            document.getElementById('placeholder').style.display = 'none';
+            document.getElementById('result').classList.remove('show');
+            document.getElementById('processing').classList.add('show');
+            document.getElementById('submit-btn').disabled = true;
+            
+            setTimeout(() => {
+                const decision = analyzeOrder();
+                displayDecision(decision);
+                document.getElementById('processing').classList.remove('show');
+                document.getElementById('submit-btn').disabled = false;
+            }, 1500);
+        }
+        
+        function analyzeOrder() {
+            const quantity = parseInt(document.getElementById('quantity').value);
+            const stock = parseInt(document.getElementById('stock').value);
+            const leadtime = parseInt(document.getElementById('leadtime').value);
+            const priority = document.getElementById('priority').value;
+            const custom = document.getElementById('custom').value;
+            
+            const factors = [];
+            let fulfillFromStock = true;
+            let confidence = 95;
+            
+            // Check customization
+            if (custom === 'yes') {
+                fulfillFromStock = false;
+                factors.push({ factor: 'Customization', value: 'Required - must produce', impact: 'production' });
+            } else {
+                factors.push({ factor: 'Customization', value: 'None - standard item', impact: 'stock' });
+            }
+            
+            // Check stock levels
+            if (stock >= quantity) {
+                factors.push({ factor: 'Stock Level', value: `${stock} available (need ${quantity})`, impact: 'stock' });
+            } else if (stock > 0) {
+                factors.push({ factor: 'Stock Level', value: `Only ${stock} available (need ${quantity})`, impact: 'production' });
+                fulfillFromStock = false;
+            } else {
+                factors.push({ factor: 'Stock Level', value: 'Out of stock', impact: 'production' });
+                fulfillFromStock = false;
+            }
+            
+            // Check priority
+            if (priority === 'vip') {
+                factors.push({ factor: 'Customer', value: 'VIP - prioritize speed', impact: 'stock' });
+                if (!fulfillFromStock && stock > 0) {
+                    // For VIP, partial fulfill if possible
+                    factors.push({ factor: 'VIP Override', value: 'Partial ship now, rest when ready', impact: 'mixed' });
+                }
+            } else if (priority === 'express') {
+                factors.push({ factor: 'Shipping', value: 'Express - 2 day delivery', impact: stock >= quantity ? 'stock' : 'production' });
+                if (leadtime > 2 && !fulfillFromStock) {
+                    confidence -= 10;
+                }
+            } else {
+                factors.push({ factor: 'Shipping', value: 'Standard - flexible timeline', impact: 'neutral' });
+            }
+            
+            // Lead time consideration
+            if (fulfillFromStock) {
+                factors.push({ factor: 'Fulfillment', value: 'Ships within 24 hours', impact: 'stock' });
+            } else {
+                factors.push({ factor: 'Lead Time', value: `${leadtime} days to produce`, impact: 'production' });
+            }
+            
+            // Stock buffer check
+            if (fulfillFromStock && stock - quantity < 10) {
+                factors.push({ factor: 'Reorder Alert', value: 'Stock running low - trigger reorder', impact: 'warning' });
+            }
+            
+            return {
+                fulfillFromStock: custom === 'no' && fulfillFromStock,
+                factors,
+                confidence
+            };
+        }
+        
+        function displayDecision(decision) {
+            const box = document.getElementById('decision-box');
+            const icon = document.getElementById('decision-icon');
+            const text = document.getElementById('decision-text');
+            const subtext = document.getElementById('decision-subtext');
+            const list = document.getElementById('factors-list');
+            
+            if (decision.fulfillFromStock) {
+                box.className = 'decision-box stock';
+                icon.textContent = '📦';
+                text.textContent = 'Fulfill from Stock';
+                subtext.textContent = 'Ship within 24 hours';
+            } else {
+                box.className = 'decision-box production';
+                icon.textContent = '�icing';
+                text.textContent = 'Send to Production';
+                subtext.textContent = 'Custom manufacturing required';
+            }
+            
+            list.innerHTML = decision.factors.map(f => {
+                let emoji = '➡️';
+                if (f.impact === 'stock') emoji = '✅';
+                else if (f.impact === 'production') emoji = '🔧';
+                else if (f.impact === 'warning') emoji = '⚠️';
+                
+                return `<li><span class="factor">${f.factor}:</span><span class="value">${emoji} ${f.value}</span></li>`;
+            }).join('');
+            
+            document.getElementById('result').classList.add('show');
+        }
+    </script>
+</body>
+</html>
