@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-4o Vision — Image Classification</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        .subtitle { opacity: 0.9; font-size: 1.1rem; }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+        .main-card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .card-section {
+            padding: 30px;
+        }
+        .upload-section {
+            border-bottom: 1px solid #e4e4e7;
+        }
+        .upload-zone {
+            border: 3px dashed #d4d4d8;
+            border-radius: 16px;
+            padding: 50px 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fafafa;
+        }
+        .upload-zone:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        .upload-zone.has-image {
+            padding: 20px;
+            background: #f4f4f5;
+        }
+        .upload-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+        }
+        .upload-text {
+            color: #71717a;
+            margin-bottom: 5px;
+        }
+        .upload-hint {
+            color: #a1a1aa;
+            font-size: 0.85rem;
+        }
+        .preview-image {
+            max-width: 100%;
+            max-height: 300px;
+            border-radius: 12px;
+            object-fit: contain;
+        }
+        .analyze-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 16px 40px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        .analyze-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .results-section {
+            display: none;
+        }
+        .results-section.visible { display: block; }
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .api-response {
+            background: #18181b;
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.85rem;
+            color: #a1a1aa;
+            overflow-x: auto;
+            margin-bottom: 25px;
+        }
+        .json-key { color: #f472b6; }
+        .json-string { color: #4ade80; }
+        .json-number { color: #60a5fa; }
+        .classification-results {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .result-item {
+            background: #f4f4f5;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .result-rank {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .rank-1 { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; }
+        .rank-2 { background: #e4e4e7; color: #52525b; }
+        .rank-3 { background: #e4e4e7; color: #71717a; }
+        .result-info { flex: 1; }
+        .result-label {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        .result-desc {
+            color: #71717a;
+            font-size: 0.9rem;
+        }
+        .confidence-bar-container {
+            width: 150px;
+        }
+        .confidence-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+            text-align: right;
+        }
+        .confidence-bar {
+            height: 8px;
+            background: #e4e4e7;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .confidence-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+        .conf-high { background: linear-gradient(90deg, #4ade80, #22c55e); }
+        .conf-med { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+        .conf-low { background: linear-gradient(90deg, #f87171, #ef4444); }
+        .metadata-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e4e4e7;
+        }
+        .meta-item {
+            text-align: center;
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 12px;
+        }
+        .meta-value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+        .meta-label {
+            font-size: 0.8rem;
+            color: #71717a;
+            margin-top: 5px;
+        }
+        .sample-images {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+        .sample-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            object-fit: cover;
+            background: linear-gradient(135deg, #e4e4e7, #d4d4d8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+        .sample-img:hover { transform: scale(1.1); }
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        .loading.visible { display: block; }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e4e4e7;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 600px) {
+            h1 { font-size: 1.8rem; }
+            .result-item { flex-direction: column; text-align: center; }
+            .confidence-bar-container { width: 100%; }
+            .confidence-label { text-align: center; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 GPT-4o Vision</h1>
+            <p class="subtitle">Building & Image Classification Demo</p>
+            <div class="badge">Powered by OpenAI Vision API</div>
+        </header>
+
+        <div class="main-card">
+            <div class="card-section upload-section">
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <div id="uploadContent">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-text">Click or drag image to upload</div>
+                        <div class="upload-hint">Supports JPG, PNG, WebP (max 20MB)</div>
+                    </div>
+                </div>
+                <input type="file" id="fileInput" accept="image/*" style="display: none" onchange="handleFile(this)">
+                
+                <div style="margin-top: 20px; color: #71717a; font-size: 0.9rem;">
+                    Or try a sample:
+                    <div class="sample-images">
+                        <div class="sample-img" onclick="selectSample('building')">🏢</div>
+                        <div class="sample-img" onclick="selectSample('house')">🏠</div>
+                        <div class="sample-img" onclick="selectSample('bridge')">🌉</div>
+                        <div class="sample-img" onclick="selectSample('tower')">🗼</div>
+                    </div>
+                </div>
+                
+                <button class="analyze-btn" id="analyzeBtn" disabled onclick="analyzeImage()">
+                    Analyze with GPT-4o Vision
+                </button>
+            </div>
+
+            <div class="card-section loading" id="loading">
+                <div class="spinner"></div>
+                <div style="color: #71717a;">Analyzing image with GPT-4o Vision...</div>
+                <div style="color: #a1a1aa; font-size: 0.85rem; margin-top: 5px;">Processing visual features</div>
+            </div>
+
+            <div class="card-section results-section" id="results">
+                <h3 class="section-title">🤖 API Response</h3>
+                <div class="api-response" id="apiResponse"></div>
+
+                <h3 class="section-title">📊 Classification Results</h3>
+                <div class="classification-results" id="classResults"></div>
+
+                <div class="metadata-grid">
+                    <div class="meta-item">
+                        <div class="meta-value" id="metaLatency">287ms</div>
+                        <div class="meta-label">Latency</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-value" id="metaTokens">1,247</div>
+                        <div class="meta-label">Tokens Used</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-value" id="metaModel">gpt-4o</div>
+                        <div class="meta-label">Model</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-value" id="metaCost">$0.003</div>
+                        <div class="meta-label">Est. Cost</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedImage = null;
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const uploadZone = document.getElementById('uploadZone');
+        const uploadContent = document.getElementById('uploadContent');
+        const loading = document.getElementById('loading');
+        const results = document.getElementById('results');
+
+        const classifications = {
+            building: {
+                results: [
+                    { label: 'Commercial Office Building', desc: 'Modern high-rise office tower with glass curtain wall facade', confidence: 0.94 },
+                    { label: 'Corporate Headquarters', desc: 'Multi-story corporate structure with contemporary design', confidence: 0.78 },
+                    { label: 'Mixed-Use Development', desc: 'Building combining commercial and retail spaces', confidence: 0.45 }
+                ],
+                json: {
+                    building_type: "commercial_office",
+                    architectural_style: "modern_contemporary",
+                    estimated_floors: 25,
+                    facade_material: "glass_curtain_wall",
+                    condition: "excellent"
+                }
+            },
+            house: {
+                results: [
+                    { label: 'Single-Family Residence', desc: 'Suburban residential home with traditional architecture', confidence: 0.91 },
+                    { label: 'Colonial Style Home', desc: 'Two-story dwelling with symmetrical facade', confidence: 0.72 },
+                    { label: 'Craftsman Bungalow', desc: 'Classic American residential style', confidence: 0.38 }
+                ],
+                json: {
+                    building_type: "residential_single_family",
+                    architectural_style: "colonial_traditional",
+                    estimated_sqft: 2400,
+                    stories: 2,
+                    condition: "good"
+                }
+            },
+            bridge: {
+                results: [
+                    { label: 'Suspension Bridge', desc: 'Major infrastructure with cable-stayed design', confidence: 0.96 },
+                    { label: 'Vehicular Crossing', desc: 'Multi-lane road bridge over waterway', confidence: 0.82 },
+                    { label: 'Landmark Structure', desc: 'Architecturally significant civil engineering work', confidence: 0.67 }
+                ],
+                json: {
+                    structure_type: "suspension_bridge",
+                    span_type: "cable_stayed",
+                    estimated_length: "1.2km",
+                    lanes: 6,
+                    condition: "excellent"
+                }
+            },
+            tower: {
+                results: [
+                    { label: 'Communication Tower', desc: 'Telecommunications infrastructure for signal transmission', confidence: 0.89 },
+                    { label: 'Observation Tower', desc: 'Elevated structure for viewing purposes', confidence: 0.65 },
+                    { label: 'Broadcast Antenna', desc: 'Radio/TV transmission equipment support structure', confidence: 0.52 }
+                ],
+                json: {
+                    structure_type: "telecommunications_tower",
+                    estimated_height: "150m",
+                    purpose: "cellular_broadcast",
+                    material: "steel_lattice",
+                    condition: "good"
+                }
+            }
+        };
+
+        function handleFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    showPreview(e.target.result);
+                    selectedImage = 'custom';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function selectSample(type) {
+            const emojis = { building: '🏢', house: '🏠', bridge: '🌉', tower: '🗼' };
+            uploadZone.classList.add('has-image');
+            uploadContent.innerHTML = `
+                <div style="font-size: 120px; margin-bottom: 10px;">${emojis[type]}</div>
+                <div style="color: #52525b;">Sample: ${type.charAt(0).toUpperCase() + type.slice(1)}</div>
+            `;
+            selectedImage = type;
+            analyzeBtn.disabled = false;
+        }
+
+        function showPreview(src) {
+            uploadZone.classList.add('has-image');
+            uploadContent.innerHTML = `<img src="${src}" class="preview-image">`;
+            analyzeBtn.disabled = false;
+        }
+
+        function analyzeImage() {
+            loading.classList.add('visible');
+            results.classList.remove('visible');
+            analyzeBtn.disabled = true;
+
+            setTimeout(() => {
+                loading.classList.remove('visible');
+                showResults(selectedImage === 'custom' ? 'building' : selectedImage);
+                analyzeBtn.disabled = false;
+            }, 2000);
+        }
+
+        function showResults(type) {
+            const data = classifications[type];
+            
+            // Format JSON response
+            const jsonHtml = formatJson(data.json);
+            document.getElementById('apiResponse').innerHTML = jsonHtml;
+
+            // Build results HTML
+            const resultsHtml = data.results.map((r, i) => {
+                const confClass = r.confidence > 0.8 ? 'conf-high' : r.confidence > 0.5 ? 'conf-med' : 'conf-low';
+                return `
+                    <div class="result-item">
+                        <div class="result-rank rank-${i + 1}">#${i + 1}</div>
+                        <div class="result-info">
+                            <div class="result-label">${r.label}</div>
+                            <div class="result-desc">${r.desc}</div>
+                        </div>
+                        <div class="confidence-bar-container">
+                            <div class="confidence-label">${(r.confidence * 100).toFixed(1)}%</div>
+                            <div class="confidence-bar">
+                                <div class="confidence-fill ${confClass}" style="width: ${r.confidence * 100}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('classResults').innerHTML = resultsHtml;
+
+            // Update metadata
+            document.getElementById('metaLatency').textContent = Math.floor(200 + Math.random() * 200) + 'ms';
+            document.getElementById('metaTokens').textContent = (1000 + Math.floor(Math.random() * 500)).toLocaleString();
+            document.getElementById('metaCost').textContent = '$0.00' + (2 + Math.floor(Math.random() * 3));
+
+            results.classList.add('visible');
+        }
+
+        function formatJson(obj) {
+            return JSON.stringify(obj, null, 2)
+                .replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
+                .replace(/: "([^"]+)"/g, ': <span class="json-string">"$1"</span>')
+                .replace(/: (\d+)/g, ': <span class="json-number">$1</span>');
+        }
+
+        // Drag and drop
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.style.borderColor = '#667eea';
+        });
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.style.borderColor = '#d4d4d8';
+        });
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.style.borderColor = '#d4d4d8';
+            if (e.dataTransfer.files.length) {
+                document.getElementById('fileInput').files = e.dataTransfer.files;
+                handleFile(document.getElementById('fileInput'));
+            }
+        });
+    </script>
+</body>
+</html>

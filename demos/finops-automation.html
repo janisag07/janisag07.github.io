@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinOps Automation — GoHighLevel + QuickBooks + Make.com</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0a0a0f;
+            color: #e4e4e7;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #00d4aa 0%, #00a3ff 50%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle { color: #71717a; font-size: 1.1rem; }
+        .integration-logos {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        .logo-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .logo-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .ghl { background: linear-gradient(135deg, #ff6b35, #f7931e); }
+        .qb { background: linear-gradient(135deg, #2ca01c, #48b848); }
+        .make { background: linear-gradient(135deg, #7b68ee, #9370db); }
+        .connector {
+            display: flex;
+            align-items: center;
+            color: #00d4aa;
+            font-size: 24px;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s;
+        }
+        .card:hover {
+            border-color: rgba(0, 212, 170, 0.3);
+            box-shadow: 0 10px 40px rgba(0, 212, 170, 0.1);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-live { background: rgba(0, 212, 170, 0.2); color: #00d4aa; }
+        .status-syncing { background: rgba(0, 163, 255, 0.2); color: #00a3ff; animation: pulse 1.5s infinite; }
+        .status-error { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .flow-diagram {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .flow-step {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .flow-step:last-child { border-bottom: none; }
+        .flow-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 16px;
+        }
+        .flow-content { flex: 1; }
+        .flow-label { font-weight: 500; }
+        .flow-detail { font-size: 0.8rem; color: #71717a; }
+        .flow-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .flow-status.success { background: #00d4aa; box-shadow: 0 0 10px #00d4aa; }
+        .flow-status.pending { background: #fbbf24; }
+        .flow-status.error { background: #ef4444; box-shadow: 0 0 10px #ef4444; }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .metric-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .metric-value.green { color: #00d4aa; }
+        .metric-value.blue { color: #00a3ff; }
+        .metric-value.purple { color: #7c3aed; }
+        .metric-value.yellow { color: #fbbf24; }
+        .metric-label {
+            font-size: 0.8rem;
+            color: #71717a;
+            margin-top: 5px;
+        }
+        .webhook-list {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .webhook-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.8rem;
+        }
+        .webhook-method {
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-right: 10px;
+            font-weight: 600;
+            font-size: 0.7rem;
+        }
+        .method-post { background: #00d4aa; color: #000; }
+        .method-get { background: #00a3ff; color: #000; }
+        .webhook-url { flex: 1; color: #a1a1aa; overflow: hidden; text-overflow: ellipsis; }
+        .webhook-time { color: #71717a; }
+        .error-panel {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .error-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .error-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(239, 68, 68, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 20px;
+        }
+        .error-title { font-weight: 600; color: #ef4444; }
+        .error-detail { font-size: 0.9rem; color: #fca5a5; }
+        .error-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4aa, #00a3ff);
+            color: #000;
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #e4e4e7;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .sync-animation {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .sync-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        .sync-arrow {
+            font-size: 24px;
+            color: #00d4aa;
+            animation: moveArrow 1.5s infinite;
+        }
+        @keyframes moveArrow {
+            0%, 100% { transform: translateX(0); opacity: 1; }
+            50% { transform: translateX(10px); opacity: 0.5; }
+        }
+        .ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .ledger-table th, .ledger-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .ledger-table th {
+            color: #71717a;
+            font-weight: 500;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        .ledger-table td { font-size: 0.9rem; }
+        .amount-positive { color: #00d4aa; }
+        .amount-negative { color: #ef4444; }
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .integration-logos { gap: 20px; }
+            .logo-circle { width: 60px; height: 60px; font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="gradient-text">FinOps Automation</h1>
+            <p class="subtitle">GoHighLevel + QuickBooks + Make.com Integration</p>
+        </header>
+
+        <div class="integration-logos">
+            <div class="logo-item">
+                <div class="logo-circle ghl">GHL</div>
+                <span>GoHighLevel</span>
+            </div>
+            <div class="connector">→</div>
+            <div class="logo-item">
+                <div class="logo-circle make">M</div>
+                <span>Make.com</span>
+            </div>
+            <div class="connector">→</div>
+            <div class="logo-item">
+                <div class="logo-circle qb">QB</div>
+                <span>QuickBooks</span>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🔄 Sync Pipeline</span>
+                    <span class="status-badge status-live">● Live</span>
+                </div>
+                <div class="flow-diagram">
+                    <div class="flow-step">
+                        <div class="flow-icon ghl">G</div>
+                        <div class="flow-content">
+                            <div class="flow-label">New Invoice Created</div>
+                            <div class="flow-detail">Trigger: invoice.created webhook</div>
+                        </div>
+                        <div class="flow-status success"></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-icon make">M</div>
+                        <div class="flow-content">
+                            <div class="flow-label">Data Transform</div>
+                            <div class="flow-detail">Map GHL → QB schema</div>
+                        </div>
+                        <div class="flow-status success"></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-icon" style="background: #3b82f6;">V</div>
+                        <div class="flow-content">
+                            <div class="flow-label">Validation</div>
+                            <div class="flow-detail">Check required fields</div>
+                        </div>
+                        <div class="flow-status success"></div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-icon qb">Q</div>
+                        <div class="flow-content">
+                            <div class="flow-label">Create QB Entry</div>
+                            <div class="flow-detail">POST /v3/company/invoice</div>
+                        </div>
+                        <div class="flow-status success"></div>
+                    </div>
+                </div>
+                <div class="sync-animation">
+                    <div class="sync-box ghl">📊</div>
+                    <div class="sync-arrow">→→→</div>
+                    <div class="sync-box qb">💰</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📊 Sync Metrics</span>
+                    <span class="status-badge status-syncing">⟳ Syncing</span>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-value green">2,847</div>
+                        <div class="metric-label">Invoices Synced</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value blue">99.7%</div>
+                        <div class="metric-label">Success Rate</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value purple">$284K</div>
+                        <div class="metric-label">Total Revenue</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value yellow">1.2s</div>
+                        <div class="metric-label">Avg. Sync Time</div>
+                    </div>
+                </div>
+                <div style="margin-top: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-size: 0.85rem;">Monthly Progress</span>
+                        <span style="font-size: 0.85rem; color: #00d4aa;">847 / 1000</span>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.3); border-radius: 8px; height: 10px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, #00d4aa, #00a3ff); height: 100%; width: 84.7%; border-radius: 8px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">🔗 Webhook Activity</span>
+                    <span style="color: #71717a; font-size: 0.8rem;">Last 5 events</span>
+                </div>
+                <div class="webhook-list">
+                    <div class="webhook-item">
+                        <span class="webhook-method method-post">POST</span>
+                        <span class="webhook-url">/webhook/ghl/invoice</span>
+                        <span class="webhook-time">2s ago</span>
+                    </div>
+                    <div class="webhook-item">
+                        <span class="webhook-method method-post">POST</span>
+                        <span class="webhook-url">/webhook/ghl/contact</span>
+                        <span class="webhook-time">15s ago</span>
+                    </div>
+                    <div class="webhook-item">
+                        <span class="webhook-method method-get">GET</span>
+                        <span class="webhook-url">/api/qb/sync-status</span>
+                        <span class="webhook-time">32s ago</span>
+                    </div>
+                    <div class="webhook-item">
+                        <span class="webhook-method method-post">POST</span>
+                        <span class="webhook-url">/webhook/ghl/payment</span>
+                        <span class="webhook-time">1m ago</span>
+                    </div>
+                    <div class="webhook-item">
+                        <span class="webhook-method method-post">POST</span>
+                        <span class="webhook-url">/webhook/ghl/invoice</span>
+                        <span class="webhook-time">2m ago</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">⚠️ Error Handling</span>
+                    <span class="status-badge status-error">3 Issues</span>
+                </div>
+                <div class="error-panel">
+                    <div class="error-header">
+                        <div class="error-icon">⚠️</div>
+                        <div>
+                            <div class="error-title">Duplicate Entry Detected</div>
+                            <div class="error-detail">Invoice #INV-2847 already exists in QB</div>
+                        </div>
+                    </div>
+                    <div style="background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; font-family: monospace; font-size: 0.8rem; margin-bottom: 15px;">
+                        <span style="color: #ef4444;">Error:</span> QuickBooks API returned 409 Conflict<br>
+                        <span style="color: #71717a;">Resolution: Auto-merge enabled</span>
+                    </div>
+                    <div class="error-actions">
+                        <button class="btn btn-primary" onclick="resolveError()">Auto-Resolve</button>
+                        <button class="btn btn-secondary">View Details</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title">📒 Recent Ledger Entries</span>
+                <span style="color: #71717a; font-size: 0.8rem;">CRM → Accounting Sync</span>
+            </div>
+            <table class="ledger-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Description</th>
+                        <th>GHL ID</th>
+                        <th>QB ID</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2024-01-15</td>
+                        <td>Invoice Payment - ABC Corp</td>
+                        <td>GHL-28471</td>
+                        <td>QB-9284</td>
+                        <td class="amount-positive">+$2,500.00</td>
+                        <td><span class="status-badge status-live">Synced</span></td>
+                    </tr>
+                    <tr>
+                        <td>2024-01-15</td>
+                        <td>New Invoice - XYZ Ltd</td>
+                        <td>GHL-28472</td>
+                        <td>QB-9285</td>
+                        <td class="amount-positive">+$1,750.00</td>
+                        <td><span class="status-badge status-live">Synced</span></td>
+                    </tr>
+                    <tr>
+                        <td>2024-01-14</td>
+                        <td>Refund - Smith Co</td>
+                        <td>GHL-28468</td>
+                        <td>QB-9281</td>
+                        <td class="amount-negative">-$350.00</td>
+                        <td><span class="status-badge status-live">Synced</span></td>
+                    </tr>
+                    <tr>
+                        <td>2024-01-14</td>
+                        <td>Invoice Payment - Tech Inc</td>
+                        <td>GHL-28465</td>
+                        <td>—</td>
+                        <td class="amount-positive">+$4,200.00</td>
+                        <td><span class="status-badge status-syncing">Pending</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function resolveError() {
+            const btn = event.target;
+            btn.textContent = 'Resolving...';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.textContent = '✓ Resolved';
+                btn.style.background = '#00d4aa';
+            }, 1500);
+        }
+
+        // Simulate real-time updates
+        setInterval(() => {
+            const times = document.querySelectorAll('.webhook-time');
+            times.forEach(t => {
+                const current = t.textContent;
+                if (current.includes('s ago')) {
+                    const val = parseInt(current) + 1;
+                    if (val >= 60) {
+                        t.textContent = '1m ago';
+                    } else {
+                        t.textContent = val + 's ago';
+                    }
+                }
+            });
+        }, 1000);
+    </script>
+</body>
+</html>

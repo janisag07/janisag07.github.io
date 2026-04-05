@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Pipeline — Document Q&A with AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(180deg, #fafafa 0%, #f4f4f5 100%);
+            min-height: 100vh;
+            color: #18181b;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .subtitle { color: #71717a; font-size: 1.1rem; }
+        .pipeline-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        .pipeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .pipeline-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 2px solid #e4e4e7;
+        }
+        .pipeline-icon.active {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.2);
+        }
+        .pipeline-label { font-size: 0.8rem; color: #71717a; }
+        .pipeline-arrow { color: #d4d4d8; font-size: 20px; }
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 25px;
+        }
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+        }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border: 1px solid #e4e4e7;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .upload-zone {
+            border: 2px dashed #d4d4d8;
+            border-radius: 16px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        .upload-zone:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .upload-text { color: #71717a; }
+        .document-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .document-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background: #f4f4f5;
+            border-radius: 12px;
+            transition: all 0.3s;
+        }
+        .document-item:hover { background: #e4e4e7; }
+        .doc-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        .doc-pdf { background: #fecaca; }
+        .doc-txt { background: #bfdbfe; }
+        .doc-md { background: #d9f99d; }
+        .doc-info { flex: 1; }
+        .doc-name { font-weight: 500; font-size: 0.9rem; }
+        .doc-meta { font-size: 0.75rem; color: #71717a; }
+        .doc-status {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .status-indexed { background: #bbf7d0; color: #166534; }
+        .status-processing { background: #fef08a; color: #854d0e; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .stat-item {
+            background: #f4f4f5;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value { font-size: 1.5rem; font-weight: 700; color: #3b82f6; }
+        .stat-label { font-size: 0.75rem; color: #71717a; margin-top: 4px; }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .message {
+            display: flex;
+            gap: 12px;
+        }
+        .message.user { flex-direction: row-reverse; }
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .avatar-user { background: linear-gradient(135deg, #3b82f6, #8b5cf6); color: white; }
+        .avatar-ai { background: linear-gradient(135deg, #10b981, #34d399); color: white; }
+        .message-content {
+            max-width: 80%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message-bubble {
+            padding: 14px 18px;
+            border-radius: 16px;
+            line-height: 1.5;
+        }
+        .user .message-bubble {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .ai .message-bubble {
+            background: #f4f4f5;
+            border-bottom-left-radius: 4px;
+        }
+        .retrieved-chunks {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 0.85rem;
+        }
+        .chunks-header {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #92400e;
+        }
+        .chunk-item {
+            background: white;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid #f59e0b;
+        }
+        .chunk-item:last-child { margin-bottom: 0; }
+        .chunk-source {
+            font-size: 0.7rem;
+            color: #92400e;
+            margin-top: 6px;
+        }
+        .similarity-score {
+            display: inline-block;
+            background: #fef3c7;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #92400e;
+        }
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+            padding-top: 20px;
+            border-top: 1px solid #e4e4e7;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid #e4e4e7;
+            border-radius: 14px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        .chat-input:focus { border-color: #3b82f6; }
+        .send-btn {
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .send-btn:hover { transform: scale(1.05); }
+        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .typing-indicator {
+            display: flex;
+            gap: 4px;
+            padding: 15px;
+        }
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #a1a1aa;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+        .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔍 RAG Pipeline</h1>
+            <p class="subtitle">Retrieval-Augmented Generation for Document Q&A</p>
+        </header>
+
+        <div class="pipeline-visual">
+            <div class="pipeline-step">
+                <div class="pipeline-icon active">📄</div>
+                <span class="pipeline-label">Documents</span>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-step">
+                <div class="pipeline-icon active">✂️</div>
+                <span class="pipeline-label">Chunking</span>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-step">
+                <div class="pipeline-icon active">🧮</div>
+                <span class="pipeline-label">Embeddings</span>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-step">
+                <div class="pipeline-icon active">🗄️</div>
+                <span class="pipeline-label">Vector DB</span>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-step">
+                <div class="pipeline-icon active">🔎</div>
+                <span class="pipeline-label">Retrieval</span>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-step">
+                <div class="pipeline-icon active">🤖</div>
+                <span class="pipeline-label">LLM</span>
+            </div>
+        </div>
+
+        <div class="main-grid">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📁 Document Store</span>
+                </div>
+                <div class="upload-zone" onclick="addDocument()">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">Drop documents here</div>
+                    <div class="upload-text" style="font-size: 0.8rem;">PDF, TXT, MD, DOCX</div>
+                </div>
+                <div class="document-list" id="documentList">
+                    <div class="document-item">
+                        <div class="doc-icon doc-pdf">📕</div>
+                        <div class="doc-info">
+                            <div class="doc-name">company_handbook.pdf</div>
+                            <div class="doc-meta">2.4 MB • 48 pages • 156 chunks</div>
+                        </div>
+                        <div class="doc-status status-indexed">✓</div>
+                    </div>
+                    <div class="document-item">
+                        <div class="doc-icon doc-pdf">📕</div>
+                        <div class="doc-info">
+                            <div class="doc-name">product_specs.pdf</div>
+                            <div class="doc-meta">1.8 MB • 32 pages • 98 chunks</div>
+                        </div>
+                        <div class="doc-status status-indexed">✓</div>
+                    </div>
+                    <div class="document-item">
+                        <div class="doc-icon doc-md">📗</div>
+                        <div class="doc-info">
+                            <div class="doc-name">API_documentation.md</div>
+                            <div class="doc-meta">340 KB • 89 chunks</div>
+                        </div>
+                        <div class="doc-status status-indexed">✓</div>
+                    </div>
+                    <div class="document-item">
+                        <div class="doc-icon doc-txt">📘</div>
+                        <div class="doc-info">
+                            <div class="doc-name">meeting_notes.txt</div>
+                            <div class="doc-meta">45 KB • 23 chunks</div>
+                        </div>
+                        <div class="doc-status status-processing">⟳</div>
+                    </div>
+                </div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value">4</div>
+                        <div class="stat-label">Documents</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">366</div>
+                        <div class="stat-label">Chunks</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">1536</div>
+                        <div class="stat-label">Vector Dim</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">Pinecone</div>
+                        <div class="stat-label">Vector DB</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">💬 Ask Your Documents</span>
+                </div>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai">
+                            <div class="message-avatar avatar-ai">🤖</div>
+                            <div class="message-content">
+                                <div class="message-bubble">
+                                    Hello! I'm your RAG assistant. I can answer questions about your uploaded documents. What would you like to know?
+                                </div>
+                            </div>
+                        </div>
+                        <div class="message user">
+                            <div class="message-avatar avatar-user">👤</div>
+                            <div class="message-content">
+                                <div class="message-bubble">
+                                    What is the company's remote work policy?
+                                </div>
+                            </div>
+                        </div>
+                        <div class="message ai">
+                            <div class="message-avatar avatar-ai">🤖</div>
+                            <div class="message-content">
+                                <div class="retrieved-chunks">
+                                    <div class="chunks-header">📚 Retrieved Chunks (3)</div>
+                                    <div class="chunk-item">
+                                        "Employees may work remotely up to 3 days per week with manager approval. Remote work arrangements must be documented..."
+                                        <div class="chunk-source">
+                                            <span class="similarity-score">0.94</span> company_handbook.pdf, p.24
+                                        </div>
+                                    </div>
+                                    <div class="chunk-item">
+                                        "Remote workers must maintain core hours (10am-3pm local time) for team collaboration and meetings..."
+                                        <div class="chunk-source">
+                                            <span class="similarity-score">0.89</span> company_handbook.pdf, p.25
+                                        </div>
+                                    </div>
+                                    <div class="chunk-item">
+                                        "Equipment allowance of $500 is provided for home office setup for full-time remote employees..."
+                                        <div class="chunk-source">
+                                            <span class="similarity-score">0.82</span> company_handbook.pdf, p.26
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="message-bubble">
+                                    Based on the company handbook, the remote work policy includes:
+
+                                    <strong>Flexibility:</strong> Employees can work remotely up to 3 days per week with manager approval.
+
+                                    <strong>Core Hours:</strong> Remote workers must be available 10am-3pm local time for collaboration.
+
+                                    <strong>Equipment:</strong> A $500 allowance is provided for home office setup for full-time remote employees.
+
+                                    Would you like more details about any specific aspect?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="chatInput" placeholder="Ask a question about your documents..." onkeypress="if(event.key==='Enter')sendMessage()">
+                        <button class="send-btn" onclick="sendMessage()">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+
+        const sampleResponses = [
+            {
+                chunks: [
+                    { text: "The API supports RESTful endpoints with OAuth 2.0 authentication...", source: "API_documentation.md", score: 0.91 },
+                    { text: "Rate limits are set at 1000 requests per minute per API key...", source: "API_documentation.md", score: 0.87 }
+                ],
+                answer: "The API uses OAuth 2.0 authentication and supports standard REST endpoints. Rate limits are 1000 requests/minute per API key."
+            },
+            {
+                chunks: [
+                    { text: "Product launch scheduled for Q2 2024 with initial focus on enterprise customers...", source: "meeting_notes.txt", score: 0.88 },
+                    { text: "Key features include: real-time sync, advanced analytics, custom integrations...", source: "product_specs.pdf", score: 0.85 }
+                ],
+                answer: "The product launch is planned for Q2 2024, targeting enterprise customers first. Key features include real-time sync, advanced analytics, and custom integrations."
+            },
+            {
+                chunks: [
+                    { text: "Support tickets should be submitted through the internal portal...", source: "company_handbook.pdf", score: 0.86 },
+                    { text: "Emergency contacts for IT support: helpdesk@company.com...", source: "company_handbook.pdf", score: 0.79 }
+                ],
+                answer: "For IT support, submit tickets through the internal portal. For emergencies, contact helpdesk@company.com directly."
+            }
+        ];
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user';
+            userMsg.innerHTML = `
+                <div class="message-avatar avatar-user">👤</div>
+                <div class="message-content">
+                    <div class="message-bubble">${text}</div>
+                </div>
+            `;
+            chatMessages.appendChild(userMsg);
+            chatInput.value = '';
+
+            // Add typing indicator
+            const typing = document.createElement('div');
+            typing.className = 'message ai';
+            typing.id = 'typing';
+            typing.innerHTML = `
+                <div class="message-avatar avatar-ai">🤖</div>
+                <div class="message-content">
+                    <div class="message-bubble">
+                        <div class="typing-indicator">
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                            <div class="typing-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(typing);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            // Simulate response
+            setTimeout(() => {
+                typing.remove();
+                const response = sampleResponses[Math.floor(Math.random() * sampleResponses.length)];
+                
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai';
+                
+                let chunksHtml = response.chunks.map(c => `
+                    <div class="chunk-item">
+                        "${c.text}"
+                        <div class="chunk-source">
+                            <span class="similarity-score">${c.score.toFixed(2)}</span> ${c.source}
+                        </div>
+                    </div>
+                `).join('');
+
+                aiMsg.innerHTML = `
+                    <div class="message-avatar avatar-ai">🤖</div>
+                    <div class="message-content">
+                        <div class="retrieved-chunks">
+                            <div class="chunks-header">📚 Retrieved Chunks (${response.chunks.length})</div>
+                            ${chunksHtml}
+                        </div>
+                        <div class="message-bubble">${response.answer}</div>
+                    </div>
+                `;
+                chatMessages.appendChild(aiMsg);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1500);
+        }
+
+        function addDocument() {
+            const list = document.getElementById('documentList');
+            const names = ['quarterly_report.pdf', 'user_guide.pdf', 'faq.md', 'changelog.txt'];
+            const name = names[Math.floor(Math.random() * names.length)];
+            const icon = name.endsWith('.pdf') ? 'doc-pdf' : name.endsWith('.md') ? 'doc-md' : 'doc-txt';
+            const emoji = name.endsWith('.pdf') ? '📕' : name.endsWith('.md') ? '📗' : '📘';
+            
+            const item = document.createElement('div');
+            item.className = 'document-item';
+            item.innerHTML = `
+                <div class="doc-icon ${icon}">${emoji}</div>
+                <div class="doc-info">
+                    <div class="doc-name">${name}</div>
+                    <div class="doc-meta">Indexing...</div>
+                </div>
+                <div class="doc-status status-processing">⟳</div>
+            `;
+            list.appendChild(item);
+
+            setTimeout(() => {
+                item.querySelector('.doc-meta').textContent = `${(Math.random() * 2 + 0.5).toFixed(1)} MB • ${Math.floor(Math.random() * 50 + 20)} chunks`;
+                item.querySelector('.doc-status').className = 'doc-status status-indexed';
+                item.querySelector('.doc-status').textContent = '✓';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quant Trading — ML Strategy Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0d0d0d;
+            color: #e4e4e7;
+            min-height: 100vh;
+        }
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        h1 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .live-badge {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #ef4444;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+        .time-btn {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #a1a1aa;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .time-btn:hover, .time-btn.active {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            color: #10b981;
+        }
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .metric-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        .metric-label {
+            color: #71717a;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        .metric-value.positive { color: #10b981; }
+        .metric-value.negative { color: #ef4444; }
+        .metric-value.neutral { color: #60a5fa; }
+        .metric-change {
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+        .change-up { color: #10b981; }
+        .change-down { color: #ef4444; }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        @media (max-width: 1000px) {
+            .grid-2col { grid-template-columns: 1fr; }
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 25px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+        .chart-container {
+            height: 300px;
+            position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .equity-curve {
+            position: relative;
+            height: 100%;
+            padding: 20px;
+        }
+        .equity-line {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            height: calc(100% - 40px);
+        }
+        .equity-line svg {
+            width: 100%;
+            height: 100%;
+        }
+        .chart-grid {
+            position: absolute;
+            inset: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .grid-line {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+        }
+        .grid-label {
+            position: absolute;
+            right: 100%;
+            margin-right: 10px;
+            font-size: 0.7rem;
+            color: #52525b;
+        }
+        .indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        .indicator-item {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        .indicator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .indicator-name {
+            font-size: 0.85rem;
+            color: #a1a1aa;
+        }
+        .indicator-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .signal-badge {
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+        .signal-buy { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .signal-sell { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .signal-hold { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        .mini-chart {
+            height: 40px;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+        }
+        .mini-bar {
+            flex: 1;
+            background: linear-gradient(to top, #10b981, #34d399);
+            border-radius: 2px;
+            transition: height 0.3s;
+        }
+        .mini-bar.negative {
+            background: linear-gradient(to top, #ef4444, #f87171);
+        }
+        .trades-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .trades-table th {
+            text-align: left;
+            padding: 12px;
+            color: #71717a;
+            font-weight: 500;
+            font-size: 0.8rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .trades-table td {
+            padding: 12px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .trade-type {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .type-long { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .type-short { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .pnl-positive { color: #10b981; }
+        .pnl-negative { color: #ef4444; }
+        .strategy-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .strategy-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .strategy-item:last-child { border-bottom: none; }
+        .strategy-label { color: #71717a; }
+        .strategy-value { font-weight: 600; }
+        .ml-model-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .model-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(124, 58, 237, 0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #a78bfa;
+            margin-bottom: 15px;
+        }
+        .model-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+        .model-stat {
+            text-align: center;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        .model-stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #a78bfa;
+        }
+        .model-stat-label {
+            font-size: 0.7rem;
+            color: #71717a;
+            margin-top: 4px;
+        }
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #52525b;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <header>
+            <h1>
+                📈 Quant Trading Dashboard
+                <span class="live-badge"><span class="live-dot"></span> LIVE</span>
+            </h1>
+            <div class="header-controls">
+                <button class="time-btn">1D</button>
+                <button class="time-btn">1W</button>
+                <button class="time-btn active">1M</button>
+                <button class="time-btn">3M</button>
+                <button class="time-btn">1Y</button>
+            </div>
+        </header>
+
+        <div class="metrics-row">
+            <div class="metric-card">
+                <div class="metric-label">Total Return</div>
+                <div class="metric-value positive">+47.3%</div>
+                <div class="metric-change change-up">↑ 2.4% today</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Sharpe Ratio</div>
+                <div class="metric-value neutral">2.34</div>
+                <div class="metric-change" style="color: #71717a;">Risk-adjusted</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Max Drawdown</div>
+                <div class="metric-value negative">-8.7%</div>
+                <div class="metric-change" style="color: #71717a;">Peak to trough</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Win Rate</div>
+                <div class="metric-value positive">68.4%</div>
+                <div class="metric-change change-up">↑ 284/415 trades</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Sortino Ratio</div>
+                <div class="metric-value neutral">3.12</div>
+                <div class="metric-change" style="color: #71717a;">Downside risk</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Profit Factor</div>
+                <div class="metric-value positive">2.41</div>
+                <div class="metric-change" style="color: #71717a;">Gross P / Gross L</div>
+            </div>
+        </div>
+
+        <div class="grid-2col">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📊 Equity Curve (Backtest + Live)</span>
+                    <span style="color: #71717a; font-size: 0.85rem;">Jan 2024 - Present</span>
+                </div>
+                <div class="chart-container">
+                    <div class="equity-curve">
+                        <div class="chart-grid">
+                            <div class="grid-line"><span class="grid-label">$150K</span></div>
+                            <div class="grid-line"><span class="grid-label">$140K</span></div>
+                            <div class="grid-line"><span class="grid-label">$130K</span></div>
+                            <div class="grid-line"><span class="grid-label">$120K</span></div>
+                            <div class="grid-line"><span class="grid-label">$110K</span></div>
+                            <div class="grid-line"><span class="grid-label">$100K</span></div>
+                        </div>
+                        <div class="equity-line">
+                            <svg viewBox="0 0 400 200" preserveAspectRatio="none">
+                                <defs>
+                                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" style="stop-color:#10b981"/>
+                                        <stop offset="100%" style="stop-color:#34d399"/>
+                                    </linearGradient>
+                                    <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.3"/>
+                                        <stop offset="100%" style="stop-color:#10b981;stop-opacity:0"/>
+                                    </linearGradient>
+                                </defs>
+                                <path d="M0,180 L20,170 L40,165 L60,155 L80,140 L100,145 L120,130 L140,120 L160,115 L180,100 L200,95 L220,85 L240,90 L260,75 L280,70 L300,55 L320,50 L340,40 L360,35 L380,25 L400,20 L400,200 L0,200 Z" 
+                                      fill="url(#areaGradient)"/>
+                                <path d="M0,180 L20,170 L40,165 L60,155 L80,140 L100,145 L120,130 L140,120 L160,115 L180,100 L200,95 L220,85 L240,90 L260,75 L280,70 L300,55 L320,50 L340,40 L360,35 L380,25 L400,20" 
+                                      fill="none" stroke="url(#lineGradient)" stroke-width="3"/>
+                                <circle cx="400" cy="20" r="5" fill="#10b981"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">📐 Momentum Indicators</span>
+                </div>
+                <div class="indicators-grid">
+                    <div class="indicator-item">
+                        <div class="indicator-header">
+                            <span class="indicator-name">RSI (14)</span>
+                            <span class="signal-badge signal-buy">BUY</span>
+                        </div>
+                        <div class="indicator-value">58.4</div>
+                        <div class="mini-chart">
+                            <div class="mini-bar" style="height: 45%"></div>
+                            <div class="mini-bar" style="height: 52%"></div>
+                            <div class="mini-bar" style="height: 48%"></div>
+                            <div class="mini-bar" style="height: 55%"></div>
+                            <div class="mini-bar" style="height: 62%"></div>
+                            <div class="mini-bar" style="height: 58%"></div>
+                        </div>
+                    </div>
+                    <div class="indicator-item">
+                        <div class="indicator-header">
+                            <span class="indicator-name">MACD</span>
+                            <span class="signal-badge signal-buy">BULLISH</span>
+                        </div>
+                        <div class="indicator-value">+12.5</div>
+                        <div class="mini-chart">
+                            <div class="mini-bar negative" style="height: 20%"></div>
+                            <div class="mini-bar negative" style="height: 15%"></div>
+                            <div class="mini-bar" style="height: 25%"></div>
+                            <div class="mini-bar" style="height: 40%"></div>
+                            <div class="mini-bar" style="height: 55%"></div>
+                            <div class="mini-bar" style="height: 70%"></div>
+                        </div>
+                    </div>
+                    <div class="indicator-item">
+                        <div class="indicator-header">
+                            <span class="indicator-name">ADX</span>
+                            <span class="signal-badge signal-hold">TREND</span>
+                        </div>
+                        <div class="indicator-value">34.2</div>
+                        <div class="mini-chart">
+                            <div class="mini-bar" style="height: 60%"></div>
+                            <div class="mini-bar" style="height: 65%"></div>
+                            <div class="mini-bar" style="height: 58%"></div>
+                            <div class="mini-bar" style="height: 70%"></div>
+                            <div class="mini-bar" style="height: 68%"></div>
+                            <div class="mini-bar" style="height: 72%"></div>
+                        </div>
+                    </div>
+                    <div class="indicator-item">
+                        <div class="indicator-header">
+                            <span class="indicator-name">Stochastic</span>
+                            <span class="signal-badge signal-sell">OVERBOUGHT</span>
+                        </div>
+                        <div class="indicator-value">78.6</div>
+                        <div class="mini-chart">
+                            <div class="mini-bar" style="height: 55%"></div>
+                            <div class="mini-bar" style="height: 65%"></div>
+                            <div class="mini-bar" style="height: 72%"></div>
+                            <div class="mini-bar" style="height: 80%"></div>
+                            <div class="mini-bar" style="height: 85%"></div>
+                            <div class="mini-bar" style="height: 78%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2col">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">💹 Recent Trades</span>
+                    <span style="color: #71717a; font-size: 0.85rem;">Last 24h</span>
+                </div>
+                <table class="trades-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Symbol</th>
+                            <th>Type</th>
+                            <th>Entry</th>
+                            <th>Exit</th>
+                            <th>P&L</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>14:32</td>
+                            <td>BTC/USD</td>
+                            <td><span class="trade-type type-long">LONG</span></td>
+                            <td>$42,150</td>
+                            <td>$42,890</td>
+                            <td class="pnl-positive">+$1,480</td>
+                        </tr>
+                        <tr>
+                            <td>12:15</td>
+                            <td>ETH/USD</td>
+                            <td><span class="trade-type type-short">SHORT</span></td>
+                            <td>$2,340</td>
+                            <td>$2,295</td>
+                            <td class="pnl-positive">+$900</td>
+                        </tr>
+                        <tr>
+                            <td>09:45</td>
+                            <td>SOL/USD</td>
+                            <td><span class="trade-type type-long">LONG</span></td>
+                            <td>$98.50</td>
+                            <td>$96.20</td>
+                            <td class="pnl-negative">-$460</td>
+                        </tr>
+                        <tr>
+                            <td>08:20</td>
+                            <td>BTC/USD</td>
+                            <td><span class="trade-type type-long">LONG</span></td>
+                            <td>$41,800</td>
+                            <td>$42,150</td>
+                            <td class="pnl-positive">+$700</td>
+                        </tr>
+                        <tr>
+                            <td>06:55</td>
+                            <td>AVAX/USD</td>
+                            <td><span class="trade-type type-short">SHORT</span></td>
+                            <td>$38.20</td>
+                            <td>$37.45</td>
+                            <td class="pnl-positive">+$375</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">⚙️ Strategy Parameters</span>
+                </div>
+                <div class="strategy-info">
+                    <div class="strategy-item">
+                        <span class="strategy-label">Strategy</span>
+                        <span class="strategy-value">Momentum + Mean Reversion</span>
+                    </div>
+                    <div class="strategy-item">
+                        <span class="strategy-label">Timeframe</span>
+                        <span class="strategy-value">15m / 1h / 4h</span>
+                    </div>
+                    <div class="strategy-item">
+                        <span class="strategy-label">Position Size</span>
+                        <span class="strategy-value">2% Risk / Trade</span>
+                    </div>
+                    <div class="strategy-item">
+                        <span class="strategy-label">Stop Loss</span>
+                        <span class="strategy-value">ATR × 2.0</span>
+                    </div>
+                    <div class="strategy-item">
+                        <span class="strategy-label">Take Profit</span>
+                        <span class="strategy-value">ATR × 3.5</span>
+                    </div>
+                </div>
+                <div class="ml-model-section">
+                    <div class="model-badge">🧠 ML Model: LSTM + Transformer Ensemble</div>
+                    <div class="model-stats">
+                        <div class="model-stat">
+                            <div class="model-stat-value">94.2%</div>
+                            <div class="model-stat-label">Accuracy</div>
+                        </div>
+                        <div class="model-stat">
+                            <div class="model-stat-value">0.91</div>
+                            <div class="model-stat-label">F1 Score</div>
+                        </div>
+                        <div class="model-stat">
+                            <div class="model-stat-value">1.2M</div>
+                            <div class="model-stat-label">Parameters</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            Quant Trading Dashboard — Demo for Upwork Proposal<br>
+            <span style="font-size: 0.75rem;">Not financial advice. Past performance ≠ future results.</span>
+        </footer>
+    </div>
+
+    <script>
+        // Time button interaction
+        document.querySelectorAll('.time-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Simulate live updates
+        setInterval(() => {
+            const values = document.querySelectorAll('.indicator-value');
+            values.forEach(v => {
+                const current = parseFloat(v.textContent.replace(/[+$,]/g, ''));
+                const change = (Math.random() - 0.5) * 2;
+                v.textContent = (current + change).toFixed(1);
+            });
+        }, 3000);
+    </script>
+</body>
+</html>

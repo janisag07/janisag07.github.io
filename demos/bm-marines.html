@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BM Marines — Professional Boat Services</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0c1929;
+            color: #e4e4e7;
+            min-height: 100vh;
+        }
+        .hero {
+            background: linear-gradient(135deg, rgba(12, 25, 41, 0.95), rgba(12, 25, 41, 0.8)),
+                        linear-gradient(180deg, #1e3a5f 0%, #0c1929 100%);
+            padding: 60px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="%23ffffff10"/></svg>');
+            background-size: 50px 50px;
+            opacity: 0.3;
+        }
+        .logo {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .logo span { color: #00a8e8; }
+        .tagline {
+            color: #a1a1aa;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        .hero-cta {
+            display: inline-block;
+            background: linear-gradient(135deg, #00a8e8, #0077b6);
+            color: white;
+            padding: 16px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .hero-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(0, 168, 232, 0.3);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+        .section-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+        .service-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+        .service-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 168, 232, 0.3);
+            box-shadow: 0 20px 40px rgba(0, 168, 232, 0.1);
+        }
+        .service-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+        .service-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        .service-desc { color: #a1a1aa; line-height: 1.6; }
+        .lead-form-section {
+            background: linear-gradient(135deg, rgba(0, 168, 232, 0.1), rgba(0, 119, 182, 0.1));
+            border-radius: 24px;
+            padding: 50px 30px;
+            margin-bottom: 60px;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        label {
+            font-size: 0.9rem;
+            color: #a1a1aa;
+        }
+        input, select, textarea {
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus, textarea:focus {
+            border-color: #00a8e8;
+        }
+        textarea { resize: vertical; min-height: 100px; }
+        select { cursor: pointer; }
+        select option { background: #0c1929; }
+        .submit-btn {
+            background: linear-gradient(135deg, #00a8e8, #0077b6);
+            color: white;
+            padding: 16px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s;
+            width: 100%;
+        }
+        .submit-btn:hover { transform: translateY(-2px); }
+        .chat-widget {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+        .chat-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00a8e8, #0077b6);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0, 168, 232, 0.4);
+            transition: transform 0.3s;
+        }
+        .chat-toggle:hover { transform: scale(1.1); }
+        .chat-window {
+            position: absolute;
+            bottom: 75px;
+            right: 0;
+            width: 350px;
+            max-width: 90vw;
+            background: #1a2a3a;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+            display: none;
+        }
+        .chat-window.open { display: block; animation: slideUp 0.3s ease; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .chat-header {
+            background: linear-gradient(135deg, #00a8e8, #0077b6);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .chat-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .chat-header-info h3 { font-size: 1rem; }
+        .chat-header-info span { font-size: 0.8rem; opacity: 0.8; }
+        .chat-messages {
+            height: 300px;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .chat-msg {
+            max-width: 85%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            line-height: 1.4;
+        }
+        .chat-msg.bot {
+            background: rgba(255, 255, 255, 0.1);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-msg.user {
+            background: linear-gradient(135deg, #00a8e8, #0077b6);
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-input-area {
+            padding: 15px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 10px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            outline: none;
+        }
+        .chat-send {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00a8e8, #0077b6);
+            border: none;
+            color: white;
+            cursor: pointer;
+        }
+        .quick-replies {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 15px 15px;
+        }
+        .quick-reply {
+            padding: 8px 16px;
+            background: rgba(0, 168, 232, 0.2);
+            border: 1px solid rgba(0, 168, 232, 0.3);
+            border-radius: 20px;
+            color: #00a8e8;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .quick-reply:hover {
+            background: rgba(0, 168, 232, 0.3);
+        }
+        .dashboard-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+        }
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .dashboard-title {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .log-table th {
+            text-align: left;
+            padding: 12px;
+            color: #a1a1aa;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .log-table td {
+            padding: 15px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-completed { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-pending { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+        .status-scheduled { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .boat-icon { font-size: 1.2rem; }
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #71717a;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        @media (max-width: 768px) {
+            .logo { font-size: 2rem; }
+            .tagline { font-size: 1rem; }
+            .chat-window { width: calc(100vw - 40px); right: -10px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="logo">BM <span>Marines</span></div>
+        <p class="tagline">Professional Boat Maintenance & Marine Services</p>
+        <a href="#contact" class="hero-cta">Get Free Quote</a>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">Our Services</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <div class="service-icon">🔧</div>
+                <h3 class="service-title">Engine Service</h3>
+                <p class="service-desc">Complete engine diagnostics, repairs, and maintenance for all marine engines. Certified technicians.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🎨</div>
+                <h3 class="service-title">Hull & Paint</h3>
+                <p class="service-desc">Professional hull cleaning, antifouling, and custom paint jobs. Keep your boat looking pristine.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">⚡</div>
+                <h3 class="service-title">Electronics</h3>
+                <p class="service-desc">Navigation systems, radar, fish finders, and electrical system installation & repair.</p>
+            </div>
+            <div class="service-card">
+                <div class="service-icon">🏠</div>
+                <h3 class="service-title">Winter Storage</h3>
+                <p class="service-desc">Secure indoor and outdoor storage with optional winterization services.</p>
+            </div>
+        </div>
+
+        <div class="lead-form-section" id="contact">
+            <h2 class="section-title" style="margin-bottom: 30px;">Request Service Quote</h2>
+            <form class="form-grid" id="leadForm" onsubmit="submitForm(event)">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" required placeholder="John Smith">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number *</label>
+                    <input type="tel" required placeholder="(555) 123-4567">
+                </div>
+                <div class="form-group">
+                    <label>Email Address *</label>
+                    <input type="email" required placeholder="john@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Boat Type</label>
+                    <select>
+                        <option>Select boat type...</option>
+                        <option>Sailboat</option>
+                        <option>Motorboat</option>
+                        <option>Yacht</option>
+                        <option>Fishing Boat</option>
+                        <option>Pontoon</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Service Needed</label>
+                    <select>
+                        <option>Select service...</option>
+                        <option>Engine Service</option>
+                        <option>Hull & Paint</option>
+                        <option>Electronics</option>
+                        <option>Winter Storage</option>
+                        <option>Full Inspection</option>
+                        <option>Emergency Repair</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Preferred Date</label>
+                    <input type="date">
+                </div>
+                <div class="form-group full-width">
+                    <label>Additional Details</label>
+                    <textarea placeholder="Describe your boat and the service you need..."></textarea>
+                </div>
+                <div class="form-group full-width">
+                    <button type="submit" class="submit-btn">Submit Request</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="dashboard-section">
+            <div class="dashboard-header">
+                <h3 class="dashboard-title">📋 Service Dashboard Preview</h3>
+                <span style="color: #a1a1aa; font-size: 0.9rem;">Recent Activity</span>
+            </div>
+            <table class="log-table">
+                <thead>
+                    <tr>
+                        <th>Boat</th>
+                        <th>Owner</th>
+                        <th>Service</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="boat-icon">⛵</span> Sea Breeze 42</td>
+                        <td>Mike Johnson</td>
+                        <td>Engine Overhaul</td>
+                        <td>Jan 15, 2024</td>
+                        <td><span class="status-badge status-completed">Completed</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="boat-icon">🚤</span> Wave Runner</td>
+                        <td>Sarah Davis</td>
+                        <td>Hull Cleaning</td>
+                        <td>Jan 16, 2024</td>
+                        <td><span class="status-badge status-pending">In Progress</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="boat-icon">🛥️</span> Ocean Queen</td>
+                        <td>Robert Chen</td>
+                        <td>Electronics Install</td>
+                        <td>Jan 18, 2024</td>
+                        <td><span class="status-badge status-scheduled">Scheduled</span></td>
+                    </tr>
+                    <tr>
+                        <td><span class="boat-icon">⛵</span> Wind Dancer</td>
+                        <td>Emily White</td>
+                        <td>Winter Storage</td>
+                        <td>Jan 20, 2024</td>
+                        <td><span class="status-badge status-scheduled">Scheduled</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="chat-widget">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-avatar">🤖</div>
+                <div class="chat-header-info">
+                    <h3>BM Marines Assistant</h3>
+                    <span>● Online now</span>
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-msg bot">
+                    Ahoy! 👋 I'm your BM Marines assistant. How can I help you today?
+                </div>
+            </div>
+            <div class="quick-replies">
+                <button class="quick-reply" onclick="sendQuickReply('Get a quote')">Get a quote</button>
+                <button class="quick-reply" onclick="sendQuickReply('Service hours')">Service hours</button>
+                <button class="quick-reply" onclick="sendQuickReply('Emergency repair')">Emergency repair</button>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Type a message..." onkeypress="if(event.key==='Enter')sendChatMsg()">
+                <button class="chat-send" onclick="sendChatMsg()">➤</button>
+            </div>
+        </div>
+        <button class="chat-toggle" onclick="toggleChat()">💬</button>
+    </div>
+
+    <footer>
+        <p>© 2024 BM Marines — Professional Boat Services</p>
+        <p style="margin-top: 10px; font-size: 0.85rem;">Demo created for Upwork proposal</p>
+    </footer>
+
+    <script>
+        const chatWindow = document.getElementById('chatWindow');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+
+        function toggleChat() {
+            chatWindow.classList.toggle('open');
+        }
+
+        function sendChatMsg() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            addChatMsg(text, 'user');
+            chatInput.value = '';
+            setTimeout(() => respondToChat(text), 1000);
+        }
+
+        function sendQuickReply(text) {
+            addChatMsg(text, 'user');
+            setTimeout(() => respondToChat(text), 1000);
+        }
+
+        function addChatMsg(text, type) {
+            const msg = document.createElement('div');
+            msg.className = `chat-msg ${type}`;
+            msg.textContent = text;
+            chatMessages.appendChild(msg);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function respondToChat(userMsg) {
+            const responses = {
+                'get a quote': "I'd be happy to help you get a quote! Please fill out the form above or tell me:\n1. Your boat type\n2. Service needed\n3. Preferred date",
+                'service hours': "We're open Monday-Saturday, 7 AM - 6 PM. Emergency services available 24/7 with our hotline: (555) 911-BOAT",
+                'emergency repair': "For emergencies, call our 24/7 hotline: (555) 911-BOAT. A technician can be dispatched within 2 hours in most areas."
+            };
+
+            const key = userMsg.toLowerCase();
+            const response = responses[key] || "Thanks for your message! A team member will get back to you shortly. You can also call us at (555) 123-4567 or fill out the quote form above.";
+            addChatMsg(response, 'bot');
+        }
+
+        function submitForm(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.textContent = 'Submitting...';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.textContent = '✓ Request Submitted!';
+                btn.style.background = '#10b981';
+                addChatMsg("Great news! Your service request has been submitted. We'll contact you within 24 hours to confirm your appointment.", 'bot');
+                chatWindow.classList.add('open');
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
