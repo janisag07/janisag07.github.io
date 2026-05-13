@@ -8,3 +8,6 @@
 .section-head{margin-bottom:28px}
 .feature-img{height:280px}
 @media(max-width:900px){.section{padding:54px 0}.section.tight{padding:32px 0}.section-head{margin-bottom:24px}}
+
+/* Location chooser */
+button.pill{font:inherit;cursor:pointer}.text-location{border:0;background:transparent;color:var(--sea);font:inherit;font-weight:900;text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:0}.map-card{border:0;width:100%;cursor:pointer;text-align:left}.location-modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(17,17,15,.52);backdrop-filter:blur(10px)}.location-modal.show{display:flex}.location-dialog{width:min(520px,100%);background:var(--card);border:1px solid var(--line);border-radius:30px;box-shadow:0 30px 90px rgba(0,0,0,.28);padding:28px}.location-dialog h3{font-family:"Playfair Display";font-size:2rem;line-height:1;margin:0 0 10px}.location-dialog p{color:var(--muted);margin:0 0 20px}.location-actions{display:grid;gap:12px}.location-actions .btn{width:100%}.modal-close{margin-top:14px;width:100%;border:0;background:transparent;color:var(--muted);font-weight:850;padding:12px;cursor:pointer}
