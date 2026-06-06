@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI System Unlock Demo</title>
+  <style>
+    :root{--bg:#05060b;--card:#10131d;--card2:#151927;--text:#f5f7ff;--muted:#9aa3bd;--line:#252b3d;--a:#8b5cf6;--b:#22c55e;--c:#38bdf8;--warn:#f59e0b;--danger:#ef4444}*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top left,#25114a 0,#070913 36%,#03040a 100%);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.wrap{max-width:1180px;margin:0 auto;padding:32px 18px 72px}.nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:44px}.logo{font-weight:900;letter-spacing:-.05em;font-size:22px}.pill{font-size:13px;color:#d6dbf2;border:1px solid var(--line);background:rgba(255,255,255,.05);padding:9px 13px;border-radius:999px}.hero{display:grid;grid-template-columns:1fr .9fr;gap:26px;align-items:stretch}.tag{display:inline-flex;border:1px solid rgba(139,92,246,.35);background:rgba(139,92,246,.13);color:#ddd6fe;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:800;margin-bottom:15px}.h1{font-size:58px;line-height:.94;letter-spacing:-.075em;margin:0 0 17px}.grad{background:linear-gradient(90deg,#a78bfa,#22c55e,#38bdf8);-webkit-background-clip:text;background-clip:text;color:transparent}.lead{font-size:18px;line-height:1.62;color:#ccd3e9;margin:0 0 22px}.panel,.card{background:linear-gradient(180deg,rgba(255,255,255,.075),rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 80px rgba(0,0,0,.42);border-radius:28px;padding:23px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}.card{box-shadow:none;background:rgba(16,19,29,.78)}.card h3{margin:0 0 8px;font-size:16px}.card p{margin:0;color:#b8c0d8;line-height:1.48;font-size:14px}.field{display:grid;gap:8px;margin-bottom:12px}label{font-size:13px;color:#d3d8ec;font-weight:750}input,select{width:100%;border:1px solid var(--line);background:#080b13;color:var(--text);border-radius:14px;padding:14px;font-size:15px;outline:none}input:focus,select:focus{border-color:#8b5cf6;box-shadow:0 0 0 4px rgba(139,92,246,.15)}button{border:0;border-radius:16px;background:linear-gradient(90deg,#a78bfa,#22c55e);color:#04110a;font-weight:900;padding:15px 17px;width:100%;cursor:pointer;font-size:15px}.note{font-size:12px;color:var(--muted);line-height:1.5}.results{display:none;margin-top:32px}.scoreRow{display:grid;grid-template-columns:230px 1fr;gap:16px}.score{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:radial-gradient(circle,#132b20,#0b1018);border:1px solid rgba(34,197,94,.35);border-radius:28px;padding:24px}.scoreNum{font-size:68px;font-weight:950;letter-spacing:-.08em;color:#7df3a8}.steps{display:grid;gap:10px}.step{display:flex;gap:12px;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:16px;padding:13px}.dot{width:10px;height:10px;border-radius:50%;background:var(--warn);margin-top:6px;flex:0 0 auto}.locked{position:relative;overflow:hidden;min-height:190px}.locked .blur{filter:blur(4px);opacity:.42}.lockOverlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;background:linear-gradient(180deg,rgba(5,6,11,.35),rgba(5,6,11,.92))}.price{font-size:22px;font-weight:950;color:#86efac;margin-top:4px}.smallBtn{width:auto;padding:11px 14px;margin-top:12px}.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:18px}.tab{padding:12px;border-radius:16px;background:#111827;border:1px solid var(--line);color:#dce3f6;font-weight:850;text-align:center;font-size:13px}.tab.active{background:rgba(139,92,246,.22);border-color:rgba(139,92,246,.55)}.code{background:#070a12;border:1px solid var(--line);border-radius:18px;padding:16px;color:#cbd5e1;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:13px;line-height:1.55;white-space:pre-wrap}.cta{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}.secondary{background:#151927;color:#eef2ff;border:1px solid var(--line)}@media(max-width:880px){.hero,.scoreRow{grid-template-columns:1fr}.h1{font-size:42px}.grid3,.tabs,.cta{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <div class="nav"><div class="logo">AI System Unlock</div><div class="pill">Demo · Testzugriff begrenzt · Vollzugriff bezahlt</div></div>
+  <section class="hero">
+    <div>
+      <div class="tag">Keine Website-Agentur — KI-Systeme für Unternehmen</div>
+      <h1 class="h1">Der Kunde testet ein <span class="grad">fertiges KI-System</span> — aber Vollzugriff bleibt locked.</h1>
+      <p class="lead">Wir bauen pro Branche ein vorkonfiguriertes Claude/GPT-System: Prompts, Rollen, Workflows, Vorlagen, Schritt-für-Schritt Setup und Automationen. Der Kunde sieht live, dass es für sein Unternehmen funktioniert. Voller Blueprint, Export und Einrichtung erst nach Zahlung.</p>
+      <div class="grid3">
+        <div class="card"><h3>1. Branche wählen</h3><p>Restaurant, Clothing Brand, Gym, Handwerker, Versicherung, Pflege usw.</p></div>
+        <div class="card"><h3>2. KI testet Problem</h3><p>Das System erstellt eine echte Vorschau: Analyse, Beispielantwort, Workflow.</p></div>
+        <div class="card"><h3>3. Paid Unlock</h3><p>Setup Guide, Claude-Projekt, Prompts, Templates und Automationen werden bezahlt freigeschaltet.</p></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2 style="margin:0 0 15px;letter-spacing:-.045em">System-Demo starten</h2>
+      <div class="field"><label>Unternehmen / Brand</label><input id="biz" value="CLS Legacy" placeholder="z.B. CLS Legacy"></div>
+      <div class="field"><label>Branche</label><select id="niche"><option>Clothing Brand / Streetwear</option><option>Restaurant / Gastro</option><option>Boxgym / Fitnessstudio</option><option>Handwerker / Servicebetrieb</option><option>Versicherung / Finanzberatung</option></select></div>
+      <div class="field"><label>Hauptproblem</label><select id="pain"><option>Kundenanfragen gehen verloren</option><option>Content & Produkttexte dauern zu lange</option><option>Chaos in DMs / WhatsApp / E-Mail</option><option>Mitarbeiter brauchen bessere Abläufe</option><option>Mehr Leads und Follow-up</option></select></div>
+      <button onclick="runDemo()">Kostenlosen Testzugriff generieren</button>
+      <p class="note">Das ist die erste Live-Demo des Mechanismus. Aktuell simuliert. Nächste Version: echte Claude/OpenAI API + Lead-Speicherung + Stripe Unlock.</p>
+    </div>
+  </section>
+
+  <section id="results" class="results">
+    <div class="scoreRow">
+      <div class="score"><div class="scoreNum" id="score">82</div><small>System Fit Score</small></div>
+      <div class="panel">
+        <h2 style="margin:0 0 12px;letter-spacing:-.04em">Kostenloser Testzugriff für <span id="bizOut">dein Unternehmen</span></h2>
+        <div class="steps" id="preview"></div>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active">Claude Rolle</div><div class="tab active">Workflow</div><div class="tab">Templates locked</div><div class="tab">Automation locked</div>
+    </div>
+
+    <div class="grid3">
+      <div class="card">
+        <h3>Freie Vorschau: KI-Rolle</h3>
+        <div class="code" id="roleBox">Du bist der AI Growth Operator für diese Brand...</div>
+      </div>
+      <div class="card locked">
+        <div class="blur"><h3>Kompletter Claude Setup Guide</h3><p>Projektstruktur, System Prompt, Knowledge Files, Beispiele, Qualitätsregeln, Schritt-für-Schritt Einrichtung.</p><div class="price">299 € Unlock</div></div>
+        <div class="lockOverlay"><strong>🔒 Voller Setup Guide gesperrt</strong><p class="note">Der Kunde sieht, dass es funktioniert — aber bekommt nicht die komplette Einrichtung kostenlos.</p><button class="smallBtn">Guide freischalten</button></div>
+      </div>
+      <div class="card locked">
+        <div class="blur"><h3>Branchen-Preset + Automationen</h3><p>E-Mail/DM Follow-ups, CRM Sheet, Kundenantworten, Angebotstexte, SOPs und Zapier/n8n Blueprint.</p><div class="price">1.500–5.000 € Setup</div></div>
+        <div class="lockOverlay"><strong>🔒 Done-for-you gesperrt</strong><p class="note">Setup, Anpassung und Übergabe nur nach Zahlung/Call.</p><button class="smallBtn">System anfragen</button></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:16px">
+      <h2 style="margin:0 0 8px;letter-spacing:-.04em">So verdient das System Geld</h2>
+      <div class="code">Lead kommt rein → kostenlose KI-Vorschau → Kunde sieht konkreten Nutzen → Vollzugriff ist locked → Zahlung für Guide / Preset / Done-for-you Setup → automatisierte Follow-ups an Opt-in Leads.</div>
+      <div class="cta"><button>Testkunde anlegen</button><button class="secondary">Stripe/Call Unlock verbinden</button></div>
+    </div>
+  </section>
+</main>
+<script>
+function item(text,color='#f59e0b'){return `<div class="step"><span class="dot" style="background:${color}"></span><div>${text}</div></div>`}
+function runDemo(){
+  const biz=document.getElementById('biz').value||'dein Unternehmen';
+  const niche=document.getElementById('niche').value;
+  const pain=document.getElementById('pain').value;
+  document.getElementById('bizOut').textContent=biz;
+  document.getElementById('score').textContent=78+Math.floor(Math.random()*15);
+  let data={
+    'Clothing Brand / Streetwear':[
+      `<b>System-Vorschau:</b> Claude wird als Brand Growth Operator eingerichtet: Drop-Planung, Produkttexte, Captions, DM-Antworten, Waitlist-Follow-up.`,
+      `<b>Konkreter Nutzen:</b> weniger Chaos bei Drops, bessere Texte, schnellere Kundenantworten, klarere Kaufstrecke.`,
+      `<b>Locked:</b> komplette Prompt-Bibliothek, Produkttext-Generator, Drop-Kalender, E-Mail/DM-Sequenzen.`],
+    'Restaurant / Gastro':[
+      `<b>System-Vorschau:</b> Claude wird als Restaurant Ops Assistant eingerichtet: Reservierungen, Menütexte, Bewertungsantworten, Mitarbeiter-SOPs.`,
+      `<b>Konkreter Nutzen:</b> weniger verpasste Anfragen, schnellere Antworten, klare Abläufe für Team und Gäste.`,
+      `<b>Locked:</b> Reservierungs-Workflow, Menü-Update-Guide, Bewertungs- und Social-Templates.`],
+    'Boxgym / Fitnessstudio':[
+      `<b>System-Vorschau:</b> Claude wird als Gym Lead Assistant eingerichtet: Probetraining-Anfragen, Vorqualifizierung, Follow-up, Kursinfos.`,
+      `<b>Konkreter Nutzen:</b> mehr Probetrainings aus Instagram/Website, weniger manuelle Antworten.`,
+      `<b>Locked:</b> Lead-Skripte, Follow-up Automationen, Trainer-SOPs und CRM-Blueprint.`],
+    'Handwerker / Servicebetrieb':[
+      `<b>System-Vorschau:</b> Claude wird als Angebots- und Einsatz-Assistent eingerichtet: Kundenanfragen strukturieren, Angebote vorbereiten, Materialinfos sammeln.`,
+      `<b>Konkreter Nutzen:</b> weniger Rückfragen, schnellere Angebote, sauberere Übergaben.`,
+      `<b>Locked:</b> Anfrageformular, Angebotslogik, Einsatz-Checklisten und Follow-up.`],
+    'Versicherung / Finanzberatung':[
+      `<b>System-Vorschau:</b> Claude wird als Beratungs- und Dokumentationsassistent eingerichtet: Gesprächsvorbereitung, Checklisten, Follow-up, Unterlagen.`,
+      `<b>Konkreter Nutzen:</b> strukturiertere Beratung, weniger vergessene To-dos, bessere Nachfassung.`,
+      `<b>Locked:</b> Beratungs-SOPs, Follow-up Texte, Dokumenten-Checklisten und CRM-Blueprint.`]
+  };
+  document.getElementById('preview').innerHTML=(data[niche]||data['Clothing Brand / Streetwear']).map((x,i)=>item(x,i===1?'#22c55e':'#f59e0b')).join('');
+  document.getElementById('roleBox').textContent=`Du bist der spezialisierte KI-Operator für ${biz}.\nBranche: ${niche}\nHauptproblem: ${pain}\n\nAufgabe:\n1. Erkenne wiederkehrende Arbeitsabläufe.\n2. Erstelle bessere Antworten, SOPs und Follow-ups.\n3. Zeige dem Unternehmen eine kleine Vorschau.\n4. Gib volle Templates und Automationen erst nach bezahltem Unlock frei.`;
+  document.getElementById('results').style.display='block';
+  document.getElementById('results').scrollIntoView({behavior:'smooth'});
+}
+</script>
+</body>
+</html>
