@@ -28,23 +28,23 @@
 </head>
 <body>
 <main class="wrap">
-  <nav class="nav"><div class="logo"><span class="mark"></span>Arceus Operator OS</div><small>Mac mini / MacBook / Windows · Download · Terminal · Abos · Recht</small></nav>
+  <nav class="nav"><div class="logo"><span class="mark"></span>Arceus Operator OS</div><small>Trial · Blueprint · Done-for-you Setup · Wartung</small></nav>
 
   <section class="hero">
     <div>
-      <div class="eyebrow"><span class="pulse"></span>KI-Computer für Unternehmen</div>
-      <h1>Ein übersichtliches <span class="grad">Setup-System</span>, nicht nur eine schöne Seite.</h1>
-      <p class="lead">Der Kunde sieht klar: Was muss er kaufen? Was muss er herunterladen? Welche Terminal-/PowerShell-Befehle braucht er? Welche Dateien entstehen? Welche Regeln schützen ihn und uns?</p>
-      <div class="actions"><a class="btn" href="#builder">Konfigurator öffnen</a><button class="btn ghost" onclick="jumpTo('downloadHelp')">Download-Anleitung ansehen</button></div>
+      <div class="eyebrow"><span class="pulse"></span>14 Tage testbarer KI-Operator</div>
+      <h1>Verwandle dein Business in ein <span class="grad">KI-geführtes Operating System</span>.</h1>
+      <p class="lead">Der Kunde konfiguriert seine Branche, bekommt sofort einen echten Trial-Operator zum Testen und kann danach das volle Blueprint- oder Done-for-you-System freischalten.</p>
+      <div class="actions"><a class="btn" href="#builder">Kostenlosen Trial starten</a><button class="btn ghost" onclick="jumpTo('offer')">Was bekomme ich?</button></div>
       <div class="grid3">
-        <div class="mini"><b>1. Eingaben</b><span>Name, Branche, Gerät, Tools, Regeln, Abos und Freigaben.</span></div>
-        <div class="mini"><b>2. Dateien</b><span>SOUL.md, Setup, Runbook, SOPs, Legal, Kostenplan.</span></div>
-        <div class="mini"><b>3. Installation</b><span>Mac-Terminal oder Windows-PowerShell mit kopierbaren Befehlen.</span></div>
+        <div class="mini"><b>1. Testen</b><span>Branche wählen, Operator generieren, Trial-Pack herunterladen.</span></div>
+        <div class="mini"><b>2. Einrichten</b><span>In Claude/ChatGPT laden, Beispielaufgaben sofort ausprobieren.</span></div>
+        <div class="mini"><b>3. Freischalten</b><span>Full Blueprint kaufen oder komplette Einrichtung buchen.</span></div>
       </div>
     </div>
 
     <div id="builder" class="panel builder">
-      <div class="builderHead"><div><h2>Operator konfigurieren</h2><p class="sub">Alles ist in aufklappbare Bereiche sortiert. Nur öffnen, was gebraucht wird.</p></div></div>
+      <div class="builderHead"><div><h2>Deinen Trial-Operator konfigurieren</h2><p class="sub">In 2 Minuten entsteht ein branchenspezifisches Testsystem — genug zum Prüfen, aber das volle System bleibt geschützt.</p></div></div>
       <div class="flow"><div class="flowStep"><small>01</small><b>Firma</b><span>Grunddaten + Branche</span></div><div class="flowStep"><small>02</small><b>Gerät</b><span>Mac mini, MacBook, Windows</span></div><div class="flowStep"><small>03</small><b>Soul</b><span>Regeln + Freigaben</span></div><div class="flowStep"><small>04</small><b>Setup</b><span>Download + Terminal</span></div></div>
 
       <div class="tabs"><button class="tab active" onclick="tab('basic')">Grunddaten</button><button class="tab" onclick="tab('device')">Gerät & Tools</button><button class="tab" onclick="tab('soul')">Soul & Regeln</button><button class="tab" onclick="tab('cost')">Abos & Recht</button></div>
@@ -70,12 +70,12 @@
         <div class="priceCards"><div class="priceCard"><b>KI-Abo</b><div class="amount">Pflicht</div><p>Claude Pro/Team oder ChatGPT Plus/Team. Preise extern, können sich ändern.</p></div><div class="priceCard"><b>Hardware</b><div class="amount">optional</div><p>Mac mini empfohlen, wenn der Operator dauerhaft laufen soll.</p></div><div class="priceCard"><b>Remote-Zugriff</b><div class="amount">optional</div><p>AnyDesk, Jump Desktop, Bildschirmfreigabe oder internes IT-Setup.</p></div><div class="priceCard"><b>Automation</b><div class="amount">optional</div><p>Make/Zapier/Power Automate nur, wenn echte Automationen gebraucht werden.</p></div></div>
         <details open><summary>Rechtliche Absicherung bestätigen</summary><div class="inside checks"><label class="check"><input id="legalOk" type="checkbox" checked>Kunde bleibt für Freigaben, veröffentlichte Inhalte, Kundendaten, rechtliche Aussagen und externe Aktionen verantwortlich.</label><label class="check"><input id="humanOk" type="checkbox" checked>Kritische Aktionen brauchen Human-in-the-loop: Zahlung, Kündigung, Rabatt, Storno, rechtliche Aussage, medizinische/finanzielle Beratung.</label></div></details>
       </div>
-      <div class="actions"><button class="btn" onclick="buildSystem()">Operator-Pack generieren</button><button class="btn ghost" onclick="resetTrial()">Trial zurücksetzen</button></div>
+      <div class="actions"><button class="btn" onclick="buildSystem()">Kostenlosen Trial generieren</button><button class="btn ghost" onclick="resetTrial()">Trial zurücksetzen</button></div>
     </div>
   </section>
 
   <section id="results" class="results">
-    <div class="resultGrid"><div class="panel statusPanel"><div class="days" id="days">14</div><b>Tage Trial aktiv</b><p class="muted" id="expires">läuft ab am —</p><button class="btn" onclick="downloadAll()">Komplettes Bundle herunterladen</button><p class="muted" style="font-size:12px;margin-bottom:0">Download erzeugt eine fertige Markdown-Datei. In der echten Version wird daraus ein ZIP + Lizenzportal.</p></div><div class="panel"><h2 id="sysTitle">Operator OS</h2><p id="sysSummary" class="muted"></p><div class="chips" id="chips"></div></div></div>
+    <div class="resultGrid"><div class="panel statusPanel"><div class="days" id="days">14</div><b>Tage Trial aktiv</b><p class="muted" id="expires">läuft ab am —</p><button class="btn" onclick="downloadAll()">Trial-Pack herunterladen</button><p class="muted" style="font-size:12px;margin-bottom:0">Der Trial beweist den Nutzen. Full Blueprint, Automationen und Done-for-you Setup werden nach Kauf freigeschaltet.</p></div><div class="panel"><h2 id="sysTitle">Operator OS</h2><p id="sysSummary" class="muted"></p><div class="chips" id="chips"></div></div></div>
 
     <div id="downloadHelp" class="section panel">
       <h2>Download & Installation — klarer Ablauf</h2><p class="sub">Hier sieht der Kunde genau, was er machen muss. Kein Ratespiel.</p>
@@ -85,21 +85,21 @@
       <details><summary>Schritt 4 — Welche Abos und Kosten braucht der Kunde?</summary><div class="inside"><div class="priceCards" id="costCards"></div><p class="muted" style="font-size:12px">Hinweis: Externe Abo-Preise können sich ändern. Der finale Vertrag sollte klar trennen: unsere Setup-Gebühr vs. laufende Drittanbieter-Abos.</p></div></details>
     </div>
 
-    <div class="section"><h2>Lieferbare Dateien</h2><p class="sub">Aufklappen oder einzeln laden. Inhalt ist dynamisch zur Auswahl — Gastro bleibt Gastro, Clothing bleibt Clothing.</p><div class="fileGrid" id="fileGrid"></div></div>
+    <div id="offer" class="section"><h2>Was der Kunde bekommt</h2><p class="sub">Kein loses Prompt-Paket, sondern ein fertiger KI-Mitarbeiter mit Rolle, Firmenwissen, SOPs, Freigaberegeln, Setup-Anleitung und klarer Haftungsgrenze.</p><div class="fileGrid" id="fileGrid"></div></div>
 
     <div class="section two"><div class="panel"><h2>Geräte-Anleitung</h2><p class="sub" id="deviceIntro"></p><div class="steps" id="steps"></div></div><div class="panel"><h2>Erster Arbeitstag</h2><div class="code" id="dayOne"></div></div></div>
 
     <div class="section two"><div class="panel"><h2>SOUL.md Preview</h2><div class="code big" id="soulPreview"></div><button class="btn ghost" style="margin-top:10px" onclick="downloadFile('SOUL.md')">SOUL.md herunterladen</button></div><div class="panel warn"><h2>Recht & Haftung</h2><p class="sub">Muss in Angebot/Vertrag rein. Nicht als Rechtsberatung, aber als klare Produktgrenze.</p><div class="code" id="legalPreview"></div><button class="btn ghost" style="margin-top:10px" onclick="downloadFile('LEGAL_GUARDRAILS.md')">Legal-Datei herunterladen</button></div></div>
 
-    <div class="section lockBox"><div class="panel locked"><div class="blur"><h2>Paid Vollsystem</h2><div class="code">✓ echte ZIP-Auslieferung
-✓ Remote- oder Mac-mini-Einrichtung
-✓ getrenntes Benutzerkonto
-✓ Knowledge Files + SOPs
-✓ Tool-Profile + Freigaben
-✓ Übergabevideo
-✓ 30 Tage Feinschliff</div></div><div class="lock"><strong>Vollsystem gesperrt</strong><div class="price">ab 2.500 € Setup</div><p class="muted">Kein Prompt-Produkt. Ein eingerichteter Unternehmens-Operator.</p></div></div><div class="panel"><h2>Angebot</h2><div class="priceCards"><div class="priceCard"><b>Remote Setup</b><div class="amount">2.500–4.900 €</div><p>MacBook/Windows, 1 Rolle, Übergabe.</p></div><div class="priceCard"><b>Mac mini Operator</b><div class="amount">5.000–10.000 €</div><p>Eigener KI-Arbeitsplatz, mehrere Tools.</p></div><div class="priceCard"><b>Wartung</b><div class="amount">500–1.500 €/Monat</div><p>Updates, Monitoring, neue Workflows.</p></div><div class="priceCard"><b>Drittanbieter</b><div class="amount">separat</div><p>Claude/ChatGPT, Remote, Automations.</p></div></div></div></div>
+    <div class="section lockBox"><div class="panel locked"><div class="blur"><h2>Paid Vollsystem</h2><div class="code">✓ kompletter Full System Prompt
+✓ vollständige Prompt- & SOP-Bibliothek
+✓ Knowledge-File Templates
+✓ Drop/Content/DM/Support Workflows
+✓ Setup für Claude/ChatGPT
+✓ Automations-Blueprint
+✓ Updates + kommerzielle Nutzung</div></div><div class="lock"><strong>Full Access gesperrt</strong><div class="price">399 € Blueprint</div><p class="muted">Trial kostenlos. Vollsystem nach Zahlung freischalten.</p></div></div><div class="panel"><h2>Angebot</h2><div class="priceCards"><div class="priceCard"><b>14 Tage Trial</b><div class="amount">0 €</div><p>Limitierter Operator zum Testen in Claude/ChatGPT.</p></div><div class="priceCard"><b>Full Blueprint</b><div class="amount">399 €</div><p>Alle Dateien, SOPs, Prompts, Templates und Nutzungsrechte.</p></div><div class="priceCard"><b>Done-for-you Setup</b><div class="amount">1.500–5.000 €</div><p>Janis richtet alles direkt für Brand, Shop und Team ein.</p></div><div class="priceCard"><b>Wartung</b><div class="amount">300–1.500 €/Monat</div><p>Updates, neue Workflows, Optimierung und Support.</p></div></div></div></div>
 
-    <div class="banner"><div><b>Jetzt ist es die richtige Richtung:</b><br><span class="muted">Strukturierter Konfigurator, aufklappbare Bereiche, echte Download-/Terminal-Anleitung, Abo-Kosten und rechtliche Grenzen.</span></div><button class="btn" onclick="downloadAll()">Bundle downloaden</button></div>
+    <div class="banner"><div><b>Bereit für Verkauf:</b><br><span class="muted">Trial erzeugt Vertrauen, Full Access ist klar abgegrenzt, Done-for-you Setup und Retainer sind der Upsell.</span></div><button class="btn" onclick="downloadAll()">Trial-Pack downloaden</button></div>
   </section>
 </main>
 
