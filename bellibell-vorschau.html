@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Bellibell Produktberater – Konzeptvorschau</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%23a6282d'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='38' font-style='italic' fill='white'%3EB%3C/text%3E%3C/svg%3E">
+  <style>
+    :root {
+      --paper: #f7f4ee;
+      --paper-2: #efe9df;
+      --ink: #24201d;
+      --muted: #706962;
+      --line: rgba(58, 49, 43, .14);
+      --brand: #a6282d;
+      --brand-dark: #741c21;
+      --forest: #2f5646;
+      --snow: #fffdf9;
+      --shadow: 0 24px 70px rgba(47, 39, 33, .12);
+      --radius: 28px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 0%, rgba(166, 40, 45, .06), transparent 27rem),
+        linear-gradient(180deg, #fbf9f5 0%, var(--paper) 58%, #efe9df 100%);
+      font-family: ui-rounded, "SF Pro Rounded", "Avenir Next", Avenir, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      min-height: 100vh;
+    }
+
+    button, a { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; }
+    [hidden] { display: none !important; }
+
+    .topbar {
+      min-height: 38px;
+      display: grid;
+      place-items: center;
+      padding: 8px 18px;
+      background: var(--forest);
+      color: #fff;
+      font-size: 12px;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .nav {
+      max-width: 1240px;
+      margin: 0 auto;
+      min-height: 86px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-mark {
+      width: 46px;
+      height: 46px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: #fff;
+      background: var(--brand);
+      font-family: Georgia, serif;
+      font-size: 29px;
+      font-style: italic;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.2);
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 19px;
+      letter-spacing: .02em;
+    }
+    .brand-copy span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .nav-note {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .nav-note::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4f856c;
+      box-shadow: 0 0 0 4px rgba(79,133,108,.12);
+    }
+
+    .shell {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 12px 24px 72px;
+    }
+
+    .intro {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(320px, .95fr);
+      gap: 44px;
+      align-items: end;
+      margin: 38px 0 36px;
+    }
+
+    .eyebrow {
+      color: var(--brand);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+      margin: 0 0 14px;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(42px, 6vw, 78px);
+      font-weight: 500;
+      line-height: .99;
+      letter-spacing: -.045em;
+      text-wrap: balance;
+    }
+
+    .intro-copy {
+      max-width: 520px;
+      justify-self: end;
+      padding-bottom: 6px;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.65;
+    }
+    .intro-copy strong { color: var(--ink); }
+
+    .tabs {
+      display: inline-flex;
+      gap: 5px;
+      margin: 0 0 16px;
+      padding: 5px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.68);
+    }
+    .tab {
+      min-height: 44px;
+      border: 0;
+      border-radius: 999px;
+      padding: 0 18px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+    }
+    .tab.is-active {
+      background: var(--ink);
+      color: #fff;
+      box-shadow: 0 6px 18px rgba(36,32,29,.14);
+    }
+
+    .advisor {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, .8fr);
+      min-height: 720px;
+      overflow: hidden;
+      border: 1px solid rgba(58,49,43,.12);
+      border-radius: 36px;
+      background: rgba(255,253,249,.86);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .questions {
+      padding: clamp(26px, 4vw, 54px);
+      border-right: 1px solid var(--line);
+    }
+
+    .question-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 18px;
+      margin-bottom: 30px;
+    }
+    .question-head h2 {
+      margin: 0 0 8px;
+      font-size: clamp(25px, 3vw, 38px);
+      letter-spacing: -.035em;
+      line-height: 1.08;
+    }
+    .question-head p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+    .catalog-pill {
+      flex: 0 0 auto;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: #edf3ef;
+      color: var(--forest);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .question {
+      padding: 22px 0;
+      border-top: 1px solid var(--line);
+    }
+    .question:first-of-type { border-top: 0; }
+    .question-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 15px;
+      font-weight: 750;
+    }
+    .step {
+      width: 25px;
+      height: 25px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      color: var(--brand-dark);
+      background: rgba(166,40,45,.09);
+      font-size: 12px;
+    }
+
+    .choices {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+    .choice {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 14px;
+      background: var(--snow);
+      color: #544d47;
+      cursor: pointer;
+      transition: border-color .16s ease, transform .16s ease, box-shadow .16s ease, background .16s ease;
+    }
+    .choice:hover { transform: translateY(-1px); border-color: rgba(166,40,45,.35); }
+    .choice:focus-visible { outline: 3px solid rgba(166,40,45,.22); outline-offset: 2px; }
+    .choice.is-active {
+      border-color: var(--brand);
+      color: var(--brand-dark);
+      background: rgba(166,40,45,.075);
+      box-shadow: inset 0 0 0 1px rgba(166,40,45,.08);
+      font-weight: 700;
+    }
+
+    .result-column {
+      position: relative;
+      padding: clamp(20px, 3vw, 34px);
+      background:
+        linear-gradient(180deg, rgba(235,240,235,.78), rgba(247,244,238,.96)),
+        var(--paper-2);
+    }
+    .result-column::before,
+    .result-column::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+      opacity: .16;
+      clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      background: var(--forest);
+    }
+    .result-column::before { width: 180px; height: 105px; top: 12px; right: -35px; }
+    .result-column::after { width: 120px; height: 72px; top: 45px; right: 88px; opacity: .09; }
+
+    .request-summary {
+      position: relative;
+      z-index: 1;
+      margin: 4px 0 18px;
+      color: var(--forest);
+      font-size: 12px;
+      font-weight: 750;
+      letter-spacing: .03em;
+    }
+
+    .product-card {
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      border: 1px solid rgba(58,49,43,.12);
+      border-radius: 27px;
+      background: var(--snow);
+      box-shadow: 0 20px 44px rgba(53,45,39,.1);
+    }
+    .product-image-wrap {
+      aspect-ratio: 1.08;
+      overflow: hidden;
+      background: #e9e3da;
+    }
+    .product-image-wrap img {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      transition: transform .45s ease;
+    }
+    .product-card:hover img { transform: scale(1.025); }
+
+    .product-copy { padding: 24px; }
+    .product-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+    .product-meta h3 {
+      margin: 0;
+      font-family: Georgia, serif;
+      font-size: 25px;
+      line-height: 1.08;
+      letter-spacing: -.025em;
+    }
+    .price { white-space: nowrap; font-weight: 800; }
+    .variant { margin: 9px 0 16px; color: var(--brand-dark); font-size: 14px; font-weight: 700; }
+    .reasons {
+      display: grid;
+      gap: 9px;
+      margin: 0 0 19px;
+      padding: 0;
+      list-style: none;
+      color: #5f5852;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .reasons li { position: relative; padding-left: 21px; }
+    .reasons li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: .48em;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--forest);
+      box-shadow: 0 0 0 4px rgba(47,86,70,.08);
+    }
+    .shop-link {
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 14px;
+      background: var(--brand);
+      color: #fff;
+      font-weight: 800;
+      text-decoration: none;
+      transition: transform .16s ease, background .16s ease;
+    }
+    .shop-link:hover { background: var(--brand-dark); transform: translateY(-1px); }
+    .boundary { margin: 14px 0 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+
+    .alternatives-title {
+      margin: 21px 0 10px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .alternatives { display: grid; gap: 8px; }
+    .alternative {
+      display: grid;
+      grid-template-columns: 52px 1fr;
+      gap: 11px;
+      align-items: center;
+      padding: 8px;
+      border-radius: 13px;
+      color: #4d4742;
+      background: rgba(255,255,255,.68);
+      text-decoration: none;
+    }
+    .alternative:hover { background: #fff; }
+    .alternative img { width: 52px; height: 52px; border-radius: 10px; object-fit: cover; background: #e8e2d9; }
+    .alternative strong, .alternative small { display: block; }
+    .alternative strong { font-size: 12px; line-height: 1.3; }
+    .alternative small { margin-top: 3px; color: var(--muted); font-size: 11px; }
+
+    .handoff {
+      position: relative;
+      z-index: 1;
+      margin-top: 80px;
+      padding: 30px;
+      border-radius: 24px;
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+    .handoff h3 { margin: 0 0 8px; font-family: Georgia, serif; font-size: 28px; }
+    .handoff p { color: var(--muted); line-height: 1.55; }
+
+    .team-panel {
+      min-height: 600px;
+      padding: clamp(26px, 4vw, 54px);
+      border: 1px solid var(--line);
+      border-radius: 36px;
+      background: #202b26;
+      color: #f8f5ee;
+      box-shadow: var(--shadow);
+    }
+    .team-head {
+      max-width: 780px;
+      margin-bottom: 34px;
+    }
+    .team-head h2 { margin: 0 0 12px; font-size: clamp(30px, 4vw, 50px); letter-spacing: -.04em; }
+    .team-head p { margin: 0; color: #b9c4bd; font-size: 16px; line-height: 1.6; }
+    .team-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .team-card {
+      min-height: 155px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 20px;
+      background: rgba(255,255,255,.045);
+    }
+    .team-card.wide { grid-column: 1 / -1; }
+    .team-card span {
+      display: block;
+      margin-bottom: 12px;
+      color: #91a298;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .team-card p { margin: 0; color: #edf2ee; line-height: 1.6; }
+    .team-card code { color: #d8e7dc; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+
+    .proof-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-top: 34px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: var(--line);
+    }
+    .proof-item { min-height: 160px; padding: 27px; background: rgba(255,253,249,.9); }
+    .proof-item strong { display: block; margin-bottom: 9px; font-size: 17px; }
+    .proof-item p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+
+    footer {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px 38px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 900px) {
+      .intro { grid-template-columns: 1fr; gap: 18px; }
+      .intro-copy { justify-self: start; }
+      .advisor { grid-template-columns: 1fr; }
+      .questions { border-right: 0; border-bottom: 1px solid var(--line); }
+      .proof-strip { grid-template-columns: 1fr; }
+      .team-grid { grid-template-columns: 1fr; }
+      .team-card.wide { grid-column: auto; }
+    }
+
+    @media (max-width: 600px) {
+      .nav { min-height: 72px; padding: 13px 16px; }
+      .brand-copy span, .nav-note { display: none; }
+      .shell { padding: 0 12px 50px; }
+      .intro { margin: 25px 5px 26px; }
+      h1 { font-size: clamp(42px, 13vw, 60px); }
+      .intro-copy { font-size: 15px; }
+      .tabs { display: flex; width: 100%; }
+      .tab { flex: 1; padding: 0 9px; }
+      .advisor, .team-panel { border-radius: 25px; }
+      .questions { padding: 24px 18px; }
+      .question-head { display: block; }
+      .catalog-pill { display: inline-flex; margin-top: 12px; }
+      .result-column { padding: 18px; }
+      .choice { flex: 1 1 auto; }
+      .product-copy { padding: 20px; }
+      .product-meta h3 { font-size: 21px; }
+      footer { padding-inline: 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">Private Konzeptvorschau für Bellibell · 18. Juli 2026</div>
+  <nav class="nav" aria-label="Demo-Navigation">
+    <a class="brand" href="https://bellibell.de" target="_blank" rel="noopener noreferrer" aria-label="Bellibell Website öffnen">
+      <span class="brand-mark" aria-hidden="true">B</span>
+      <span class="brand-copy"><strong>bellibell.de</strong><span>Merino aus den Bergen</span></span>
+    </a>
+    <div class="nav-note">Konzeptvorschau, keine Shop-Integration</div>
+  </nav>
+
+  <main class="shell">
+    <section class="intro">
+      <div>
+        <p class="eyebrow">Bellibell Produktberatung</p>
+        <h1>Welcher Merino-Begleiter passt zu eurem Kind?</h1>
+      </div>
+      <p class="intro-copy"><strong>Eine konkrete Vorschau:</strong> Der Berater grenzt Größe, Jahreszeit und Produktart ein und empfiehlt nur Kombinationen, die im aktuellen Bellibell-Katalog hinterlegt sind.</p>
+    </section>
+
+    <div class="tabs" role="tablist" aria-label="Ansicht wählen">
+      <button class="tab is-active" id="tab-customer" type="button" role="tab" aria-selected="true" aria-controls="panel-customer" tabindex="0" data-view="customer">Kundenansicht</button>
+      <button class="tab" id="tab-team" type="button" role="tab" aria-selected="false" aria-controls="panel-team" tabindex="-1" data-view="team">Teamansicht</button>
+    </div>
+
+    <section class="advisor" id="panel-customer" role="tabpanel" aria-labelledby="tab-customer" data-panel="customer">
+      <div class="questions">
+        <header class="question-head">
+          <div>
+            <h2>In fünf kurzen Schritten</h2>
+            <p>Ändert eine Auswahl und die Empfehlung wird sofort neu aus Bellibells Produkten berechnet.</p>
+          </div>
+          <span class="catalog-pill" id="catalog-count">Katalog wird geladen</span>
+        </header>
+
+        <div class="question">
+          <div class="question-label"><span class="step">1</span>Aktuelle Kleidergröße</div>
+          <div class="choices" aria-label="Aktuelle Kleidergröße">
+            <button class="choice" type="button" data-key="size" data-value="62">62</button>
+            <button class="choice" type="button" data-key="size" data-value="68">68</button>
+            <button class="choice is-active" type="button" data-key="size" data-value="74">74</button>
+            <button class="choice" type="button" data-key="size" data-value="80">80</button>
+            <button class="choice" type="button" data-key="size" data-value="86">86</button>
+            <button class="choice" type="button" data-key="size" data-value="104">104</button>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-label"><span class="step">2</span>Wann wird es getragen?</div>
+          <div class="choices">
+            <button class="choice is-active" type="button" data-key="season" data-value="winter">Kalte Tage / Winter</button>
+            <button class="choice" type="button" data-key="season" data-value="all-year">Übergang / ganzjährig</button>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-label"><span class="step">3</span>Was sucht ihr?</div>
+          <div class="choices">
+            <button class="choice is-active" type="button" data-key="category" data-value="overall">Overall</button>
+            <button class="choice" type="button" data-key="category" data-value="set">Body & Hose</button>
+            <button class="choice" type="button" data-key="category" data-value="top">Shirt / Langarmshirt</button>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-label"><span class="step">4</span>Wie soll es sitzen?</div>
+          <div class="choices">
+            <button class="choice is-active" type="button" data-key="growth" data-value="more">Lange mitwachsend</button>
+            <button class="choice" type="button" data-key="growth" data-value="balanced">Ausgewogen</button>
+            <button class="choice" type="button" data-key="growth" data-value="close">Jetzt körpernäher</button>
+          </div>
+        </div>
+
+        <div class="question">
+          <div class="question-label"><span class="step">5</span>Welcher Stil passt?</div>
+          <div class="choices">
+            <button class="choice is-active" type="button" data-key="motif" data-value="blue">Blau & Berge</button>
+            <button class="choice" type="button" data-key="motif" data-value="colorful">Bunt & Seilbahn</button>
+            <button class="choice" type="button" data-key="motif" data-value="neutral">Ruhig & neutral</button>
+            <button class="choice" type="button" data-key="motif" data-value="forest">Wald & Grün</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="result-column" aria-live="polite">
+        <p class="request-summary" id="request-summary"></p>
+        <article class="product-card" id="recommendation">
+          <div class="product-image-wrap"><img id="product-image" src="" alt=""></div>
+          <div class="product-copy">
+            <div class="product-meta">
+              <h3 id="product-title"></h3>
+              <span class="price" id="product-price"></span>
+            </div>
+            <p class="variant" id="product-variant"></p>
+            <ul class="reasons" id="reasons"></ul>
+            <a class="shop-link" id="product-link" href="https://bellibell.de" target="_blank" rel="noopener noreferrer">Produkt im Bellibell-Shop ansehen</a>
+            <p class="boundary" id="product-boundary">Verfügbarkeit und endgültige Passform werden vor dem Kauf geprüft.</p>
+          </div>
+        </article>
+        <article class="handoff" id="handoff" hidden>
+          <h3>Hier übernimmt das Team</h3>
+          <p id="handoff-reason"></p>
+          <p>Die Angaben werden strukturiert an Bellibell übergeben, statt eine nicht hinterlegte Antwort zu erfinden.</p>
+        </article>
+        <p class="alternatives-title" id="alternatives-title">Weitere passende Optionen</p>
+        <div class="alternatives" id="alternatives"></div>
+      </aside>
+    </section>
+
+    <section class="team-panel" id="panel-team" role="tabpanel" aria-labelledby="tab-team" data-panel="team" hidden>
+      <header class="team-head">
+        <p class="eyebrow" style="color:#b9d1c2">Für das Bellibell-Team</p>
+        <h2>Was hinter der Kundenantwort ankommt</h2>
+        <p>Die Vorschau antwortet nicht frei aus dem Internet. Sie nutzt freigegebene Produktdaten, dokumentiert die Begründung und übergibt Fälle, die der Katalog nicht sicher abdeckt.</p>
+      </header>
+      <div class="team-grid">
+        <article class="team-card">
+          <span>Kundenangaben</span>
+          <p id="team-input"></p>
+        </article>
+        <article class="team-card">
+          <span>Systementscheidung</span>
+          <p id="team-decision"></p>
+        </article>
+        <article class="team-card">
+          <span>Datenquelle</span>
+          <p>Bellibells öffentlich sichtbarer Katalog mit Produktart, Varianten, Saison, Materialangaben, Grammatur, Preis und Produktlink.</p>
+        </article>
+        <article class="team-card">
+          <span>Sicherheitsgrenze</span>
+          <p id="team-boundary">Verfügbarkeit und endgültige Passform werden vor dem Kauf im Bellibell-Shop geprüft.</p>
+        </article>
+        <article class="team-card wide">
+          <span>Mögliche Übergabe im echten System</span>
+          <p>Wenn eine Größe fehlt, eine Frage nicht aus den freigegebenen Daten beantwortet werden kann oder persönliche Beratung nötig ist, erhält das Team die bisherige Auswahl als kompakte Zusammenfassung. Der Kunde muss nicht von vorn beginnen.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="proof-strip" aria-label="Was die Vorschau demonstriert">
+      <article class="proof-item"><strong>Reale Produktbasis</strong><p>Die Beispielantworten stammen aus Bellibells aktuellem öffentlichen Katalog, nicht aus erfundenen Platzhalterprodukten.</p></article>
+      <article class="proof-item"><strong>Begründbare Auswahl</strong><p>Größe, Saison und Grammatur bleiben sichtbar. So kann das Team jede Empfehlung nachvollziehen.</p></article>
+      <article class="proof-item"><strong>Saubere Übergabe</strong><p>Unsichere Fälle werden markiert und ans Team gegeben. Das System soll Beratung ergänzen, nicht vortäuschen.</p></article>
+    </section>
+  </main>
+
+  <footer>
+    Konzeptvorschau für Bellibell auf Basis öffentlich sichtbarer Produktinformationen von bellibell.de. Diese Seite ist keine offizielle Shop-Funktion, verändert den Live-Shop nicht und verarbeitet keine Kundendaten.
+  </footer>
+
+  <script src="bellibell-vorschau-catalog.js"></script>
+  <script src="bellibell-vorschau-recommender.js"></script>
+  <script src="bellibell-vorschau-app.js"></script>
+</body>
+</html>
