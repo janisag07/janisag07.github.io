@@ -1,0 +1,1174 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="description" content="Private Konzept-Demo eines KI-Produktberaters und internen Arbeitsablaufs für grillfreude.de.">
+  <title>Grillfreude KI-Beratung — Konzept-Demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700&family=Proza+Libre:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #191919;
+      --ink-soft: #45433f;
+      --paper: #edebe6;
+      --surface: #fff;
+      --surface-warm: #f7f4ee;
+      --line: #d8d3c9;
+      --line-dark: #bdb7ab;
+      --orange: #ff8800;
+      --orange-dark: #c76500;
+      --orange-soft: #fff0df;
+      --green: #506e04;
+      --green-soft: #edf3dc;
+      --red: #9f352c;
+      --red-soft: #fae8e5;
+      --blue: #285f7d;
+      --blue-soft: #e5f1f6;
+      --shadow: 0 20px 55px rgba(34, 29, 22, .10);
+      --radius-lg: 24px;
+      --radius-md: 14px;
+      --radius-sm: 8px;
+      --max: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "Assistant", system-ui, sans-serif;
+      font-size: 17px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input, select, textarea { font: inherit; }
+    button, a { -webkit-tap-highlight-color: transparent; }
+    button:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(255, 136, 0, .45);
+      outline-offset: 3px;
+    }
+    img { max-width: 100%; display: block; }
+    [hidden] { display: none !important; }
+
+    .demo-rail {
+      min-height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 9px 20px;
+      background: var(--ink);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-align: center;
+      text-transform: uppercase;
+    }
+    .demo-rail .pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--orange);
+      box-shadow: 0 0 0 5px rgba(255,136,0,.14);
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(25,25,25,.10);
+      background: rgba(255,255,255,.94);
+      backdrop-filter: blur(14px);
+    }
+    .nav-inner {
+      width: min(calc(100% - 36px), var(--max));
+      min-height: 76px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 20px;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+    }
+    .brand img { width: 168px; height: auto; }
+    .brand-copy {
+      padding-left: 13px;
+      border-left: 1px solid var(--line);
+      color: var(--ink-soft);
+      font-size: 13px;
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: .03em;
+    }
+    .view-switcher {
+      display: inline-flex;
+      gap: 4px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface-warm);
+    }
+    .view-switcher button {
+      min-height: 42px;
+      padding: 0 17px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--ink-soft);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .view-switcher button.active {
+      background: var(--ink);
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,.14);
+    }
+    .header-actions { justify-self: end; }
+    .ghost-button {
+      min-height: 44px;
+      padding: 0 16px;
+      border: 1px solid var(--line-dark);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--ink);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .ghost-button:hover { background: var(--surface-warm); }
+
+    main { min-height: calc(100vh - 118px); }
+    .view { animation: reveal .28s ease both; }
+    @keyframes reveal { from { opacity: 0; transform: translateY(6px); } }
+
+    .hero {
+      width: min(calc(100% - 36px), var(--max));
+      margin: 0 auto;
+      padding: 68px 0 40px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.4fr) minmax(300px, .6fr);
+      gap: 56px;
+      align-items: end;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      margin-bottom: 18px;
+      color: var(--orange-dark);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 26px;
+      height: 3px;
+      background: var(--orange);
+    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h2, h3 { font-family: "Proza Libre", Georgia, serif; line-height: 1.08; }
+    h1 {
+      max-width: 780px;
+      margin-bottom: 22px;
+      font-size: clamp(44px, 7vw, 80px);
+      letter-spacing: -.055em;
+      text-wrap: balance;
+    }
+    .hero-lede {
+      max-width: 760px;
+      margin-bottom: 0;
+      color: var(--ink-soft);
+      font-size: clamp(19px, 2vw, 23px);
+      line-height: 1.48;
+      text-wrap: pretty;
+    }
+    .scope-card {
+      padding: 23px;
+      border: 1px solid var(--line-dark);
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,.48);
+    }
+    .scope-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-family: "Proza Libre", Georgia, serif;
+      font-size: 17px;
+    }
+    .scope-card p {
+      margin: 0;
+      color: var(--ink-soft);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .scope-link {
+      min-height: 44px;
+      margin-top: 17px;
+      padding: 0 15px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .scope-link:hover { background: #343330; }
+
+    .advisor-wrap {
+      width: min(calc(100% - 36px), var(--max));
+      margin: 0 auto;
+      padding-bottom: 84px;
+    }
+    .advisor-shell {
+      overflow: hidden;
+      border: 1px solid rgba(25,25,25,.12);
+      border-radius: var(--radius-lg);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .advisor-topbar {
+      min-height: 66px;
+      padding: 14px 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      border-bottom: 1px solid var(--line);
+    }
+    .advisor-id { display: flex; align-items: center; gap: 12px; font-weight: 800; }
+    .advisor-mark {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 9px;
+      background: var(--ink);
+      color: var(--orange);
+      font-family: "Proza Libre", Georgia, serif;
+      font-size: 18px;
+    }
+    .snapshot-note { color: var(--ink-soft); font-size: 13px; text-align: right; }
+    .advisor-grid {
+      min-height: 590px;
+      display: grid;
+      grid-template-columns: 235px minmax(0, 1fr);
+    }
+    .step-rail {
+      padding: 28px 21px;
+      border-right: 1px solid var(--line);
+      background: #f7f5f1;
+    }
+    .step-rail-title {
+      margin-bottom: 18px;
+      color: #777168;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .steps { display: grid; gap: 7px; }
+    .step-pill {
+      min-height: 48px;
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 10px;
+      border-radius: 9px;
+      color: #777168;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .step-pill .num {
+      width: 27px;
+      height: 27px;
+      display: grid;
+      place-items: center;
+      border: 1px solid #cbc5ba;
+      border-radius: 50%;
+      font-size: 12px;
+    }
+    .step-pill.active { background: var(--orange-soft); color: var(--ink); }
+    .step-pill.active .num { border-color: var(--orange); background: var(--orange); color: #fff; }
+    .step-pill.done { color: var(--ink); }
+    .step-pill.done .num { border-color: var(--green); background: var(--green-soft); color: var(--green); }
+    .rail-footnote {
+      margin: 28px 2px 0;
+      padding-top: 20px;
+      border-top: 1px solid var(--line);
+      color: #777168;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .question-stage { padding: clamp(30px, 5vw, 64px); }
+    .progress-track {
+      width: 100%;
+      height: 5px;
+      overflow: hidden;
+      margin-bottom: 40px;
+      border-radius: 99px;
+      background: #ebe7df;
+    }
+    .progress-bar { height: 100%; width: 20%; background: var(--orange); transition: width .25s ease; }
+    .question-kicker {
+      margin-bottom: 10px;
+      color: var(--orange-dark);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .question-stage h2 {
+      max-width: 750px;
+      margin-bottom: 14px;
+      font-size: clamp(29px, 4vw, 47px);
+      letter-spacing: -.035em;
+    }
+    .question-help {
+      max-width: 700px;
+      margin-bottom: 32px;
+      color: var(--ink-soft);
+      font-size: 17px;
+    }
+    .options {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .option {
+      min-height: 78px;
+      padding: 15px 17px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-md);
+      background: #fff;
+      color: var(--ink);
+      text-align: left;
+      cursor: pointer;
+      transition: border-color .15s ease, transform .15s ease, background .15s ease;
+    }
+    .option:hover { transform: translateY(-2px); border-color: var(--orange); background: #fffcf8; }
+    .option.selected { border-color: var(--orange); background: var(--orange-soft); }
+    .option-label { display: block; font-weight: 800; }
+    .option-detail { display: block; margin-top: 2px; color: var(--ink-soft); font-size: 13px; }
+    .option-dot {
+      width: 22px;
+      height: 22px;
+      border: 1.5px solid #a9a297;
+      border-radius: 50%;
+    }
+    .option.selected .option-dot { border: 6px solid var(--orange); background: #fff; }
+    .stage-actions {
+      min-height: 46px;
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .back-button {
+      min-height: 44px;
+      padding: 0 14px;
+      border: 0;
+      background: transparent;
+      color: var(--ink-soft);
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .selection-hint { color: #777168; font-size: 13px; }
+
+    .result-panel { padding: clamp(26px, 4vw, 54px); }
+    .result-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      gap: 24px;
+      margin-bottom: 30px;
+    }
+    .result-head h2 { margin-bottom: 9px; font-size: clamp(31px, 4vw, 48px); letter-spacing: -.04em; }
+    .result-head p { margin: 0; color: var(--ink-soft); }
+    .fit-score {
+      min-width: 120px;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--green-soft);
+      text-align: center;
+    }
+    .fit-score strong { display: block; color: var(--green); font-size: 25px; line-height: 1; }
+    .fit-score span { color: var(--ink-soft); font-size: 12px; font-weight: 700; }
+    .handoff {
+      margin-bottom: 22px;
+      padding: 18px;
+      border: 1px solid #e2ba68;
+      border-radius: 12px;
+      background: #fff8e7;
+    }
+    .handoff strong { display: block; margin-bottom: 5px; }
+    .handoff p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+    .product-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+    .product-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+    }
+    .product-image {
+      position: relative;
+      aspect-ratio: 16 / 10;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: #f3f1ed;
+    }
+    .product-image img { width: 100%; height: 100%; object-fit: contain; padding: 20px; mix-blend-mode: multiply; }
+    .snapshot-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 6px 9px;
+      border-radius: 7px;
+      background: rgba(25,25,25,.92);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+    .product-body { padding: 21px; }
+    .product-type { color: var(--orange-dark); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+    .product-body h3 { margin: 7px 0 8px; font-size: 22px; letter-spacing: -.025em; }
+    .product-price { margin-bottom: 15px; font-size: 20px; font-weight: 800; }
+    .product-price small { color: #777168; font-size: 12px; font-weight: 600; }
+    .reason-list { margin: 0 0 19px; padding-left: 19px; color: var(--ink-soft); font-size: 14px; }
+    .reason-list li + li { margin-top: 4px; }
+    .product-link {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 15px;
+      border-radius: 7px;
+      background: var(--orange);
+      color: #fff;
+      font-weight: 800;
+      text-decoration: none;
+    }
+    .product-link:hover { background: var(--orange-dark); }
+    .result-foot {
+      margin-top: 22px;
+      padding: 18px;
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      border-radius: 12px;
+      background: var(--surface-warm);
+    }
+    .result-foot p { margin: 0; max-width: 760px; color: var(--ink-soft); font-size: 13px; }
+    .primary-button {
+      min-height: 46px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 8px;
+      background: var(--ink);
+      color: #fff;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .primary-button:hover { background: #343330; }
+
+    .team-hero {
+      width: min(calc(100% - 36px), var(--max));
+      margin: 0 auto;
+      padding: 58px 0 28px;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 30px;
+    }
+    .team-hero h1 { margin-bottom: 12px; font-size: clamp(39px, 6vw, 67px); }
+    .team-hero p { max-width: 700px; margin: 0; color: var(--ink-soft); font-size: 19px; }
+    .sim-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 11px;
+      border-radius: 8px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .team-wrap {
+      width: min(calc(100% - 36px), var(--max));
+      margin: 0 auto;
+      padding-bottom: 85px;
+    }
+    .ops-promise {
+      margin-bottom: 22px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 19px;
+      background: #fff;
+      box-shadow: 0 10px 35px rgba(34,29,22,.06);
+    }
+    .ops-promise-head {
+      padding: 22px 24px;
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+    .ops-promise-head h2 { margin: 0; max-width: 710px; font-size: clamp(24px, 3vw, 34px); letter-spacing: -.03em; }
+    .ops-promise-head p { max-width: 400px; margin: 0; color: var(--ink-soft); font-size: 14px; }
+    .ops-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .ops-item { min-height: 170px; padding: 22px; }
+    .ops-item + .ops-item { border-left: 1px solid var(--line); }
+    .ops-item span { color: var(--orange-dark); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .ops-item h3 { margin: 13px 0 8px; font-size: 18px; line-height: 1.25; }
+    .ops-item p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+    .ops-guardrail {
+      padding: 14px 22px;
+      border-top: 1px solid var(--line);
+      background: var(--surface-warm);
+      color: var(--ink-soft);
+      font-size: 13px;
+    }
+    .ops-guardrail strong { color: var(--ink); }
+    .empty-team {
+      padding: 70px 30px;
+      border: 1px dashed var(--line-dark);
+      border-radius: var(--radius-lg);
+      background: rgba(255,255,255,.45);
+      text-align: center;
+    }
+    .empty-team h2 { margin-bottom: 10px; font-size: 30px; }
+    .empty-team p { max-width: 600px; margin: 0 auto 22px; color: var(--ink-soft); }
+    .team-grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr); gap: 18px; }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 10px 35px rgba(34,29,22,.06);
+    }
+    .panel-head {
+      min-height: 65px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      border-bottom: 1px solid var(--line);
+    }
+    .panel-head h2 { margin: 0; font-size: 20px; }
+    .case-id { color: #777168; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+    .panel-body { padding: 20px; }
+    .captured-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px; }
+    .datum {
+      min-height: 80px;
+      padding: 13px;
+      border-radius: 10px;
+      background: var(--surface-warm);
+    }
+    .datum span { display: block; color: #777168; font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; }
+    .datum strong { display: block; margin-top: 5px; font-size: 16px; }
+    .recap {
+      margin-top: 15px;
+      padding: 15px;
+      border: 1px solid #eed0ad;
+      border-radius: 11px;
+      background: var(--orange-soft);
+      color: var(--ink-soft);
+      font-size: 14px;
+    }
+    .recap strong { color: var(--ink); }
+    .timeline { display: grid; gap: 0; }
+    .event { position: relative; padding: 0 0 22px 32px; }
+    .event:last-child { padding-bottom: 0; }
+    .event::before {
+      content: "";
+      position: absolute;
+      left: 9px;
+      top: 9px;
+      bottom: -6px;
+      width: 1px;
+      background: var(--line);
+    }
+    .event:last-child::before { display: none; }
+    .event-dot {
+      position: absolute;
+      left: 3px;
+      top: 3px;
+      width: 13px;
+      height: 13px;
+      border: 3px solid #fff;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 1px var(--green);
+    }
+    .event.blocked .event-dot { background: var(--red); box-shadow: 0 0 0 1px var(--red); }
+    .event strong { display: block; font-size: 14px; }
+    .event span { display: block; color: #777168; font-size: 12px; }
+    .actions-panel { grid-column: 1 / -1; }
+    .action-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    .action-card {
+      min-height: 156px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+    }
+    .action-card h3 { margin: 12px 0 7px; font-size: 16px; line-height: 1.25; }
+    .action-card p { margin: 0; color: var(--ink-soft); font-size: 13px; }
+    .status-chip {
+      align-self: flex-start;
+      padding: 5px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+    }
+    .status-chip.simulated { background: var(--green-soft); color: var(--green); }
+    .status-chip.draft { background: var(--blue-soft); color: var(--blue); }
+    .status-chip.blocked { background: var(--red-soft); color: var(--red); }
+    .status-chip.required { background: #eeeae3; color: #665f55; }
+
+    .boundary {
+      margin-top: 22px;
+      overflow: hidden;
+      border: 2px solid var(--ink);
+      border-radius: 19px;
+      background: var(--ink);
+      color: #fff;
+    }
+    .boundary-head { padding: 24px; display: flex; align-items: end; justify-content: space-between; gap: 20px; }
+    .boundary-head h2 { margin: 0; max-width: 680px; font-size: clamp(25px, 3vw, 37px); letter-spacing: -.03em; }
+    .boundary-head p { max-width: 410px; margin: 0; color: #c9c5bd; font-size: 14px; }
+    .compare { display: grid; grid-template-columns: 1fr 1fr; background: #fff; color: var(--ink); }
+    .compare-col { padding: 25px; }
+    .compare-col + .compare-col { border-left: 1px solid var(--line); }
+    .compare-label { display: inline-block; margin-bottom: 17px; color: var(--orange-dark); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+    .compare-col h3 { margin-bottom: 16px; font-size: 23px; }
+    .check-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+    .check-list li { position: relative; padding-left: 25px; color: var(--ink-soft); font-size: 14px; }
+    .check-list li::before { position: absolute; left: 0; top: 0; font-weight: 900; }
+    .demo-list li::before { content: "•"; color: var(--orange); font-size: 22px; line-height: .8; }
+    .prod-list li::before { content: "✓"; color: var(--green); }
+
+    footer {
+      padding: 27px 18px;
+      border-top: 1px solid rgba(25,25,25,.12);
+      color: #716a61;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 940px) {
+      .nav-inner { grid-template-columns: 1fr auto; }
+      .view-switcher { grid-row: 2; grid-column: 1 / -1; justify-self: center; margin-bottom: 11px; }
+      .header-actions { display: none; }
+      .hero { grid-template-columns: 1fr; gap: 28px; padding-top: 48px; }
+      .advisor-grid { grid-template-columns: 1fr; }
+      .step-rail { display: none; }
+      .team-grid { grid-template-columns: 1fr; }
+      .actions-panel { grid-column: auto; }
+      .action-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .ops-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .ops-item:nth-child(3) { border-left: 0; border-top: 1px solid var(--line); }
+      .ops-item:nth-child(4) { border-top: 1px solid var(--line); }
+      .team-hero { align-items: start; flex-direction: column; }
+    }
+    @media (max-width: 680px) {
+      body { font-size: 16px; }
+      .demo-rail { min-height: 50px; font-size: 11px; line-height: 1.35; }
+      .nav-inner { width: min(calc(100% - 22px), var(--max)); min-height: 68px; }
+      .brand img { width: 136px; }
+      .brand-copy { display: none; }
+      .view-switcher { width: 100%; }
+      .view-switcher button { flex: 1; padding: 0 10px; }
+      .hero, .advisor-wrap, .team-hero, .team-wrap { width: min(calc(100% - 22px), var(--max)); }
+      .hero { padding-top: 38px; }
+      h1 { font-size: clamp(39px, 14vw, 57px); }
+      .advisor-topbar { align-items: flex-start; flex-direction: column; }
+      .snapshot-note { text-align: left; }
+      .question-stage { padding: 26px 18px; }
+      .options, .product-grid, .captured-grid, .action-grid, .compare { grid-template-columns: 1fr; }
+      .result-panel { padding: 24px 16px; }
+      .result-head { grid-template-columns: 1fr; }
+      .fit-score { width: 100%; }
+      .result-foot { flex-direction: column; }
+      .primary-button { width: 100%; }
+      .ops-promise-head { align-items: flex-start; flex-direction: column; }
+      .ops-grid { grid-template-columns: 1fr; }
+      .ops-item + .ops-item { border-left: 0; border-top: 1px solid var(--line); }
+      .compare-col + .compare-col { border-left: 0; border-top: 1px solid var(--line); }
+      .boundary-head { align-items: flex-start; flex-direction: column; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: .01ms !important; scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="demo-rail" role="note">
+    <span class="pulse" aria-hidden="true"></span>
+    Konzept-Demo · Keine Live-Verbindung · Keine echten Kundendaten · Produktstand 22.07.2026
+  </div>
+
+  <header class="site-header">
+    <div class="nav-inner">
+      <div class="brand">
+        <img src="https://www.grillfreude.de/cdn/shop/files/gempages_560137723290059632-319f920b-5971-4d3b-8a73-7e4ff3c45062.png?v=1757705720&width=380" alt="grillfreude.de">
+        <div class="brand-copy">Personal Agent<br>Konzeptvorschau</div>
+      </div>
+      <div class="view-switcher" role="tablist" aria-label="Demo-Ansicht wechseln">
+        <button id="customer-tab" class="active" role="tab" aria-selected="true" aria-controls="customer-view" data-view="customer">1 · Kundenweg</button>
+        <button id="team-tab" role="tab" aria-selected="false" aria-controls="team-view" data-view="team">2 · Interne KI</button>
+      </div>
+      <div class="header-actions">
+        <button class="ghost-button" id="reset-top" type="button">Demo zurücksetzen</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="view" id="customer-view" role="tabpanel" aria-labelledby="customer-tab">
+      <div class="hero">
+        <div>
+          <div class="eyebrow">Kundenweg + interne KI</div>
+          <h1>Welcher Grill passt wirklich zu dir?</h1>
+          <p class="hero-lede">Vorne führt eine kurze Beratung zur passenden Auswahl. Dahinter bereitet die interne KI aus jeder Anfrage einen strukturierten Vorgang für das Team vor.</p>
+        </div>
+        <aside class="scope-card">
+          <strong>Der Produktberater ist nur der Einstieg</strong>
+          <p>Der betriebliche Hebel steckt in der zweiten Ansicht: Angaben erfassen, dokumentieren, fehlende Informationen erkennen und erlaubte nächste Schritte vorbereiten. Alles ist hier simuliert – nicht live verbunden.</p>
+          <button class="scope-link" type="button" data-jump="team">Interne KI ansehen</button>
+        </aside>
+      </div>
+
+      <div class="advisor-wrap">
+        <section class="advisor-shell" aria-label="Grillfinder Demo">
+          <div class="advisor-topbar">
+            <div class="advisor-id"><span class="advisor-mark">G</span> Grillfreude Grillfinder</div>
+            <div class="snapshot-note">Öffentlicher Produkt-Snapshot · 6 Beispielprodukte · keine Shop-API</div>
+          </div>
+          <div class="advisor-grid">
+            <aside class="step-rail" aria-label="Fortschritt">
+              <div class="step-rail-title">Deine Auswahl</div>
+              <div class="steps" id="step-list"></div>
+              <p class="rail-footnote">Die spätere Lösung könnte den freigegebenen Shopkatalog live abgleichen. Diese Demo rechnet nur mit dem hinterlegten Snapshot.</p>
+            </aside>
+            <div id="question-stage" class="question-stage"></div>
+            <div id="result-panel" class="result-panel" hidden></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <section class="view" id="team-view" role="tabpanel" aria-labelledby="team-tab" hidden>
+      <div class="team-hero">
+        <div>
+          <div class="eyebrow">Interne KI · Personal Agent</div>
+          <h1>Aus einer Anfrage wird ein sauberer Vorgang</h1>
+          <p>Das ist der eigentliche betriebliche Nutzen: Informationen werden nicht nur beantwortet, sondern strukturiert erfasst, dokumentiert und für den nächsten internen Schritt vorbereitet.</p>
+        </div>
+        <span class="sim-badge">Nur Demo · keine Aktion ausgeführt</span>
+      </div>
+
+      <div class="team-wrap">
+        <section class="ops-promise" aria-label="Betrieblicher Nutzen der internen KI">
+          <div class="ops-promise-head">
+            <h2>Nicht „noch ein Chatbot“, sondern weniger Handarbeit im Tagesgeschäft</h2>
+            <p>Der Personal Agent verbindet den Kundenkontakt mit einem klar definierten internen Ablauf. Was wirklich automatisch ausgeführt werden darf, wird erst gemeinsam festgelegt.</p>
+          </div>
+          <div class="ops-grid">
+            <article class="ops-item"><span>01 · Erfassen</span><h3>Angaben werden zu Daten</h3><p>Standort, Bedarf, Preisrahmen und offene Fragen liegen strukturiert vor, statt in einzelnen Nachrichten verloren zu gehen.</p></article>
+            <article class="ops-item"><span>02 · Dokumentieren</span><h3>Einheitlicher Vorgang</h3><p>Die Anfrage wird zusammengefasst und nach bestätigten Geschäftsregeln kategorisiert.</p></article>
+            <article class="ops-item"><span>03 · Vorbereiten</span><h3>Nächster Schritt liegt bereit</h3><p>Rückfrage, Aufgabe, Produktauswahl oder Übergabe werden vorbereitet – mit vollständigem Kontext.</p></article>
+            <article class="ops-item"><span>04 · Kontrollieren</span><h3>Menschen behalten die Freigabe</h3><p>Fehlende Daten und Sonderfälle werden markiert. Kritische Aktionen bleiben hinter Regeln oder menschlicher Bestätigung.</p></article>
+          </div>
+          <div class="ops-guardrail"><strong>Demo-Grenze:</strong> Hier wird der Ablauf nur dargestellt. Reale Speicherung, CRM-/Shop-Abgleich oder Aktionen benötigen geprüfte Zugänge, Berechtigungen und einen vereinbarten Prozess.</div>
+        </section>
+
+        <div id="team-empty" class="empty-team">
+          <h2>Interne KI mit einem Beispielvorgang testen</h2>
+          <p>Du kannst selbst durch den Kundenweg gehen oder direkt einen vollständig simulierten Grillfreude-Fall laden.</p>
+          <button class="primary-button" type="button" data-load-sample>Beispielvorgang laden</button>
+          <button class="back-button" type="button" data-jump="customer">Kundenweg selbst testen</button>
+        </div>
+
+        <div id="team-content" hidden>
+          <div class="team-grid">
+            <section class="panel">
+              <div class="panel-head"><h2>Von der Anfrage zum Vorgang</h2><span class="case-id">DEMO-GF-2207-01</span></div>
+              <div class="panel-body">
+                <div class="captured-grid" id="captured-data"></div>
+                <div class="recap" id="case-recap"></div>
+              </div>
+            </section>
+
+            <section class="panel">
+              <div class="panel-head"><h2>Was die interne KI verarbeitet</h2><span class="sim-badge">Simulation</span></div>
+              <div class="panel-body">
+                <div class="timeline" id="timeline"></div>
+              </div>
+            </section>
+
+            <section class="panel actions-panel">
+              <div class="panel-head"><h2>Vorbereitete Arbeit für das Team</h2><span class="case-id">keine Live-Systeme verbunden</span></div>
+              <div class="panel-body">
+                <div class="action-grid">
+                  <article class="action-card">
+                    <span class="status-chip simulated">In Demo erzeugt</span>
+                    <h3>Vorgang dokumentiert</h3>
+                    <p>Antworten, angewandte Regeln, Produktempfehlung und offene Punkte liegen strukturiert als Demofall vor.</p>
+                  </article>
+                  <article class="action-card">
+                    <span class="status-chip draft">Entwurf bereit</span>
+                    <h3>Persönliche Rückfrage vorbereitet</h3>
+                    <p id="followup-draft">Ein passender Antwortentwurf wird nach dem Durchlauf angezeigt.</p>
+                  </article>
+                  <article class="action-card">
+                    <span class="status-chip blocked">Nicht verbunden</span>
+                    <h3>Bestand live prüfen</h3>
+                    <p>Erfordert freigegebenen Shopify-Zugriff. In der Demo wird kein Bestand abgefragt.</p>
+                  </article>
+                  <article class="action-card">
+                    <span class="status-chip required">Freigabe nötig</span>
+                    <h3>Aufgabe oder CRM-Fall anlegen</h3>
+                    <p>Würde erst nach Prozessprüfung, Systemzugang, Zielsystem und festgelegten Berechtigungen umgesetzt.</p>
+                  </article>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          <section class="boundary" aria-label="Abgrenzung Demo und fertiges Produkt">
+            <div class="boundary-head">
+              <h2>Demo und fertiges Produkt sind bewusst getrennt</h2>
+              <p>Die Vorschau zeigt Ablauf und Nutzen. Verkaufbar wird daraus ein klar abgegrenzter Pilot – nicht das Versprechen, sofort jeden Prozess zu automatisieren.</p>
+            </div>
+            <div class="compare">
+              <div class="compare-col">
+                <span class="compare-label">Was hier getestet wird</span>
+                <h3>Konzept-Demo</h3>
+                <ul class="check-list demo-list">
+                  <li>Sechs öffentlich sichtbare Beispielprodukte in einem festen Snapshot</li>
+                  <li>Nachvollziehbare, fest hinterlegte Empfehlungsregeln</li>
+                  <li>Eingaben nur lokal im Browser, ohne Speicherung</li>
+                  <li>Simulierte Teamansicht und simulierte interne Schritte</li>
+                  <li>Keine Shopänderung, keine Nachricht und keine Bestellung</li>
+                </ul>
+              </div>
+              <div class="compare-col">
+                <span class="compare-label">Erst nach gemeinsamer Umsetzung</span>
+                <h3>Produktive Lösung</h3>
+                <ul class="check-list prod-list">
+                  <li>Freigegebener, aktueller Produktkatalog mit kontrollierter Synchronisierung</li>
+                  <li>Individuelle Geschäftsregeln und definierte Eskalationen</li>
+                  <li>Dokumentation in vereinbarter Datenbank oder im CRM</li>
+                  <li>Erlaubte Aktionen über geprüfte APIs, Webhooks und Freigaben</li>
+                  <li>Login, Rollen, Audit-Log, Monitoring, Datenschutz und Support</li>
+                  <li>Start als Pilot mit einem Eingangskanal, einem internen Ablauf, einer Datenquelle und einem Zielsystem</li>
+                </ul>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>Private NexAgent Konzeptvorschau für Grillfreude · Nicht Teil des offiziellen Shops · Keine Live-Integration</footer>
+
+  <script>
+    const PRODUCTS = [
+      {id:'blazeflame-master-4',title:'RÖSLE Blazeflame Master 4',vendor:'Rösle',type:'Gasgrill',price:2999,locations:['garten'],persons:['3-5','6+'],fuel:'gas',strengths:['high-heat','smart','versatile'],url:'https://www.grillfreude.de/products/roesle-gasgrill-blazeflame-master-4',image:'https://cdn.shopify.com/s/files/1/0860/9883/7835/files/NeuerRoeslegrillblazeflame.png?v=1751447740&width=900'},
+      {id:'woodridge-elite',title:'Traeger Woodridge Elite Pelletgrill',vendor:'Traeger',type:'Pelletgrill',price:1699,locations:['garten'],persons:['6+'],fuel:'pellet',strengths:['smoke','smart','low-slow','versatile'],url:'https://www.grillfreude.de/products/woodridge-elite',image:'https://cdn.shopify.com/s/files/1/0860/9883/7835/files/woodridge_elitepellets.jpg?v=1781898761&width=900'},
+      {id:'ninja-woodfire-pro-xl',title:'Ninja Woodfire Pro XL OG850EU',vendor:'Ninja Foodi',type:'Elektrogrill',price:359,locations:['balkon','camping','garten'],persons:['1-2','3-5'],fuel:'electric',strengths:['quick','easy','smoke','compact'],url:'https://www.grillfreude.de/products/ninja-woodfire-pro-xl-og850eu',image:'https://cdn.shopify.com/s/files/1/0860/9883/7835/files/Ninja-OG850_UK_Hero_Front_LidClosed_MedRare_Beef_RGB.jpg?v=1740996593&width=900'},
+      {id:'petromax-atago',title:'Petromax Atago Tischgrill & Feuerstelle',vendor:'Petromax',type:'Mobiler Holzkohlegrill',price:219,locations:['camping','garten'],persons:['1-2','3-5'],fuel:'charcoal',strengths:['mobile','fire','versatile'],url:'https://www.grillfreude.de/products/atago',image:'https://cdn.shopify.com/s/files/1/0860/9883/7835/files/atago-studio-seitenansicht-ausgeklappt-2000x2000_jpg.webp?v=1757704863&width=900'},
+      {id:'kasai-nano-pro',title:'Kasai Nano Pro Konro Grill',vendor:'Kasai',type:'Japanischer Holzkohlegrill',price:399,locations:['balkon','camping'],persons:['1-2'],fuel:'charcoal',strengths:['high-heat','compact','direct'],url:'https://www.grillfreude.de/products/kasai-nano-pro-konro-grill-edelstahl-japanischer-holzkohlegrill-2-3-personen',image:'https://cdn.shopify.com/s/files/1/0860/9883/7835/files/NanoPro_SVT-16075_-03.jpg?v=1782489507&width=900'},
+      {id:'epicflame-pro-4',title:'RÖSLE EPICFLAME Pro 4 Gasgrill',vendor:'Rösle',type:'Gasgrill',price:1499,locations:['garten'],persons:['3-5','6+'],fuel:'gas',strengths:['high-heat','smart','versatile'],url:'https://www.grillfreude.de/products/gasgrill-epicflame-pro-4',image:'https://cdn.shopify.com/s/files/1/0860/9883/7835/files/251165_EPICFLAME_PRO_4_0000.png?v=1783084510&width=900'}
+    ];
+
+    const QUESTIONS = [
+      {key:'location',rail:'Standort',kicker:'Frage 1 von 5',title:'Wo soll dein Grill hauptsächlich stehen?',help:'Der Standort grenzt Bauart, Größe und passende Energiequelle ein.',options:[
+        {value:'balkon',label:'Balkon oder Terrasse',detail:'Kompakt und gut kontrollierbar'},
+        {value:'garten',label:'Garten',detail:'Mehr Platz für Leistung und Grillfläche'},
+        {value:'camping',label:'Camping oder unterwegs',detail:'Mobil, robust und schnell aufgebaut'}]},
+      {key:'persons',rail:'Personenzahl',kicker:'Frage 2 von 5',title:'Für wie viele Personen grillst du meistens?',help:'Die typische Runde ist wichtiger als der seltene große Anlass.',options:[
+        {value:'1-2',label:'1–2 Personen',detail:'Kompakt und effizient'},
+        {value:'3-5',label:'3–5 Personen',detail:'Alltag, Familie und Freunde'},
+        {value:'6+',label:'6 oder mehr',detail:'Viel Fläche für größere Runden'}]},
+      {key:'fuel',rail:'Grillart',kicker:'Frage 3 von 5',title:'Welche Grillart bevorzugst du?',help:'Wenn du unsicher bist, gewichtet die Demo deine übrigen Antworten stärker.',options:[
+        {value:'unsure',label:'Noch offen',detail:'Bitte anhand meiner Nutzung empfehlen'},
+        {value:'gas',label:'Gas',detail:'Schnell, präzise und vielseitig'},
+        {value:'pellet',label:'Pellet',detail:'Smoken und lange Garzeiten'},
+        {value:'electric',label:'Elektro',detail:'Komfortabel und unkompliziert'},
+        {value:'charcoal',label:'Holzkohle',detail:'Direkte Hitze und klassisches Feuer'}]},
+      {key:'goal',rail:'Funktionen',kicker:'Frage 4 von 5',title:'Was ist dir beim Grillen am wichtigsten?',help:'Die Auswahl beeinflusst, welche Produkte in der Demo höher gewichtet werden.',options:[
+        {value:'quick',label:'Schnell und unkompliziert',detail:'Kurze Aufheizzeit, wenig Aufwand'},
+        {value:'smoke',label:'Smoken und Low & Slow',detail:'Aroma und lange Garzeiten'},
+        {value:'high-heat',label:'Sehr hohe direkte Hitze',detail:'Scharfes Anbraten und Röstaromen'},
+        {value:'versatile',label:'Möglichst vielseitig',detail:'Mehrere Zubereitungsarten'},
+        {value:'mobile',label:'Mobilität',detail:'Transport und flexibler Einsatz'}]},
+      {key:'budget',rail:'Rahmen',kicker:'Frage 5 von 5',title:'Welcher Preisrahmen passt für dich?',help:'In einer fertigen Lösung könnten Preisregeln live aus dem Shop kommen. Hier gilt der Snapshot vom 22.07.2026.',options:[
+        {value:'under500',label:'Bis 500 €',detail:'Kompakte und mobile Lösungen'},
+        {value:'500-1500',label:'500–1.500 €',detail:'Gehobene Ausstattung'},
+        {value:'over1500',label:'Über 1.500 €',detail:'Premium und große Grillflächen'},
+        {value:'flex',label:'Noch nicht festgelegt',detail:'Passung ist zunächst wichtiger'}]}
+    ];
+
+    const LABELS = {
+      location:{balkon:'Balkon oder Terrasse',garten:'Garten',camping:'Camping oder unterwegs'},
+      persons:{'1-2':'1–2 Personen','3-5':'3–5 Personen','6+':'6 oder mehr'},
+      fuel:{unsure:'Noch offen',gas:'Gas',pellet:'Pellet',electric:'Elektro',charcoal:'Holzkohle'},
+      goal:{quick:'Schnell und unkompliziert',smoke:'Smoken und Low & Slow','high-heat':'Sehr hohe direkte Hitze',versatile:'Möglichst vielseitig',mobile:'Mobilität'},
+      budget:{under500:'Bis 500 €','500-1500':'500–1.500 €',over1500:'Über 1.500 €',flex:'Noch nicht festgelegt'}
+    };
+
+    const state = { step:0, answers:{}, recommendations:[], compatible:true, view:'customer' };
+    const stepList = document.querySelector('#step-list');
+    const stage = document.querySelector('#question-stage');
+    const resultPanel = document.querySelector('#result-panel');
+
+    function escapeHtml(value) {
+      return String(value).replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
+    }
+
+    function renderSteps() {
+      stepList.innerHTML = QUESTIONS.map((q, i) => {
+        const done = state.answers[q.key] !== undefined;
+        const active = i === state.step && !state.recommendations.length;
+        const cls = done ? 'done' : active ? 'active' : '';
+        return `<div class="step-pill ${cls}"><span class="num">${done ? '✓' : i + 1}</span><span>${q.rail}</span></div>`;
+      }).join('');
+    }
+
+    function renderQuestion() {
+      state.recommendations = [];
+      resultPanel.hidden = true;
+      stage.hidden = false;
+      const q = QUESTIONS[state.step];
+      const selected = state.answers[q.key];
+      stage.innerHTML = `
+        <div class="progress-track" aria-hidden="true"><div class="progress-bar" style="width:${((state.step + 1) / QUESTIONS.length) * 100}%"></div></div>
+        <div class="question-kicker">${q.kicker}</div>
+        <h2>${q.title}</h2>
+        <p class="question-help">${q.help}</p>
+        <div class="options" role="radiogroup" aria-label="${escapeHtml(q.title)}">
+          ${q.options.map(o => `
+            <button class="option ${selected === o.value ? 'selected' : ''}" type="button" role="radio" aria-checked="${selected === o.value}" data-answer="${o.value}">
+              <span><span class="option-label">${o.label}</span><span class="option-detail">${o.detail}</span></span><span class="option-dot" aria-hidden="true"></span>
+            </button>`).join('')}
+        </div>
+        <div class="stage-actions">
+          <button class="back-button" type="button" id="back-step" ${state.step === 0 ? 'hidden' : ''}>← Zurück</button>
+          <span class="selection-hint">Auswahl führt automatisch weiter</span>
+        </div>`;
+      stage.querySelectorAll('[data-answer]').forEach(btn => btn.addEventListener('click', () => chooseAnswer(q.key, btn.dataset.answer)));
+      const back = stage.querySelector('#back-step');
+      if (back) back.addEventListener('click', previousStep);
+      renderSteps();
+      syncQaState();
+    }
+
+    function chooseAnswer(key, value) {
+      state.answers[key] = value;
+      if (state.step < QUESTIONS.length - 1) {
+        state.step += 1;
+        renderQuestion();
+      } else {
+        calculateRecommendations();
+        renderResults();
+      }
+    }
+
+    function previousStep() {
+      if (state.step > 0) {
+        state.step -= 1;
+        renderQuestion();
+      }
+    }
+
+    function scoreProduct(p) {
+      let score = 0;
+      const a = state.answers;
+      score += p.locations.includes(a.location) ? 7 : -4;
+      score += p.persons.includes(a.persons) ? 5 : -2;
+      if (a.fuel !== 'unsure') score += p.fuel === a.fuel ? 7 : -3;
+      if (p.strengths.includes(a.goal)) score += 4;
+      if (a.budget === 'under500') score += p.price <= 500 ? 4 : -4;
+      if (a.budget === '500-1500') score += p.price > 500 && p.price <= 1500 ? 4 : p.price <= 500 ? 1 : -2;
+      if (a.budget === 'over1500') score += p.price > 1500 ? 4 : 1;
+      return score;
+    }
+
+    function calculateRecommendations() {
+      state.compatible = PRODUCTS.some(p => p.locations.includes(state.answers.location) && p.persons.includes(state.answers.persons));
+      state.recommendations = PRODUCTS.map(p => ({...p,score:scoreProduct(p)})).sort((a,b) => b.score - a.score || a.price - b.price).slice(0,2);
+    }
+
+    function reasonsFor(p) {
+      const a = state.answers;
+      const reasons = [];
+      if (p.locations.includes(a.location)) reasons.push(`passt zum Einsatzort „${LABELS.location[a.location]}“`);
+      if (p.persons.includes(a.persons)) reasons.push(`ausgelegt für ${LABELS.persons[a.persons].toLowerCase()}`);
+      if (a.fuel !== 'unsure' && p.fuel === a.fuel) reasons.push(`entspricht der gewünschten Grillart ${LABELS.fuel[a.fuel]}`);
+      if (p.strengths.includes(a.goal)) reasons.push(`deckt den Schwerpunkt „${LABELS.goal[a.goal]}“ ab`);
+      if (a.budget === 'under500' && p.price <= 500) reasons.push('liegt im gewählten Preisrahmen');
+      if (a.budget === '500-1500' && p.price > 500 && p.price <= 1500) reasons.push('liegt im gewählten Preisrahmen');
+      if (a.budget === 'over1500' && p.price > 1500) reasons.push('passt zum Premium-Preisrahmen');
+      if (!reasons.length) reasons.push('ist im kleinen Demo-Katalog die nächstliegende Alternative');
+      return reasons.slice(0,4);
+    }
+
+    function euro(value) {
+      return new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(value);
+    }
+
+    function renderResults() {
+      stage.hidden = true;
+      resultPanel.hidden = false;
+      const top = state.recommendations[0];
+      const maxScore = 27;
+      const scorePercent = Math.max(52, Math.min(96, Math.round((top.score / maxScore) * 100)));
+      resultPanel.innerHTML = `
+        <div class="result-head">
+          <div><div class="question-kicker">Ergebnis der Konzept-Demo</div><h2>Diese Auswahl passt am ehesten</h2><p>Jede Empfehlung folgt den sichtbaren Antworten und fest hinterlegten Regeln.</p></div>
+          <div class="fit-score"><strong>${scorePercent}%</strong><span>Demo-Passung</span></div>
+        </div>
+        ${state.compatible ? '' : `<div class="handoff"><strong>Sonderfall erkannt: persönliche Prüfung empfohlen</strong><p>Standort und Personenzahl ergeben im kleinen Demo-Katalog keinen eindeutigen Treffer. Ein fertiges System würde nichts erfinden, sondern den Fall mit allen Angaben an das Team übergeben.</p></div>`}
+        <div class="product-grid">
+          ${state.recommendations.map((p, index) => `
+            <article class="product-card">
+              <div class="product-image"><span class="snapshot-badge">${index === 0 ? 'Beste Demo-Passung' : 'Alternative'}</span><img src="${p.image}" alt="${escapeHtml(p.title)}" loading="lazy"></div>
+              <div class="product-body">
+                <div class="product-type">${escapeHtml(p.type)} · ${escapeHtml(p.vendor)}</div>
+                <h3>${escapeHtml(p.title)}</h3>
+                <div class="product-price">${euro(p.price)} <small>Snapshot, nicht live</small></div>
+                <ul class="reason-list">${reasonsFor(p).map(r => `<li>${escapeHtml(r)}</li>`).join('')}</ul>
+                <a class="product-link" href="${p.url}" target="_blank" rel="noopener noreferrer">Öffentliche Produktseite</a>
+              </div>
+            </article>`).join('')}
+        </div>
+        <div class="result-foot">
+          <p><strong>Abgrenzung:</strong> Diese Demo verwendet sechs öffentlich sichtbare Produkte mit Preisen und Verfügbarkeit vom 22.07.2026. Das fertige Produkt würde nur nach freigegebener Anbindung auf aktuelle Daten zugreifen.</p>
+          <button class="primary-button" type="button" data-jump="team">Interne KI ansehen</button>
+        </div>`;
+      resultPanel.querySelector('[data-jump="team"]').addEventListener('click', () => switchView('team'));
+      renderTeamView();
+      renderSteps();
+      syncQaState();
+    }
+
+    function renderTeamView() {
+      const hasCase = state.recommendations.length > 0;
+      document.querySelector('#team-empty').hidden = hasCase;
+      document.querySelector('#team-content').hidden = !hasCase;
+      if (!hasCase) return;
+      const a = state.answers;
+      const top = state.recommendations[0];
+      const fields = [
+        ['Einsatzort', LABELS.location[a.location]],
+        ['Personenzahl', LABELS.persons[a.persons]],
+        ['Grillart', LABELS.fuel[a.fuel]],
+        ['Priorität', LABELS.goal[a.goal]],
+        ['Preisrahmen', LABELS.budget[a.budget]],
+        ['Top-Empfehlung', top.title]
+      ];
+      document.querySelector('#captured-data').innerHTML = fields.map(([k,v]) => `<div class="datum"><span>${escapeHtml(k)}</span><strong>${escapeHtml(v)}</strong></div>`).join('');
+      document.querySelector('#case-recap').innerHTML = `<strong>Automatisch erstellte Zusammenfassung:</strong> Gesucht wird eine Lösung für ${LABELS.location[a.location].toLowerCase()} und ${LABELS.persons[a.persons].toLowerCase()}. Schwerpunkt: ${LABELS.goal[a.goal].toLowerCase()}. Die Demo empfiehlt ${escapeHtml(top.title)} auf Basis des hinterlegten Produkt-Snapshots.`;
+      const events = [
+        ['Eingaben erfasst','5 strukturierte Kriterien aus der Kundenansicht','ok'],
+        ['Daten normalisiert','Standort, Gruppe, Grillart, Funktion und Preisrahmen','ok'],
+        ['Produktregeln abgeglichen',`${PRODUCTS.length} Beispielprodukte aus öffentlichem Snapshot`,'ok'],
+        ['Empfehlung dokumentiert',`${top.title} als beste Demo-Passung`,'ok'],
+        ['Live-Bestand nicht geprüft','Shopify-API ist in dieser Konzept-Demo nicht verbunden','blocked']
+      ];
+      document.querySelector('#timeline').innerHTML = events.map(([title,text,status]) => `<div class="event ${status === 'blocked' ? 'blocked' : ''}"><span class="event-dot"></span><strong>${escapeHtml(title)}</strong><span>${escapeHtml(text)}</span></div>`).join('');
+      document.querySelector('#followup-draft').textContent = `Entwurf: „Für deine Angaben passt ${top.title} am besten. Vor dem nächsten Schritt prüfen wir noch Verfügbarkeit und offene Details.“`;
+    }
+
+    function switchView(view) {
+      state.view = view;
+      document.querySelector('#customer-view').hidden = view !== 'customer';
+      document.querySelector('#team-view').hidden = view !== 'team';
+      document.querySelectorAll('[data-view]').forEach(btn => {
+        const active = btn.dataset.view === view;
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-selected', String(active));
+      });
+      if (view === 'team') renderTeamView();
+      window.scrollTo({top:0,behavior:'smooth'});
+      syncQaState();
+    }
+
+    function resetDemo() {
+      state.step = 0;
+      state.answers = {};
+      state.recommendations = [];
+      state.compatible = true;
+      switchView('customer');
+      renderQuestion();
+      renderTeamView();
+    }
+
+    function syncQaState() {
+      document.documentElement.dataset.demoView = state.view;
+      document.documentElement.dataset.demoStep = String(state.step + 1);
+      document.documentElement.dataset.answerCount = String(Object.keys(state.answers).length);
+      document.documentElement.dataset.resultCount = String(state.recommendations.length);
+    }
+
+    document.querySelectorAll('[data-view]').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.view)));
+    document.querySelectorAll('[data-jump]').forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.jump)));
+    document.querySelectorAll('[data-load-sample]').forEach(btn => btn.addEventListener('click', () => {
+      window.__grillfreudeDemo.answer({location:'garten',persons:'6+',fuel:'pellet',goal:'smoke',budget:'over1500'});
+      switchView('team');
+    }));
+    document.querySelector('#reset-top').addEventListener('click', resetDemo);
+
+    window.__grillfreudeDemo = {
+      getState: () => JSON.parse(JSON.stringify(state)),
+      reset: resetDemo,
+      answer(values) {
+        resetDemo();
+        QUESTIONS.forEach(q => {
+          if (!(q.key in values)) throw new Error(`Fehlende Testantwort: ${q.key}`);
+          state.answers[q.key] = values[q.key];
+        });
+        state.step = QUESTIONS.length - 1;
+        calculateRecommendations();
+        renderResults();
+        return this.getState();
+      },
+      products: PRODUCTS.map(p => ({id:p.id,title:p.title,price:p.price,url:p.url}))
+    };
+
+    renderQuestion();
+    renderTeamView();
+  </script>
+</body>
+</html>
